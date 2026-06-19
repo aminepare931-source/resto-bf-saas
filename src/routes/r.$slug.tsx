@@ -1,0 +1,75 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { renderTemplate } from "@/components/public/templates";
+import type { PublicRestaurant, PublicMenuItem, PublicReview, PublicGalleryImage } from "@/components/public/shared";
+
+export const Route = createFileRoute("/r/$slug")({
+  ssr: false,
+  head: ({ params }) => ({
+    meta: [
+      { title: `${params.slug} — Resto BF` },
+      { name: "description", content: "Découvrez ce restaurant : menu, photos, avis et contact." },
+    ],
+  }),
+  component: PublicRestaurantPage,
+});
+
+function PublicRestaurantPage() {
+  const { slug } = Route.useParams();
+  const [restaurant, setRestaurant] = useState<PublicRestaurant | null>(null);
+  const [menu, setMenu] = useState<PublicMenuItem[]>([]);
+  const [reviews, setReviews] = useState<PublicReview[]>([]);
+  const [gallery, setGallery] = useState<PublicGalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [missing, setMissing] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const { data: r } = await supabase
+        .from("restaurants")
+        .select("id, name, city, cuisine, description, address, hours, phone, whatsapp, email, plan, template")
+        .eq("slug", slug)
+        .maybeSingle();
+
+      if (!r) {
+        setMissing(true);
+        setLoading(false);
+        return;
+      }
+      setRestaurant(r as PublicRestaurant);
+
+      const [m, rev, g] = await Promise.all([
+        supabase.from("menu_items").select("id, category, name, description, price, image_url, available").eq("restaurant_id", r.id).eq("available", true).order("category").order("position"),
+        supabase.from("reviews").select("id, author_name, rating, comment, created_at").eq("restaurant_id", r.id).eq("approved", true).order("created_at", { ascending: false }).limit(12),
+        supabase.from("gallery_images").select("id, image_url, caption").eq("restaurant_id", r.id).order("position"),
+      ]);
+      setMenu((m.data ?? []) as PublicMenuItem[]);
+      setReviews((rev.data ?? []) as PublicReview[]);
+      setGallery((g.data ?? []) as PublicGalleryImage[]);
+      setLoading(false);
+    })();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f] text-white/60">
+        Chargement...
+      </div>
+    );
+  }
+
+  if (missing || !restaurant) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f] text-white text-center px-4">
+        <div>
+          <h1 className="text-3xl font-black text-gradient-gold mb-2">Restaurant introuvable</h1>
+          <p className="text-white/60">Le lien <code className="text-gold">/r/{slug}</code> ne correspond à aucun restaurant.</p>
+          <a href="/" className="mt-6 inline-block px-5 py-3 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold">Retour à Resto BF</a>
+        </div>
+      </div>
+    );
+  }
+
+  return renderTemplate(restaurant.template, { restaurant, menu, reviews, gallery });
+}

@@ -9,38 +9,209 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RSlugRouteImport } from './routes/r.$slug'
+import { Route as AuthInscriptionRouteImport } from './routes/auth/inscription'
+import { Route as AuthConnexionRouteImport } from './routes/auth/connexion'
+import { Route as AuthChoisirTemplateRouteImport } from './routes/auth/choisir-template'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
+import { Route as AuthenticatedDashboardReservationsRouteImport } from './routes/_authenticated/dashboard.reservations'
+import { Route as AuthenticatedDashboardParametresRouteImport } from './routes/_authenticated/dashboard.parametres'
+import { Route as AuthenticatedDashboardMenuRouteImport } from './routes/_authenticated/dashboard.menu'
+import { Route as AuthenticatedDashboardGalerieRouteImport } from './routes/_authenticated/dashboard.galerie'
+import { Route as AuthenticatedDashboardAvisRouteImport } from './routes/_authenticated/dashboard.avis'
 
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RSlugRoute = RSlugRouteImport.update({
+  id: '/r/$slug',
+  path: '/r/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthInscriptionRoute = AuthInscriptionRouteImport.update({
+  id: '/auth/inscription',
+  path: '/auth/inscription',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthConnexionRoute = AuthConnexionRouteImport.update({
+  id: '/auth/connexion',
+  path: '/auth/connexion',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthChoisirTemplateRoute = AuthChoisirTemplateRouteImport.update({
+  id: '/auth/choisir-template',
+  path: '/auth/choisir-template',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDashboardIndexRoute =
+  AuthenticatedDashboardIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardReservationsRoute =
+  AuthenticatedDashboardReservationsRouteImport.update({
+    id: '/reservations',
+    path: '/reservations',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardParametresRoute =
+  AuthenticatedDashboardParametresRouteImport.update({
+    id: '/parametres',
+    path: '/parametres',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardMenuRoute =
+  AuthenticatedDashboardMenuRouteImport.update({
+    id: '/menu',
+    path: '/menu',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardGalerieRoute =
+  AuthenticatedDashboardGalerieRouteImport.update({
+    id: '/galerie',
+    path: '/galerie',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardAvisRoute =
+  AuthenticatedDashboardAvisRouteImport.update({
+    id: '/avis',
+    path: '/avis',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/auth/choisir-template': typeof AuthChoisirTemplateRoute
+  '/auth/connexion': typeof AuthConnexionRoute
+  '/auth/inscription': typeof AuthInscriptionRoute
+  '/r/$slug': typeof RSlugRoute
+  '/dashboard/avis': typeof AuthenticatedDashboardAvisRoute
+  '/dashboard/galerie': typeof AuthenticatedDashboardGalerieRoute
+  '/dashboard/menu': typeof AuthenticatedDashboardMenuRoute
+  '/dashboard/parametres': typeof AuthenticatedDashboardParametresRoute
+  '/dashboard/reservations': typeof AuthenticatedDashboardReservationsRoute
+  '/dashboard/': typeof AuthenticatedDashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/auth/choisir-template': typeof AuthChoisirTemplateRoute
+  '/auth/connexion': typeof AuthConnexionRoute
+  '/auth/inscription': typeof AuthInscriptionRoute
+  '/r/$slug': typeof RSlugRoute
+  '/dashboard/avis': typeof AuthenticatedDashboardAvisRoute
+  '/dashboard/galerie': typeof AuthenticatedDashboardGalerieRoute
+  '/dashboard/menu': typeof AuthenticatedDashboardMenuRoute
+  '/dashboard/parametres': typeof AuthenticatedDashboardParametresRoute
+  '/dashboard/reservations': typeof AuthenticatedDashboardReservationsRoute
+  '/dashboard': typeof AuthenticatedDashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/auth/choisir-template': typeof AuthChoisirTemplateRoute
+  '/auth/connexion': typeof AuthConnexionRoute
+  '/auth/inscription': typeof AuthInscriptionRoute
+  '/r/$slug': typeof RSlugRoute
+  '/_authenticated/dashboard/avis': typeof AuthenticatedDashboardAvisRoute
+  '/_authenticated/dashboard/galerie': typeof AuthenticatedDashboardGalerieRoute
+  '/_authenticated/dashboard/menu': typeof AuthenticatedDashboardMenuRoute
+  '/_authenticated/dashboard/parametres': typeof AuthenticatedDashboardParametresRoute
+  '/_authenticated/dashboard/reservations': typeof AuthenticatedDashboardReservationsRoute
+  '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/dashboard'
+    | '/auth/choisir-template'
+    | '/auth/connexion'
+    | '/auth/inscription'
+    | '/r/$slug'
+    | '/dashboard/avis'
+    | '/dashboard/galerie'
+    | '/dashboard/menu'
+    | '/dashboard/parametres'
+    | '/dashboard/reservations'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/auth/choisir-template'
+    | '/auth/connexion'
+    | '/auth/inscription'
+    | '/r/$slug'
+    | '/dashboard/avis'
+    | '/dashboard/galerie'
+    | '/dashboard/menu'
+    | '/dashboard/parametres'
+    | '/dashboard/reservations'
+    | '/dashboard'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/_authenticated/admin'
+    | '/_authenticated/dashboard'
+    | '/auth/choisir-template'
+    | '/auth/connexion'
+    | '/auth/inscription'
+    | '/r/$slug'
+    | '/_authenticated/dashboard/avis'
+    | '/_authenticated/dashboard/galerie'
+    | '/_authenticated/dashboard/menu'
+    | '/_authenticated/dashboard/parametres'
+    | '/_authenticated/dashboard/reservations'
+    | '/_authenticated/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthChoisirTemplateRoute: typeof AuthChoisirTemplateRoute
+  AuthConnexionRoute: typeof AuthConnexionRoute
+  AuthInscriptionRoute: typeof AuthInscriptionRoute
+  RSlugRoute: typeof RSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +219,139 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/r/$slug': {
+      id: '/r/$slug'
+      path: '/r/$slug'
+      fullPath: '/r/$slug'
+      preLoaderRoute: typeof RSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/inscription': {
+      id: '/auth/inscription'
+      path: '/auth/inscription'
+      fullPath: '/auth/inscription'
+      preLoaderRoute: typeof AuthInscriptionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/connexion': {
+      id: '/auth/connexion'
+      path: '/auth/connexion'
+      fullPath: '/auth/connexion'
+      preLoaderRoute: typeof AuthConnexionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/choisir-template': {
+      id: '/auth/choisir-template'
+      path: '/auth/choisir-template'
+      fullPath: '/auth/choisir-template'
+      preLoaderRoute: typeof AuthChoisirTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard/': {
+      id: '/_authenticated/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/reservations': {
+      id: '/_authenticated/dashboard/reservations'
+      path: '/reservations'
+      fullPath: '/dashboard/reservations'
+      preLoaderRoute: typeof AuthenticatedDashboardReservationsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/parametres': {
+      id: '/_authenticated/dashboard/parametres'
+      path: '/parametres'
+      fullPath: '/dashboard/parametres'
+      preLoaderRoute: typeof AuthenticatedDashboardParametresRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/menu': {
+      id: '/_authenticated/dashboard/menu'
+      path: '/menu'
+      fullPath: '/dashboard/menu'
+      preLoaderRoute: typeof AuthenticatedDashboardMenuRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/galerie': {
+      id: '/_authenticated/dashboard/galerie'
+      path: '/galerie'
+      fullPath: '/dashboard/galerie'
+      preLoaderRoute: typeof AuthenticatedDashboardGalerieRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/avis': {
+      id: '/_authenticated/dashboard/avis'
+      path: '/avis'
+      fullPath: '/dashboard/avis'
+      preLoaderRoute: typeof AuthenticatedDashboardAvisRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
   }
 }
 
+interface AuthenticatedDashboardRouteChildren {
+  AuthenticatedDashboardAvisRoute: typeof AuthenticatedDashboardAvisRoute
+  AuthenticatedDashboardGalerieRoute: typeof AuthenticatedDashboardGalerieRoute
+  AuthenticatedDashboardMenuRoute: typeof AuthenticatedDashboardMenuRoute
+  AuthenticatedDashboardParametresRoute: typeof AuthenticatedDashboardParametresRoute
+  AuthenticatedDashboardReservationsRoute: typeof AuthenticatedDashboardReservationsRoute
+  AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
+}
+
+const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
+  {
+    AuthenticatedDashboardAvisRoute: AuthenticatedDashboardAvisRoute,
+    AuthenticatedDashboardGalerieRoute: AuthenticatedDashboardGalerieRoute,
+    AuthenticatedDashboardMenuRoute: AuthenticatedDashboardMenuRoute,
+    AuthenticatedDashboardParametresRoute:
+      AuthenticatedDashboardParametresRoute,
+    AuthenticatedDashboardReservationsRoute:
+      AuthenticatedDashboardReservationsRoute,
+    AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
+  }
+
+const AuthenticatedDashboardRouteWithChildren =
+  AuthenticatedDashboardRoute._addFileChildren(
+    AuthenticatedDashboardRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthChoisirTemplateRoute: AuthChoisirTemplateRoute,
+  AuthConnexionRoute: AuthConnexionRoute,
+  AuthInscriptionRoute: AuthInscriptionRoute,
+  RSlugRoute: RSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
