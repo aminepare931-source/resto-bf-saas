@@ -1,0 +1,436 @@
+import type { CSSProperties, ReactNode } from "react";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { StorageImage } from "@/components/StorageImage";
+
+/* ---------- Types ---------- */
+
+export type PublicRestaurant = {
+  id: string;
+  name: string;
+  city: string;
+  cuisine: string | null;
+  description: string | null;
+  address: string | null;
+  hours: string | null;
+  phone: string;
+  whatsapp: string | null;
+  email: string;
+  plan: string;
+  template: string | null;
+};
+
+export type PublicMenuItem = {
+  id: string;
+  category: string;
+  name: string;
+  description: string | null;
+  price: number;
+  image_url: string | null;
+  available: boolean;
+};
+
+export type PublicReview = {
+  id: string;
+  author_name: string;
+  rating: number;
+  comment: string | null;
+  created_at: string;
+};
+
+export type PublicGalleryImage = {
+  id: string;
+  image_url: string;
+  caption: string | null;
+};
+
+export type TemplateProps = {
+  restaurant: PublicRestaurant;
+  menu: PublicMenuItem[];
+  reviews: PublicReview[];
+  gallery: PublicGalleryImage[];
+};
+
+/** Thème passé à tous les composants partagés — fini les hacks d'override. */
+export type Theme = {
+  bg: string;
+  surface: string;
+  surfaceAlt: string;
+  text: string;
+  textMuted: string;
+  accent: string;
+  accentInk: string;
+  border: string;
+  radius: string;
+};
+
+/* ---------- Helpers ---------- */
+
+export function buildWhatsAppLink(whatsapp: string | null, restaurantName: string) {
+  if (!whatsapp) return null;
+  const phone = whatsapp.replace(/\D/g, "");
+  const msg = encodeURIComponent(`Bonjour ${restaurantName}, je souhaite passer commande.`);
+  return `https://wa.me/${phone}?text=${msg}`;
+}
+
+export function groupByCategory(menu: PublicMenuItem[]) {
+  const map = new Map<string, PublicMenuItem[]>();
+  for (const it of menu) {
+    if (!it.available) continue;
+    if (!map.has(it.category)) map.set(it.category, []);
+    map.get(it.category)!.push(it);
+  }
+  return Array.from(map.entries());
+}
+
+export function fmtPrice(n: number) {
+  return new Intl.NumberFormat("fr-FR").format(n) + " F";
+}
+
+export function avgRating(reviews: PublicReview[]) {
+  if (!reviews.length) return null;
+  return reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+}
+
+/* ---------- Section primitives ---------- */
+
+export function SectionHead({
+  kicker,
+  title,
+  theme,
+  align = "left",
+  serif = false,
+}: {
+  kicker?: string;
+  title: string;
+  theme: Theme;
+  align?: "left" | "center";
+  serif?: boolean;
+}) {
+  return (
+    <header className={`mb-10 ${align === "center" ? "text-center" : ""}`}>
+      {kicker && (
+        <p
+          className="text-[11px] font-bold uppercase mb-3"
+          style={{ color: theme.accent, letterSpacing: "0.4em" }}
+        >
+          {kicker}
+        </p>
+      )}
+      <h2
+        className="text-3xl sm:text-4xl lg:text-5xl font-black leading-[1.05] tracking-tight"
+        style={{ color: theme.text, fontFamily: serif ? "'Cormorant Garamond', serif" : undefined, fontStyle: serif ? "italic" : undefined, fontWeight: serif ? 600 : undefined }}
+      >
+        {title}
+      </h2>
+    </header>
+  );
+}
+
+/* ---------- Menu (themed) ---------- */
+
+export function MenuGrid({ menu, theme }: { menu: PublicMenuItem[]; theme: Theme }) {
+  const groups = groupByCategory(menu);
+  if (!groups.length) {
+    return (
+      <div
+        className="text-center py-16 px-6 rounded-2xl border-2 border-dashed"
+        style={{ borderColor: theme.border, color: theme.textMuted }}
+      >
+        <p className="text-2xl mb-2">🍽️</p>
+        <p className="italic">Le menu sera très bientôt disponible.</p>
+      </div>
+    );
+  }
+  return (
+    <div className="space-y-14">
+      {groups.map(([cat, items]) => (
+        <div key={cat}>
+          <div className="flex items-baseline gap-4 mb-6">
+            <h3
+              className="text-xs font-bold uppercase shrink-0"
+              style={{ color: theme.accent, letterSpacing: "0.35em" }}
+            >
+              {cat}
+            </h3>
+            <span className="flex-1 h-px" style={{ background: theme.border }} />
+            <span className="text-xs shrink-0" style={{ color: theme.textMuted }}>
+              {items.length} plat{items.length > 1 ? "s" : ""}
+            </span>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-x-8 gap-y-6">
+            {items.map((it) => (
+              <article
+                key={it.id}
+                className="group flex gap-4 pb-6"
+                style={{ borderBottom: `1px solid ${theme.border}` }}
+              >
+                {it.image_url && (
+                  <div
+                    className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 overflow-hidden"
+                    style={{ borderRadius: theme.radius, background: theme.surfaceAlt }}
+                  >
+                    <StorageImage
+                      path={it.image_url}
+                      alt={it.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                    />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-baseline justify-between gap-3 mb-1">
+                    <h4 className="font-bold leading-tight" style={{ color: theme.text }}>
+                      {it.name}
+                    </h4>
+                    <span
+                      className="font-black whitespace-nowrap text-sm"
+                      style={{ color: theme.accent }}
+                    >
+                      {fmtPrice(it.price)}
+                    </span>
+                  </div>
+                  {it.description && (
+                    <p className="text-sm leading-relaxed" style={{ color: theme.textMuted }}>
+                      {it.description}
+                    </p>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ---------- Gallery (masonry) ---------- */
+
+export function GalleryGrid({
+  gallery,
+  theme,
+}: {
+  gallery: PublicGalleryImage[];
+  theme: Theme;
+}) {
+  if (!gallery.length) {
+    return (
+      <div
+        className="text-center py-16 rounded-2xl border-2 border-dashed"
+        style={{ borderColor: theme.border, color: theme.textMuted }}
+      >
+        <p className="text-2xl mb-2">📷</p>
+        <p className="italic">Les photos arrivent bientôt.</p>
+      </div>
+    );
+  }
+  return (
+    <div className="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3">
+      {gallery.map((g, i) => (
+        <div
+          key={g.id}
+          className="break-inside-avoid overflow-hidden"
+          style={{
+            borderRadius: theme.radius,
+            background: theme.surfaceAlt,
+            aspectRatio: i % 3 === 0 ? "3/4" : i % 3 === 1 ? "1/1" : "4/5",
+          }}
+        >
+          <StorageImage
+            path={g.image_url}
+            alt={g.caption ?? "Photo"}
+            className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ---------- Reviews ---------- */
+
+export function ReviewList({ reviews, theme }: { reviews: PublicReview[]; theme: Theme }) {
+  if (!reviews.length) {
+    return (
+      <p className="italic text-center py-10" style={{ color: theme.textMuted }}>
+        Soyez le premier à laisser un avis !
+      </p>
+    );
+  }
+  return (
+    <div className="grid md:grid-cols-2 gap-5">
+      {reviews.map((r) => (
+        <article
+          key={r.id}
+          className="p-6"
+          style={{
+            background: theme.surface,
+            borderRadius: theme.radius,
+            border: `1px solid ${theme.border}`,
+          }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div
+                className="w-10 h-10 rounded-full shrink-0 grid place-items-center font-black"
+                style={{ background: theme.accent, color: theme.accentInk }}
+              >
+                {r.author_name.charAt(0).toUpperCase()}
+              </div>
+              <strong className="truncate" style={{ color: theme.text }}>
+                {r.author_name}
+              </strong>
+            </div>
+            <span style={{ color: theme.accent }}>
+              {"★".repeat(r.rating)}
+              <span style={{ opacity: 0.2 }}>{"★".repeat(5 - r.rating)}</span>
+            </span>
+          </div>
+          {r.comment && (
+            <p className="text-sm leading-relaxed" style={{ color: theme.textMuted }}>
+              "{r.comment}"
+            </p>
+          )}
+        </article>
+      ))}
+    </div>
+  );
+}
+
+/* ---------- Forms ---------- */
+
+function themedInput(theme: Theme): CSSProperties {
+  return {
+    background: theme.surface,
+    border: `1px solid ${theme.border}`,
+    color: theme.text,
+    borderRadius: theme.radius,
+  };
+}
+
+export function ReservationForm({
+  restaurantId,
+  theme,
+}: {
+  restaurantId: string;
+  theme: Theme;
+}) {
+  const [form, setForm] = useState({
+    customer_name: "",
+    customer_phone: "",
+    party_size: 2,
+    reservation_date: "",
+    reservation_time: "",
+    notes: "",
+  });
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.customer_name || !form.customer_phone || !form.reservation_date || !form.reservation_time) {
+      toast.error("Veuillez remplir les champs obligatoires");
+      return;
+    }
+    setBusy(true);
+    const { error } = await supabase.from("reservations").insert({
+      ...form,
+      restaurant_id: restaurantId,
+      party_size: Number(form.party_size),
+    });
+    setBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success("Réservation envoyée ✓ Le restaurant vous contactera.");
+    setForm({ customer_name: "", customer_phone: "", party_size: 2, reservation_date: "", reservation_time: "", notes: "" });
+  };
+
+  const cls = "w-full px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-offset-0";
+  const inputStyle = { ...themedInput(theme), "--tw-ring-color": theme.accent } as CSSProperties;
+
+  return (
+    <form onSubmit={submit} className="grid sm:grid-cols-2 gap-3">
+      <input required placeholder="Votre nom *" value={form.customer_name} onChange={(e) => setForm({ ...form, customer_name: e.target.value })} className={cls} style={inputStyle} />
+      <input required type="tel" placeholder="Téléphone *" value={form.customer_phone} onChange={(e) => setForm({ ...form, customer_phone: e.target.value })} className={cls} style={inputStyle} />
+      <input required type="date" value={form.reservation_date} onChange={(e) => setForm({ ...form, reservation_date: e.target.value })} className={cls} style={inputStyle} />
+      <input required type="time" value={form.reservation_time} onChange={(e) => setForm({ ...form, reservation_time: e.target.value })} className={cls} style={inputStyle} />
+      <input type="number" min={1} max={50} value={form.party_size} onChange={(e) => setForm({ ...form, party_size: Number(e.target.value) })} placeholder="Nb personnes" className={`${cls} sm:col-span-2`} style={inputStyle} />
+      <textarea placeholder="Notes (allergies, occasion…)" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={3} className={`${cls} sm:col-span-2`} style={inputStyle} />
+      <button
+        type="submit"
+        disabled={busy}
+        className="sm:col-span-2 px-6 py-4 font-bold uppercase tracking-wider text-sm disabled:opacity-60 transition hover:opacity-90"
+        style={{ background: theme.accent, color: theme.accentInk, borderRadius: theme.radius }}
+      >
+        {busy ? "Envoi..." : "Réserver ma table"}
+      </button>
+    </form>
+  );
+}
+
+export function ReviewForm({ restaurantId, theme }: { restaurantId: string; theme: Theme }) {
+  const [form, setForm] = useState({ author_name: "", rating: 5, comment: "" });
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.author_name.trim()) return toast.error("Votre nom est requis");
+    setBusy(true);
+    const { error } = await supabase.from("reviews").insert({ ...form, restaurant_id: restaurantId });
+    setBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success("Merci ! Votre avis sera publié après modération.");
+    setForm({ author_name: "", rating: 5, comment: "" });
+  };
+
+  const cls = "w-full px-4 py-3 text-sm focus:outline-none";
+  const inputStyle = themedInput(theme);
+
+  return (
+    <form onSubmit={submit} className="space-y-3">
+      <input required placeholder="Votre nom" value={form.author_name} onChange={(e) => setForm({ ...form, author_name: e.target.value })} className={cls} style={inputStyle} />
+      <div className="flex items-center gap-2">
+        <span className="text-sm" style={{ color: theme.textMuted }}>Note :</span>
+        {[1, 2, 3, 4, 5].map((n) => (
+          <button
+            type="button"
+            key={n}
+            onClick={() => setForm({ ...form, rating: n })}
+            className="text-2xl transition"
+            style={{ color: n <= form.rating ? theme.accent : theme.border }}
+          >
+            ★
+          </button>
+        ))}
+      </div>
+      <textarea placeholder="Votre avis (optionnel)" value={form.comment} onChange={(e) => setForm({ ...form, comment: e.target.value })} rows={3} className={cls} style={inputStyle} />
+      <button
+        type="submit"
+        disabled={busy}
+        className="px-5 py-3 font-bold disabled:opacity-60 hover:opacity-90 transition"
+        style={{ background: theme.accent, color: theme.accentInk, borderRadius: theme.radius }}
+      >
+        {busy ? "Envoi..." : "Laisser mon avis"}
+      </button>
+    </form>
+  );
+}
+
+/* ---------- Floating WhatsApp CTA ---------- */
+
+export function FloatingWhatsApp({ href, accent, ink }: { href: string | null; accent: string; ink: string }) {
+  if (!href) return null;
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full grid place-items-center shadow-2xl hover:scale-110 transition"
+      style={{ background: "#25D366", color: "#fff" }}
+      aria-label="Commander sur WhatsApp"
+    >
+      <svg viewBox="0 0 24 24" className="w-7 h-7" fill="currentColor">
+        <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.71.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z" />
+      </svg>
+    </a>
+  );
+}
