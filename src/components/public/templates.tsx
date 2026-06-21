@@ -13,6 +13,7 @@ import {
   fmtPrice,
 } from "./shared";
 import { StorageImage } from "@/components/StorageImage";
+import { TplPremiumFeu, TplPremiumLuxe, TplPremiumNuit, TplPremiumRoyal } from "./premium-templates";
 
 /* ============= Helpers ============= */
 
@@ -2056,10 +2057,13 @@ export function renderTemplate(template: string | null, props: TemplateProps) {
   switch (template) {
     case "nuit":
     case "prem-nuit":
+      return <TplPremiumNuit {...props} />;
     case "prem-royal":
+      return <TplPremiumRoyal {...props} />;
     case "prem-feu":
+      return <TplPremiumFeu {...props} />;
     case "prem-luxe":
-      return <TplNuit {...props} />;
+      return <TplPremiumLuxe {...props} />;
     case "soleil":
     case "std-soleil":
       return <TplSoleil {...props} />;

@@ -6,6 +6,11 @@ import { AuthShell } from "@/components/auth/AuthShell";
 import { renderTemplate } from "@/components/public/templates";
 import { demoData } from "@/components/public/demo-data";
 
+const PREMIUM_FEU_BG = "/__l5e/assets-v1/87344d52-8ccc-40d3-8dca-70ff3430fb7d/premium-feu-bg.png";
+const PREMIUM_GRILL_BG = "/__l5e/assets-v1/2d9697e6-8ffe-42e1-a69e-cba1bcff93cd/premium-grill-bg.png";
+const PREMIUM_ORANGE_BG = "/__l5e/assets-v1/2d8b1063-8221-4293-be87-017c3e752c93/premium-orange-bg.png";
+const PREMIUM_PASTA_BG = "/__l5e/assets-v1/5196f02c-fbb0-4ccd-83cc-bfa2d2bf7072/premium-pasta-bg.png";
+
 export const Route = createFileRoute("/auth/choisir-template")({
   ssr: false,
   beforeLoad: async () => {
@@ -24,10 +29,10 @@ const templates: Tpl[] = [
   { id: "std-savane", name: "Savane", tagline: "Ocre & rust africain", plan: "standard", vibe: "linear-gradient(135deg,#b95036,#7a2e1d)" },
   { id: "std-marche", name: "Marché", tagline: "Couleurs vives Sankariaré", plan: "standard", vibe: "linear-gradient(135deg,#0f6b4f,#0a4f3a)" },
   { id: "std-moderne", name: "Moderne", tagline: "Épuré contemporain", plan: "standard", vibe: "linear-gradient(135deg,#2c3e50,#1a1a2e)" },
-  { id: "prem-royal", name: "Royal", tagline: "Or, animations premium", plan: "premium", vibe: "linear-gradient(135deg,#d4a853,#f0d48a,#b08800)" },
-  { id: "prem-nuit", name: "Nuit", tagline: "Sombre élégant luxueux", plan: "premium", vibe: "linear-gradient(135deg,#0a0a0f,#1a1a2e,#d4a853)" },
-  { id: "prem-feu", name: "Feu de Bois", tagline: "Grillades & ambiance", plan: "premium", vibe: "linear-gradient(135deg,#e74c3c,#c0392b,#7a2e1d)" },
-  { id: "prem-luxe", name: "Luxe", tagline: "Le top du top", plan: "premium", vibe: "linear-gradient(135deg,#f0d48a,#d4a853,#0a0a0f)" },
+  { id: "prem-royal", name: "Palais Royal", tagline: "Or, QR, cave, événements", plan: "premium", vibe: `url(${PREMIUM_ORANGE_BG}) center/cover` },
+  { id: "prem-nuit", name: "Aurum Nuit", tagline: "Fine dining sombre animé", plan: "premium", vibe: `url(${PREMIUM_PASTA_BG}) center/cover` },
+  { id: "prem-feu", name: "Ignis Feu", tagline: "Braises animées & grillades", plan: "premium", vibe: `url(${PREMIUM_FEU_BG}) center/cover` },
+  { id: "prem-luxe", name: "Luxe Grill", tagline: "Grande réservation + QR", plan: "premium", vibe: `url(${PREMIUM_GRILL_BG}) center/cover` },
 ];
 
 const planRank = { gratuit: 0, standard: 1, premium: 2 };
