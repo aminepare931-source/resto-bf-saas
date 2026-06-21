@@ -4,12 +4,13 @@ import * as QRCode from "qrcode";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { StorageImage } from "@/components/StorageImage";
-import fireBg from "@/assets/premium-feu-bg.png.asset.json";
-import grillBg from "@/assets/premium-grill-bg.png.asset.json";
-import orangeBg from "@/assets/premium-orange-bg.png.asset.json";
-import pastaBg from "@/assets/premium-pasta-bg.png.asset.json";
 import type { TemplateProps, PublicMenuItem, Theme } from "./shared";
 import { FloatingWhatsApp, ReviewForm, ReviewList, avgRating, fmtPrice, groupByCategory } from "./shared";
+
+const PREMIUM_FEU_BG = "/__l5e/assets-v1/87344d52-8ccc-40d3-8dca-70ff3430fb7d/premium-feu-bg.png";
+const PREMIUM_GRILL_BG = "/__l5e/assets-v1/2d9697e6-8ffe-42e1-a69e-cba1bcff93cd/premium-grill-bg.png";
+const PREMIUM_ORANGE_BG = "/__l5e/assets-v1/2d8b1063-8221-4293-be87-017c3e752c93/premium-orange-bg.png";
+const PREMIUM_PASTA_BG = "/__l5e/assets-v1/5196f02c-fbb0-4ccd-83cc-bfa2d2bf7072/premium-pasta-bg.png";
 
 type PremiumKind = "royal" | "nuit" | "feu" | "luxe";
 
@@ -38,7 +39,7 @@ const PREMIUM_CONFIGS: Record<PremiumKind, PremiumConfig> = {
     label: "Le Palais Gourmand",
     title: "L'expérience royale",
     subtitle: "Menus d'exception, cave, événements privés et réservation grand format.",
-    background: orangeBg.url,
+    background: PREMIUM_ORANGE_BG,
     bg: "#09070b",
     surface: "rgba(22, 14, 12, 0.88)",
     surfaceAlt: "rgba(46, 26, 14, 0.82)",
@@ -56,7 +57,7 @@ const PREMIUM_CONFIGS: Record<PremiumKind, PremiumConfig> = {
     label: "Aurum Fine Dining",
     title: "Une soirée au-delà du goût",
     subtitle: "Ambiance feutrée, carte signature, galerie immersive et avis clients.",
-    background: pastaBg.url,
+    background: PREMIUM_PASTA_BG,
     bg: "#05070a",
     surface: "rgba(12, 17, 21, 0.9)",
     surfaceAlt: "rgba(18, 22, 26, 0.82)",
@@ -74,7 +75,7 @@ const PREMIUM_CONFIGS: Record<PremiumKind, PremiumConfig> = {
     label: "Ignis Wood-Fired",
     title: "Forgé dans le feu",
     subtitle: "Grillades, braises animées, commandes WhatsApp et réservation premium.",
-    background: fireBg.url,
+    background: PREMIUM_FEU_BG,
     bg: "#080604",
     surface: "rgba(22, 12, 7, 0.9)",
     surfaceAlt: "rgba(48, 20, 10, 0.82)",
@@ -92,7 +93,7 @@ const PREMIUM_CONFIGS: Record<PremiumKind, PremiumConfig> = {
     label: "Maison Signature",
     title: "Le luxe dans chaque détail",
     subtitle: "Page complète haut de gamme : QR code, menu, galerie, avis, événements et contact.",
-    background: grillBg.url,
+    background: PREMIUM_GRILL_BG,
     bg: "#070908",
     surface: "rgba(10, 18, 15, 0.9)",
     surfaceAlt: "rgba(18, 35, 28, 0.82)",
