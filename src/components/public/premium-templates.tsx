@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import QRCode from "qrcode";
+import type { CSSProperties, FormEvent } from "react";
+import * as QRCode from "qrcode";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { StorageImage } from "@/components/StorageImage";
@@ -170,7 +171,7 @@ function PremiumRestaurantTemplate({ restaurant, menu, reviews, gallery, config 
         "--pr-serif": config.serif,
         background: config.bg,
         color: config.text,
-      } as React.CSSProperties}
+      } as CSSProperties}
     >
       <style>{PREMIUM_CSS}</style>
       <div className="premium-bg" aria-hidden>
@@ -389,7 +390,7 @@ function PremiumReservationForm({ restaurantId, config }: { restaurantId: string
   });
   const times = ["18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00"];
 
-  const submit = async (event: React.FormEvent) => {
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
     if (!form.customer_name || !form.customer_phone || !form.reservation_date || !form.reservation_time) {
       toast.error("Nom, téléphone, date et heure sont obligatoires.");
