@@ -5,6 +5,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { renderTemplate } from "@/components/public/templates";
 import { demoData } from "@/components/public/demo-data";
+import premiumFeuBg from "@/assets/premium-feu-bg.png.asset.json";
+import premiumGrillBg from "@/assets/premium-grill-bg.png.asset.json";
+import premiumOrangeBg from "@/assets/premium-orange-bg.png.asset.json";
+import premiumPastaBg from "@/assets/premium-pasta-bg.png.asset.json";
 
 export const Route = createFileRoute("/auth/choisir-template")({
   ssr: false,
@@ -24,10 +28,10 @@ const templates: Tpl[] = [
   { id: "std-savane", name: "Savane", tagline: "Ocre & rust africain", plan: "standard", vibe: "linear-gradient(135deg,#b95036,#7a2e1d)" },
   { id: "std-marche", name: "Marché", tagline: "Couleurs vives Sankariaré", plan: "standard", vibe: "linear-gradient(135deg,#0f6b4f,#0a4f3a)" },
   { id: "std-moderne", name: "Moderne", tagline: "Épuré contemporain", plan: "standard", vibe: "linear-gradient(135deg,#2c3e50,#1a1a2e)" },
-  { id: "prem-royal", name: "Royal", tagline: "Or, animations premium", plan: "premium", vibe: "linear-gradient(135deg,#d4a853,#f0d48a,#b08800)" },
-  { id: "prem-nuit", name: "Nuit", tagline: "Sombre élégant luxueux", plan: "premium", vibe: "linear-gradient(135deg,#0a0a0f,#1a1a2e,#d4a853)" },
-  { id: "prem-feu", name: "Feu de Bois", tagline: "Grillades & ambiance", plan: "premium", vibe: "linear-gradient(135deg,#e74c3c,#c0392b,#7a2e1d)" },
-  { id: "prem-luxe", name: "Luxe", tagline: "Le top du top", plan: "premium", vibe: "linear-gradient(135deg,#f0d48a,#d4a853,#0a0a0f)" },
+  { id: "prem-royal", name: "Palais Royal", tagline: "Or, QR, cave, événements", plan: "premium", vibe: `url(${premiumOrangeBg.url}) center/cover` },
+  { id: "prem-nuit", name: "Aurum Nuit", tagline: "Fine dining sombre animé", plan: "premium", vibe: `url(${premiumPastaBg.url}) center/cover` },
+  { id: "prem-feu", name: "Ignis Feu", tagline: "Braises animées & grillades", plan: "premium", vibe: `url(${premiumFeuBg.url}) center/cover` },
+  { id: "prem-luxe", name: "Luxe Grill", tagline: "Grande réservation + QR", plan: "premium", vibe: `url(${premiumGrillBg.url}) center/cover` },
 ];
 
 const planRank = { gratuit: 0, standard: 1, premium: 2 };
