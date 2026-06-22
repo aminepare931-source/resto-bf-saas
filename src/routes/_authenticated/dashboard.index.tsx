@@ -1,9 +1,8 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyRestaurant } from "@/hooks/use-my-restaurant";
-import { useIsSuperAdmin, useSuperAdminExists } from "@/hooks/use-is-super-admin";
-import { toast } from "sonner";
+import { SubscribeContactModal } from "@/components/SubscribeContactModal";
 
 export const Route = createFileRoute("/_authenticated/dashboard/")({
   component: DashboardHome,
@@ -11,24 +10,8 @@ export const Route = createFileRoute("/_authenticated/dashboard/")({
 
 function DashboardHome() {
   const { restaurant: r } = useMyRestaurant();
-  const { isAdmin } = useIsSuperAdmin();
-  const adminExists = useSuperAdminExists();
-  const navigate = useNavigate();
   const [counts, setCounts] = useState({ menu: 0, resa: 0, reviews: 0, pending: 0 });
-  const [claiming, setClaiming] = useState(false);
-
-  const claim = async () => {
-    setClaiming(true);
-    const { data, error } = await supabase.rpc("claim_super_admin");
-    setClaiming(false);
-    if (error) return toast.error(error.message);
-    if (data) {
-      toast.success("Tu es maintenant Super-Admin du SaaS !");
-      navigate({ to: "/admin" });
-    } else {
-      toast.error("Un super-admin existe déjà.");
-    }
-  };
+  const [subModal, setSubModal] = useState(false);
 
   useEffect(() => {
     if (!r) return;
@@ -45,6 +28,12 @@ function DashboardHome() {
 
   const publicUrl = r?.slug ? `${typeof window !== "undefined" ? window.location.origin : ""}/r/${r.slug}` : null;
 
+  const status = (r as { subscription_status?: string } | null)?.subscription_status;
+  const trialEnds = (r as { trial_ends_at?: string | null } | null)?.trial_ends_at;
+  const daysLeft = trialEnds
+    ? Math.max(0, Math.ceil((new Date(trialEnds).getTime() - Date.now()) / 86400000))
+    : null;
+
   return (
     <div className="max-w-5xl">
       <div className="mb-10">
@@ -55,24 +44,44 @@ function DashboardHome() {
         <p className="mt-2 text-muted-foreground">Voici un aperçu de votre espace restaurateur.</p>
       </div>
 
-      {adminExists === false && !isAdmin && (
-        <div className="mb-8 p-5 rounded-2xl border-2 border-gold/40 bg-gradient-to-br from-gold/15 to-transparent">
-          <p className="text-xs uppercase tracking-widest text-gold font-bold mb-1">★ Propriétaire du SaaS ?</p>
-          <strong className="block text-lg">Aucun Super-Admin n'a encore été désigné</strong>
-          <p className="text-sm text-muted-foreground mt-1 mb-3">
-            Le premier à cliquer ici devient l'unique Super-Admin du SaaS Resto BF et accède au pilotage de tous les comptes. Ne clique que si tu es le propriétaire.
-          </p>
-          <button onClick={claim} disabled={claiming} className="px-5 py-2.5 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold disabled:opacity-50">
-            {claiming ? "..." : "Devenir Super-Admin"}
+      {status === "trial" && daysLeft !== null && (
+        <div className="mb-8 p-5 rounded-2xl border-2 border-blue-400/40 bg-gradient-to-br from-blue-400/10 to-transparent grid grid-cols-[minmax(0,1fr)_auto] gap-3 items-center">
+          <div className="min-w-0">
+            <p className="text-xs uppercase tracking-widest text-blue-300 font-bold mb-1">
+              🎁 Essai gratuit
+            </p>
+            <strong className="block text-lg">
+              {daysLeft > 0
+                ? `${daysLeft} jour${daysLeft > 1 ? "s" : ""} restant${daysLeft > 1 ? "s" : ""}`
+                : "Votre essai a expiré"}
+            </strong>
+            <p className="text-sm text-muted-foreground mt-1">
+              Choisissez un abonnement pour garder toutes vos données et fonctionnalités actives.
+            </p>
+          </div>
+          <button
+            onClick={() => setSubModal(true)}
+            className="shrink-0 px-5 py-2.5 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold whitespace-nowrap"
+          >
+            S'abonner
           </button>
         </div>
       )}
 
-      {isAdmin && (
-        <Link to="/admin" className="block mb-8 p-5 rounded-2xl border border-gold/30 bg-gold/5 hover:bg-gold/10 transition-colors">
-          <strong className="text-gold">★ Accéder au pilotage SaaS</strong>
-          <p className="text-sm text-muted-foreground mt-1">Voir tous les restaurants inscrits, leurs forfaits et l'activité globale.</p>
-        </Link>
+      {status === "expired" && (
+        <div className="mb-8 p-5 rounded-2xl border-2 border-red-400/40 bg-red-400/5">
+          <p className="text-xs uppercase tracking-widest text-red-300 font-bold mb-1">⚠️ Abonnement expiré</p>
+          <strong className="block text-lg">Votre site n'est plus actif</strong>
+          <p className="text-sm text-muted-foreground mt-1 mb-3">
+            Contactez notre assistance pour réactiver votre abonnement et remettre votre site en ligne.
+          </p>
+          <button
+            onClick={() => setSubModal(true)}
+            className="px-5 py-2.5 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold"
+          >
+            Réactiver mon abonnement
+          </button>
+        </div>
       )}
 
       {!r?.template && (
@@ -120,6 +129,8 @@ function DashboardHome() {
           </div>
         </InfoCard>
       </div>
+
+      <SubscribeContactModal open={subModal} onClose={() => setSubModal(false)} plan={r?.plan} />
     </div>
   );
 }
