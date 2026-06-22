@@ -258,8 +258,8 @@ function LandingPage() {
           <div className="relative max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
               { n: 5, suffix: "", label: "Minutes pour créer sa page" },
-              { n: 5000, suffix: " F", label: "Plan Standard / mois" },
-              { n: 10000, suffix: " F", label: "Plan Premium / mois" },
+              { n: 14, suffix: " j", label: "Essai gratuit offert" },
+              { n: 10000, suffix: " F", label: "Plan Standard / mois" },
               { n: 0, suffix: "%", label: "Commission sur les ventes" },
             ].map((s, i) => (
               <Reveal key={s.label} delay={(i + 1) as 1 | 2 | 3 | 4}>
