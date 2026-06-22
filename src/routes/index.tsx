@@ -363,9 +363,9 @@ function LandingPage() {
             title={<>Nos <span className="text-gradient-gold">abonnements</span></>}
             desc="Pas de frais cachés. Pas de commission sur vos ventes. Annulation à tout moment."
           />
-          <div className="max-w-6xl mx-auto mt-14 grid gap-6 md:grid-cols-3">
+          <div className="max-w-7xl mx-auto mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {plans.map((p, i) => (
-              <Reveal key={p.name} delay={(i + 1) as 1 | 2 | 3}>
+              <Reveal key={p.name} delay={((i % 4) + 1) as 1 | 2 | 3 | 4}>
                 <div
                   className={`relative h-full p-8 rounded-3xl border transition-all hover:-translate-y-1 ${
                     p.popular
@@ -406,6 +406,32 @@ function LandingPage() {
               </Reveal>
             ))}
           </div>
+
+          {/* SUR MESURE */}
+          <Reveal>
+            <div className="max-w-7xl mx-auto mt-8 p-8 lg:p-10 rounded-3xl border-2 border-gold/30 bg-gradient-to-br from-gold/10 via-transparent to-transparent grid lg:grid-cols-[1fr_auto] gap-6 items-center">
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">
+                  💎 Offre Sur Mesure
+                </p>
+                <h3 className="text-2xl md:text-3xl font-black">
+                  Un site 100% personnalisé pour votre restaurant
+                </h3>
+                <p className="mt-3 text-muted-foreground max-w-2xl">
+                  Nom de domaine personnalisé, design unique, fonctionnalités spécifiques
+                  selon vos besoins. À partir de <strong className="text-gold">250 000 FCFA</strong>.
+                </p>
+              </div>
+              <a
+                href="https://wa.me/22655300868?text=Bonjour%2C%20je%20souhaite%20une%20offre%20sur%20mesure%20Resto%20BF"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center px-7 py-4 rounded-2xl bg-gradient-gold text-[#0a0a0f] font-bold shadow-gold hover:-translate-y-0.5 transition-transform whitespace-nowrap"
+              >
+                Demander une offre sur mesure →
+              </a>
+            </div>
+          </Reveal>
         </section>
 
         {/* FAQ */}
