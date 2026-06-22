@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SuperAdminRouteImport } from './routes/super-admin'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RSlugRouteImport } from './routes/r.$slug'
@@ -23,6 +24,11 @@ import { Route as AuthenticatedDashboardMenuRouteImport } from './routes/_authen
 import { Route as AuthenticatedDashboardGalerieRouteImport } from './routes/_authenticated/dashboard.galerie'
 import { Route as AuthenticatedDashboardAvisRouteImport } from './routes/_authenticated/dashboard.avis'
 
+const SuperAdminRoute = SuperAdminRouteImport.update({
+  id: '/super-admin',
+  path: '/super-admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -96,6 +102,7 @@ const AuthenticatedDashboardAvisRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/super-admin': typeof SuperAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/auth/choisir-template': typeof AuthChoisirTemplateRoute
   '/auth/connexion': typeof AuthConnexionRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/super-admin': typeof SuperAdminRoute
   '/auth/choisir-template': typeof AuthChoisirTemplateRoute
   '/auth/connexion': typeof AuthConnexionRoute
   '/auth/inscription': typeof AuthInscriptionRoute
@@ -125,6 +133,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/super-admin': typeof SuperAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/auth/choisir-template': typeof AuthChoisirTemplateRoute
   '/auth/connexion': typeof AuthConnexionRoute
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/super-admin'
     | '/dashboard'
     | '/auth/choisir-template'
     | '/auth/connexion'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/super-admin'
     | '/auth/choisir-template'
     | '/auth/connexion'
     | '/auth/inscription'
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/super-admin'
     | '/_authenticated/dashboard'
     | '/auth/choisir-template'
     | '/auth/connexion'
@@ -185,6 +197,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  SuperAdminRoute: typeof SuperAdminRoute
   AuthChoisirTemplateRoute: typeof AuthChoisirTemplateRoute
   AuthConnexionRoute: typeof AuthConnexionRoute
   AuthInscriptionRoute: typeof AuthInscriptionRoute
@@ -193,6 +206,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/super-admin': {
+      id: '/super-admin'
+      path: '/super-admin'
+      fullPath: '/super-admin'
+      preLoaderRoute: typeof SuperAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -327,6 +347,7 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  SuperAdminRoute: SuperAdminRoute,
   AuthChoisirTemplateRoute: AuthChoisirTemplateRoute,
   AuthConnexionRoute: AuthConnexionRoute,
   AuthInscriptionRoute: AuthInscriptionRoute,
