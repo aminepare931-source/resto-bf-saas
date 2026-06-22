@@ -2,7 +2,6 @@ import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tan
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useIsSuperAdmin } from "@/hooks/use-is-super-admin";
 
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -31,7 +30,6 @@ const nav = [
 function DashboardLayout() {
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { isAdmin } = useIsSuperAdmin();
   const [resto, setResto] = useState<Restaurant | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -110,15 +108,6 @@ function DashboardLayout() {
         </nav>
 
         <div className="p-3 border-t border-white/5 space-y-1">
-          {isAdmin && (
-            <Link
-              to="/admin"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold bg-gold/10 border border-gold/20 text-gold hover:bg-gold/15 transition-colors"
-            >
-              ★ Super-Admin SaaS
-            </Link>
-          )}
           <Link
             to="/auth/choisir-template"
             className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-muted-foreground hover:bg-white/[0.03] hover:text-gold transition-colors"

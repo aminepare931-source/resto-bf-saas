@@ -21,7 +21,8 @@ export const Route = createFileRoute("/auth/choisir-template")({
   component: ChooseTemplate,
 });
 
-type Tpl = { id: string; name: string; tagline: string; plan: "gratuit" | "standard" | "premium"; vibe: string };
+type PlanTier = "gratuit" | "standard" | "premium";
+type Tpl = { id: string; name: string; tagline: string; plan: PlanTier; vibe: string };
 
 const templates: Tpl[] = [
   { id: "gratuit-classique", name: "Classique", tagline: "Swiss minimal noir/blanc", plan: "gratuit", vibe: "linear-gradient(135deg,#1a1a24,#0a0a0f)" },
@@ -35,11 +36,20 @@ const templates: Tpl[] = [
   { id: "prem-luxe", name: "Luxe Grill", tagline: "Grande réservation + QR", plan: "premium", vibe: `url(${PREMIUM_GRILL_BG}) center/cover` },
 ];
 
-const planRank = { gratuit: 0, standard: 1, premium: 2 };
+const planRank: Record<PlanTier, number> = { gratuit: 0, standard: 1, premium: 2 };
+
+// Map DB plan -> tier used for template gating.
+// Trial and standard_plus give Standard-tier template access (not Premium).
+function planToTier(plan: string): PlanTier {
+  if (plan === "premium" || plan === "sur_mesure") return "premium";
+  if (plan === "standard" || plan === "standard_plus" || plan === "trial") return "standard";
+  return "gratuit";
+}
 
 function ChooseTemplate() {
   const navigate = useNavigate();
-  const [userPlan, setUserPlan] = useState<"gratuit" | "standard" | "premium">("standard");
+  const [userPlan, setUserPlan] = useState<PlanTier>("standard");
+  const [planLabel, setPlanLabel] = useState<string>("essai");
   const [selected, setSelected] = useState<string | null>(null);
   const [previewId, setPreviewId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -54,7 +64,8 @@ function ChooseTemplate() {
         .eq("user_id", u.user.id)
         .maybeSingle();
       if (data) {
-        setUserPlan(data.plan as typeof userPlan);
+        setUserPlan(planToTier(data.plan));
+        setPlanLabel(data.plan);
         setSelected(data.template ?? null);
       }
     })();
@@ -88,7 +99,7 @@ function ChooseTemplate() {
 
   return (
     <>
-      <AuthShell title="Choisissez votre template" subtitle={`Votre forfait : ${userPlan} · Clique sur un design pour le prévisualiser en grand`} maxWidth="max-w-5xl">
+      <AuthShell title="Choisissez votre template" subtitle={`Votre forfait : ${planLabel} · Clique sur un design pour le prévisualiser en grand`} maxWidth="max-w-5xl">
         <div className="space-y-8">
           {(["gratuit", "standard", "premium"] as const).map((plan) => (
             <div key={plan}>

@@ -16,6 +16,10 @@ export type MyRestaurant = {
   hours: string | null;
   description: string | null;
   owner_name: string;
+  subscription_status: string | null;
+  trial_ends_at: string | null;
+  subscription_ends_at: string | null;
+  logo_url: string | null;
 };
 
 export function useMyRestaurant() {
@@ -30,7 +34,7 @@ export function useMyRestaurant() {
     }
     const { data } = await supabase
       .from("restaurants")
-      .select("id, name, slug, plan, template, city, cuisine, phone, whatsapp, email, address, hours, description, owner_name")
+      .select("id, name, slug, plan, template, city, cuisine, phone, whatsapp, email, address, hours, description, owner_name, subscription_status, trial_ends_at, subscription_ends_at, logo_url")
       .eq("user_id", u.user.id)
       .maybeSingle();
     if (data) setRestaurant(data as MyRestaurant);

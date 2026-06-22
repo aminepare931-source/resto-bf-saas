@@ -63,43 +63,81 @@ const testimonials = [
 
 const plans = [
   {
-    name: "Gratuit",
+    name: "Essai gratuit",
     price: "0",
     unit: "FCFA",
-    period: "Pour toujours",
+    period: "14 jours offerts",
     popular: false,
-    cta: "Commencer gratuitement",
-    href: "/auth/inscription",
-    features: ["Page restaurant publique", "Menu jusqu'à 5 plats", "Avis clients", "Lien unique partageable", "1 template basique"],
+    cta: "Démarrer mon essai",
+    href: "/auth/inscription" as const,
+    features: [
+      "Toutes les fonctionnalités Standard",
+      "Aucune carte bancaire",
+      "Site en ligne immédiatement",
+      "À la fin : choix d'un abonnement",
+    ],
   },
   {
     name: "Standard",
-    price: "5 000",
-    unit: "FCFA",
-    period: "/ mois",
-    popular: true,
-    cta: "Choisir Standard",
-    href: "/auth/inscription",
-    features: ["Tout le plan Gratuit", "Menu jusqu'à 30 plats", "Bouton WhatsApp commande", "4 templates élégants", "Support WhatsApp"],
-  },
-  {
-    name: "Premium",
     price: "10 000",
     unit: "FCFA",
     period: "/ mois",
     popular: false,
+    cta: "Choisir Standard",
+    href: "/auth/inscription" as const,
+    features: [
+      "Menu jusqu'à 30 plats",
+      "Commande WhatsApp",
+      "4 templates Standard améliorés",
+      "QR Code restaurant",
+      "Réservations avancées",
+      "Statistiques basiques",
+    ],
+  },
+  {
+    name: "Standard Plus",
+    price: "15 000",
+    unit: "FCFA",
+    period: "/ mois",
+    popular: true,
+    cta: "Choisir Standard Plus",
+    href: "/auth/inscription" as const,
+    features: [
+      "Tout Standard",
+      "Menu jusqu'à 80 plats",
+      "Galerie ambiance améliorée",
+      "Personnalisation avancée",
+      "Avis clients modérés",
+      "Support prioritaire",
+    ],
+  },
+  {
+    name: "Premium",
+    price: "25 000",
+    unit: "FCFA",
+    period: "/ mois",
+    popular: false,
     cta: "Passer Premium",
-    href: "/auth/inscription",
-    features: ["Tout le plan Standard", "Menu illimité", "Réservation en ligne", "Galerie ambiance + QR code", "4 templates premium animés"],
+    href: "/auth/inscription" as const,
+    features: [
+      "Menu illimité",
+      "4 templates Premium animés",
+      "Facturation + logo personnalisé",
+      "Statistiques avancées",
+      "Gestion employés & promotions",
+      "Rapports PDF mensuels",
+      "Export & sauvegardes auto",
+    ],
   },
 ];
 
 const faqs = [
-  { q: "Combien coûte vraiment Resto BF ?", a: "Le plan Gratuit reste gratuit pour toujours. Standard à 5 000 FCFA/mois, Premium à 10 000 FCFA/mois. Pas de frais d'installation, pas de commission." },
+  { q: "Combien coûte vraiment Resto BF ?", a: "Vous démarrez par un essai gratuit de 14 jours. Ensuite : Standard 10 000 FCFA/mois, Standard Plus 15 000 FCFA/mois, Premium 25 000 FCFA/mois. Pas de frais d'installation, pas de commission." },
   { q: "Mes clients n'ont pas forcément internet rapide. Ça marche ?", a: "Votre page se charge en moins de 2 secondes même en 3G. Chaque image est optimisée pour le réseau burkinabè." },
   { q: "Comment mes clients trouvent ma page ?", a: "Vous recevez un lien unique et un QR code à imprimer. Partagez-le sur WhatsApp, sur vos tables ou sur votre enseigne." },
-  { q: "Est-ce que je peux essayer gratuitement ?", a: "Oui ! Le forfait Gratuit est complet pour démarrer. Vous payez seulement quand vous voulez plus de plats ou de fonctionnalités." },
+  { q: "Est-ce que je peux essayer gratuitement ?", a: "Oui ! L'essai gratuit de 14 jours vous donne accès à toutes les fonctionnalités Standard. À la fin, vous choisissez votre abonnement." },
   { q: "Comment fonctionne la commande WhatsApp ?", a: "Chaque plat a un bouton Commander. Le client clique, un message WhatsApp s'ouvre déjà préparé avec le nom du plat, le prix et vos coordonnées." },
+  { q: "Je veux un site 100% personnalisé. C'est possible ?", a: "Oui, avec notre offre Sur Mesure (à partir de 250 000 FCFA) : nom de domaine personnalisé, design unique, fonctionnalités spécifiques selon vos besoins. Contactez-nous au +226 55 30 08 68." },
 ];
 
 function LandingPage() {
@@ -220,8 +258,8 @@ function LandingPage() {
           <div className="relative max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
               { n: 5, suffix: "", label: "Minutes pour créer sa page" },
-              { n: 5000, suffix: " F", label: "Plan Standard / mois" },
-              { n: 10000, suffix: " F", label: "Plan Premium / mois" },
+              { n: 14, suffix: " j", label: "Essai gratuit offert" },
+              { n: 10000, suffix: " F", label: "Plan Standard / mois" },
               { n: 0, suffix: "%", label: "Commission sur les ventes" },
             ].map((s, i) => (
               <Reveal key={s.label} delay={(i + 1) as 1 | 2 | 3 | 4}>
@@ -325,9 +363,9 @@ function LandingPage() {
             title={<>Nos <span className="text-gradient-gold">abonnements</span></>}
             desc="Pas de frais cachés. Pas de commission sur vos ventes. Annulation à tout moment."
           />
-          <div className="max-w-6xl mx-auto mt-14 grid gap-6 md:grid-cols-3">
+          <div className="max-w-7xl mx-auto mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {plans.map((p, i) => (
-              <Reveal key={p.name} delay={(i + 1) as 1 | 2 | 3}>
+              <Reveal key={p.name} delay={((i % 4) + 1) as 1 | 2 | 3 | 4}>
                 <div
                   className={`relative h-full p-8 rounded-3xl border transition-all hover:-translate-y-1 ${
                     p.popular
@@ -368,6 +406,32 @@ function LandingPage() {
               </Reveal>
             ))}
           </div>
+
+          {/* SUR MESURE */}
+          <Reveal>
+            <div className="max-w-7xl mx-auto mt-8 p-8 lg:p-10 rounded-3xl border-2 border-gold/30 bg-gradient-to-br from-gold/10 via-transparent to-transparent grid lg:grid-cols-[1fr_auto] gap-6 items-center">
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">
+                  💎 Offre Sur Mesure
+                </p>
+                <h3 className="text-2xl md:text-3xl font-black">
+                  Un site 100% personnalisé pour votre restaurant
+                </h3>
+                <p className="mt-3 text-muted-foreground max-w-2xl">
+                  Nom de domaine personnalisé, design unique, fonctionnalités spécifiques
+                  selon vos besoins. À partir de <strong className="text-gold">250 000 FCFA</strong>.
+                </p>
+              </div>
+              <a
+                href="https://wa.me/22655300868?text=Bonjour%2C%20je%20souhaite%20une%20offre%20sur%20mesure%20Resto%20BF"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center px-7 py-4 rounded-2xl bg-gradient-gold text-[#0a0a0f] font-bold shadow-gold hover:-translate-y-0.5 transition-transform whitespace-nowrap"
+              >
+                Demander une offre sur mesure →
+              </a>
+            </div>
+          </Reveal>
         </section>
 
         {/* FAQ */}
