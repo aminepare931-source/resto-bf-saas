@@ -16,7 +16,6 @@ import { Route as AuthInscriptionRouteImport } from './routes/auth/inscription'
 import { Route as AuthConnexionRouteImport } from './routes/auth/connexion'
 import { Route as AuthChoisirTemplateRouteImport } from './routes/auth/choisir-template'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as AuthenticatedDashboardReservationsRouteImport } from './routes/_authenticated/dashboard.reservations'
 import { Route as AuthenticatedDashboardParametresRouteImport } from './routes/_authenticated/dashboard.parametres'
@@ -58,11 +57,6 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedDashboardIndexRoute =
   AuthenticatedDashboardIndexRouteImport.update({
     id: '/',
@@ -102,7 +96,6 @@ const AuthenticatedDashboardAvisRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/auth/choisir-template': typeof AuthChoisirTemplateRoute
   '/auth/connexion': typeof AuthConnexionRoute
@@ -117,7 +110,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AuthenticatedAdminRoute
   '/auth/choisir-template': typeof AuthChoisirTemplateRoute
   '/auth/connexion': typeof AuthConnexionRoute
   '/auth/inscription': typeof AuthInscriptionRoute
@@ -133,7 +125,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/auth/choisir-template': typeof AuthChoisirTemplateRoute
   '/auth/connexion': typeof AuthConnexionRoute
@@ -150,7 +141,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/admin'
     | '/dashboard'
     | '/auth/choisir-template'
     | '/auth/connexion'
@@ -165,7 +155,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
     | '/auth/choisir-template'
     | '/auth/connexion'
     | '/auth/inscription'
@@ -180,7 +169,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
-    | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/auth/choisir-template'
     | '/auth/connexion'
@@ -252,13 +240,6 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard/': {
@@ -333,12 +314,10 @@ const AuthenticatedDashboardRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRouteWithChildren,
 }
 
