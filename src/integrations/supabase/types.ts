@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      custom_orders: {
+        Row: {
+          budget: string | null
+          city: string | null
+          contact_name: string
+          created_at: string
+          email: string
+          id: string
+          message: string
+          phone: string
+          restaurant_name: string
+          status: string
+        }
+        Insert: {
+          budget?: string | null
+          city?: string | null
+          contact_name: string
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          phone: string
+          restaurant_name: string
+          status?: string
+        }
+        Update: {
+          budget?: string | null
+          city?: string | null
+          contact_name?: string
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          phone?: string
+          restaurant_name?: string
+          status?: string
+        }
+        Relationships: []
+      }
       gallery_images: {
         Row: {
           caption: string | null
@@ -42,6 +81,77 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "gallery_images_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          created_at: string
+          customer_address: string | null
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string | null
+          due_at: string | null
+          id: string
+          invoice_number: string
+          issued_at: string
+          items: Json
+          notes: string | null
+          restaurant_id: string
+          status: string
+          subtotal: number
+          tax_amount: number
+          tax_rate: number
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_address?: string | null
+          customer_email?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          due_at?: string | null
+          id?: string
+          invoice_number: string
+          issued_at?: string
+          items?: Json
+          notes?: string | null
+          restaurant_id: string
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          tax_rate?: number
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_address?: string | null
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          due_at?: string | null
+          id?: string
+          invoice_number?: string
+          issued_at?: string
+          items?: Json
+          notes?: string | null
+          restaurant_id?: string
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          tax_rate?: number
+          total?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_restaurant_id_fkey"
             columns: ["restaurant_id"]
             isOneToOne: false
             referencedRelation: "restaurants"
@@ -151,58 +261,97 @@ export type Database = {
       }
       restaurants: {
         Row: {
+          about_text: string | null
           address: string | null
           city: string
           created_at: string
           cuisine: string | null
           description: string | null
           email: string
+          font_family: string | null
+          hero_subtitle: string | null
+          hero_title: string | null
           hours: string | null
           id: string
+          invoice_footer: string | null
+          invoice_prefix: string | null
+          logo_url: string | null
           name: string
           owner_name: string
           phone: string
           plan: string
+          primary_color: string | null
+          sections: Json
           slug: string | null
+          social_links: Json
+          subscription_ends_at: string | null
+          subscription_status: string
           template: string | null
+          trial_ends_at: string | null
           updated_at: string
           user_id: string
           whatsapp: string | null
         }
         Insert: {
+          about_text?: string | null
           address?: string | null
           city: string
           created_at?: string
           cuisine?: string | null
           description?: string | null
           email: string
+          font_family?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
           hours?: string | null
           id?: string
+          invoice_footer?: string | null
+          invoice_prefix?: string | null
+          logo_url?: string | null
           name: string
           owner_name: string
           phone: string
           plan?: string
+          primary_color?: string | null
+          sections?: Json
           slug?: string | null
+          social_links?: Json
+          subscription_ends_at?: string | null
+          subscription_status?: string
           template?: string | null
+          trial_ends_at?: string | null
           updated_at?: string
           user_id: string
           whatsapp?: string | null
         }
         Update: {
+          about_text?: string | null
           address?: string | null
           city?: string
           created_at?: string
           cuisine?: string | null
           description?: string | null
           email?: string
+          font_family?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
           hours?: string | null
           id?: string
+          invoice_footer?: string | null
+          invoice_prefix?: string | null
+          logo_url?: string | null
           name?: string
           owner_name?: string
           phone?: string
           plan?: string
+          primary_color?: string | null
+          sections?: Json
           slug?: string | null
+          social_links?: Json
+          subscription_ends_at?: string | null
+          subscription_status?: string
           template?: string | null
+          trial_ends_at?: string | null
           updated_at?: string
           user_id?: string
           whatsapp?: string | null
