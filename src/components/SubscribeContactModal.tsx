@@ -3,7 +3,7 @@ import { useEffect } from "react";
 const SUPPORT_PHONE = "+226 55 30 08 68";
 const SUPPORT_PHONE_TEL = "+22655300868";
 const SUPPORT_WA = "22655300868";
-const SUPPORT_EMAIL = "contact@restobf.com";
+const SUPPORT_EMAIL = "aminepare931@gmail.com";
 
 export function SubscribeContactModal({
   open,
