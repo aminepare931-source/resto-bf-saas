@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { uploadToStorage } from "@/lib/storage";
+import { uploadRestaurantFile, signedUrl } from "@/lib/storage";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/dashboard/contenu")({
@@ -61,7 +61,8 @@ function ContentPage() {
     if (file.size > 3_000_000) return toast.error("Logo trop volumineux (max 3 Mo)");
     setUploading(true);
     try {
-      const url = await uploadToStorage(file, `logos/${restoId}/${Date.now()}-${file.name}`);
+      const path = await uploadRestaurantFile(restoId, file);
+      const url = (await signedUrl(path)) ?? path;
       setForm((f) => ({ ...f, logo_url: url }));
       toast.success("Logo téléchargé");
     } catch (e: any) {
