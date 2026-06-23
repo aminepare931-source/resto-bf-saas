@@ -24,6 +24,9 @@ const nav = [
   { to: "/dashboard/reservations", label: "Réservations", icon: "📅" },
   { to: "/dashboard/galerie", label: "Galerie", icon: "🖼️" },
   { to: "/dashboard/avis", label: "Avis clients", icon: "⭐" },
+  { to: "/dashboard/qr-code", label: "QR Code", icon: "📱" },
+  { to: "/dashboard/contenu", label: "Contenu & branding", icon: "🎨" },
+  { to: "/dashboard/facturation", label: "Facturation", icon: "🧾", badge: "Premium" },
   { to: "/dashboard/parametres", label: "Paramètres", icon: "⚙️" },
 ];
 

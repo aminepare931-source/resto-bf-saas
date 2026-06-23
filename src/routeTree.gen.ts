@@ -23,6 +23,7 @@ import { Route as AuthenticatedDashboardQrCodeRouteImport } from './routes/_auth
 import { Route as AuthenticatedDashboardParametresRouteImport } from './routes/_authenticated/dashboard.parametres'
 import { Route as AuthenticatedDashboardMenuRouteImport } from './routes/_authenticated/dashboard.menu'
 import { Route as AuthenticatedDashboardGalerieRouteImport } from './routes/_authenticated/dashboard.galerie'
+import { Route as AuthenticatedDashboardFacturationRouteImport } from './routes/_authenticated/dashboard.facturation'
 import { Route as AuthenticatedDashboardContenuRouteImport } from './routes/_authenticated/dashboard.contenu'
 import { Route as AuthenticatedDashboardAvisRouteImport } from './routes/_authenticated/dashboard.avis'
 
@@ -101,6 +102,12 @@ const AuthenticatedDashboardGalerieRoute =
     path: '/galerie',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardFacturationRoute =
+  AuthenticatedDashboardFacturationRouteImport.update({
+    id: '/facturation',
+    path: '/facturation',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardContenuRoute =
   AuthenticatedDashboardContenuRouteImport.update({
     id: '/contenu',
@@ -124,6 +131,7 @@ export interface FileRoutesByFullPath {
   '/r/$slug': typeof RSlugRoute
   '/dashboard/avis': typeof AuthenticatedDashboardAvisRoute
   '/dashboard/contenu': typeof AuthenticatedDashboardContenuRoute
+  '/dashboard/facturation': typeof AuthenticatedDashboardFacturationRoute
   '/dashboard/galerie': typeof AuthenticatedDashboardGalerieRoute
   '/dashboard/menu': typeof AuthenticatedDashboardMenuRoute
   '/dashboard/parametres': typeof AuthenticatedDashboardParametresRoute
@@ -140,6 +148,7 @@ export interface FileRoutesByTo {
   '/r/$slug': typeof RSlugRoute
   '/dashboard/avis': typeof AuthenticatedDashboardAvisRoute
   '/dashboard/contenu': typeof AuthenticatedDashboardContenuRoute
+  '/dashboard/facturation': typeof AuthenticatedDashboardFacturationRoute
   '/dashboard/galerie': typeof AuthenticatedDashboardGalerieRoute
   '/dashboard/menu': typeof AuthenticatedDashboardMenuRoute
   '/dashboard/parametres': typeof AuthenticatedDashboardParametresRoute
@@ -159,6 +168,7 @@ export interface FileRoutesById {
   '/r/$slug': typeof RSlugRoute
   '/_authenticated/dashboard/avis': typeof AuthenticatedDashboardAvisRoute
   '/_authenticated/dashboard/contenu': typeof AuthenticatedDashboardContenuRoute
+  '/_authenticated/dashboard/facturation': typeof AuthenticatedDashboardFacturationRoute
   '/_authenticated/dashboard/galerie': typeof AuthenticatedDashboardGalerieRoute
   '/_authenticated/dashboard/menu': typeof AuthenticatedDashboardMenuRoute
   '/_authenticated/dashboard/parametres': typeof AuthenticatedDashboardParametresRoute
@@ -178,6 +188,7 @@ export interface FileRouteTypes {
     | '/r/$slug'
     | '/dashboard/avis'
     | '/dashboard/contenu'
+    | '/dashboard/facturation'
     | '/dashboard/galerie'
     | '/dashboard/menu'
     | '/dashboard/parametres'
@@ -194,6 +205,7 @@ export interface FileRouteTypes {
     | '/r/$slug'
     | '/dashboard/avis'
     | '/dashboard/contenu'
+    | '/dashboard/facturation'
     | '/dashboard/galerie'
     | '/dashboard/menu'
     | '/dashboard/parametres'
@@ -212,6 +224,7 @@ export interface FileRouteTypes {
     | '/r/$slug'
     | '/_authenticated/dashboard/avis'
     | '/_authenticated/dashboard/contenu'
+    | '/_authenticated/dashboard/facturation'
     | '/_authenticated/dashboard/galerie'
     | '/_authenticated/dashboard/menu'
     | '/_authenticated/dashboard/parametres'
@@ -330,6 +343,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardGalerieRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/facturation': {
+      id: '/_authenticated/dashboard/facturation'
+      path: '/facturation'
+      fullPath: '/dashboard/facturation'
+      preLoaderRoute: typeof AuthenticatedDashboardFacturationRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/contenu': {
       id: '/_authenticated/dashboard/contenu'
       path: '/contenu'
@@ -350,6 +370,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardAvisRoute: typeof AuthenticatedDashboardAvisRoute
   AuthenticatedDashboardContenuRoute: typeof AuthenticatedDashboardContenuRoute
+  AuthenticatedDashboardFacturationRoute: typeof AuthenticatedDashboardFacturationRoute
   AuthenticatedDashboardGalerieRoute: typeof AuthenticatedDashboardGalerieRoute
   AuthenticatedDashboardMenuRoute: typeof AuthenticatedDashboardMenuRoute
   AuthenticatedDashboardParametresRoute: typeof AuthenticatedDashboardParametresRoute
@@ -362,6 +383,8 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
     AuthenticatedDashboardAvisRoute: AuthenticatedDashboardAvisRoute,
     AuthenticatedDashboardContenuRoute: AuthenticatedDashboardContenuRoute,
+    AuthenticatedDashboardFacturationRoute:
+      AuthenticatedDashboardFacturationRoute,
     AuthenticatedDashboardGalerieRoute: AuthenticatedDashboardGalerieRoute,
     AuthenticatedDashboardMenuRoute: AuthenticatedDashboardMenuRoute,
     AuthenticatedDashboardParametresRoute:
