@@ -105,7 +105,12 @@ function DashboardLayout() {
               }`}
             >
               <span className="text-base">{n.icon}</span>
-              {n.label}
+              <span className="flex-1">{n.label}</span>
+              {"badge" in n && n.badge && (
+                <span className="px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider bg-gold/20 text-gold font-black">
+                  {n.badge}
+                </span>
+              )}
             </Link>
           ))}
         </nav>
