@@ -23,6 +23,7 @@ import { Route as AuthenticatedDashboardQrCodeRouteImport } from './routes/_auth
 import { Route as AuthenticatedDashboardParametresRouteImport } from './routes/_authenticated/dashboard.parametres'
 import { Route as AuthenticatedDashboardMenuRouteImport } from './routes/_authenticated/dashboard.menu'
 import { Route as AuthenticatedDashboardGalerieRouteImport } from './routes/_authenticated/dashboard.galerie'
+import { Route as AuthenticatedDashboardContenuRouteImport } from './routes/_authenticated/dashboard.contenu'
 import { Route as AuthenticatedDashboardAvisRouteImport } from './routes/_authenticated/dashboard.avis'
 
 const SuperAdminRoute = SuperAdminRouteImport.update({
@@ -100,6 +101,12 @@ const AuthenticatedDashboardGalerieRoute =
     path: '/galerie',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardContenuRoute =
+  AuthenticatedDashboardContenuRouteImport.update({
+    id: '/contenu',
+    path: '/contenu',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardAvisRoute =
   AuthenticatedDashboardAvisRouteImport.update({
     id: '/avis',
@@ -116,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/auth/inscription': typeof AuthInscriptionRoute
   '/r/$slug': typeof RSlugRoute
   '/dashboard/avis': typeof AuthenticatedDashboardAvisRoute
+  '/dashboard/contenu': typeof AuthenticatedDashboardContenuRoute
   '/dashboard/galerie': typeof AuthenticatedDashboardGalerieRoute
   '/dashboard/menu': typeof AuthenticatedDashboardMenuRoute
   '/dashboard/parametres': typeof AuthenticatedDashboardParametresRoute
@@ -131,6 +139,7 @@ export interface FileRoutesByTo {
   '/auth/inscription': typeof AuthInscriptionRoute
   '/r/$slug': typeof RSlugRoute
   '/dashboard/avis': typeof AuthenticatedDashboardAvisRoute
+  '/dashboard/contenu': typeof AuthenticatedDashboardContenuRoute
   '/dashboard/galerie': typeof AuthenticatedDashboardGalerieRoute
   '/dashboard/menu': typeof AuthenticatedDashboardMenuRoute
   '/dashboard/parametres': typeof AuthenticatedDashboardParametresRoute
@@ -149,6 +158,7 @@ export interface FileRoutesById {
   '/auth/inscription': typeof AuthInscriptionRoute
   '/r/$slug': typeof RSlugRoute
   '/_authenticated/dashboard/avis': typeof AuthenticatedDashboardAvisRoute
+  '/_authenticated/dashboard/contenu': typeof AuthenticatedDashboardContenuRoute
   '/_authenticated/dashboard/galerie': typeof AuthenticatedDashboardGalerieRoute
   '/_authenticated/dashboard/menu': typeof AuthenticatedDashboardMenuRoute
   '/_authenticated/dashboard/parametres': typeof AuthenticatedDashboardParametresRoute
@@ -167,6 +177,7 @@ export interface FileRouteTypes {
     | '/auth/inscription'
     | '/r/$slug'
     | '/dashboard/avis'
+    | '/dashboard/contenu'
     | '/dashboard/galerie'
     | '/dashboard/menu'
     | '/dashboard/parametres'
@@ -182,6 +193,7 @@ export interface FileRouteTypes {
     | '/auth/inscription'
     | '/r/$slug'
     | '/dashboard/avis'
+    | '/dashboard/contenu'
     | '/dashboard/galerie'
     | '/dashboard/menu'
     | '/dashboard/parametres'
@@ -199,6 +211,7 @@ export interface FileRouteTypes {
     | '/auth/inscription'
     | '/r/$slug'
     | '/_authenticated/dashboard/avis'
+    | '/_authenticated/dashboard/contenu'
     | '/_authenticated/dashboard/galerie'
     | '/_authenticated/dashboard/menu'
     | '/_authenticated/dashboard/parametres'
@@ -317,6 +330,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardGalerieRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/contenu': {
+      id: '/_authenticated/dashboard/contenu'
+      path: '/contenu'
+      fullPath: '/dashboard/contenu'
+      preLoaderRoute: typeof AuthenticatedDashboardContenuRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/avis': {
       id: '/_authenticated/dashboard/avis'
       path: '/avis'
@@ -329,6 +349,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardAvisRoute: typeof AuthenticatedDashboardAvisRoute
+  AuthenticatedDashboardContenuRoute: typeof AuthenticatedDashboardContenuRoute
   AuthenticatedDashboardGalerieRoute: typeof AuthenticatedDashboardGalerieRoute
   AuthenticatedDashboardMenuRoute: typeof AuthenticatedDashboardMenuRoute
   AuthenticatedDashboardParametresRoute: typeof AuthenticatedDashboardParametresRoute
@@ -340,6 +361,7 @@ interface AuthenticatedDashboardRouteChildren {
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
     AuthenticatedDashboardAvisRoute: AuthenticatedDashboardAvisRoute,
+    AuthenticatedDashboardContenuRoute: AuthenticatedDashboardContenuRoute,
     AuthenticatedDashboardGalerieRoute: AuthenticatedDashboardGalerieRoute,
     AuthenticatedDashboardMenuRoute: AuthenticatedDashboardMenuRoute,
     AuthenticatedDashboardParametresRoute:
