@@ -24,6 +24,9 @@ const nav = [
   { to: "/dashboard/reservations", label: "Réservations", icon: "📅" },
   { to: "/dashboard/galerie", label: "Galerie", icon: "🖼️" },
   { to: "/dashboard/avis", label: "Avis clients", icon: "⭐" },
+  { to: "/dashboard/qr-code", label: "QR Code", icon: "📱" },
+  { to: "/dashboard/contenu", label: "Contenu & branding", icon: "🎨" },
+  { to: "/dashboard/facturation", label: "Facturation", icon: "🧾", badge: "Premium" },
   { to: "/dashboard/parametres", label: "Paramètres", icon: "⚙️" },
 ];
 
@@ -102,7 +105,12 @@ function DashboardLayout() {
               }`}
             >
               <span className="text-base">{n.icon}</span>
-              {n.label}
+              <span className="flex-1">{n.label}</span>
+              {"badge" in n && n.badge && (
+                <span className="px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider bg-gold/20 text-gold font-black">
+                  {n.badge}
+                </span>
+              )}
             </Link>
           ))}
         </nav>
