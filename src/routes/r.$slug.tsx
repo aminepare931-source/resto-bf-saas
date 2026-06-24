@@ -3,9 +3,13 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { renderTemplate } from "@/components/public/templates";
 import type { PublicRestaurant, PublicMenuItem, PublicReview, PublicGalleryImage } from "@/components/public/shared";
+import { OrderCartFab } from "@/components/public/OrderCart";
 
 export const Route = createFileRoute("/r/$slug")({
   ssr: false,
+  validateSearch: (s: Record<string, unknown>) => ({
+    table: typeof s.table === "string" ? s.table.slice(0, 10) : undefined,
+  }),
   head: ({ params }) => ({
     meta: [
       { title: `${params.slug} — Resto BF` },
@@ -17,6 +21,7 @@ export const Route = createFileRoute("/r/$slug")({
 
 function PublicRestaurantPage() {
   const { slug } = Route.useParams();
+  const { table } = Route.useSearch();
   const [restaurant, setRestaurant] = useState<PublicRestaurant | null>(null);
   const [menu, setMenu] = useState<PublicMenuItem[]>([]);
   const [reviews, setReviews] = useState<PublicReview[]>([]);
@@ -71,5 +76,10 @@ function PublicRestaurantPage() {
     );
   }
 
-  return renderTemplate(restaurant.template, { restaurant, menu, reviews, gallery });
+  return (
+    <>
+      {renderTemplate(restaurant.template, { restaurant, menu, reviews, gallery })}
+      <OrderCartFab restaurant={restaurant} menu={menu} tableNumber={table ?? null} />
+    </>
+  );
 }
