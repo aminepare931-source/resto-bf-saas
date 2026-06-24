@@ -209,6 +209,75 @@ export type Database = {
           },
         ]
       }
+      orders: {
+        Row: {
+          created_at: string
+          customer_name: string | null
+          customer_phone: string | null
+          id: string
+          items: Json
+          notes: string | null
+          restaurant_id: string
+          source: string
+          status: string
+          subtotal: number
+          table_id: string | null
+          table_number: string | null
+          total: number
+          updated_at: string
+          whatsapp_sent_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          id?: string
+          items?: Json
+          notes?: string | null
+          restaurant_id: string
+          source?: string
+          status?: string
+          subtotal?: number
+          table_id?: string | null
+          table_number?: string | null
+          total?: number
+          updated_at?: string
+          whatsapp_sent_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          id?: string
+          items?: Json
+          notes?: string | null
+          restaurant_id?: string
+          source?: string
+          status?: string
+          subtotal?: number
+          table_id?: string | null
+          table_number?: string | null
+          total?: number
+          updated_at?: string
+          whatsapp_sent_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_table_id_fkey"
+            columns: ["table_id"]
+            isOneToOne: false
+            referencedRelation: "restaurant_tables"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reservations: {
         Row: {
           created_at: string
@@ -259,6 +328,50 @@ export type Database = {
           },
         ]
       }
+      restaurant_tables: {
+        Row: {
+          capacity: number
+          created_at: string
+          id: string
+          number: string
+          position: number
+          restaurant_id: string
+          status: string
+          updated_at: string
+          zone: string | null
+        }
+        Insert: {
+          capacity?: number
+          created_at?: string
+          id?: string
+          number: string
+          position?: number
+          restaurant_id: string
+          status?: string
+          updated_at?: string
+          zone?: string | null
+        }
+        Update: {
+          capacity?: number
+          created_at?: string
+          id?: string
+          number?: string
+          position?: number
+          restaurant_id?: string
+          status?: string
+          updated_at?: string
+          zone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "restaurant_tables_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       restaurants: {
         Row: {
           about_text: string | null
@@ -281,6 +394,7 @@ export type Database = {
           phone: string
           plan: string
           primary_color: string | null
+          public_site_url: string | null
           sections: Json
           slug: string | null
           social_links: Json
@@ -313,6 +427,7 @@ export type Database = {
           phone: string
           plan?: string
           primary_color?: string | null
+          public_site_url?: string | null
           sections?: Json
           slug?: string | null
           social_links?: Json
@@ -345,6 +460,7 @@ export type Database = {
           phone?: string
           plan?: string
           primary_color?: string | null
+          public_site_url?: string | null
           sections?: Json
           slug?: string | null
           social_links?: Json
