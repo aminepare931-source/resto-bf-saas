@@ -18,6 +18,7 @@ import { Route as AuthConnexionRouteImport } from './routes/auth/connexion'
 import { Route as AuthChoisirTemplateRouteImport } from './routes/auth/choisir-template'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
+import { Route as AuthenticatedDashboardTablesRouteImport } from './routes/_authenticated/dashboard.tables'
 import { Route as AuthenticatedDashboardReservationsRouteImport } from './routes/_authenticated/dashboard.reservations'
 import { Route as AuthenticatedDashboardQrCodeRouteImport } from './routes/_authenticated/dashboard.qr-code'
 import { Route as AuthenticatedDashboardParametresRouteImport } from './routes/_authenticated/dashboard.parametres'
@@ -71,6 +72,12 @@ const AuthenticatedDashboardIndexRoute =
   AuthenticatedDashboardIndexRouteImport.update({
     id: '/',
     path: '/',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardTablesRoute =
+  AuthenticatedDashboardTablesRouteImport.update({
+    id: '/tables',
+    path: '/tables',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
 const AuthenticatedDashboardReservationsRoute =
@@ -145,6 +152,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/parametres': typeof AuthenticatedDashboardParametresRoute
   '/dashboard/qr-code': typeof AuthenticatedDashboardQrCodeRoute
   '/dashboard/reservations': typeof AuthenticatedDashboardReservationsRoute
+  '/dashboard/tables': typeof AuthenticatedDashboardTablesRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
 }
 export interface FileRoutesByTo {
@@ -163,6 +171,7 @@ export interface FileRoutesByTo {
   '/dashboard/parametres': typeof AuthenticatedDashboardParametresRoute
   '/dashboard/qr-code': typeof AuthenticatedDashboardQrCodeRoute
   '/dashboard/reservations': typeof AuthenticatedDashboardReservationsRoute
+  '/dashboard/tables': typeof AuthenticatedDashboardTablesRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
 }
 export interface FileRoutesById {
@@ -184,6 +193,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/parametres': typeof AuthenticatedDashboardParametresRoute
   '/_authenticated/dashboard/qr-code': typeof AuthenticatedDashboardQrCodeRoute
   '/_authenticated/dashboard/reservations': typeof AuthenticatedDashboardReservationsRoute
+  '/_authenticated/dashboard/tables': typeof AuthenticatedDashboardTablesRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
 }
 export interface FileRouteTypes {
@@ -205,6 +215,7 @@ export interface FileRouteTypes {
     | '/dashboard/parametres'
     | '/dashboard/qr-code'
     | '/dashboard/reservations'
+    | '/dashboard/tables'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -223,6 +234,7 @@ export interface FileRouteTypes {
     | '/dashboard/parametres'
     | '/dashboard/qr-code'
     | '/dashboard/reservations'
+    | '/dashboard/tables'
     | '/dashboard'
   id:
     | '__root__'
@@ -243,6 +255,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/parametres'
     | '/_authenticated/dashboard/qr-code'
     | '/_authenticated/dashboard/reservations'
+    | '/_authenticated/dashboard/tables'
     | '/_authenticated/dashboard/'
   fileRoutesById: FileRoutesById
 }
@@ -321,6 +334,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/tables': {
+      id: '/_authenticated/dashboard/tables'
+      path: '/tables'
+      fullPath: '/dashboard/tables'
+      preLoaderRoute: typeof AuthenticatedDashboardTablesRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/reservations': {
       id: '/_authenticated/dashboard/reservations'
       path: '/reservations'
@@ -397,6 +417,7 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardParametresRoute: typeof AuthenticatedDashboardParametresRoute
   AuthenticatedDashboardQrCodeRoute: typeof AuthenticatedDashboardQrCodeRoute
   AuthenticatedDashboardReservationsRoute: typeof AuthenticatedDashboardReservationsRoute
+  AuthenticatedDashboardTablesRoute: typeof AuthenticatedDashboardTablesRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
 }
 
@@ -414,6 +435,7 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
     AuthenticatedDashboardQrCodeRoute: AuthenticatedDashboardQrCodeRoute,
     AuthenticatedDashboardReservationsRoute:
       AuthenticatedDashboardReservationsRoute,
+    AuthenticatedDashboardTablesRoute: AuthenticatedDashboardTablesRoute,
     AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   }
 
