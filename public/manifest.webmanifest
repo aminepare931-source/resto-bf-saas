@@ -1,0 +1,25 @@
+{
+  "name": "RestoBF — Gestion restaurant",
+  "short_name": "RestoBF",
+  "description": "Site web, menu digital, commandes et gestion pour les restaurants du Burkina Faso.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/__l5e/assets-v1/7ed5f573-4a43-4515-ad78-6a59b5ff4083/restobf-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/__l5e/assets-v1/7ed5f573-4a43-4515-ad78-6a59b5ff4083/restobf-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

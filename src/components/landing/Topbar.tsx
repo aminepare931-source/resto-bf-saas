@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import logoAsset from "@/assets/restobf-logo.png.asset.json";
 
 const navItems = [
   { href: "#fonctionnalites", label: "Fonctionnalités" },
@@ -30,11 +31,15 @@ export function Topbar() {
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between gap-6">
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-11 h-11 rounded-xl bg-gradient-gold flex items-center justify-center font-black text-[#0a0a0f] text-xl shadow-gold group-hover:scale-105 transition-transform">
-            R
-          </div>
+          <img
+            src={logoAsset.url}
+            alt="RestoBF"
+            width={44}
+            height={44}
+            className="w-11 h-11 rounded-xl bg-white object-contain p-1 shadow-gold group-hover:scale-105 transition-transform"
+          />
           <div className="hidden sm:flex flex-col leading-tight">
-            <strong className="text-base font-bold text-foreground">Resto BF</strong>
+            <strong className="text-base font-bold text-foreground">RestoBF</strong>
             <small className="text-xs text-muted-foreground">Site web pour restaurants</small>
           </div>
         </Link>

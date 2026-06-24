@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
 import { useMyRestaurant } from "@/hooks/use-my-restaurant";
 import { toast } from "sonner";
+import { buildRestaurantUrl, getPublicSiteOrigin } from "@/lib/site-url";
 
 export const Route = createFileRoute("/_authenticated/dashboard/qr-code")({
   component: QrCodePage,
@@ -14,14 +15,13 @@ function QrCodePage() {
   const [color, setColor] = useState("#0a0a0f");
   const [bg, setBg] = useState("#ffffff");
   const [margin, setMargin] = useState(2);
+  const [tableNum, setTableNum] = useState("");
   const [pngUrl, setPngUrl] = useState<string>("");
   const [svgString, setSvgString] = useState<string>("");
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const targetUrl =
-    r?.slug && typeof window !== "undefined"
-      ? `${window.location.origin}/r/${r.slug}`
-      : "";
+  const override = (r as unknown as { public_site_url?: string | null })?.public_site_url ?? null;
+  const targetUrl = r?.slug ? buildRestaurantUrl(r.slug, tableNum.trim() || null, override) : "";
 
   useEffect(() => {
     if (!targetUrl) return;
@@ -60,7 +60,8 @@ function QrCodePage() {
         <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">QR Code</p>
         <h1 className="text-3xl font-black">QR Code professionnel</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          À imprimer sur vos cartes de table, vitrines, flyers. Pointe directement vers votre site.
+          À imprimer sur vos cartes de table, vitrines, flyers. Pointe vers <strong className="text-gold">{getPublicSiteOrigin(override)}</strong>.
+          Optionnel : entrez un numéro de table pour générer un QR par table (la commande sera automatiquement rattachée).
         </p>
       </div>
 
@@ -110,6 +111,19 @@ function QrCodePage() {
         </div>
 
         <div className="space-y-5">
+          <SettingCard label="Numéro de table (optionnel)">
+            <input
+              type="text"
+              value={tableNum}
+              onChange={(e) => setTableNum(e.target.value.replace(/[^A-Za-z0-9-]/g, "").slice(0, 10))}
+              placeholder="ex : 12"
+              className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Laisse vide pour un QR générique restaurant.
+            </p>
+          </SettingCard>
+
           <SettingCard label="Taille">
             <input
               type="range"

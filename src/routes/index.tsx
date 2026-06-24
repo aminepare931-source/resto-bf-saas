@@ -4,6 +4,7 @@ import { Footer } from "@/components/landing/Footer";
 import { Particles } from "@/components/landing/Particles";
 import { Reveal } from "@/components/landing/Reveal";
 import { Counter } from "@/components/landing/Counter";
+import landingBg from "@/assets/landing-bg.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -142,7 +143,21 @@ const faqs = [
 
 function LandingPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+    <div className="relative min-h-screen text-foreground overflow-x-hidden">
+      {/* Background plein écran */}
+      <div
+        className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${landingBg.url})` }}
+        aria-hidden="true"
+      />
+      <div
+        className="fixed inset-0 -z-10 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(8,8,16,0.85) 0%, rgba(8,8,16,0.92) 40%, rgba(8,8,16,0.97) 100%)",
+        }}
+        aria-hidden="true"
+      />
       <Topbar />
 
       <main>
@@ -477,7 +492,7 @@ function LandingPage() {
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <a
-                  href="https://wa.me/22670000000"
+                  href="https://wa.me/22655300868"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center px-7 py-4 rounded-2xl bg-gradient-gold text-[#0a0a0f] font-bold shadow-gold hover:-translate-y-0.5 transition-transform"
@@ -485,10 +500,10 @@ function LandingPage() {
                   💬 Nous écrire sur WhatsApp
                 </a>
                 <a
-                  href="tel:+22670000000"
+                  href="tel:+22655300868"
                   className="inline-flex items-center px-7 py-4 rounded-2xl border border-white/10 hover:border-gold/40 hover:bg-white/[0.03] font-semibold transition-colors"
                 >
-                  📞 +226 70 00 00 00
+                  📞 +226 55 30 08 68
                 </a>
               </div>
             </div>
