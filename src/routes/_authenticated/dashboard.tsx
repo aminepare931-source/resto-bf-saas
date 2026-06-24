@@ -2,6 +2,7 @@ import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tan
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import logoAsset from "@/assets/restobf-logo.png.asset.json";
 
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -21,6 +22,8 @@ type Restaurant = {
 const nav = [
   { to: "/dashboard", label: "Aperçu", icon: "📊", exact: true },
   { to: "/dashboard/menu", label: "Menu", icon: "🍽️" },
+  { to: "/dashboard/commandes", label: "Commandes", icon: "🛎️", badge: "Live" },
+  { to: "/dashboard/tables", label: "Tables", icon: "🪑" },
   { to: "/dashboard/reservations", label: "Réservations", icon: "📅" },
   { to: "/dashboard/galerie", label: "Galerie", icon: "🖼️" },
   { to: "/dashboard/avis", label: "Avis clients", icon: "⭐" },
@@ -72,11 +75,9 @@ function DashboardLayout() {
         }`}
       >
         <Link to="/" className="flex items-center gap-3 p-5 border-b border-white/5">
-          <div className="w-10 h-10 rounded-xl bg-gradient-gold flex items-center justify-center font-black text-[#0a0a0f] shadow-gold">
-            R
-          </div>
+          <img src={logoAsset.url} alt="RestoBF" width={40} height={40} className="w-10 h-10 rounded-xl bg-white object-contain p-1 shadow-gold" />
           <div>
-            <strong className="block text-sm">Resto BF</strong>
+            <strong className="block text-sm">RestoBF</strong>
             <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Admin</span>
           </div>
         </Link>
