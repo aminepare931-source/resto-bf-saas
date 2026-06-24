@@ -3,6 +3,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthShell } from "@/components/auth/AuthShell";
+import { signupSchema, firstZodError } from "@/lib/validation";
 
 export const Route = createFileRoute("/auth/inscription")({
   head: () => ({
@@ -36,12 +37,9 @@ function SignupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (form.password !== form.confirm) {
-      toast.error("Les mots de passe ne correspondent pas");
-      return;
-    }
-    if (!form.accept) {
-      toast.error("Veuillez accepter les conditions");
+    const parsed = signupSchema.safeParse(form);
+    if (!parsed.success) {
+      toast.error(firstZodError(parsed.error));
       return;
     }
     setLoading(true);
@@ -99,7 +97,7 @@ function SignupPage() {
             <input required value={form.ownerName} onChange={(e) => set("ownerName", e.target.value)} placeholder="Aminata Konaté" className="auth-input" />
           </Field>
           <Field label="WhatsApp *" icon="📱">
-            <input required type="tel" value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="+226 70 00 00 00" className="auth-input" />
+            <input required type="tel" value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="+226 55 30 08 68" className="auth-input" />
           </Field>
         </div>
 
@@ -116,10 +114,10 @@ function SignupPage() {
 
         <div className="grid sm:grid-cols-2 gap-3">
           <Field label="Mot de passe *" icon="🔒">
-            <input required type="password" minLength={6} value={form.password} onChange={(e) => set("password", e.target.value)} placeholder="Min. 6 caractères" className="auth-input" />
+            <input required type="password" minLength={8} value={form.password} onChange={(e) => set("password", e.target.value)} placeholder="Min. 8 (lettres + chiffres)" className="auth-input" />
           </Field>
           <Field label="Confirmer *" icon="🔒">
-            <input required type="password" minLength={6} value={form.confirm} onChange={(e) => set("confirm", e.target.value)} placeholder="Retapez" className="auth-input" />
+            <input required type="password" minLength={8} value={form.confirm} onChange={(e) => set("confirm", e.target.value)} placeholder="Retapez" className="auth-input" />
           </Field>
         </div>
 
