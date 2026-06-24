@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import logoAsset from "@/assets/restobf-logo.png.asset.json";
 
 export function Footer() {
   return (
@@ -6,10 +7,8 @@ export function Footer() {
       <div className="max-w-7xl mx-auto grid gap-10 md:grid-cols-4">
         <div>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-gold flex items-center justify-center font-black text-[#0a0a0f] text-2xl shadow-gold">
-              R
-            </div>
-            <strong className="text-lg font-bold">Resto BF</strong>
+            <img src={logoAsset.url} alt="RestoBF" width={48} height={48} className="w-12 h-12 rounded-xl bg-white object-contain p-1 shadow-gold" />
+            <strong className="text-lg font-bold">RestoBF</strong>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">
             La solution SaaS pour mettre les restaurants du Burkina Faso en ligne.
@@ -45,8 +44,9 @@ export function Footer() {
         <FooterCol
           title="Contact"
           links={[
-            { href: "https://wa.me/22670000000", label: "WhatsApp" },
-            { href: "tel:+22670000000", label: "+226 70 00 00 00" },
+            { href: "https://wa.me/22655300868", label: "WhatsApp" },
+            { href: "tel:+22655300868", label: "+226 55 30 08 68" },
+            { href: "mailto:aminepare931@gmail.com", label: "aminepare931@gmail.com" },
             { href: "#", label: "Ouagadougou, Burkina Faso" },
           ]}
         />
