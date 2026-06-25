@@ -32,8 +32,8 @@ function PublicRestaurantPage() {
   useEffect(() => {
     (async () => {
       const { data: r } = await supabase
-        .from("restaurants")
-        .select("id, name, city, cuisine, description, address, hours, phone, whatsapp, email, plan, template")
+        .from("public_restaurants" as never)
+        .select("id, name, city, cuisine, description, address, hours, phone, whatsapp, template")
         .eq("slug", slug)
         .maybeSingle();
 
@@ -42,7 +42,8 @@ function PublicRestaurantPage() {
         setLoading(false);
         return;
       }
-      setRestaurant(r as PublicRestaurant);
+      // The public view omits owner email/plan; fill with safe defaults for the renderer.
+      setRestaurant({ ...(r as Omit<PublicRestaurant, "email" | "plan">), email: "", plan: "standard" } as PublicRestaurant);
 
       const [m, rev, g] = await Promise.all([
         supabase.from("menu_items").select("id, category, name, description, price, image_url, available").eq("restaurant_id", r.id).eq("available", true).order("category").order("position"),

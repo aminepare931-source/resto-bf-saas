@@ -83,6 +83,13 @@ export type Database = {
             foreignKeyName: "gallery_images_restaurant_id_fkey"
             columns: ["restaurant_id"]
             isOneToOne: false
+            referencedRelation: "public_restaurants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gallery_images_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
             referencedRelation: "restaurants"
             referencedColumns: ["id"]
           },
@@ -154,6 +161,13 @@ export type Database = {
             foreignKeyName: "invoices_restaurant_id_fkey"
             columns: ["restaurant_id"]
             isOneToOne: false
+            referencedRelation: "public_restaurants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
             referencedRelation: "restaurants"
             referencedColumns: ["id"]
           },
@@ -200,6 +214,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "menu_items_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "public_restaurants"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "menu_items_restaurant_id_fkey"
             columns: ["restaurant_id"]
@@ -266,6 +287,13 @@ export type Database = {
             foreignKeyName: "orders_restaurant_id_fkey"
             columns: ["restaurant_id"]
             isOneToOne: false
+            referencedRelation: "public_restaurants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
             referencedRelation: "restaurants"
             referencedColumns: ["id"]
           },
@@ -323,6 +351,13 @@ export type Database = {
             foreignKeyName: "reservations_restaurant_id_fkey"
             columns: ["restaurant_id"]
             isOneToOne: false
+            referencedRelation: "public_restaurants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reservations_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
             referencedRelation: "restaurants"
             referencedColumns: ["id"]
           },
@@ -363,6 +398,13 @@ export type Database = {
           zone?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "restaurant_tables_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "public_restaurants"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "restaurant_tables_restaurant_id_fkey"
             columns: ["restaurant_id"]
@@ -507,6 +549,13 @@ export type Database = {
             foreignKeyName: "reviews_restaurant_id_fkey"
             columns: ["restaurant_id"]
             isOneToOne: false
+            referencedRelation: "public_restaurants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
             referencedRelation: "restaurants"
             referencedColumns: ["id"]
           },
@@ -535,7 +584,72 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_restaurants: {
+        Row: {
+          about_text: string | null
+          address: string | null
+          city: string | null
+          cuisine: string | null
+          description: string | null
+          font_family: string | null
+          hero_subtitle: string | null
+          hero_title: string | null
+          hours: string | null
+          id: string | null
+          logo_url: string | null
+          name: string | null
+          phone: string | null
+          primary_color: string | null
+          sections: Json | null
+          slug: string | null
+          social_links: Json | null
+          template: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          about_text?: string | null
+          address?: string | null
+          city?: string | null
+          cuisine?: string | null
+          description?: string | null
+          font_family?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          hours?: string | null
+          id?: string | null
+          logo_url?: string | null
+          name?: string | null
+          phone?: string | null
+          primary_color?: string | null
+          sections?: Json | null
+          slug?: string | null
+          social_links?: Json | null
+          template?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          about_text?: string | null
+          address?: string | null
+          city?: string | null
+          cuisine?: string | null
+          description?: string | null
+          font_family?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          hours?: string | null
+          id?: string | null
+          logo_url?: string | null
+          name?: string | null
+          phone?: string | null
+          primary_color?: string | null
+          sections?: Json | null
+          slug?: string | null
+          social_links?: Json | null
+          template?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       claim_super_admin: { Args: never; Returns: boolean }
