@@ -289,27 +289,37 @@ function LandingPage() {
         </section>
 
         {/* FEATURES */}
-        <section id="fonctionnalites" className="py-16 sm:py-28 px-4 sm:px-6">
+        <section id="fonctionnalites" className="py-12 sm:py-20 px-4 sm:px-6">
           <SectionHeader
             eyebrow="Tout ce qu'il vous faut"
             title={<>Une application web <span className="text-gradient-gold">complète</span> pour votre restaurant</>}
             desc="Menu digital, commandes en temps réel, gestion de cuisine, stocks, facturation, statistiques. Tout est inclus."
           />
-          <div className="max-w-6xl mx-auto mt-10 sm:mt-14 grid gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((f, i) => (
+          <div className="max-w-6xl mx-auto mt-8 sm:mt-12 grid gap-3 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {features.slice(0, 6).map((f, i) => (
               <Reveal key={f.title} delay={((i % 5) + 1) as 1 | 2 | 3 | 4 | 5}>
-              <article className="group relative h-full p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-white/8 bg-dark-card hover:bg-dark-card-hover hover:border-gold/30 transition-all hover:-translate-y-1 hover:shadow-gold overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-gold/0 to-gold/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="relative w-10 sm:w-14 h-10 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br from-gold/15 to-gold/5 flex items-center justify-center text-xl sm:text-2xl mb-3 sm:mb-5 group-hover:scale-110 transition-transform">
-                    {f.icon}
-                  </div>
-                  <h3 className="text-base sm:text-xl font-bold mb-1 sm:mb-2">{f.title}</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
-                </article>
-              </Reveal>
-            ))}
-          </div>
-        </section>
+                <article className="group relative h-full p-4 sm:p-7 rounded-2xl sm:rounded-3xl border border-white/8 bg-dark-card hover:bg-dark-card-hover hover:border-gold/30 transition-all hover:-translate-y-1 hover:shadow-gold overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-gold/0 to-gold/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="relative w-10 sm:w-14 h-10 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br from-gold/15 to-gold/5 flex items-center justify-center text-xl sm:text-2xl mb-3 sm:mb-5 group-hover:scale-110 transition-transform">
+                      {f.icon}
+                    </div>
+                    <h3 className="text-base sm:text-xl font-bold mb-1 sm:mb-2">{f.title}</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+                  </article>
+                </Reveal>
+              ))}
+            </div>
+            <div className="max-w-6xl mx-auto mt-6 sm:mt-8 text-center">
+              <p className="text-xs sm:text-sm text-muted-foreground mb-3">Et bien plus encore :</p>
+              <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+                {features.slice(6).map((f) => (
+                  <span key={f.title} className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[10px] sm:text-xs border border-white/10 bg-white/[0.02] text-muted-foreground">
+                    {f.icon} {f.title}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </section>
 
         {/* STEPS */}
         <section id="demo" className="py-16 sm:py-28 px-4 sm:px-6 bg-[#080810] border-y border-white/5">
