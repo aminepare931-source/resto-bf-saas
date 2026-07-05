@@ -271,8 +271,8 @@ export function TplNuit(props: TemplateProps) {
       </div>
 
       {/* HISTOIRE */}
-      <section id="histoire" className="py-24 px-5 sm:px-8">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 items-start">
+      <section id="histoire" className="py-14 sm:py-24 px-4 sm:px-8">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-8 sm:gap-12 items-start">
           <div className="lg:col-span-7">
             <p className="text-[10px] uppercase mb-4" style={{ color: theme.accent, letterSpacing: "0.45em" }}>— Notre maison —</p>
             <h2
@@ -305,13 +305,13 @@ export function TplNuit(props: TemplateProps) {
 
       {/* SIGNATURES */}
       {signatures.length > 0 && (
-        <section className="py-20 px-5 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
+        <section className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
           <div className="max-w-7xl mx-auto">
             <SectionHead kicker="— Signatures —" title="Les incontournables" theme={theme} serif />
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-4 sm:gap-6">
               {signatures.map((d) => (
                 <article key={d.id} className="group">
-                  <div className="aspect-[4/5] overflow-hidden" style={{ background: theme.surface }}>
+                  <div className="aspect-[3/4] sm:aspect-[4/5] overflow-hidden" style={{ background: theme.surface }}>
                     <StorageImage path={d.image_url} alt={d.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
                   </div>
                   <div className="mt-5 flex items-baseline justify-between gap-4">
@@ -329,7 +329,7 @@ export function TplNuit(props: TemplateProps) {
       )}
 
       {/* CARTE */}
-      <section id="carte" className="py-20 px-5 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
+      <section id="carte" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
         <div className="max-w-7xl mx-auto">
           <SectionHead kicker="— La carte —" title="Notre menu" theme={theme} serif />
           <MenuGrid menu={menu} theme={theme} />
@@ -338,7 +338,7 @@ export function TplNuit(props: TemplateProps) {
 
       {/* GALERIE */}
       {gallery.length > 0 && (
-        <section id="galerie" className="py-20 px-5 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
+        <section id="galerie" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
           <div className="max-w-7xl mx-auto">
             <SectionHead kicker="— Galerie —" title="L'ambiance" theme={theme} serif />
             <GalleryGrid gallery={gallery} theme={theme} />
@@ -348,7 +348,7 @@ export function TplNuit(props: TemplateProps) {
 
       {/* RESERVATION */}
       {features.can_reserve && (
-        <section id="reserver" className="py-20 px-5 sm:px-8" style={{ borderTop: `1px solid ${theme.border}`, background: theme.surfaceAlt }}>
+        <section id="reserver" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}`, background: theme.surfaceAlt }}>
           <div className="max-w-3xl mx-auto">
             <SectionHead kicker="— Réservation —" title="Réserver votre table" theme={theme} serif />
             <AdvancedReservationForm restaurantId={restaurant.id} restaurantName={restaurant.name} theme={theme} waLink={wa} />
@@ -357,11 +357,11 @@ export function TplNuit(props: TemplateProps) {
       )}
 
       {/* AVIS */}
-      <section id="avis" className="py-20 px-5 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
+      <section id="avis" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
         <div className="max-w-7xl mx-auto">
           <SectionHead kicker="— Ils en parlent —" title="Avis de nos clients" theme={theme} serif />
           <ReviewList reviews={reviews} theme={theme} />
-          <div className="mt-12 max-w-xl">
+          <div className="mt-10 sm:mt-12 max-w-xl">
             <h3 className="text-lg italic mb-4" style={{ fontFamily: "'Cormorant Garamond', serif", color: theme.text }}>
               Laissez votre avis
             </h3>
@@ -459,7 +459,7 @@ export function TplSoleil(props: TemplateProps) {
 
       {/* TOP STRIP */}
       <div style={{ background: theme.surfaceAlt, color: theme.text }} className="text-xs">
-        <div className="max-w-6xl mx-auto px-5 py-2 flex flex-wrap items-center justify-between gap-2">
+        <div className="max-w-6xl mx-auto px-4 sm:px-5 py-2 flex flex-wrap items-center justify-between gap-2">
           <div className="flex flex-wrap gap-x-5 gap-y-1">
             <span><strong>Tél :</strong> {restaurant.phone}</span>
             <span className="hidden sm:inline"><strong>Email :</strong> {restaurant.email}</span>
@@ -526,10 +526,10 @@ export function TplSoleil(props: TemplateProps) {
       {currentView === "home" && (
         <>
           {/* HERO card */}
-          <section id="home" className="px-5 pt-8 pb-12">
+          <section id="home" className="px-4 sm:px-5 pt-6 sm:pt-8 pb-10 sm:pb-12">
             <div className="max-w-6xl mx-auto rounded-[28px] overflow-hidden relative" style={{ background: heroOverlay }}>
               
-              <div className="relative grid lg:grid-cols-2 gap-6 p-8 sm:p-12 items-center">
+              <div className="relative grid lg:grid-cols-2 gap-4 sm:gap-6 p-6 sm:p-12 items-center">
                 <div>
                   <h1 className="font-black leading-[0.95]" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(2.5rem, 6vw, 4.5rem)", color: "#ffffff", textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}>
                     Délicieux instants<br/>pour <em style={{ color: theme.accent, fontStyle: "italic" }}>chaque goût</em>
@@ -746,9 +746,11 @@ export function TplSavane(props: TemplateProps) {
   const heroOverlay = "linear-gradient(135deg, rgba(200,40,30,0.92) 0%, rgba(200,40,30,0.85) 50%, rgba(200,40,30,0.78) 100%)";
 
   const [currentView, setCurrentView] = useState<"home" | "menu" | "about" | "reserve">("home");
+  const [mobOpen, setMobOpen] = useState(false);
 
   const goTo = (view: typeof currentView) => {
     setCurrentView(view);
+    setMobOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -784,16 +786,37 @@ export function TplSavane(props: TemplateProps) {
                 <button onClick={() => goTo("menu")} className={`hover:text-white ${currentView === "menu" ? "text-white" : ""}`}>Menu</button>
               </nav>
               {restaurant.plan !== "gratuit" && (
-                <button onClick={() => goTo("reserve")} className="px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition border-2 border-white" style={{ color: "#ffffff" }}>
+                <button onClick={() => goTo("reserve")} className="hidden md:block px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition border-2 border-white" style={{ color: "#ffffff" }}>
                   Réserver
                 </button>
               )}
-              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition" style={{ background: theme.accent, color: theme.accentInk }}>
+              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="hidden md:inline-flex px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition" style={{ background: theme.accent, color: theme.accentInk }}>
                 Commander
               </a>
+              <button
+                onClick={() => setMobOpen((v) => !v)}
+                className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-white/10 transition-colors"
+                aria-label="Menu"
+              >
+                <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
+                <span className={`block w-6 h-0.5 bg-current transition-opacity ${mobOpen ? "opacity-0" : ""}`} />
+                <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+              </button>
             </div>
           </div>
         </header>
+        {mobOpen && (
+          <nav className="md:hidden border-t border-white/10 bg-[#0e0e10]/95 backdrop-blur-xl">
+            <div className="flex flex-col px-4 py-4 gap-1">
+              <button onClick={() => goTo("home")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">Accueil</button>
+              <button onClick={() => goTo("about")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">À propos</button>
+              <button onClick={() => goTo("menu")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">Menu</button>
+              {restaurant.plan !== "gratuit" && (
+                <button onClick={() => goTo("reserve")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">Réserver</button>
+              )}
+            </div>
+          </nav>
+        )}
 
         {/* HOME VIEW */}
         {currentView === "home" && (
@@ -1053,9 +1076,11 @@ export function TplMarche(props: TemplateProps) {
   };
 
   const [currentView, setCurrentView] = useState<"home" | "menu" | "about" | "reserve">("home");
+  const [mobOpen, setMobOpen] = useState(false);
 
   const goTo = (view: typeof currentView) => {
     setCurrentView(view);
+    setMobOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -1242,9 +1267,11 @@ export function TplModerne(props: TemplateProps) {
   };
 
   const [currentView, setCurrentView] = useState<"home" | "menu" | "about" | "reserve">("home");
+  const [mobOpen, setMobOpen] = useState(false);
 
   const goTo = (view: typeof currentView) => {
     setCurrentView(view);
+    setMobOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -1278,10 +1305,19 @@ export function TplModerne(props: TemplateProps) {
               <button onClick={() => goTo("menu")} className={`hover:text-[#c9a35a] ${currentView === "menu" ? "text-[#c9a35a]" : ""}`}>Menu</button>
             </nav>
             {restaurant.plan !== "gratuit" && (
-              <button onClick={() => goTo("reserve")} className="px-5 py-2.5 border text-xs font-semibold hover:bg-[#c9a35a] hover:text-[#0e0e10] transition rounded-full" style={{ borderColor: theme.accent, color: theme.accent }}>
+              <button onClick={() => goTo("reserve")} className="hidden md:block px-5 py-2.5 border text-xs font-semibold hover:bg-[#c9a35a] hover:text-[#0e0e10] transition rounded-full" style={{ borderColor: theme.accent, color: theme.accent }}>
                 Réserver une table →
               </button>
             )}
+            <button
+              onClick={() => setMobOpen((v) => !v)}
+              className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-white/10 transition-colors"
+              aria-label="Menu"
+            >
+              <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
+              <span className={`block w-6 h-0.5 bg-current transition-opacity ${mobOpen ? "opacity-0" : ""}`} />
+              <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+            </button>
           </div>
         </div>
       </header>
