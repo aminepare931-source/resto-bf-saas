@@ -150,7 +150,7 @@ function LandingPage() {
 
       <main>
         {/* HERO */}
-        <section className="relative pt-32 pb-20 px-6 min-h-[100vh] flex items-center overflow-hidden">
+        <section className="relative pt-24 sm:pt-32 pb-16 sm:pb-20 px-4 sm:px-6 min-h-[90vh] sm:min-h-[100vh] flex items-center overflow-hidden">
           <div className="absolute inset-0 grid-bg opacity-60" aria-hidden="true" />
           <div
             className="absolute inset-0 opacity-40 pointer-events-none"
@@ -162,44 +162,44 @@ function LandingPage() {
           />
           <Particles count={8} />
 
-          <div className="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center w-full">
+          <div className="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 sm:gap-16 items-center w-full">
             <div>
               <Reveal>
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gold/30 bg-gold/5 text-xs font-semibold text-gold mb-6">
+                <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-gold/30 bg-gold/5 text-[10px] sm:text-xs font-semibold text-gold mb-4 sm:mb-6">
                   <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
                   Pour les restaurants, maquis & fast-foods
                 </div>
               </Reveal>
               <Reveal delay={1}>
-                <h1 className="text-5xl md:text-7xl font-black leading-[1.05] tracking-tight">
+                <h1 className="text-4xl sm:text-5xl md:text-7xl font-black leading-[1.05] tracking-tight">
                   Votre restaurant<br />
                   <span className="text-gradient-gold">en ligne en 5 minutes</span>
                 </h1>
               </Reveal>
               <Reveal delay={2}>
-                <p className="mt-6 text-lg text-muted-foreground max-w-xl leading-relaxed">
+                <p className="mt-4 sm:mt-6 text-base sm:text-lg text-muted-foreground max-w-xl leading-relaxed">
                   L'application web complète pour gérer votre restaurant : menu digital, commandes en temps réel,
                   gestion de cuisine, stocks, facturation et statistiques. <strong className="text-foreground">Tout-en-un, simple et puissant.</strong>
                 </p>
               </Reveal>
               <Reveal delay={3}>
-                <div className="mt-8 flex flex-wrap gap-3">
+                <div className="mt-6 sm:mt-8 flex flex-wrap gap-3">
                   <Link
                     to="/auth/inscription"
-                    className="inline-flex items-center px-7 py-4 rounded-2xl bg-gradient-gold text-[#0a0a0f] font-bold shadow-gold hover:-translate-y-0.5 transition-transform"
+                    className="inline-flex items-center px-5 sm:px-7 py-3 sm:py-4 rounded-2xl bg-gradient-gold text-[#0a0a0f] font-bold shadow-gold hover:-translate-y-0.5 transition-transform text-sm sm:text-base"
                   >
                     ✨ Créer ma page gratuite
                   </Link>
                   <a
                     href="#tarifs"
-                    className="inline-flex items-center px-7 py-4 rounded-2xl border border-white/10 hover:border-gold/40 hover:bg-white/[0.03] text-foreground font-semibold transition-colors"
+                    className="inline-flex items-center px-5 sm:px-7 py-3 sm:py-4 rounded-2xl border border-white/10 hover:border-gold/40 hover:bg-white/[0.03] text-foreground font-semibold transition-colors text-sm sm:text-base"
                   >
                     Voir les tarifs →
                   </a>
                 </div>
               </Reveal>
               <Reveal delay={4}>
-                <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+                <div className="mt-6 sm:mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs sm:text-sm text-muted-foreground">
                   <span className="inline-flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                     🔒 Sans carte bancaire
@@ -212,40 +212,40 @@ function LandingPage() {
             </div>
 
             {/* Mockup */}
-            <Reveal delay={2} className="lg:justify-self-end w-full max-w-md">
+            <Reveal delay={2} className="lg:justify-self-end w-full max-w-sm sm:max-w-md mx-auto lg:mx-0">
               <div className="relative">
-                <span className="absolute -top-3 -right-3 z-10 px-3 py-1 rounded-lg bg-gradient-gold text-[#0a0a0f] text-[10px] font-black uppercase tracking-wider shadow-gold">
+                <span className="absolute -top-3 -right-3 z-10 px-2 sm:px-3 py-1 rounded-lg bg-gradient-gold text-[#0a0a0f] text-[8px] sm:text-[10px] font-black uppercase tracking-wider shadow-gold">
                   Plan Premium
                 </span>
-                <div className="rounded-3xl border border-white/10 bg-dark-card overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
-                  <div className="flex gap-1.5 p-4 border-b border-white/5">
-                    <span className="w-3 h-3 rounded-full bg-red-500/60" />
-                    <span className="w-3 h-3 rounded-full bg-yellow-500/60" />
-                    <span className="w-3 h-3 rounded-full bg-green-500/60" />
+                <div className="rounded-2xl sm:rounded-3xl border border-white/10 bg-dark-card overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
+                  <div className="flex gap-1.5 p-3 sm:p-4 border-b border-white/5">
+                    <span className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-red-500/60" />
+                    <span className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-yellow-500/60" />
+                    <span className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-green-500/60" />
                   </div>
-                  <div className="p-5">
-                    <div className="flex items-center gap-3 mb-5">
-                      <span className="w-10 h-10 rounded-xl bg-gradient-gold flex items-center justify-center font-black text-[#0a0a0f]">
+                  <div className="p-3 sm:p-5">
+                    <div className="flex items-center gap-3 mb-4 sm:mb-5">
+                      <span className="w-8 sm:w-10 h-8 sm:h-10 rounded-xl bg-gradient-gold flex items-center justify-center font-black text-[#0a0a0f] text-sm sm:text-base">
                         R
                       </span>
-                      <strong className="text-base">Maquis Le Karité</strong>
+                      <strong className="text-sm sm:text-base">Maquis Le Karité</strong>
                     </div>
                     {[
                       { name: "Poulet braisé royal", price: "3 000 FCFA", emoji: "🍗" },
                       { name: "Poisson grillé Airfryer", price: "4 500 FCFA", emoji: "🐟" },
                       { name: "Brochettes de bœuf & frites", price: "3 500 FCFA", emoji: "🥩" },
                     ].map((d) => (
-                      <div key={d.name} className="flex items-center gap-3 py-3 border-t border-white/5 first:border-t-0">
-                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-gold/20 to-gold/5 flex items-center justify-center text-2xl">
+                      <div key={d.name} className="flex items-center gap-2 sm:gap-3 py-2 sm:py-3 border-t border-white/5 first:border-t-0">
+                        <div className="w-10 sm:w-14 h-10 sm:h-14 rounded-xl bg-gradient-to-br from-gold/20 to-gold/5 flex items-center justify-center text-lg sm:text-2xl shrink-0">
                           {d.emoji}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <strong className="block text-sm truncate">{d.name}</strong>
-                          <span className="text-xs text-gold font-bold">{d.price}</span>
+                          <strong className="block text-xs sm:text-sm truncate">{d.name}</strong>
+                          <span className="text-[11px] sm:text-xs text-gold font-bold">{d.price}</span>
                         </div>
                       </div>
                     ))}
-                    <button className="mt-4 w-full py-3 rounded-xl bg-[#25D366] text-white font-bold text-sm hover:opacity-90 transition-opacity">
+                    <button className="mt-3 sm:mt-4 w-full py-2.5 sm:py-3 rounded-xl bg-[#25D366] text-white font-bold text-xs sm:text-sm hover:opacity-90 transition-opacity">
                       📱 Commander sur WhatsApp
                     </button>
                   </div>
@@ -256,13 +256,13 @@ function LandingPage() {
         </section>
 
         {/* STATS */}
-        <section className="relative border-y border-white/5 bg-[#080810] py-12 px-6 overflow-hidden">
+        <section className="relative border-y border-white/5 bg-[#080810] py-10 sm:py-12 px-4 sm:px-6 overflow-hidden">
           <div
             className="absolute inset-0 opacity-30 pointer-events-none"
             style={{ background: "radial-gradient(ellipse at center, rgba(212,168,83,0.15), transparent 70%)" }}
             aria-hidden="true"
           />
-          <div className="relative max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div className="relative max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 text-center">
             {[
               { n: 5, suffix: "", label: "Minutes pour créer sa page" },
               { n: 30, suffix: " jours", label: "Essai gratuit offert" },
@@ -271,17 +271,17 @@ function LandingPage() {
             ].map((s, i) => (
               <Reveal key={s.label} delay={(i + 1) as 1 | 2 | 3 | 4}>
                 <div>
-                  <div className="text-3xl md:text-4xl font-black text-gradient-gold">
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-black text-gradient-gold">
                     <Counter target={s.n} suffix={s.suffix} />
                   </div>
-                  <div className="mt-2 text-xs text-muted-foreground">{s.label}</div>
+                  <div className="mt-1 sm:mt-2 text-[11px] sm:text-xs text-muted-foreground">{s.label}</div>
                 </div>
               </Reveal>
             ))}
           </div>
-          <div className="relative mt-8 flex flex-wrap justify-center gap-3 max-w-5xl mx-auto">
+          <div className="relative mt-6 sm:mt-8 flex flex-wrap justify-center gap-2 sm:gap-3 max-w-5xl mx-auto px-2">
             {["📱 Orange Money", "📱 Moov Money", "🇧🇫 Made in Burkina", "🔒 Sans engagement", "⚡ Installation offerte"].map((b) => (
-              <span key={b} className="px-3 py-1.5 rounded-full text-xs border border-white/10 bg-white/[0.02] text-muted-foreground">
+              <span key={b} className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs border border-white/10 bg-white/[0.02] text-muted-foreground">
                 {b}
               </span>
             ))}
@@ -289,22 +289,22 @@ function LandingPage() {
         </section>
 
         {/* FEATURES */}
-        <section id="fonctionnalites" className="py-28 px-6">
+        <section id="fonctionnalites" className="py-16 sm:py-28 px-4 sm:px-6">
           <SectionHeader
             eyebrow="Tout ce qu'il vous faut"
             title={<>Une application web <span className="text-gradient-gold">complète</span> pour votre restaurant</>}
             desc="Menu digital, commandes en temps réel, gestion de cuisine, stocks, facturation, statistiques. Tout est inclus."
           />
-          <div className="max-w-6xl mx-auto mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="max-w-6xl mx-auto mt-10 sm:mt-14 grid gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f, i) => (
               <Reveal key={f.title} delay={((i % 5) + 1) as 1 | 2 | 3 | 4 | 5}>
-              <article className="group relative h-full p-7 rounded-3xl border border-white/8 bg-dark-card hover:bg-dark-card-hover hover:border-gold/30 transition-all hover:-translate-y-1 hover:shadow-gold overflow-hidden">
+              <article className="group relative h-full p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-white/8 bg-dark-card hover:bg-dark-card-hover hover:border-gold/30 transition-all hover:-translate-y-1 hover:shadow-gold overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-gold/0 to-gold/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-gold/15 to-gold/5 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">
+                  <div className="relative w-10 sm:w-14 h-10 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br from-gold/15 to-gold/5 flex items-center justify-center text-xl sm:text-2xl mb-3 sm:mb-5 group-hover:scale-110 transition-transform">
                     {f.icon}
                   </div>
-                  <h3 className="text-xl font-bold mb-2">{f.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+                  <h3 className="text-base sm:text-xl font-bold mb-1 sm:mb-2">{f.title}</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
                 </article>
               </Reveal>
             ))}
@@ -312,21 +312,21 @@ function LandingPage() {
         </section>
 
         {/* STEPS */}
-        <section id="demo" className="py-28 px-6 bg-[#080810] border-y border-white/5">
+        <section id="demo" className="py-16 sm:py-28 px-4 sm:px-6 bg-[#080810] border-y border-white/5">
           <SectionHeader
             eyebrow="Simple et rapide"
             title={<>Comment <span className="text-gradient-gold">ça marche</span></>}
             desc="Trois étapes pour accéder à votre application web complète."
           />
-          <div className="max-w-5xl mx-auto mt-16 grid gap-8 md:grid-cols-3">
+          <div className="max-w-5xl mx-auto mt-10 sm:mt-16 grid gap-6 sm:gap-8 sm:grid-cols-3">
             {steps.map((s, i) => (
               <Reveal key={s.n} delay={((i * 2) + 1) as 1 | 3 | 5}>
-                <div className="relative text-center px-4">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-gold text-[#0a0a0f] text-2xl font-black shadow-gold mb-5">
+                <div className="relative text-center px-2 sm:px-4">
+                  <div className="inline-flex items-center justify-center w-12 sm:w-16 h-12 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-gold text-[#0a0a0f] text-lg sm:text-2xl font-black shadow-gold mb-3 sm:mb-5">
                     {s.n}
                   </div>
-                  <h3 className="text-xl font-bold mb-2">{s.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
+                  <h3 className="text-base sm:text-xl font-bold mb-1 sm:mb-2">{s.title}</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -334,31 +334,31 @@ function LandingPage() {
         </section>
 
         {/* TESTIMONIALS */}
-        <section id="avis" className="py-28 px-6">
+        <section id="avis" className="py-16 sm:py-28 px-4 sm:px-6">
           <SectionHeader
             eyebrow="Ils nous font confiance"
             title={<>Des restaurateurs qui en parlent <span className="text-gradient-gold">mieux que nous</span></>}
             desc="Découvrez ce que disent les restaurateurs qui utilisent déjà Resto BF au quotidien."
           />
-          <div className="max-w-6xl mx-auto mt-14 grid gap-6 md:grid-cols-3">
+          <div className="max-w-6xl mx-auto mt-10 sm:mt-14 grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {testimonials.map((t, i) => (
               <Reveal key={t.name} delay={(i + 1) as 1 | 2 | 3}>
-                <article className="relative h-full p-7 rounded-3xl border border-white/8 bg-dark-card">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="text-gold text-sm tracking-widest">★★★★★</div>
-                    <span className="text-xs text-muted-foreground">Avis vérifié</span>
+                <article className="relative h-full p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-white/8 bg-dark-card">
+                  <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                    <div className="text-gold text-xs sm:text-sm tracking-widest">★★★★★</div>
+                    <span className="text-[10px] sm:text-xs text-muted-foreground">Avis vérifié</span>
                   </div>
-                  <p className="text-foreground/90 leading-relaxed text-[15px]">"{t.text}"</p>
-                  <div className="mt-6 flex items-center gap-3 pt-5 border-t border-white/5">
+                  <p className="text-foreground/90 leading-relaxed text-sm sm:text-[15px]">"{t.text}"</p>
+                  <div className="mt-4 sm:mt-6 flex items-center gap-3 pt-4 sm:pt-5 border-t border-white/5">
                     <div
-                      className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-white text-sm"
+                      className="w-9 sm:w-11 h-9 sm:h-11 rounded-full flex items-center justify-center font-bold text-white text-xs sm:text-sm shrink-0"
                       style={{ background: t.color }}
                     >
                       {t.avatar}
                     </div>
-                    <div>
-                      <strong className="block text-sm">{t.name}</strong>
-                      <span className="text-xs text-muted-foreground">{t.role}</span>
+                    <div className="min-w-0">
+                      <strong className="block text-xs sm:text-sm truncate">{t.name}</strong>
+                      <span className="text-[10px] sm:text-xs text-muted-foreground truncate block">{t.role}</span>
                     </div>
                   </div>
                 </article>
@@ -368,17 +368,17 @@ function LandingPage() {
         </section>
 
         {/* PRICING */}
-        <section id="tarifs" className="py-28 px-6">
+        <section id="tarifs" className="py-16 sm:py-28 px-4 sm:px-6">
           <SectionHeader
             eyebrow="Prix transparents"
             title={<>Nos <span className="text-gradient-gold">abonnements</span></>}
             desc="Pas de frais cachés. Pas de commission sur vos ventes. Annulation à tout moment."
           />
-          <div className="max-w-7xl mx-auto mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="max-w-7xl mx-auto mt-10 sm:mt-14 grid gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {plans.map((p, i) => (
               <Reveal key={p.name} delay={((i % 4) + 1) as 1 | 2 | 3 | 4}>
                 <div
-                  className={`relative h-full p-8 rounded-3xl border transition-all hover:-translate-y-1 ${
+                  className={`relative h-full p-6 sm:p-8 rounded-2xl sm:rounded-3xl border transition-all hover:-translate-y-1 ${
                     p.popular
                       ? "border-gold bg-gradient-to-b from-gold/10 to-transparent shadow-gold scale-[1.02]"
                       : "border-white/10 bg-dark-card hover:border-gold/30"
@@ -386,20 +386,20 @@ function LandingPage() {
                   style={p.popular ? { boxShadow: "0 0 40px rgba(212,168,83,0.15)" } : {}}
                 >
                   {p.popular && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-gradient-gold text-[#0a0a0f] shadow-gold">
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-2 sm:px-3 py-1 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-wider bg-gradient-gold text-[#0a0a0f] shadow-gold whitespace-nowrap">
                       Populaire
                     </span>
                   )}
-                  <h3 className="text-xl font-bold">{p.name}</h3>
-                  <div className="mt-4 flex items-baseline gap-1">
-                    <span className="text-5xl font-black text-gradient-gold">{p.price}</span>
-                    <small className="text-sm text-muted-foreground font-semibold">{p.unit}</small>
+                  <h3 className="text-lg sm:text-xl font-bold">{p.name}</h3>
+                  <div className="mt-3 sm:mt-4 flex items-baseline gap-1">
+                    <span className="text-3xl sm:text-5xl font-black text-gradient-gold">{p.price}</span>
+                    <small className="text-xs sm:text-sm text-muted-foreground font-semibold">{p.unit}</small>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">{p.period}</p>
-                  <ul className="mt-6 space-y-3 text-sm">
+                  <p className="text-[11px] sm:text-xs text-muted-foreground mt-1">{p.period}</p>
+                  <ul className="mt-4 sm:mt-6 space-y-2 sm:space-y-3 text-xs sm:text-sm">
                     {p.features.map((f) => (
                       <li key={f} className="flex items-start gap-2">
-                        <span className="text-gold mt-0.5">✓</span>
+                        <span className="text-gold mt-0.5 shrink-0">✓</span>
                         <span className="text-foreground/85">{f}</span>
                       </li>
                     ))}
@@ -407,7 +407,7 @@ function LandingPage() {
                   <Link
                     to={p.href}
                     search={{ plan: p.plan }}
-                    className={`mt-8 inline-flex w-full items-center justify-center px-5 py-3 rounded-xl font-bold text-sm transition-all ${
+                    className={`mt-6 sm:mt-8 inline-flex w-full items-center justify-center px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm transition-all ${
                       p.popular
                         ? "bg-gradient-gold text-[#0a0a0f] hover:shadow-gold"
                         : "border border-white/10 hover:border-gold/40 hover:bg-white/[0.03]"
@@ -422,15 +422,15 @@ function LandingPage() {
 
           {/* SUR MESURE */}
           <Reveal>
-            <div className="max-w-7xl mx-auto mt-8 p-8 lg:p-10 rounded-3xl border-2 border-gold/30 bg-gradient-to-br from-gold/10 via-transparent to-transparent grid lg:grid-cols-[1fr_auto] gap-6 items-center">
+            <div className="max-w-7xl mx-auto mt-6 sm:mt-8 p-6 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl border-2 border-gold/30 bg-gradient-to-br from-gold/10 via-transparent to-transparent grid lg:grid-cols-[1fr_auto] gap-4 sm:gap-6 items-center">
               <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">
+                <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-1 sm:mb-2">
                   💎 Offre Sur Mesure
                 </p>
-                <h3 className="text-2xl md:text-3xl font-black">
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-black">
                   Un site 100% personnalisé pour votre restaurant
                 </h3>
-                <p className="mt-3 text-muted-foreground max-w-2xl">
+                <p className="mt-2 sm:mt-3 text-sm sm:text-base text-muted-foreground max-w-2xl">
                   Nom de domaine personnalisé, design unique, fonctionnalités spécifiques
                   selon vos besoins. À partir de <strong className="text-gold">250 000 FCFA</strong>.
                 </p>
@@ -439,7 +439,7 @@ function LandingPage() {
                 href="https://wa.me/22655300868?text=Bonjour%2C%20je%20souhaite%20une%20offre%20sur%20mesure%20Resto%20BF"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center justify-center px-7 py-4 rounded-2xl bg-gradient-gold text-[#0a0a0f] font-bold shadow-gold hover:-translate-y-0.5 transition-transform whitespace-nowrap"
+                className="inline-flex items-center justify-center px-5 sm:px-7 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-gold text-[#0a0a0f] font-bold shadow-gold hover:-translate-y-0.5 transition-transform whitespace-nowrap text-sm sm:text-base"
               >
                 Demander une offre sur mesure →
               </a>
@@ -448,24 +448,24 @@ function LandingPage() {
         </section>
 
         {/* FAQ */}
-        <section id="faq" className="py-28 px-6 bg-[#080810] border-y border-white/5">
+        <section id="faq" className="py-16 sm:py-28 px-4 sm:px-6 bg-[#080810] border-y border-white/5">
           <SectionHeader
             eyebrow="Questions fréquentes"
             title={<>On répond à vos <span className="text-gradient-gold">questions</span></>}
             desc="Les réponses aux questions que les restaurateurs nous posent le plus souvent."
           />
-          <div className="max-w-3xl mx-auto mt-14 space-y-3">
+          <div className="max-w-3xl mx-auto mt-10 sm:mt-14 space-y-3">
             {faqs.map((f, i) => (
               <Reveal key={f.q} delay={((i % 4) + 1) as 1 | 2 | 3 | 4}>
                 <details
-                  className="group rounded-2xl border border-white/8 bg-dark-card open:border-gold/30 transition-colors"
+                  className="group rounded-xl sm:rounded-2xl border border-white/8 bg-dark-card open:border-gold/30 transition-colors"
                   open={i === 0}
                 >
-                  <summary className="cursor-pointer list-none p-5 flex items-center justify-between gap-4 text-base font-semibold">
+                  <summary className="cursor-pointer list-none p-4 sm:p-5 flex items-center justify-between gap-4 text-sm sm:text-base font-semibold">
                     {f.q}
-                    <span className="text-gold text-xl transition-transform group-open:rotate-45">+</span>
+                    <span className="text-gold text-lg sm:text-xl transition-transform group-open:rotate-45 shrink-0">+</span>
                   </summary>
-                  <p className="px-5 pb-5 text-sm text-muted-foreground leading-relaxed">{f.a}</p>
+                  <p className="px-4 sm:px-5 pb-4 sm:pb-5 text-xs sm:text-sm text-muted-foreground leading-relaxed">{f.a}</p>
                 </details>
               </Reveal>
             ))}
@@ -473,7 +473,7 @@ function LandingPage() {
         </section>
 
         {/* CTA */}
-        <section id="contact" className="relative py-28 px-6 overflow-hidden">
+        <section id="contact" className="relative py-16 sm:py-28 px-4 sm:px-6 overflow-hidden">
           <div
             className="absolute inset-0 opacity-40 pointer-events-none"
             style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(212,168,83,0.18), transparent 70%)" }}
@@ -481,25 +481,25 @@ function LandingPage() {
           />
           <Reveal>
             <div className="relative max-w-3xl mx-auto text-center">
-              <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">On discute ?</p>
-              <h2 className="text-4xl md:text-5xl font-black">
+              <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2 sm:mb-3">On discute ?</p>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black">
                 Vous avez des <span className="text-gradient-gold">questions</span> ?
               </h2>
-              <p className="mt-4 text-muted-foreground">
+              <p className="mt-3 sm:mt-4 text-sm sm:text-base text-muted-foreground">
                 Envoyez-nous un message sur WhatsApp, on vous répond en 5 minutes.
               </p>
-              <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <div className="mt-6 sm:mt-8 flex flex-wrap justify-center gap-3">
                 <a
                   href="https://wa.me/22655300868"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center px-7 py-4 rounded-2xl bg-gradient-gold text-[#0a0a0f] font-bold shadow-gold hover:-translate-y-0.5 transition-transform"
+                  className="inline-flex items-center px-5 sm:px-7 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-gold text-[#0a0a0f] font-bold shadow-gold hover:-translate-y-0.5 transition-transform text-sm sm:text-base"
                 >
                   💬 Nous écrire sur WhatsApp
                 </a>
                 <a
                   href="tel:+22655300868"
-                  className="inline-flex items-center px-7 py-4 rounded-2xl border border-white/10 hover:border-gold/40 hover:bg-white/[0.03] font-semibold transition-colors"
+                  className="inline-flex items-center px-5 sm:px-7 py-3 sm:py-4 rounded-xl sm:rounded-2xl border border-white/10 hover:border-gold/40 hover:bg-white/[0.03] font-semibold transition-colors text-sm sm:text-base"
                 >
                   📞 +226 55 30 08 68
                 </a>
@@ -526,9 +526,9 @@ function SectionHeader({
   return (
     <Reveal>
       <div className="text-center max-w-3xl mx-auto">
-        <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">{eyebrow}</p>
-        <h2 className="text-4xl md:text-5xl font-black leading-tight">{title}</h2>
-        <p className="mt-4 text-muted-foreground">{desc}</p>
+        <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2 sm:mb-3">{eyebrow}</p>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black leading-tight">{title}</h2>
+        <p className="mt-2 sm:mt-4 text-sm sm:text-base text-muted-foreground">{desc}</p>
       </div>
     </Reveal>
   );
