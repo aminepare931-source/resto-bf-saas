@@ -312,21 +312,21 @@ function LandingPage() {
           </section>
 
         {/* STEPS */}
-        <section id="demo" className="py-16 sm:py-28 px-4 sm:px-6 bg-[#080810] border-y border-white/5">
+        <section id="demo" className="py-12 sm:py-28 px-4 sm:px-6 bg-[#080810] border-y border-white/5">
           <SectionHeader
             eyebrow="Simple et rapide"
             title={<>Comment <span className="text-gradient-gold">ça marche</span></>}
             desc="Trois étapes pour accéder à votre application web complète."
           />
-          <div className="max-w-5xl mx-auto mt-10 sm:mt-16 grid gap-6 sm:gap-8 sm:grid-cols-3">
+          <div className="max-w-5xl mx-auto mt-8 sm:mt-16 grid gap-4 sm:gap-8 grid-cols-2 sm:grid-cols-3">
             {steps.map((s, i) => (
               <Reveal key={s.n} delay={((i * 2) + 1) as 1 | 3 | 5}>
                 <div className="relative text-center px-2 sm:px-4">
-                  <div className="inline-flex items-center justify-center w-12 sm:w-16 h-12 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-gold text-[#0a0a0f] text-lg sm:text-2xl font-black shadow-gold mb-3 sm:mb-5">
+                  <div className="inline-flex items-center justify-center w-10 sm:w-16 h-10 sm:h-16 rounded-lg sm:rounded-2xl bg-gradient-gold text-[#0a0a0f] text-base sm:text-2xl font-black shadow-gold mb-2 sm:mb-5">
                     {s.n}
                   </div>
-                  <h3 className="text-base sm:text-xl font-bold mb-1 sm:mb-2">{s.title}</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
+                  <h3 className="text-xs sm:text-xl font-bold mb-1 sm:mb-2 leading-tight">{s.title}</h3>
+                  <p className="text-[10px] sm:text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -334,31 +334,31 @@ function LandingPage() {
         </section>
 
         {/* TESTIMONIALS */}
-        <section id="avis" className="py-16 sm:py-28 px-4 sm:px-6">
+        <section id="avis" className="py-12 sm:py-28 px-4 sm:px-6">
           <SectionHeader
             eyebrow="Ils nous font confiance"
             title={<>Des restaurateurs qui en parlent <span className="text-gradient-gold">mieux que nous</span></>}
             desc="Découvrez ce que disent les restaurateurs qui utilisent déjà Resto BF au quotidien."
           />
-          <div className="max-w-6xl mx-auto mt-10 sm:mt-14 grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="max-w-6xl mx-auto mt-8 sm:mt-14 grid gap-3 sm:gap-6 grid-cols-2 sm:grid-cols-2 lg:grid-cols-3">
             {testimonials.map((t, i) => (
               <Reveal key={t.name} delay={(i + 1) as 1 | 2 | 3}>
-                <article className="relative h-full p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-white/8 bg-dark-card">
-                  <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                    <div className="text-gold text-xs sm:text-sm tracking-widest">★★★★★</div>
-                    <span className="text-[10px] sm:text-xs text-muted-foreground">Avis vérifié</span>
+                <article className="relative h-full p-3 sm:p-7 rounded-2xl sm:rounded-3xl border border-white/8 bg-dark-card">
+                  <div className="flex items-center gap-1.5 mb-2 sm:mb-3">
+                    <div className="text-gold text-[10px] sm:text-sm tracking-widest">★★★★★</div>
+                    <span className="text-[9px] sm:text-xs text-muted-foreground">Avis vérifié</span>
                   </div>
-                  <p className="text-foreground/90 leading-relaxed text-sm sm:text-[15px]">"{t.text}"</p>
-                  <div className="mt-4 sm:mt-6 flex items-center gap-3 pt-4 sm:pt-5 border-t border-white/5">
+                  <p className="text-foreground/90 leading-relaxed text-xs sm:text-[15px]">"{t.text}"</p>
+                  <div className="mt-3 sm:mt-6 flex items-center gap-2 sm:gap-3 pt-3 sm:pt-5 border-t border-white/5">
                     <div
-                      className="w-9 sm:w-11 h-9 sm:h-11 rounded-full flex items-center justify-center font-bold text-white text-xs sm:text-sm shrink-0"
+                      className="w-7 sm:w-11 h-7 sm:h-11 rounded-full flex items-center justify-center font-bold text-white text-[10px] sm:text-sm shrink-0"
                       style={{ background: t.color }}
                     >
                       {t.avatar}
                     </div>
                     <div className="min-w-0">
-                      <strong className="block text-xs sm:text-sm truncate">{t.name}</strong>
-                      <span className="text-[10px] sm:text-xs text-muted-foreground truncate block">{t.role}</span>
+                      <strong className="block text-[10px] sm:text-sm truncate">{t.name}</strong>
+                      <span className="text-[9px] sm:text-xs text-muted-foreground truncate block">{t.role}</span>
                     </div>
                   </div>
                 </article>
