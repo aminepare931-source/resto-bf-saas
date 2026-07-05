@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Plus, AlertTriangle, Package, TrendingDown, RefreshCw, Search } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import { StockCardSkeleton, KpiCardSkeleton } from "@/components/ui/Skeleton";
+import { StockCardSkeleton, KpiCardSkeleton } from "@/components/ui/skeleton";
 import type { StockItem } from "@/types";
 
 export const Route = createFileRoute("/_authenticated/dashboard/stocks")({

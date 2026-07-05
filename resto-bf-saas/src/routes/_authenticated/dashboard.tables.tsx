@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Plus, Users, Clock, CheckCircle, XCircle, RefreshCw } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import { KpiCardSkeleton } from "@/components/ui/Skeleton";
+import { KpiCardSkeleton } from "@/components/ui/skeleton";
 import type { RestaurantTable, TableStatus } from "@/types";
 import { TABLE_STATUS_LABEL } from "@/types";
 

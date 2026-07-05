@@ -7,7 +7,7 @@ import { useStaffRole } from "@/hooks/use-staff-role";
 import { UserPlus, Trash2, Shield, ChefHat, User, Eye, EyeOff, Copy, Pencil } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import { StaffCardSkeleton } from "@/components/ui/Skeleton";
+import { StaffCardSkeleton } from "@/components/ui/skeleton";
 import type { StaffMember, StaffRole } from "@/types";
 
 export const Route = createFileRoute("/_authenticated/dashboard/staff")({

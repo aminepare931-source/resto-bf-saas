@@ -5,7 +5,7 @@ import { useMyRestaurant } from "@/hooks/use-my-restaurant";
 import { useDebounce } from "@/hooks/use-debounce";
 import { toast } from "sonner";
 import { Search, Filter, Clock, ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
-import { OrderCardSkeleton } from "@/components/ui/Skeleton";
+import { OrderCardSkeleton } from "@/components/ui/skeleton";
 import type { Order, OrderStatus } from "@/types";
 import { ORDER_STATUS_LABEL, ORDER_STATUS_COLOR, ORDER_NEXT_STATUS, formatCurrency, formatDate } from "@/types";
 
