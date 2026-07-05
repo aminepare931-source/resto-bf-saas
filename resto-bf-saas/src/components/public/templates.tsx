@@ -153,6 +153,7 @@ export function TplNuit(props: TemplateProps) {
   const cover = pickCover(gallery, menu);
   const signatures = signatureDishes(menu, 3);
   const rating = avgRating(reviews);
+  const [mobOpen, setMobOpen] = useState(false);
 
   const theme: Theme = {
     bg: "#0a0907",
@@ -172,7 +173,7 @@ export function TplNuit(props: TemplateProps) {
 
       {/* NAV */}
       <header className="absolute top-0 inset-x-0 z-30">
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 py-6 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 py-6 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <span className="w-6 h-px shrink-0" style={{ background: theme.accent }} />
             <span
@@ -188,7 +189,26 @@ export function TplNuit(props: TemplateProps) {
             <a href="#galerie" className="hover:text-[#c9a35a] transition-colors">Galerie</a>
             <a href="#reserver" className="hover:text-[#c9a35a] transition-colors">Réserver</a>
           </nav>
+          <button
+            onClick={() => setMobOpen((v) => !v)}
+            className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-white/5 transition-colors"
+            aria-label="Menu"
+          >
+            <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
+            <span className={`block w-6 h-0.5 bg-current transition-opacity ${mobOpen ? "opacity-0" : ""}`} />
+            <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+          </button>
         </div>
+        {mobOpen && (
+          <nav className="md:hidden border-t border-white/10 bg-[#0a0907]/95 backdrop-blur-xl">
+            <div className="flex flex-col px-4 py-4 gap-1">
+              <a href="#histoire" onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Histoire</a>
+              <a href="#carte" onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Carte</a>
+              <a href="#galerie" onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Galerie</a>
+              <a href="#reserver" onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Réserver</a>
+            </div>
+          </nav>
+        )}
       </header>
 
       {/* HERO */}
