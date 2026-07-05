@@ -426,6 +426,7 @@ export function TplSoleil(props: TemplateProps) {
   const popular = (activeTab ? menu.filter((m) => m.available && m.category === activeTab) : menu.filter((m) => m.available)).slice(0, 8);
   
   const [currentView, setCurrentView] = useState<"home" | "menu" | "about" | "reserve">("home");
+  const [mobOpen, setMobOpen] = useState(false);
 
   const theme: Theme = {
     bg: "#fbf3e6",
@@ -469,8 +470,8 @@ export function TplSoleil(props: TemplateProps) {
 
       {/* NAV */}
       <header className="sticky top-0 z-30 backdrop-blur" style={{ background: "rgba(251,243,230,0.95)", borderBottom: `1px solid ${theme.border}` }}>
-        <div className="max-w-6xl mx-auto px-5 py-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
-          <div className="min-w-0 flex items-center gap-3">
+        <div className="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
             {restaurant.logo_url ? (
               <img src={restaurant.logo_url} alt={restaurant.name} className="h-10 w-auto object-contain rounded" />
             ) : null}
@@ -488,15 +489,37 @@ export function TplSoleil(props: TemplateProps) {
               <button onClick={() => goTo("about")} className={`hover:text-[#c7522a] transition ${currentView === "about" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}>À propos</button>
             </nav>
             {restaurant.plan !== "gratuit" && (
-              <button onClick={() => goTo("reserve")} className="px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition border-2 border-white" style={{ color: "#ffffff" }}>
+              <button onClick={() => goTo("reserve")} className="hidden md:block px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition border-2 border-white" style={{ color: "#ffffff" }}>
                 Réserver
               </button>
             )}
-            <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full grid place-items-center text-base hover:scale-105 transition" style={{ background: theme.accent, color: theme.accentInk }} aria-label="Commander">
+            <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="hidden md:flex w-10 h-10 rounded-full grid place-items-center text-base hover:scale-105 transition" style={{ background: theme.accent, color: theme.accentInk }} aria-label="Commander">
               🛒
             </a>
+            <button
+              onClick={() => setMobOpen((v) => !v)}
+              className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-black/5 transition-colors"
+              aria-label="Menu"
+            >
+              <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
+              <span className={`block w-6 h-0.5 bg-current transition-opacity ${mobOpen ? "opacity-0" : ""}`} />
+              <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+            </button>
           </div>
         </div>
+        {mobOpen && (
+          <nav className="md:hidden border-t border-black/10 bg-white/95 backdrop-blur-xl">
+            <div className="flex flex-col px-4 py-4 gap-1">
+              <button onClick={() => goTo("home")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">Accueil</button>
+              <button onClick={() => goTo("menu")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">Menu</button>
+              <button onClick={() => goTo("about")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">À propos</button>
+              {restaurant.plan !== "gratuit" && (
+                <button onClick={() => goTo("reserve")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">Réserver</button>
+              )}
+              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors">🛒 Commander</a>
+            </div>
+          </nav>
+        )}
       </header>
 
       {/* HOME VIEW */}
