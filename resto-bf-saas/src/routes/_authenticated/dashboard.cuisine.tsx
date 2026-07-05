@@ -5,7 +5,7 @@ import { useMyRestaurant } from "@/hooks/use-my-restaurant";
 import { useRealtimeSubscription, useNotificationSound } from "@/hooks/use-realtime";
 import { toast } from "sonner";
 import { Clock, ChefHat, Bell, RefreshCw } from "lucide-react";
-import { OrderCardSkeleton } from "@/components/ui/Skeleton";
+import { OrderCardSkeleton } from "@/components/ui/skeleton";
 import type { Order, OrderStatus } from "@/types";
 import { formatCurrency } from "@/types";
 
