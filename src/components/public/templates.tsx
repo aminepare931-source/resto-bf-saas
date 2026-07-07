@@ -1,4 +1,4 @@
-import * as React from "react";
+ n'eimport * as React from "react";
 import type { TemplateProps, PublicMenuItem, PublicGalleryImage, Theme } from "./shared";
 import {
   MenuGrid,
@@ -333,6 +333,27 @@ export function TplNuit(props: TemplateProps) {
         <div className="max-w-7xl mx-auto">
           <SectionHead kicker="— La carte —" title="Notre menu" theme={theme} serif />
           <MenuGrid menu={menu} theme={theme} />
+        </div>
+      </section>
+
+      {/* SECTION PREMIUM - Menu Dégustation */}
+      <section className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}`, background: theme.surfaceAlt }}>
+        <div className="max-w-5xl mx-auto">
+          <SectionHead kicker="— Expérience gastronomique —" title="Menu Dégustation" theme={theme} serif />
+          <div className="grid md:grid-cols-2 gap-6 mt-10">
+            <div className="p-8 rounded-2xl" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
+              <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: theme.accent }}>Menu Étoilé</p>
+              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Cormorant Garamond', serif" }}>7 services</h3>
+              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Une expérience culinaire complète avec accord mets-vins</p>
+              <p className="text-3xl font-black" style={{ color: theme.accent }}>35 000 F</p>
+            </div>
+            <div className="p-8 rounded-2xl" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
+              <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: theme.accent }}>Menu Découverte</p>
+              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Cormorant Garamond', serif" }}>5 services</h3>
+              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Nos meilleures créations en format découverte</p>
+              <p className="text-3xl font-black" style={{ color: theme.accent }}>25 000 F</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -677,6 +698,33 @@ export function TplSoleil(props: TemplateProps) {
         </section>
       )}
 
+      {/* SECTION PREMIUM - Événements privés */}
+      <section className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}`, background: theme.surfaceAlt }}>
+        <div className="max-w-5xl mx-auto">
+          <SectionHead kicker="— Moments spéciaux —" title="Événements Privés" theme={theme} serif />
+          <div className="grid md:grid-cols-3 gap-6 mt-10">
+            <div className="p-6 rounded-2xl text-center" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
+              <div className="text-4xl mb-3">🎂</div>
+              <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Anniversaires</h3>
+              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Menu spécial et décoration personnalisée</p>
+              <p className="text-lg font-black" style={{ color: theme.accent }}>À partir de 15 000 F/pers</p>
+            </div>
+            <div className="p-6 rounded-2xl text-center" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
+              <div className="text-4xl mb-3">💼</div>
+              <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Repas d'affaires</h3>
+              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Espace privé et service dédié</p>
+              <p className="text-lg font-black" style={{ color: theme.accent }}>Sur demande</p>
+            </div>
+            <div className="p-6 rounded-2xl text-center" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
+              <div className="text-4xl mb-3">🥂</div>
+              <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Dîners romantiques</h3>
+              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Ambiance intimiste et menu duo</p>
+              <p className="text-lg font-black" style={{ color: theme.accent }}>À partir de 20 000 F</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA BAND */}
       {currentView === "home" && (
         <div className="px-5 py-7" style={{ background: "#8b3a1c" }}>
@@ -689,13 +737,34 @@ export function TplSoleil(props: TemplateProps) {
         </div>
       )}
 
+      {/* SECTION PREMIUM - Chef's Table */}
+      <section className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}`, background: theme.surfaceAlt }}>
+        <div className="max-w-5xl mx-auto">
+          <SectionHead kicker="— Expérience exclusive —" title="Chef's Table" theme={theme} serif />
+          <div className="grid md:grid-cols-2 gap-6 mt-10">
+            <div className="p-8 rounded-2xl" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
+              <div className="text-4xl mb-3">👨‍🍳</div>
+              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>Table du Chef</h3>
+              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Dînez en cuisine et observez le chef à l'œuvre</p>
+              <p className="text-lg font-black" style={{ color: theme.accent }}>Sur réservation uniquement</p>
+            </div>
+            <div className="p-8 rounded-2xl" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
+              <div className="text-4xl mb-3">🍷</div>
+              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>Dégustation Privée</h3>
+              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Menu personnalisé avec accord mets-vins</p>
+              <p className="text-lg font-black" style={{ color: theme.accent }}>À partir de 40 000 F/pers</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* GALERIE & AVIS - Intégrés dans l'accueil */}
       {currentView === "home" && (
         <>
           {gallery.length > 0 && (
             <section className="py-16 px-5">
               <div className="max-w-6xl mx-auto">
-                <SectionHead kicker="Galerie" title="L'ambiance chez nous" theme={theme} align="center" />
+                <SectionHead kicker="Galerie", title="L'ambiance chez nous" theme={theme} align="center" />
                 <GalleryGrid gallery={gallery} theme={theme} />
               </div>
             </section>
