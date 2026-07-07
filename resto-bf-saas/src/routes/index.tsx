@@ -305,21 +305,29 @@ function LandingPage() {
             </div>
           </section>
 
-        {/* STATS CLES */}
-        <section id="chiffres" className="py-12 sm:py-24 px-4 sm:px-6 bg-[#080810] border-y border-white/5">
+        {/* POURQUOI RESTO BF */}
+        <section id="pourquoi" className="py-12 sm:py-24 px-4 sm:px-6 bg-[#080810] border-y border-white/5">
           <SectionHeader
-            eyebrow="Pourquoi nous choisir"
-            title={<>La solution qui <span className="text-gradient-gold">cartonne</span> au Burkina</>}
-            desc="Des centaines de restaurateurs nous font déjà confiance."
+            eyebrow="Pourquoi Resto BF"
+            title={<>Tout ce qu'il faut pour <span className="text-gradient-gold">booster votre restaurant</span></>}
+            desc="Une solution complète pensée pour les restaurateurs du Burkina Faso."
           />
-          <div className="max-w-5xl mx-auto mt-8 sm:mt-16 grid gap-6 sm:gap-8 grid-cols-2 sm:grid-cols-4">
-            {stats.map((s, i) => (
-              <Reveal key={s.label} delay={((i % 4) + 1) as 1 | 2 | 3 | 4}>
-                <div className="text-center">
-                  <div className="text-3xl sm:text-5xl font-black text-gradient-gold">
-                    {s.n}
-                  </div>
-                  <div className="mt-2 text-xs sm:text-sm text-muted-foreground">{s.label}</div>
+          <div className="max-w-6xl mx-auto mt-8 sm:mt-16 grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4">
+            {[
+              { icon: "🇧🇫", title: "100% Burkina", desc: "Conçu pour les restaurateurs burkinabè. Paiements Orange Money & Moov Money." },
+              { icon: "⚡", title: "Installation rapide", desc: "Créez votre page en 5 minutes. Menu, photos, prix : tout est prêt." },
+              { icon: "📱", title: "Commandes WhatsApp", desc: "Chaque plat a son bouton Commander. Le client clique, vous recevez." },
+              { icon: "🔒", title: "Sans engagement", desc: "30 jours gratuits, annulation à tout moment. Pas de carte bancaire." },
+              { icon: "🎨", title: "5 templates pro", desc: "Des designs modernes et adaptés. Personnalisez couleurs et logo." },
+              { icon: "📊", title: "Statistiques en temps réel", desc: "Suivez vos ventes, plats populaires et heures d'affluence." },
+              { icon: "👨‍🍳", title: "Interface cuisine", desc: "Les cuisiniers voient les commandes en direct. Plus d'erreurs." },
+              { icon: "💎", title: "Support prioritaire", desc: "Une équipe dédiée sur WhatsApp 7j/7 pour vous accompagner." },
+            ].map((item, i) => (
+              <Reveal key={item.title} delay={((i % 4) + 1) as 1 | 2 | 3 | 4}>
+                <div className="group relative p-4 sm:p-6 rounded-2xl border border-white/10 bg-dark-card hover:border-gold/30 transition-all hover:-translate-y-1">
+                  <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">{item.icon}</div>
+                  <h3 className="text-sm sm:text-base font-bold mb-1">{item.title}</h3>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
                 </div>
               </Reveal>
             ))}
