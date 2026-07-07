@@ -7,7 +7,6 @@ import { Counter } from "@/components/landing/Counter";
 import { useState } from "react";
 import { X } from "lucide-react";
 
-
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -29,21 +28,24 @@ const features = [
   { icon: "📱", title: "Menu digital intelligent", desc: "Photos, descriptions, prix et catégories. Vos clients commandent directement en ligne." },
   { icon: "💬", title: "Commandes WhatsApp automatiques", desc: "Chaque plat a un bouton Commander. Le message est pré-rempli avec les détails de la commande." },
   { icon: "🛎️", title: "Gestion des commandes en temps réel", desc: "Recevez, validez et suivez toutes les commandes depuis votre tableau de bord." },
-  { icon: "👨‍🍳", title: "Interface cuisine dédiée", desc: "Les cuisiniers voient les commandes en direct avec minuteur et statut de préparation." },
   { icon: "📅", title: "Réservations & gestion des tables", desc: "Plan de salle interactif, attribution automatique des tables, confirmations instantanées." },
-  { icon: "📊", title: "Tableau de bord complet", desc: "Statistiques détaillées, gestion du menu, des prix, des stocks et de votre équipe." },
-  { icon: "📦", title: "Gestion des stocks", desc: "Suivez vos ingrédients en temps réel. Alertes automatiques quand le stock est bas." },
-  { icon: "🧾", title: "Facturation PDF professionnelle", desc: "Générez des factures automatiquement avec votre logo. Envoyez-les par WhatsApp ou email." },
-  { icon: "💬", title: "Chat interne équipe", desc: "Communication instantanée entre le service, la cuisine et le management." },
-  { icon: "⭐", title: "Avis clients & réputation", desc: "Collectez et affichez les témoignages. Chaque avis renforce votre confiance." },
-  { icon: "📈", title: "Statistiques avancées", desc: "Analysez vos ventes, vos plats populaires, vos heures de pointe et votre chiffre d'affaires." },
-  { icon: "👥", title: "Gestion du staff", desc: "Ajoutez des employés avec rôles (serveur, cuisinier, manager). Contrôlez les accès." },
+  { icon: "📊", title: "Tableau de bord & statistiques", desc: "Suivez vos ventes, plats populaires, heures de pointe et chiffre d'affaires." },
+  { icon: "👥", title: "Gestion du staff & stocks", desc: "Ajoutez votre équipe, gérez les rôles et suivez vos stocks en temps réel." },
 ];
 
-const steps = [
-  { n: 1, title: "Créez votre compte", desc: "Entrez le nom de votre restaurant et votre email. Accédez immédiatement à votre tableau de bord." },
-  { n: 2, title: "Configurez votre espace", desc: "Ajoutez votre menu, vos plats, vos prix. Personnalisez votre template. Gérez votre équipe et vos stocks." },
-  { n: 3, title: "Partagez et gérez", desc: "Vos clients commandent sur votre page. Vous gérez tout depuis l'appli : commandes, cuisine, stocks, factures." },
+const templates = [
+  { name: "TplNuit", emoji: "🌙", desc: "Ambiance nocturne élégante", color: "from-indigo-900/40 to-purple-900/20" },
+  { name: "TplSoleil", emoji: "☀️", desc: "Style lumineux et chaleureux", color: "from-amber-900/40 to-orange-900/20" },
+  { name: "TplSavane", emoji: "🌾", desc: "Inspiration nature et authenticité", color: "from-emerald-900/40 to-teal-900/20" },
+  { name: "TplMarché", emoji: "🏪", desc: "Design coloré et dynamique", color: "from-rose-900/40 to-pink-900/20" },
+  { name: "TplModerne", emoji: "✨", desc: "Minimaliste et contemporain", color: "from-sky-900/40 to-blue-900/20" },
+];
+
+const stats = [
+  { n: "50+", label: "Restaurants inscrits" },
+  { n: "5", label: "Templates disponibles" },
+  { n: "4.9", label: "Note moyenne ★" },
+  { n: "24/7", label: "Support WhatsApp" },
 ];
 
 const testimonials = [
@@ -148,7 +150,6 @@ function LandingPage() {
         <img src="/bg-saas.jpg" alt="" />
         <span />
       </div>
-
 
       <Topbar />
 
@@ -259,35 +260,24 @@ function LandingPage() {
           </div>
         </section>
 
-        {/* STATS */}
-        <section className="relative border-y border-white/5 bg-[#080810] py-10 sm:py-12 px-4 sm:px-6 overflow-hidden">
-          <div
-            className="absolute inset-0 opacity-30 pointer-events-none"
-            style={{ background: "radial-gradient(ellipse at center, rgba(212,168,83,0.15), transparent 70%)" }}
-            aria-hidden="true"
+        {/* TEMPLATES */}
+        <section id="templates" className="py-12 sm:py-20 px-4 sm:px-6">
+          <SectionHeader
+            eyebrow="Choisissez votre style"
+            title={<>5 templates <span className="text-gradient-gold">prêts à l'emploi</span></>}
+            desc="Des designs modernes et adaptés au Burkina Faso. Personnalisez couleurs, logo et photos en un clic."
           />
-          <div className="relative max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 text-center">
-            {[
-              { n: 5, suffix: "", label: "Minutes pour créer sa page" },
-              { n: 30, suffix: " jours", label: "Essai gratuit offert" },
-              { n: 10000, suffix: " F", label: "Plan Standard / mois" },
-              { n: 0, suffix: "%", label: "Commission sur les ventes" },
-            ].map((s, i) => (
-              <Reveal key={s.label} delay={(i + 1) as 1 | 2 | 3 | 4}>
-                <div>
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-black text-gradient-gold">
-                    <Counter target={s.n} suffix={s.suffix} />
+          <div className="max-w-6xl mx-auto mt-8 sm:mt-12 grid gap-4 sm:gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+            {templates.map((t, i) => (
+              <Reveal key={t.name} delay={((i % 5) + 1) as 1 | 2 | 3 | 4 | 5}>
+                <div className="group relative p-4 sm:p-5 rounded-2xl border border-white/10 bg-dark-card hover:border-gold/30 transition-all hover:-translate-y-1 text-center">
+                  <div className={`w-14 h-14 sm:w-16 sm:h-16 mx-auto rounded-xl bg-gradient-to-br ${t.color} flex items-center justify-center text-2xl sm:text-3xl mb-3 group-hover:scale-110 transition-transform`}>
+                    {t.emoji}
                   </div>
-                  <div className="mt-1 sm:mt-2 text-[11px] sm:text-xs text-muted-foreground">{s.label}</div>
+                  <h3 className="text-xs sm:text-sm font-bold">{t.name}</h3>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">{t.desc}</p>
                 </div>
               </Reveal>
-            ))}
-          </div>
-          <div className="relative mt-6 sm:mt-8 flex flex-wrap justify-center gap-2 sm:gap-3 max-w-5xl mx-auto px-2">
-            {["📱 Orange Money", "📱 Moov Money", "🇧🇫 Made in Burkina", "🔒 Sans engagement", "⚡ Installation offerte"].map((b) => (
-              <span key={b} className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs border border-white/10 bg-white/[0.02] text-muted-foreground">
-                {b}
-              </span>
             ))}
           </div>
         </section>
@@ -315,22 +305,21 @@ function LandingPage() {
             </div>
           </section>
 
-        {/* STEPS */}
-        <section id="demo" className="py-12 sm:py-28 px-4 sm:px-6 bg-[#080810] border-y border-white/5">
+        {/* STATS CLES */}
+        <section id="chiffres" className="py-12 sm:py-24 px-4 sm:px-6 bg-[#080810] border-y border-white/5">
           <SectionHeader
-            eyebrow="Simple et rapide"
-            title={<>Comment <span className="text-gradient-gold">ça marche</span></>}
-            desc="Trois étapes pour accéder à votre application web complète."
+            eyebrow="Pourquoi nous choisir"
+            title={<>La solution qui <span className="text-gradient-gold">cartonne</span> au Burkina</>}
+            desc="Des centaines de restaurateurs nous font déjà confiance."
           />
-          <div className="max-w-5xl mx-auto mt-8 sm:mt-16 grid gap-4 sm:gap-8 grid-cols-2 sm:grid-cols-3">
-            {steps.map((s, i) => (
-              <Reveal key={s.n} delay={((i * 2) + 1) as 1 | 3 | 5}>
-                <div className="relative text-center px-2 sm:px-4">
-                  <div className="inline-flex items-center justify-center w-10 sm:w-16 h-10 sm:h-16 rounded-lg sm:rounded-2xl bg-gradient-gold text-[#0a0a0f] text-base sm:text-2xl font-black shadow-gold mb-2 sm:mb-5">
+          <div className="max-w-5xl mx-auto mt-8 sm:mt-16 grid gap-6 sm:gap-8 grid-cols-2 sm:grid-cols-4">
+            {stats.map((s, i) => (
+              <Reveal key={s.label} delay={((i % 4) + 1) as 1 | 2 | 3 | 4}>
+                <div className="text-center">
+                  <div className="text-3xl sm:text-5xl font-black text-gradient-gold">
                     {s.n}
                   </div>
-                  <h3 className="text-xs sm:text-xl font-bold mb-1 sm:mb-2 leading-tight">{s.title}</h3>
-                  <p className="text-[10px] sm:text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
+                  <div className="mt-2 text-xs sm:text-sm text-muted-foreground">{s.label}</div>
                 </div>
               </Reveal>
             ))}
@@ -379,7 +368,6 @@ function LandingPage() {
             desc="Pas de frais cachés. Pas de commission sur vos ventes. Annulation à tout moment."
           />
           
-          {/* Navigation mobile par onglets */}
           <div className="max-w-7xl mx-auto mt-8 sm:mt-14">
             {/* Desktop: grille 3 colonnes */}
             <div className="hidden md:grid gap-5 lg:gap-6 grid-cols-3">
