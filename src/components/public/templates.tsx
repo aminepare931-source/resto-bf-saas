@@ -16,6 +16,10 @@ import {
 import { StorageImage } from "@/components/StorageImage";
 import { TplPremiumFeu, TplPremiumLuxe, TplPremiumNuit, TplPremiumRoyal } from "./premium-templates";
 import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
+import { TplNuit } from "./templates/tpl-nuit";
+import { TplSoleil } from "./templates/tpl-soleil";
+import { TplSavane } from "./templates/tpl-savane";
+import { TplModerne } from "./templates/tpl-moderne";
 
 /* ============= Helpers ============= */
 
@@ -142,11 +146,6 @@ function PoweredFooter({
   );
 }
 
-/* ================================================================== */
-/*  1. NUIT — Dark luxury, premium par défaut                         */
-/* ================================================================== */
-
-export function TplNuit(props: TemplateProps) {
   const { restaurant, menu, reviews, gallery } = props;
   const features = useRestaurantFeatures(restaurant.id, restaurant.plan);
   const wa = buildWhatsAppLink(restaurant.whatsapp, restaurant.name);
@@ -433,11 +432,6 @@ function CategoryIcon({ name }: { name: string }) {
   return <>🍽️</>;
 }
 
-/* ================================================================== */
-/*  2. SOLEIL — Savoria-style cream/terracotta editorial              */
-/* ================================================================== */
-
-export function TplSoleil(props: TemplateProps) {
   const { restaurant, menu, reviews, gallery } = props;
   const wa = buildWhatsAppLink(restaurant.whatsapp, restaurant.name);
   const cover = pickCover(gallery, menu);
@@ -789,11 +783,6 @@ export function TplSoleil(props: TemplateProps) {
   );
 }
 
-/* ================================================================== */
-/*  3. SAVANE — Bold fast-food red/yellow (burger reference)          */
-/* ================================================================== */
-
-export function TplSavane(props: TemplateProps) {
   const { restaurant, menu, reviews, gallery } = props;
   const wa = buildWhatsAppLink(restaurant.whatsapp, restaurant.name);
   const cover = pickCover(gallery, menu);
@@ -1314,11 +1303,6 @@ export function TplMarche(props: TemplateProps) {
   );
 }
 
-/* ================================================================== */
-/*  5. MODERNE — Dark elegant + gold (Food reference)                 */
-/* ================================================================== */
-
-export function TplModerne(props: TemplateProps) {
   const { restaurant, menu, reviews, gallery } = props;
   const wa = buildWhatsAppLink(restaurant.whatsapp, restaurant.name);
   const cover = pickCover(gallery, menu);
@@ -2404,7 +2388,7 @@ export function renderTemplate(template: string | null, props: TemplateProps) {
   switch (template) {
     case "nuit":
     case "prem-nuit":
-      return <TplPremiumNuit {...props} />;
+      return <TplNuit {...props} />;
     case "prem-royal":
       return <TplPremiumRoyal {...props} />;
     case "prem-feu":
