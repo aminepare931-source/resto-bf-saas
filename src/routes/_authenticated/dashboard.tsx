@@ -33,7 +33,7 @@ const adminNav: NavItem[] = [
   { to: "/dashboard", label: "Aperçu", icon: "📊", exact: true },
   { to: "/dashboard/menu", label: "Menu", icon: "🍽️" },
   { to: "/dashboard/commandes", label: "Commandes", icon: "🛎️", badge: "Live" },
-  { to: "/dashboard/cuisine", label: "Cuisine", icon: "👨‍🍳", badge: "Premium" },
+  { to: "/dashboard/cuisine", label: "Cuisine", icon: "👨‍🍳" },
   { to: "/dashboard/tables", label: "Tables", icon: "🪑" },
   { to: "/dashboard/reservations", label: "Réservations", icon: "📅" },
   { to: "/dashboard/galerie", label: "Galerie", icon: "🖼️" },
