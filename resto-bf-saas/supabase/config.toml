@@ -1,8 +1,0 @@
-project_id = "oaapauxtyigejzzalork"
-
-[auth]
-enable_signup = true
-
-[auth.email]
-enable_signup = true
-enable_confirmations = true

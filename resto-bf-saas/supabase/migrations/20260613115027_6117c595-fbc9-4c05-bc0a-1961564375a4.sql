@@ -1,1 +1,0 @@
-REVOKE EXECUTE ON FUNCTION public.handle_new_restaurant_user() FROM PUBLIC, anon, authenticated;
