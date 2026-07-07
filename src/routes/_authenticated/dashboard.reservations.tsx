@@ -55,6 +55,34 @@ function ReservationsPage() {
     load();
   };
 
+  const sendWhatsAppConfirmation = async (reservation: Resa) => {
+    if (!restaurant?.whatsapp) {
+      toast.error("Configurez votre numéro WhatsApp dans Paramètres");
+      return;
+    }
+
+    const channel = restaurant.notification_reservations_channel || "both";
+
+    const msg = `Bonjour ${reservation.customer_name} !\n\n` +
+      `Votre réservation pour le ${new Date(reservation.reservation_date).toLocaleDateString("fr-FR")} à ${reservation.reservation_time} a bien été enregistrée.\n\n` +
+      `Détails :\n` +
+      `• Nombre de personnes : ${reservation.party_size}\n` +
+      (reservation.notes ? `• Notes : ${reservation.notes}\n` : "") +
+      `\nNous vous attendons avec impatience !\n\n` +
+      `Resto BF`;
+
+    if (channel === "whatsapp" || channel === "both") {
+      const cleanPhone = reservation.customer_phone.replace(/\D/g, "");
+      const encodedMsg = encodeURIComponent(msg);
+      window.open(`https://wa.me/${cleanPhone}?text=${encodedMsg}`, "_blank");
+      toast.success("Message de confirmation WhatsApp ouvert");
+    } else {
+      toast.success("Réservation confirmée dans le panneau admin");
+    }
+
+    await setStatus(reservation.id, "confirmed");
+  };
+
   return (
     <div className="max-w-5xl">
       <div className="mb-6">
@@ -90,6 +118,14 @@ function ReservationsPage() {
                         → {s.label}
                       </button>
                     ))}
+                    {r.status === "pending" && (
+                      <button
+                        onClick={() => sendWhatsAppConfirmation(r)}
+                        className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-semibold hover:bg-emerald-500/20"
+                      >
+                        ✓ Confirmer + WhatsApp
+                      </button>
+                    )}
                     <button onClick={() => remove(r.id)} className="px-3 py-1.5 rounded-lg border border-destructive/30 text-destructive text-xs hover:bg-destructive/10">✕</button>
                   </div>
                 </div>

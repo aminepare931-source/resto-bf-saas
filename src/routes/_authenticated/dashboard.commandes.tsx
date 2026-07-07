@@ -90,6 +90,39 @@ function OrdersPage() {
     else toast.success(`Commande #${o.id.slice(0, 8)} → ${ORDER_STATUS_LABEL[status]}`);
   };
 
+  const sendToKitchen = async (order: Order) => {
+    if (!r?.whatsapp) {
+      toast.error("Configurez votre numéro WhatsApp dans Paramètres");
+      return;
+    }
+
+    const channel = order.restaurant_id ? 
+      (await supabase.from("restaurants").select("notification_orders_channel").eq("id", order.restaurant_id).maybeSingle())?.data?.notification_orders_channel || "both" 
+      : "both";
+
+    const itemsList = order.items.map((it) => `• ${it.qty}x ${it.name} - ${formatCurrency(it.price * it.qty)}`).join("\n");
+    const msg = `🍳 Nouvelle commande pour la cuisine\n\n` +
+      `Commande #${order.id.slice(0, 8)}\n` +
+      (order.table_number ? `🪑 Table ${order.table_number}\n` : "🛍️ À emporter\n") +
+      (order.customer_name ? `👤 ${order.customer_name}\n` : "") +
+      (order.customer_phone ? `📱 ${order.customer_phone}\n` : "") +
+      `\n📋 Détails :\n${itemsList}\n` +
+      `\n💰 Total : ${formatCurrency(Number(order.total))}` +
+      (order.notes ? `\n\n📝 Notes : ${order.notes}` : "") +
+      `\n\n⏰ ${new Date(order.created_at).toLocaleString("fr-FR")}`;
+
+    if (channel === "whatsapp" || channel === "both") {
+      const cleanPhone = r.whatsapp.replace(/\D/g, "");
+      const encodedMsg = encodeURIComponent(msg);
+      window.open(`https://wa.me/${cleanPhone}?text=${encodedMsg}`, "_blank");
+      toast.success("Commande envoyée vers la cuisine via WhatsApp");
+    } else {
+      toast.success("Commande envoyée vers le panneau cuisine");
+    }
+
+    await setStatus(order, "in_kitchen");
+  };
+
   // Filtrage et tri
   const filtered = useMemo(() => {
     let result = orders;
@@ -322,10 +355,10 @@ function OrdersPage() {
                   )}
                   {o.status === "new" && (
                     <button
-                      onClick={() => setStatus(o, "in_kitchen")}
+                      onClick={() => sendToKitchen(o)}
                       className="px-4 py-2 rounded-lg bg-blue-500/20 text-blue-300 font-bold text-xs hover:bg-blue-500/30"
                     >
-                      ✓ Valider
+                      🍳 Envoyer en cuisine
                     </button>
                   )}
                   {o.status === "ready" && (

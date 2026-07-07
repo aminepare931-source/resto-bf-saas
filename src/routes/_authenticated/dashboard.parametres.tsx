@@ -20,6 +20,8 @@ function SettingsPage() {
     address: "",
     hours: "",
     description: "",
+    notification_orders_channel: "both",
+    notification_reservations_channel: "both",
   });
 
   useEffect(() => {
@@ -28,10 +30,20 @@ function SettingsPage() {
       if (!u.user) return;
       const { data } = await supabase
         .from("restaurants")
-        .select("name, city, cuisine, owner_name, phone, whatsapp, address, hours, description")
+        .select("name, city, cuisine, owner_name, phone, whatsapp, address, hours, description, notification_orders_channel, notification_reservations_channel")
         .eq("user_id", u.user.id)
         .maybeSingle();
-      if (data) setForm((f) => ({ ...f, ...data, cuisine: data.cuisine ?? "", whatsapp: data.whatsapp ?? "", address: data.address ?? "", hours: data.hours ?? "", description: data.description ?? "" }));
+      if (data) setForm((f) => ({ 
+        ...f, 
+        ...data, 
+        cuisine: data.cuisine ?? "", 
+        whatsapp: data.whatsapp ?? "", 
+        address: data.address ?? "", 
+        hours: data.hours ?? "", 
+        description: data.description ?? "",
+        notification_orders_channel: data.notification_orders_channel ?? "both",
+        notification_reservations_channel: data.notification_reservations_channel ?? "both",
+      }));
       setLoading(false);
     })();
   }, []);
@@ -85,6 +97,48 @@ function SettingsPage() {
             className="px-4 py-3 rounded-xl bg-white/[0.04] border border-white/8 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-sm"
             placeholder="Présentez votre restaurant en quelques phrases..."
           />
+        </div>
+
+        <div className="p-6 rounded-2xl border border-gold/20 bg-gold/5">
+          <h3 className="text-sm font-black uppercase tracking-widest text-gold mb-4">Notifications</h3>
+          
+          <div className="space-y-4">
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                Réception des commandes
+              </label>
+              <select
+                value={form.notification_orders_channel || "both"}
+                onChange={(e) => set("notification_orders_channel", e.target.value)}
+                className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/8 focus:border-gold focus:outline-none text-sm"
+              >
+                <option value="admin">Panneau admin uniquement</option>
+                <option value="whatsapp">WhatsApp uniquement</option>
+                <option value="both">Les deux (admin + WhatsApp)</option>
+              </select>
+              <p className="text-[11px] text-muted-foreground">
+                Où souhaitez-vous recevoir les notifications de nouvelles commandes ?
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                Réception des réservations
+              </label>
+              <select
+                value={form.notification_reservations_channel || "both"}
+                onChange={(e) => set("notification_reservations_channel", e.target.value)}
+                className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/8 focus:border-gold focus:outline-none text-sm"
+              >
+                <option value="admin">Panneau admin uniquement</option>
+                <option value="whatsapp">WhatsApp uniquement</option>
+                <option value="both">Les deux (admin + WhatsApp)</option>
+              </select>
+              <p className="text-[11px] text-muted-foreground">
+                Où souhaitez-vous recevoir les notifications de nouvelles réservations ?
+              </p>
+            </div>
+          </div>
         </div>
 
         <button

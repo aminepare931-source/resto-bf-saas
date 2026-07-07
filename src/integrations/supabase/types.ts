@@ -432,6 +432,8 @@ export type Database = {
           invoice_prefix: string | null
           logo_url: string | null
           name: string
+          notification_orders_channel: string | null
+          notification_reservations_channel: string | null
           owner_name: string
           phone: string
           plan: string
@@ -465,6 +467,8 @@ export type Database = {
           invoice_prefix?: string | null
           logo_url?: string | null
           name: string
+          notification_orders_channel?: string | null
+          notification_reservations_channel?: string | null
           owner_name: string
           phone: string
           plan?: string
@@ -498,6 +502,8 @@ export type Database = {
           invoice_prefix?: string | null
           logo_url?: string | null
           name?: string
+          notification_orders_channel?: string | null
+          notification_reservations_channel?: string | null
           owner_name?: string
           phone?: string
           plan?: string
