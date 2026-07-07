@@ -1,158 +1,158 @@
- n'eimport * as React from "react";
-import type { TemplateProps, PublicMenuItem, PublicGalleryImage, Theme } from "./shared";
-import {
-  MenuGrid,
-  GalleryGrid,
-  ReviewList,
-  ReservationForm,
-  AdvancedReservationForm,
-  ReviewForm,
-  SectionHead,
-  FloatingWhatsApp,
-  buildWhatsAppLink,
-  avgRating,
-  fmtPrice,
+ n'emport * as React from "react";
+mport type { TemplateProps, PublcMenutem, PublcGallerymage, Theme } from "./shared";
+mport {
+  MenuGrd,
+  GalleryGrd,
+  RevewLst,
+  ReservatonForm,
+  AdvancedReservatonForm,
+  RevewForm,
+  SectonHead,
+  FloatngWhatsApp,
+  buldWhatsAppLnk,
+  avgRatng,
+  fmtPrce,
 } from "./shared";
-import { StorageImage } from "@/components/StorageImage";
-import { TplPremiumFeu, TplPremiumLuxe, TplPremiumNuit, TplPremiumRoyal } from "./premium-templates";
-import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
+mport { Storagemage } from "@/components/Storagemage";
+mport { TplPremumFeu, TplPremumLuxe, TplPremumNut, TplPremumRoyal } from "./premum-templates";
+mport { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
 
 /* ============= Helpers ============= */
 
-function pickCover(gallery: PublicGalleryImage[], menu: PublicMenuItem[]) {
-  return gallery[0]?.image_url ?? menu.find((m) => m.image_url)?.image_url ?? null;
+functon pckCover(gallery: PublcGallerymage[], menu: PublcMenutem[]) {
+  return gallery[0]?.mage_url ?? menu.fnd((m) => m.mage_url)?.mage_url ?? null;
 }
 
-function signatureDishes(menu: PublicMenuItem[], n = 3) {
-  return menu.filter((m) => m.available && m.image_url).slice(0, n);
+functon sgnatureDshes(menu: PublcMenutem[], n = 3) {
+  return menu.flter((m) => m.avalable && m.mage_url).slce(0, n);
 }
 
-function FontImport() {
+functon Fontmport() {
   return (
-    <link
+    <lnk
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&family=Archivo+Black&family=DM+Serif+Display&family=Space+Grotesk:wght@400;500;700&display=swap"
+      href="https://fonts.googleaps.com/css2?famly=Playfar+Dsplay:tal,wght@0,400;0,700;0,900;1,400;1,700&famly=Cormorant+Garamond:tal,wght@0,400;0,600;0,700;1,400;1,600&famly=nter:wght@300;400;500;600;700;800;900&famly=Bebas+Neue&famly=Archvo+Black&famly=DM+Serf+Dsplay&famly=Space+Grotesk:wght@400;500;700&dsplay=swap"
     />
   );
 }
 
-function MetaStrip({ items, theme }: { items: { label: string; value: React.ReactNode }[]; theme: Theme }) {
+functon MetaStrp({ tems, theme }: { tems: { label: strng; value: React.ReactNode }[]; theme: Theme }) {
   return (
-    <div
-      className="grid sm:grid-cols-3 gap-x-8 gap-y-5"
-      style={{ borderTop: `1px solid ${theme.border}`, borderBottom: `1px solid ${theme.border}` }}
+    <dv
+      className="grd sm:grd-cols-3 gap-x-8 gap-y-5"
+      style={{ borderTop: `1px sold ${theme.border}`, borderBottom: `1px sold ${theme.border}` }}
     >
-      {items.map((it, i) => (
-        <div
-          key={i}
+      {tems.map((t, ) => (
+        <dv
+          key={}
           className="py-5 sm:py-6 px-1"
           style={{
-            borderLeft: i > 0 ? `1px solid ${theme.border}` : undefined,
-            paddingLeft: i > 0 ? "2rem" : undefined,
+            borderLeft:  > 0 ? `1px sold ${theme.border}` : undefned,
+            paddngLeft:  > 0 ? "2rem" : undefned,
           }}
         >
           <p
             className="text-[10px] font-bold uppercase mb-2"
-            style={{ color: theme.accent, letterSpacing: "0.35em" }}
+            style={{ color: theme.accent, letterSpacng: "0.35em" }}
           >
-            {it.label}
+            {t.label}
           </p>
-          <div className="text-sm leading-relaxed" style={{ color: theme.text }}>
-            {it.value}
-          </div>
-        </div>
+          <dv className="text-sm leadng-relaxed" style={{ color: theme.text }}>
+            {t.value}
+          </dv>
+        </dv>
       ))}
-    </div>
+    </dv>
   );
 }
 
-function PoweredFooter({
+functon PoweredFooter({
   restaurant,
   wa,
   theme,
 }: {
   restaurant: TemplateProps["restaurant"];
-  wa: string | null;
+  wa: strng | null;
   theme: Theme;
 }) {
   return (
     <footer
-      id="contact"
-      style={{ background: theme.surfaceAlt, borderTop: `1px solid ${theme.border}`, color: theme.text }}
+      d="contact"
+      style={{ background: theme.surfaceAlt, borderTop: `1px sold ${theme.border}`, color: theme.text }}
     >
-      <div className="max-w-6xl mx-auto px-5 py-16 grid md:grid-cols-3 gap-10">
-        <div>
+      <dv className="max-w-6xl mx-auto px-5 py-16 grd md:grd-cols-3 gap-10">
+        <dv>
           <h3 className="text-2xl font-black mb-2" style={{ color: theme.accent }}>
             {restaurant.name}
           </h3>
           <p className="text-sm" style={{ color: theme.textMuted }}>
-            {restaurant.cuisine ?? "Restaurant"} · {restaurant.city}
+            {restaurant.cusne ?? "Restaurant"} · {restaurant.cty}
           </p>
-          {restaurant.description && (
-            <p className="mt-4 text-sm leading-relaxed" style={{ color: theme.textMuted }}>
-              {restaurant.description}
+          {restaurant.descrpton && (
+            <p className="mt-4 text-sm leadng-relaxed" style={{ color: theme.textMuted }}>
+              {restaurant.descrpton}
             </p>
           )}
-        </div>
-        <div>
-          <p className="text-[10px] font-bold uppercase mb-3" style={{ color: theme.accent, letterSpacing: "0.35em" }}>
-            Visitez-nous
+        </dv>
+        <dv>
+          <p className="text-[10px] font-bold uppercase mb-3" style={{ color: theme.accent, letterSpacng: "0.35em" }}>
+            Vstez-nous
           </p>
           {restaurant.address && <p className="text-sm mb-2">{restaurant.address}</p>}
-          <p className="text-sm whitespace-pre-line" style={{ color: theme.textMuted }}>
+          <p className="text-sm whtespace-pre-lne" style={{ color: theme.textMuted }}>
             {restaurant.hours ?? "Tous les jours · 11h — 23h"}
           </p>
-        </div>
-        <div>
-          <p className="text-[10px] font-bold uppercase mb-3" style={{ color: theme.accent, letterSpacing: "0.35em" }}>
+        </dv>
+        <dv>
+          <p className="text-[10px] font-bold uppercase mb-3" style={{ color: theme.accent, letterSpacng: "0.35em" }}>
             Contact
           </p>
           <p className="text-sm">
-            <a href={`tel:${restaurant.phone}`} className="hover:underline">{restaurant.phone}</a>
+            <a href={`tel:${restaurant.phone}`} className="hover:underlne">{restaurant.phone}</a>
           </p>
           <p className="text-sm mt-1">
-            <a href={`mailto:${restaurant.email}`} className="hover:underline">{restaurant.email}</a>
+            <a href={`malto:${restaurant.emal}`} className="hover:underlne">{restaurant.emal}</a>
           </p>
           {wa && (
             <a
               href={wa}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 font-bold text-sm hover:opacity-90 transition"
-              style={{ background: theme.accent, color: theme.accentInk, borderRadius: theme.radius }}
+              className="mt-5 nlne-flex tems-center gap-2 px-5 py-2.5 font-bold text-sm hover:opacty-90 transton"
+              style={{ background: theme.accent, color: theme.accentnk, borderRadus: theme.radus }}
             >
               Commander sur WhatsApp
             </a>
           )}
-        </div>
-      </div>
-      <div
-        className="max-w-6xl mx-auto px-5 py-5 text-xs flex justify-between flex-wrap gap-2"
-        style={{ borderTop: `1px solid ${theme.border}`, color: theme.textMuted }}
+        </dv>
+      </dv>
+      <dv
+        className="max-w-6xl mx-auto px-5 py-5 text-xs flex justfy-between flex-wrap gap-2"
+        style={{ borderTop: `1px sold ${theme.border}`, color: theme.textMuted }}
       >
-        <span>© {new Date().getFullYear()} {restaurant.name}. Tous droits réservés.</span>
+        <span>© {new Date().getFullYear()} {restaurant.name}. Tous drots réservés.</span>
         <span>
-          Site propulsé par{" "}
-          <a href="/" className="underline" style={{ color: theme.accent }}>
+          Ste propulsé par{" "}
+          <a href="/" className="underlne" style={{ color: theme.accent }}>
             Resto BF
           </a>
         </span>
-      </div>
+      </dv>
     </footer>
   );
 }
 
 /* ================================================================== */
-/*  1. NUIT — Dark luxury, premium par défaut                         */
+/*  1. NUT — Dark luxury, premum par défaut                         */
 /* ================================================================== */
 
-export function TplNuit(props: TemplateProps) {
-  const { restaurant, menu, reviews, gallery } = props;
-  const features = useRestaurantFeatures(restaurant.id, restaurant.plan);
-  const wa = buildWhatsAppLink(restaurant.whatsapp, restaurant.name);
-  const cover = pickCover(gallery, menu);
-  const signatures = signatureDishes(menu, 3);
-  const rating = avgRating(reviews);
+export functon TplNut(props: TemplateProps) {
+  const { restaurant, menu, revews, gallery } = props;
+  const features = useRestaurantFeatures(restaurant.d, restaurant.plan);
+  const wa = buldWhatsAppLnk(restaurant.whatsapp, restaurant.name);
+  const cover = pckCover(gallery, menu);
+  const sgnatures = sgnatureDshes(menu, 3);
+  const ratng = avgRatng(revews);
   const [mobOpen, setMobOpen] = useState(false);
 
   const theme: Theme = {
@@ -162,291 +162,291 @@ export function TplNuit(props: TemplateProps) {
     text: "#f0e6d0",
     textMuted: "rgba(240,230,208,0.6)",
     accent: "#c9a35a",
-    accentInk: "#0a0907",
+    accentnk: "#0a0907",
     border: "rgba(201,163,90,0.18)",
-    radius: "2px",
+    radus: "2px",
   };
 
   return (
-    <div className="min-h-screen" style={{ background: theme.bg, color: theme.text, fontFamily: "'Inter', sans-serif" }}>
-      <FontImport />
+    <dv className="mn-h-screen" style={{ background: theme.bg, color: theme.text, fontFamly: "'nter', sans-serf" }}>
+      <Fontmport />
 
       {/* NAV */}
-      <header className="absolute top-0 inset-x-0 z-30">
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 py-6 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 min-w-0">
-            <span className="w-6 h-px shrink-0" style={{ background: theme.accent }} />
+      <header className="absolute top-0 nset-x-0 z-30">
+        <dv className="max-w-7xl mx-auto px-5 sm:px-8 py-6 flex tems-center justfy-between gap-4">
+          <dv className="flex tems-center gap-3 mn-w-0">
+            <span className="w-6 h-px shrnk-0" style={{ background: theme.accent }} />
             <span
               className="text-xs sm:text-sm uppercase truncate"
-              style={{ fontFamily: "'Cormorant Garamond', serif", letterSpacing: "0.45em", color: theme.text }}
+              style={{ fontFamly: "'Cormorant Garamond', serf", letterSpacng: "0.45em", color: theme.text }}
             >
               {restaurant.name}
             </span>
-          </div>
-          <nav className="hidden md:flex gap-8 text-[11px] uppercase" style={{ letterSpacing: "0.3em", color: theme.textMuted }}>
-            <a href="#histoire" className="hover:text-[#c9a35a] transition-colors">Histoire</a>
-            <a href="#carte" className="hover:text-[#c9a35a] transition-colors">Carte</a>
-            <a href="#galerie" className="hover:text-[#c9a35a] transition-colors">Galerie</a>
-            <a href="#reserver" className="hover:text-[#c9a35a] transition-colors">Réserver</a>
+          </dv>
+          <nav className="hdden md:flex gap-8 text-[11px] uppercase" style={{ letterSpacng: "0.3em", color: theme.textMuted }}>
+            <a href="#hstore" className="hover:text-[#c9a35a] transton-colors">Hstore</a>
+            <a href="#carte" className="hover:text-[#c9a35a] transton-colors">Carte</a>
+            <a href="#galere" className="hover:text-[#c9a35a] transton-colors">Galere</a>
+            <a href="#reserver" className="hover:text-[#c9a35a] transton-colors">Réserver</a>
           </nav>
           <button
-            onClick={() => setMobOpen((v) => !v)}
-            className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-white/5 transition-colors"
-            aria-label="Menu"
+            onClck={() => setMobOpen((v) => !v)}
+            className="md:hdden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-whte/5 transton-colors"
+            ara-label="Menu"
           >
-            <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
-            <span className={`block w-6 h-0.5 bg-current transition-opacity ${mobOpen ? "opacity-0" : ""}`} />
-            <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+            <span className={`block w-6 h-0.5 bg-current transton-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
+            <span className={`block w-6 h-0.5 bg-current transton-opacty ${mobOpen ? "opacty-0" : ""}`} />
+            <span className={`block w-6 h-0.5 bg-current transton-transform ${mobOpen ? "-rotate-45 -translate-y-2" : ""}`} />
           </button>
-        </div>
+        </dv>
         {mobOpen && (
-          <nav className="md:hidden border-t border-white/10 bg-[#0a0907]/95 backdrop-blur-xl">
-            <div className="flex flex-col px-4 py-4 gap-1">
-              <a href="#histoire" onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Histoire</a>
-              <a href="#carte" onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Carte</a>
-              <a href="#galerie" onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Galerie</a>
-              <a href="#reserver" onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Réserver</a>
-            </div>
+          <nav className="md:hdden border-t border-whte/10 bg-[#0a0907]/95 backdrop-blur-xl">
+            <dv className="flex flex-col px-4 py-4 gap-1">
+              <a href="#hstore" onClck={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-whte/5 transton-colors">Hstore</a>
+              <a href="#carte" onClck={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-whte/5 transton-colors">Carte</a>
+              <a href="#galere" onClck={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-whte/5 transton-colors">Galere</a>
+              <a href="#reserver" onClck={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-whte/5 transton-colors">Réserver</a>
+            </dv>
           </nav>
         )}
       </header>
 
       {/* HERO */}
-      <section className="relative min-h-screen flex items-end overflow-hidden">
+      <secton className="relatve mn-h-screen flex tems-end overflow-hdden">
         {cover ? (
-          <StorageImage path={cover} alt={restaurant.name} className="absolute inset-0 w-full h-full object-cover" />
+          <Storagemage path={cover} alt={restaurant.name} className="absolute nset-0 w-full h-full object-cover" />
         ) : null}
 
-        <div className="relative max-w-7xl mx-auto w-full px-5 sm:px-8 pb-20 pt-40">
-          <p className="text-[10px] uppercase mb-6" style={{ color: theme.accent, letterSpacing: "0.55em" }}>
-            {restaurant.city} · Établi·e dans la tradition
+        <dv className="relatve max-w-7xl mx-auto w-full px-5 sm:px-8 pb-20 pt-40">
+          <p className="text-[10px] uppercase mb-6" style={{ color: theme.accent, letterSpacng: "0.55em" }}>
+            {restaurant.cty} · Établ·e dans la tradton
           </p>
           <h1
-            className="leading-[0.88] italic"
+            className="leadng-[0.88] talc"
             style={{
-              fontFamily: "'Cormorant Garamond', serif",
+              fontFamly: "'Cormorant Garamond', serf",
               color: theme.text,
-              fontSize: "clamp(3.5rem, 11vw, 9rem)",
-              fontWeight: 500,
+              fontSze: "clamp(3.5rem, 11vw, 9rem)",
+              fontWeght: 500,
             }}
           >
             {restaurant.name}
           </h1>
-          <div className="mt-8 grid lg:grid-cols-12 gap-8 items-end">
-            <p className="lg:col-span-7 max-w-xl text-lg leading-relaxed" style={{ color: theme.textMuted }}>
-              {restaurant.description ?? `Une expérience culinaire d'exception au cœur de ${restaurant.city}. Produits du terroir, savoir-faire artisanal, ambiance feutrée.`}
+          <dv className="mt-8 grd lg:grd-cols-12 gap-8 tems-end">
+            <p className="lg:col-span-7 max-w-xl text-lg leadng-relaxed" style={{ color: theme.textMuted }}>
+              {restaurant.descrpton ?? `Une expérence culnare d'excepton au cœur de ${restaurant.cty}. Produts du terror, savor-fare artsanal, ambance feutrée.`}
             </p>
-            <div className="lg:col-span-5 flex flex-col gap-3">
+            <dv className="lg:col-span-5 flex flex-col gap-3">
               <a
                 href="#carte"
-                className="px-8 py-4 text-center border text-xs uppercase transition hover:bg-[#c9a35a] hover:text-[#0a0907]"
-                style={{ borderColor: theme.accent, color: theme.accent, letterSpacing: "0.35em" }}
+                className="px-8 py-4 text-center border text-xs uppercase transton hover:bg-[#c9a35a] hover:text-[#0a0907]"
+                style={{ borderColor: theme.accent, color: theme.accent, letterSpacng: "0.35em" }}
               >
-                Découvrir la carte
+                Découvrr la carte
               </a>
               {features.can_reserve && (
                 <a
                   href="#reserver"
-                  className="px-8 py-4 text-center text-xs uppercase hover:opacity-90 transition"
-                  style={{ background: theme.accent, color: theme.accentInk, letterSpacing: "0.35em" }}
+                  className="px-8 py-4 text-center text-xs uppercase hover:opacty-90 transton"
+                  style={{ background: theme.accent, color: theme.accentnk, letterSpacng: "0.35em" }}
                 >
                   Réserver une table
                 </a>
               )}
-            </div>
-          </div>
-        </div>
-      </section>
+            </dv>
+          </dv>
+        </dv>
+      </secton>
 
       {/* META */}
-      <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        <MetaStrip
+      <dv className="max-w-7xl mx-auto px-5 sm:px-8">
+        <MetaStrp
           theme={theme}
-          items={[
-            { label: "Adresse", value: restaurant.address ?? restaurant.city },
-            { label: "Horaires", value: <span className="whitespace-pre-line">{restaurant.hours ?? "Tous les jours · 11h — 23h"}</span> },
-            { label: "Réservation", value: <a href={`tel:${restaurant.phone}`} className="hover:text-[#c9a35a]">{restaurant.phone}</a> },
+          tems={[
+            { label: "Adresse", value: restaurant.address ?? restaurant.cty },
+            { label: "Horares", value: <span className="whtespace-pre-lne">{restaurant.hours ?? "Tous les jours · 11h — 23h"}</span> },
+            { label: "Réservaton", value: <a href={`tel:${restaurant.phone}`} className="hover:text-[#c9a35a]">{restaurant.phone}</a> },
           ]}
         />
-      </div>
+      </dv>
 
-      {/* HISTOIRE */}
-      <section id="histoire" className="py-14 sm:py-24 px-4 sm:px-8">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-8 sm:gap-12 items-start">
-          <div className="lg:col-span-7">
-            <p className="text-[10px] uppercase mb-4" style={{ color: theme.accent, letterSpacing: "0.45em" }}>— Notre maison —</p>
+      {/* HSTORE */}
+      <secton d="hstore" className="py-14 sm:py-24 px-4 sm:px-8">
+        <dv className="max-w-7xl mx-auto grd lg:grd-cols-12 gap-8 sm:gap-12 tems-start">
+          <dv className="lg:col-span-7">
+            <p className="text-[10px] uppercase mb-4" style={{ color: theme.accent, letterSpacng: "0.45em" }}>— Notre mason —</p>
             <h2
-              className="leading-[1.05] italic"
-              style={{ fontFamily: "'Cormorant Garamond', serif", color: theme.text, fontSize: "clamp(2.5rem, 5vw, 4.5rem)", fontWeight: 500 }}
+              className="leadng-[1.05] talc"
+              style={{ fontFamly: "'Cormorant Garamond', serf", color: theme.text, fontSze: "clamp(2.5rem, 5vw, 4.5rem)", fontWeght: 500 }}
             >
-              Une cuisine <span style={{ color: theme.accent }}>d'auteur</span>,<br />une expérience à part.
+              Une cusne <span style={{ color: theme.accent }}>d'auteur</span>,<br />une expérence à part.
             </h2>
-            <p className="mt-8 text-lg leading-relaxed max-w-2xl" style={{ color: theme.textMuted }}>
-              {restaurant.description ?? `Au cœur de ${restaurant.city}, ${restaurant.name} vous invite à une expérience culinaire mémorable. Produits choisis avec soin, savoir-faire à chaque assiette.`}
+            <p className="mt-8 text-lg leadng-relaxed max-w-2xl" style={{ color: theme.textMuted }}>
+              {restaurant.descrpton ?? `Au cœur de ${restaurant.cty}, ${restaurant.name} vous nvte à une expérence culnare mémorable. Produts choss avec son, savor-fare à chaque assette.`}
             </p>
-          </div>
-          <aside className="lg:col-span-5 lg:pl-10 lg:border-l space-y-8" style={{ borderColor: theme.border }}>
-            <Stat label="Cuisine" value={restaurant.cuisine ?? "Traditionnelle"} theme={theme} />
-            <Stat label="Plats à la carte" value={`${menu.filter((m) => m.available).length}+`} theme={theme} />
-            {rating !== null && (
+          </dv>
+          <asde className="lg:col-span-5 lg:pl-10 lg:border-l space-y-8" style={{ borderColor: theme.border }}>
+            <Stat label="Cusne" value={restaurant.cusne ?? "Tradtonnelle"} theme={theme} />
+            <Stat label="Plats à la carte" value={`${menu.flter((m) => m.avalable).length}+`} theme={theme} />
+            {ratng !== null && (
               <Stat
                 label="Note moyenne"
                 value={
                   <span>
-                    {rating.toFixed(1)}<span style={{ color: theme.textMuted, fontSize: "0.6em" }}>/5 · {reviews.length} avis</span>
+                    {ratng.toFxed(1)}<span style={{ color: theme.textMuted, fontSze: "0.6em" }}>/5 · {revews.length} avs</span>
                   </span>
                 }
                 theme={theme}
               />
             )}
-          </aside>
-        </div>
-      </section>
+          </asde>
+        </dv>
+      </secton>
 
-      {/* SIGNATURES */}
-      {signatures.length > 0 && (
-        <section className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
-          <div className="max-w-7xl mx-auto">
-            <SectionHead kicker="— Signatures —" title="Les incontournables" theme={theme} serif />
-            <div className="grid md:grid-cols-3 gap-4 sm:gap-6">
-              {signatures.map((d) => (
-                <article key={d.id} className="group">
-                  <div className="aspect-[3/4] sm:aspect-[4/5] overflow-hidden" style={{ background: theme.surface }}>
-                    <StorageImage path={d.image_url} alt={d.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
-                  </div>
-                  <div className="mt-5 flex items-baseline justify-between gap-4">
-                    <h3 className="text-2xl italic" style={{ fontFamily: "'Cormorant Garamond', serif", color: theme.text, fontWeight: 600 }}>
+      {/* SGNATURES */}
+      {sgnatures.length > 0 && (
+        <secton className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px sold ${theme.border}` }}>
+          <dv className="max-w-7xl mx-auto">
+            <SectonHead kcker="— Sgnatures —" ttle="Les ncontournables" theme={theme} serf />
+            <dv className="grd md:grd-cols-3 gap-4 sm:gap-6">
+              {sgnatures.map((d) => (
+                <artcle key={d.d} className="group">
+                  <dv className="aspect-[3/4] sm:aspect-[4/5] overflow-hdden" style={{ background: theme.surface }}>
+                    <Storagemage path={d.mage_url} alt={d.name} className="w-full h-full object-cover group-hover:scale-105 transton duraton-700" />
+                  </dv>
+                  <dv className="mt-5 flex tems-baselne justfy-between gap-4">
+                    <h3 className="text-2xl talc" style={{ fontFamly: "'Cormorant Garamond', serf", color: theme.text, fontWeght: 600 }}>
                       {d.name}
                     </h3>
-                    <span className="font-medium whitespace-nowrap" style={{ color: theme.accent }}>{fmtPrice(d.price)}</span>
-                  </div>
-                  {d.description && <p className="text-sm mt-2 leading-relaxed" style={{ color: theme.textMuted }}>{d.description}</p>}
-                </article>
+                    <span className="font-medum whtespace-nowrap" style={{ color: theme.accent }}>{fmtPrce(d.prce)}</span>
+                  </dv>
+                  {d.descrpton && <p className="text-sm mt-2 leadng-relaxed" style={{ color: theme.textMuted }}>{d.descrpton}</p>}
+                </artcle>
               ))}
-            </div>
-          </div>
-        </section>
+            </dv>
+          </dv>
+        </secton>
       )}
 
       {/* CARTE */}
-      <section id="carte" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
-        <div className="max-w-7xl mx-auto">
-          <SectionHead kicker="— La carte —" title="Notre menu" theme={theme} serif />
-          <MenuGrid menu={menu} theme={theme} />
-        </div>
-      </section>
+      <secton d="carte" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px sold ${theme.border}` }}>
+        <dv className="max-w-7xl mx-auto">
+          <SectonHead kcker="— La carte —" ttle="Notre menu" theme={theme} serf />
+          <MenuGrd menu={menu} theme={theme} />
+        </dv>
+      </secton>
 
-      {/* SECTION PREMIUM - Menu Dégustation */}
-      <section className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}`, background: theme.surfaceAlt }}>
-        <div className="max-w-5xl mx-auto">
-          <SectionHead kicker="— Expérience gastronomique —" title="Menu Dégustation" theme={theme} serif />
-          <div className="grid md:grid-cols-2 gap-6 mt-10">
-            <div className="p-8 rounded-2xl" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
-              <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: theme.accent }}>Menu Étoilé</p>
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Cormorant Garamond', serif" }}>7 services</h3>
-              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Une expérience culinaire complète avec accord mets-vins</p>
+      {/* SECTON PREMUM - Menu Dégustaton */}
+      <secton className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px sold ${theme.border}`, background: theme.surfaceAlt }}>
+        <dv className="max-w-5xl mx-auto">
+          <SectonHead kcker="— Expérence gastronomque —" ttle="Menu Dégustaton" theme={theme} serf />
+          <dv className="grd md:grd-cols-2 gap-6 mt-10">
+            <dv className="p-8 rounded-2xl" style={{ background: theme.surface, border: `1px sold ${theme.border}` }}>
+              <p className="text-xs font-bold uppercase trackng-wder mb-3" style={{ color: theme.accent }}>Menu Étolé</p>
+              <h3 className="text-2xl font-bold mb-4" style={{ fontFamly: "'Cormorant Garamond', serf" }}>7 servces</h3>
+              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Une expérence culnare complète avec accord mets-vns</p>
               <p className="text-3xl font-black" style={{ color: theme.accent }}>35 000 F</p>
-            </div>
-            <div className="p-8 rounded-2xl" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
-              <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: theme.accent }}>Menu Découverte</p>
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Cormorant Garamond', serif" }}>5 services</h3>
-              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Nos meilleures créations en format découverte</p>
+            </dv>
+            <dv className="p-8 rounded-2xl" style={{ background: theme.surface, border: `1px sold ${theme.border}` }}>
+              <p className="text-xs font-bold uppercase trackng-wder mb-3" style={{ color: theme.accent }}>Menu Découverte</p>
+              <h3 className="text-2xl font-bold mb-4" style={{ fontFamly: "'Cormorant Garamond', serf" }}>5 servces</h3>
+              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Nos melleures créatons en format découverte</p>
               <p className="text-3xl font-black" style={{ color: theme.accent }}>25 000 F</p>
-            </div>
-          </div>
-        </div>
-      </section>
+            </dv>
+          </dv>
+        </dv>
+      </secton>
 
-      {/* GALERIE */}
+      {/* GALERE */}
       {gallery.length > 0 && (
-        <section id="galerie" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
-          <div className="max-w-7xl mx-auto">
-            <SectionHead kicker="— Galerie —" title="L'ambiance" theme={theme} serif />
-            <GalleryGrid gallery={gallery} theme={theme} />
-          </div>
-        </section>
+        <secton d="galere" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px sold ${theme.border}` }}>
+          <dv className="max-w-7xl mx-auto">
+            <SectonHead kcker="— Galere —" ttle="L'ambance" theme={theme} serf />
+            <GalleryGrd gallery={gallery} theme={theme} />
+          </dv>
+        </secton>
       )}
 
-      {/* RESERVATION */}
+      {/* RESERVATON */}
       {features.can_reserve && (
-        <section id="reserver" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}`, background: theme.surfaceAlt }}>
-          <div className="max-w-3xl mx-auto">
-            <SectionHead kicker="— Réservation —" title="Réserver votre table" theme={theme} serif />
-            <AdvancedReservationForm restaurantId={restaurant.id} restaurantName={restaurant.name} theme={theme} waLink={wa} />
-          </div>
-        </section>
+        <secton d="reserver" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px sold ${theme.border}`, background: theme.surfaceAlt }}>
+          <dv className="max-w-3xl mx-auto">
+            <SectonHead kcker="— Réservaton —" ttle="Réserver votre table" theme={theme} serf />
+            <AdvancedReservatonForm restaurantd={restaurant.d} restaurantName={restaurant.name} theme={theme} waLnk={wa} />
+          </dv>
+        </secton>
       )}
 
-      {/* AVIS */}
-      <section id="avis" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
-        <div className="max-w-7xl mx-auto">
-          <SectionHead kicker="— Ils en parlent —" title="Avis de nos clients" theme={theme} serif />
-          <ReviewList reviews={reviews} theme={theme} />
-          <div className="mt-10 sm:mt-12 max-w-xl">
-            <h3 className="text-lg italic mb-4" style={{ fontFamily: "'Cormorant Garamond', serif", color: theme.text }}>
-              Laissez votre avis
+      {/* AVS */}
+      <secton d="avs" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px sold ${theme.border}` }}>
+        <dv className="max-w-7xl mx-auto">
+          <SectonHead kcker="— ls en parlent —" ttle="Avs de nos clents" theme={theme} serf />
+          <RevewLst revews={revews} theme={theme} />
+          <dv className="mt-10 sm:mt-12 max-w-xl">
+            <h3 className="text-lg talc mb-4" style={{ fontFamly: "'Cormorant Garamond', serf", color: theme.text }}>
+              Lassez votre avs
             </h3>
-            <ReviewForm restaurantId={restaurant.id} theme={theme} />
-          </div>
-        </div>
-      </section>
+            <RevewForm restaurantd={restaurant.d} theme={theme} />
+          </dv>
+        </dv>
+      </secton>
 
       <PoweredFooter restaurant={restaurant} wa={wa} theme={theme} />
-      <FloatingWhatsApp href={wa} accent={theme.accent} ink={theme.accentInk} />
-    </div>
+      <FloatngWhatsApp href={wa} accent={theme.accent} nk={theme.accentnk} />
+    </dv>
   );
 }
 
-function Stat({ label, value, theme }: { label: string; value: React.ReactNode; theme: Theme }) {
+functon Stat({ label, value, theme }: { label: strng; value: React.ReactNode; theme: Theme }) {
   return (
-    <div>
-      <p className="text-[10px] uppercase mb-2" style={{ color: theme.accent, letterSpacing: "0.4em" }}>{label}</p>
-      <p className="text-2xl" style={{ color: theme.text, fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}>{value}</p>
-    </div>
+    <dv>
+      <p className="text-[10px] uppercase mb-2" style={{ color: theme.accent, letterSpacng: "0.4em" }}>{label}</p>
+      <p className="text-2xl" style={{ color: theme.text, fontFamly: "'Cormorant Garamond', serf", fontStyle: "talc" }}>{value}</p>
+    </dv>
   );
 }
 
 /* ================================================================== */
-/*  Decorative backgrounds (CDN patterns from the references)         */
+/*  Decoratve backgrounds (CDN patterns from the references)         */
 /* ================================================================== */
 
-const BG_SOLEIL = "/bg-soleil.webp";
+const BG_SOLEL = "/bg-solel.webp";
 const BG_SAVANE = "/bg-savane.jpg";
 const BG_MARCHE = "/bg-marché.jpg";
 const BG_MODERNE = "/bg-moderne.jpg";
 
-const TPL_BG_CSS = "\n/* Standard template full-screen backgrounds */\n.tpl-page{position:relative;min-height:100vh;overflow:hidden;isolation:isolate;}\n.tpl-bg{position:fixed;inset:0;z-index:-2;overflow:hidden;background:transparent;}\n.tpl-bg img{width:100%;height:100%;object-fit:cover;filter:saturate(1.08) contrast(1.1);transform:scale(1.08);animation:tpl-bg-drift 22s ease-in-out infinite alternate;}\n.tpl-bg span{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.78),rgba(0,0,0,.40),rgba(0,0,0,.80));}\n@keyframes tpl-bg-drift{0%{transform:scale(1.08) translate3d(-1.5%,0,0)}100%{transform:scale(1.18) translate3d(1.5%,-1.5%,0)}}\n@media(prefers-reduced-motion:reduce){.tpl-bg img{animation:none;transition:none}}\n";
+const TPL_BG_CSS = "\n/* Standard template full-screen backgrounds */\n.tpl-page{poston:relatve;mn-heght:100vh;overflow:hdden;solaton:solate;}\n.tpl-bg{poston:fxed;nset:0;z-ndex:-2;overflow:hdden;background:transparent;}\n.tpl-bg mg{wdth:100%;heght:100%;object-ft:cover;flter:saturate(1.08) contrast(1.1);transform:scale(1.08);anmaton:tpl-bg-drft 22s ease-n-out nfnte alternate;}\n.tpl-bg span{poston:absolute;nset:0;background:lnear-gradent(90deg,rgba(0,0,0,.78),rgba(0,0,0,.40),rgba(0,0,0,.80));}\n@keyframes tpl-bg-drft{0%{transform:scale(1.08) translate3d(-1.5%,0,0)}100%{transform:scale(1.18) translate3d(1.5%,-1.5%,0)}}\n@meda(prefers-reduced-moton:reduce){.tpl-bg mg{anmaton:none;transton:none}}\n";
 
 
-function CategoryIcon({ name }: { name: string }) {
+functon Categorycon({ name }: { name: strng }) {
   const n = name.toLowerCase();
-  if (/pizza/.test(n)) return <>🍕</>;
-  if (/burger|sandwich/.test(n)) return <>🍔</>;
-  if (/pasta|p[âa]tes|spaghet/.test(n)) return <>🍝</>;
-  if (/dessert|sucre|p[âa]tiss/.test(n)) return <>🍰</>;
-  if (/boisson|drink|jus|cocktail/.test(n)) return <>🥤</>;
-  if (/entr[ée]e|starter|salade/.test(n)) return <>🥗</>;
-  if (/grill|brochette|viande|bbq/.test(n)) return <>🍖</>;
-  if (/poisson|fish|fruits de mer/.test(n)) return <>🐟</>;
-  if (/riz|t[ôo]|plat/.test(n)) return <>🍛</>;
-  if (/petit|breakfast|d[ée]j/.test(n)) return <>🥐</>;
+  f (/pzza/.test(n)) return <>🍕</>;
+  f (/burger|sandwch/.test(n)) return <>🍔</>;
+  f (/pasta|p[âa]tes|spaghet/.test(n)) return <>🍝</>;
+  f (/dessert|sucre|p[âa]tss/.test(n)) return <>🍰</>;
+  f (/bosson|drnk|jus|cocktal/.test(n)) return <>🥤</>;
+  f (/entr[ée]e|starter|salade/.test(n)) return <>🥗</>;
+  f (/grll|brochette|vande|bbq/.test(n)) return <>🍖</>;
+  f (/posson|fsh|fruts de mer/.test(n)) return <>🐟</>;
+  f (/rz|t[ôo]|plat/.test(n)) return <>🍛</>;
+  f (/pett|breakfast|d[ée]j/.test(n)) return <>🥐</>;
   return <>🍽️</>;
 }
 
 /* ================================================================== */
-/*  2. SOLEIL — Savoria-style cream/terracotta editorial              */
+/*  2. SOLEL — Savora-style cream/terracotta edtoral              */
 /* ================================================================== */
 
-export function TplSoleil(props: TemplateProps) {
-  const { restaurant, menu, reviews, gallery } = props;
-  const wa = buildWhatsAppLink(restaurant.whatsapp, restaurant.name);
-  const cover = pickCover(gallery, menu);
-  const rating = avgRating(reviews);
-  const cats = Array.from(new Set(menu.filter((m) => m.available).map((m) => m.category))).slice(0, 6);
-  const [activeTab, setActiveTab] = useState<string | null>(null);
-  const popular = (activeTab ? menu.filter((m) => m.available && m.category === activeTab) : menu.filter((m) => m.available)).slice(0, 8);
+export functon TplSolel(props: TemplateProps) {
+  const { restaurant, menu, revews, gallery } = props;
+  const wa = buldWhatsAppLnk(restaurant.whatsapp, restaurant.name);
+  const cover = pckCover(gallery, menu);
+  const ratng = avgRatng(revews);
+  const cats = Array.from(new Set(menu.flter((m) => m.avalable).map((m) => m.category))).slce(0, 6);
+  const [actveTab, setActveTab] = useState<strng | null>(null);
+  const popular = (actveTab ? menu.flter((m) => m.avalable && m.category === actveTab) : menu.flter((m) => m.avalable)).slce(0, 8);
   
-  const [currentView, setCurrentView] = useState<"home" | "menu" | "about" | "reserve">("home");
+  const [currentVew, setCurrentVew] = useState<"home" | "menu" | "about" | "reserve">("home");
   const [mobOpen, setMobOpen] = useState(false);
 
   const theme: Theme = {
@@ -456,336 +456,336 @@ export function TplSoleil(props: TemplateProps) {
     text: "#1e1308",
     textMuted: "#6b5440",
     accent: "#c7522a",
-    accentInk: "#ffffff",
+    accentnk: "#ffffff",
     border: "rgba(30,19,8,0.12)",
-    radius: "14px",
+    radus: "14px",
   };
 
-  const heroOverlay = "linear-gradient(135deg, rgba(251,243,230,0.92) 0%, rgba(251,243,230,0.88) 50%, rgba(251,243,230,0.82) 100%)";
+  const heroOverlay = "lnear-gradent(135deg, rgba(251,243,230,0.92) 0%, rgba(251,243,230,0.88) 50%, rgba(251,243,230,0.82) 100%)";
 
-  const goTo = (view: typeof currentView) => {
-    setCurrentView(view);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const goTo = (vew: typeof currentVew) => {
+    setCurrentVew(vew);
+    wndow.scrollTo({ top: 0, behavor: "smooth" });
   };
 
   return (
-    <div className="tpl-page min-h-screen" style={{ background: theme.bg, color: theme.text, fontFamily: "'Inter', sans-serif", isolation: "isolate" }}>
-      <FontImport />
+    <dv className="tpl-page mn-h-screen" style={{ background: theme.bg, color: theme.text, fontFamly: "'nter', sans-serf", solaton: "solate" }}>
+      <Fontmport />
       <style>{TPL_BG_CSS}</style>
 
-      <div className="tpl-bg" aria-hidden>
-        <img src={BG_SOLEIL} alt="" />
+      <dv className="tpl-bg" ara-hdden>
+        <mg src={BG_SOLEL} alt="" />
         <span />
-      </div>
+      </dv>
 
-      {/* TOP STRIP */}
-      <div style={{ background: theme.surfaceAlt, color: theme.text }} className="text-xs">
-        <div className="max-w-6xl mx-auto px-4 sm:px-5 py-2 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex flex-wrap gap-x-5 gap-y-1">
+      {/* TOP STRP */}
+      <dv style={{ background: theme.surfaceAlt, color: theme.text }} className="text-xs">
+        <dv className="max-w-6xl mx-auto px-4 sm:px-5 py-2 flex flex-wrap tems-center justfy-between gap-2">
+          <dv className="flex flex-wrap gap-x-5 gap-y-1">
             <span><strong>Tél :</strong> {restaurant.phone}</span>
-            <span className="hidden sm:inline"><strong>Email :</strong> {restaurant.email}</span>
-          </div>
-          <span style={{ color: theme.accent, fontWeight: 700 }}>★ Offre : livraison offerte dès 15 000 F</span>
-        </div>
-      </div>
+            <span className="hdden sm:nlne"><strong>Emal :</strong> {restaurant.emal}</span>
+          </dv>
+          <span style={{ color: theme.accent, fontWeght: 700 }}>★ Offre : lvrason offerte dès 15 000 F</span>
+        </dv>
+      </dv>
 
       {/* NAV */}
-      <header className="sticky top-0 z-30 backdrop-blur" style={{ background: "rgba(251,243,230,0.95)", borderBottom: `1px solid ${theme.border}` }}>
-        <div className="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 min-w-0">
+      <header className="stcky top-0 z-30 backdrop-blur" style={{ background: "rgba(251,243,230,0.95)", borderBottom: `1px sold ${theme.border}` }}>
+        <dv className="max-w-6xl mx-auto px-5 py-4 flex tems-center justfy-between gap-4">
+          <dv className="flex tems-center gap-3 mn-w-0">
             {restaurant.logo_url ? (
-              <img src={restaurant.logo_url} alt={restaurant.name} className="h-10 w-auto object-contain rounded" />
+              <mg src={restaurant.logo_url} alt={restaurant.name} className="h-10 w-auto object-contan rounded" />
             ) : null}
-            <div>
-              <strong className="block text-2xl sm:text-3xl tracking-[0.25em] truncate" style={{ fontFamily: "'Playfair Display', serif", color: theme.text }}>
+            <dv>
+              <strong className="block text-2xl sm:text-3xl trackng-[0.25em] truncate" style={{ fontFamly: "'Playfar Dsplay', serf", color: theme.text }}>
                 {restaurant.name.toUpperCase()}
               </strong>
-              <span className="block text-[10px] tracking-[0.5em] mt-0.5" style={{ color: theme.accent }}>~ KITCHEN ~</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 sm:gap-5">
-            <nav className="hidden md:flex gap-5 text-sm font-medium" style={{ color: theme.text }}>
-              <button onClick={() => goTo("home")} className={`hover:text-[#c7522a] transition ${currentView === "home" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}>Accueil</button>
-              <button onClick={() => goTo("menu")} className={`hover:text-[#c7522a] transition ${currentView === "menu" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}>Menu</button>
-              <button onClick={() => goTo("about")} className={`hover:text-[#c7522a] transition ${currentView === "about" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}>À propos</button>
+              <span className="block text-[10px] trackng-[0.5em] mt-0.5" style={{ color: theme.accent }}>~ KTCHEN ~</span>
+            </dv>
+          </dv>
+          <dv className="flex tems-center gap-2 sm:gap-5">
+            <nav className="hdden md:flex gap-5 text-sm font-medum" style={{ color: theme.text }}>
+              <button onClck={() => goTo("home")} className={`hover:text-[#c7522a] transton ${currentVew === "home" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}>Accuel</button>
+              <button onClck={() => goTo("menu")} className={`hover:text-[#c7522a] transton ${currentVew === "menu" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}>Menu</button>
+              <button onClck={() => goTo("about")} className={`hover:text-[#c7522a] transton ${currentVew === "about" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}>À propos</button>
             </nav>
-            {restaurant.plan !== "gratuit" && (
-              <button onClick={() => goTo("reserve")} className="hidden md:block px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition border-2 border-white" style={{ color: "#ffffff" }}>
+            {restaurant.plan !== "gratut" && (
+              <button onClck={() => goTo("reserve")} className="hdden md:block px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transton border-2 border-whte" style={{ color: "#ffffff" }}>
                 Réserver
               </button>
             )}
-            <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="hidden md:flex w-10 h-10 rounded-full grid place-items-center text-base hover:scale-105 transition" style={{ background: theme.accent, color: theme.accentInk }} aria-label="Commander">
+            <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="hdden md:flex w-10 h-10 rounded-full grd place-tems-center text-base hover:scale-105 transton" style={{ background: theme.accent, color: theme.accentnk }} ara-label="Commander">
               🛒
             </a>
             <button
-              onClick={() => setMobOpen((v) => !v)}
-              className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-black/5 transition-colors"
-              aria-label="Menu"
+              onClck={() => setMobOpen((v) => !v)}
+              className="md:hdden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-black/5 transton-colors"
+              ara-label="Menu"
             >
-              <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
-              <span className={`block w-6 h-0.5 bg-current transition-opacity ${mobOpen ? "opacity-0" : ""}`} />
-              <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+              <span className={`block w-6 h-0.5 bg-current transton-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
+              <span className={`block w-6 h-0.5 bg-current transton-opacty ${mobOpen ? "opacty-0" : ""}`} />
+              <span className={`block w-6 h-0.5 bg-current transton-transform ${mobOpen ? "-rotate-45 -translate-y-2" : ""}`} />
             </button>
-          </div>
-        </div>
+          </dv>
+        </dv>
         {mobOpen && (
-          <nav className="md:hidden border-t border-black/10 bg-white/95 backdrop-blur-xl">
-            <div className="flex flex-col px-4 py-4 gap-1">
-              <button onClick={() => goTo("home")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">Accueil</button>
-              <button onClick={() => goTo("menu")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">Menu</button>
-              <button onClick={() => goTo("about")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">À propos</button>
-              {restaurant.plan !== "gratuit" && (
-                <button onClick={() => goTo("reserve")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">Réserver</button>
+          <nav className="md:hdden border-t border-black/10 bg-whte/95 backdrop-blur-xl">
+            <dv className="flex flex-col px-4 py-4 gap-1">
+              <button onClck={() => goTo("home")} className="px-4 py-3 rounded-xl text-sm font-medum hover:bg-black/5 transton-colors text-left">Accuel</button>
+              <button onClck={() => goTo("menu")} className="px-4 py-3 rounded-xl text-sm font-medum hover:bg-black/5 transton-colors text-left">Menu</button>
+              <button onClck={() => goTo("about")} className="px-4 py-3 rounded-xl text-sm font-medum hover:bg-black/5 transton-colors text-left">À propos</button>
+              {restaurant.plan !== "gratut" && (
+                <button onClck={() => goTo("reserve")} className="px-4 py-3 rounded-xl text-sm font-medum hover:bg-black/5 transton-colors text-left">Réserver</button>
               )}
-              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors">🛒 Commander</a>
-            </div>
+              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="px-4 py-3 rounded-xl text-sm font-medum hover:bg-black/5 transton-colors">🛒 Commander</a>
+            </dv>
           </nav>
         )}
       </header>
 
-      {/* HOME VIEW */}
-      {currentView === "home" && (
+      {/* HOME VEW */}
+      {currentVew === "home" && (
         <>
           {/* HERO card */}
-          <section id="home" className="px-4 sm:px-5 pt-6 sm:pt-8 pb-10 sm:pb-12">
-            <div className="max-w-6xl mx-auto rounded-[28px] overflow-hidden relative" style={{ background: heroOverlay }}>
+          <secton d="home" className="px-4 sm:px-5 pt-6 sm:pt-8 pb-10 sm:pb-12">
+            <dv className="max-w-6xl mx-auto rounded-[28px] overflow-hdden relatve" style={{ background: heroOverlay }}>
               
-              <div className="relative grid lg:grid-cols-2 gap-4 sm:gap-6 p-6 sm:p-12 items-center">
-                <div>
-                  <h1 className="font-black leading-[0.95]" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(2.5rem, 6vw, 4.5rem)", color: "#ffffff", textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}>
-                    Délicieux instants<br/>pour <em style={{ color: theme.accent, fontStyle: "italic" }}>chaque goût</em>
+              <dv className="relatve grd lg:grd-cols-2 gap-4 sm:gap-6 p-6 sm:p-12 tems-center">
+                <dv>
+                  <h1 className="font-black leadng-[0.95]" style={{ fontFamly: "'Playfar Dsplay', serf", fontSze: "clamp(2.5rem, 6vw, 4.5rem)", color: "#ffffff", textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}>
+                    Délceux nstants<br/>pour <em style={{ color: theme.accent, fontStyle: "talc" }}>chaque goût</em>
                   </h1>
-                  <p className="mt-5 max-w-md leading-relaxed" style={{ color: "#ffffff", fontWeight: 500, textShadow: "0 1px 10px rgba(0,0,0,0.5)" }}>
-                    {restaurant.description ?? `Une cuisine d'excellence préparée avec passion à ${restaurant.city}, ingrédients frais et locaux.`}
+                  <p className="mt-5 max-w-md leadng-relaxed" style={{ color: "#ffffff", fontWeght: 500, textShadow: "0 1px 10px rgba(0,0,0,0.5)" }}>
+                    {restaurant.descrpton ?? `Une cusne d'excellence préparée avec passon à ${restaurant.cty}, ngrédents fras et locaux.`}
                   </p>
-                  <div className="mt-7 flex gap-3 flex-wrap">
-                    <a href={wa ?? "#menu"} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="px-7 py-3.5 rounded-full font-bold text-sm hover:opacity-90 transition shadow-lg" style={{ background: theme.accent, color: theme.accentInk }}>
+                  <dv className="mt-7 flex gap-3 flex-wrap">
+                    <a href={wa ?? "#menu"} target={wa ? "_blank" : undefned} rel="noopener noreferrer" className="px-7 py-3.5 rounded-full font-bold text-sm hover:opacty-90 transton shadow-lg" style={{ background: theme.accent, color: theme.accentnk }}>
                       Commander
                     </a>
-                    {restaurant.plan !== "gratuit" && (
-                      <button onClick={() => goTo("reserve")} className="px-7 py-3.5 rounded-full font-bold text-sm border-2 border-white hover:bg-white hover:text-[#1e1308] transition shadow-md" style={{ color: "#ffffff" }}>
+                    {restaurant.plan !== "gratut" && (
+                      <button onClck={() => goTo("reserve")} className="px-7 py-3.5 rounded-full font-bold text-sm border-2 border-whte hover:bg-whte hover:text-[#1e1308] transton shadow-md" style={{ color: "#ffffff" }}>
                         Réserver une table
                       </button>
                     )}
-                  </div>
-                </div>
-                <div className="relative">
+                  </dv>
+                </dv>
+                <dv className="relatve">
                   {cover ? (
-                    <StorageImage path={cover} alt={restaurant.name} className="w-full aspect-[4/3] object-cover rounded-[20px]" />
+                    <Storagemage path={cover} alt={restaurant.name} className="w-full aspect-[4/3] object-cover rounded-[20px]" />
                   ) : (
-                    <div className="w-full aspect-[4/3] rounded-[20px] grid place-items-center text-8xl" style={{ background: "linear-gradient(135deg,#e5c89a,#c7522a)" }}>👨‍🍳</div>
+                    <dv className="w-full aspect-[4/3] rounded-[20px] grd place-tems-center text-8xl" style={{ background: "lnear-gradent(135deg,#e5c89a,#c7522a)" }}>👨‍🍳</dv>
                   )}
-                  {rating !== null && (
-                    <div className="absolute bottom-4 left-4 bg-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 text-sm">
+                  {ratng !== null && (
+                    <dv className="absolute bottom-4 left-4 bg-whte px-4 py-2 rounded-full shadow-lg flex tems-center gap-2 text-sm">
                       <span style={{ color: theme.accent }}>★</span>
-                      <strong>{rating.toFixed(1)}</strong>
-                      <span style={{ color: theme.textMuted }}>· {reviews.length} avis</span>
-                    </div>
+                      <strong>{ratng.toFxed(1)}</strong>
+                      <span style={{ color: theme.textMuted }}>· {revews.length} avs</span>
+                    </dv>
                   )}
-                </div>
-              </div>
-            </div>
-          </section>
+                </dv>
+              </dv>
+            </dv>
+          </secton>
 
-          {/* CATEGORIES circular */}
+          {/* CATEGORES crcular */}
           {cats.length > 0 && (
-            <section className="px-5 py-12">
-              <div className="max-w-6xl mx-auto text-center">
-                <h2 className="font-black mb-10" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(1.75rem, 4vw, 2.5rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
-                  Parcourir par catégorie
+            <secton className="px-5 py-12">
+              <dv className="max-w-6xl mx-auto text-center">
+                <h2 className="font-black mb-10" style={{ fontFamly: "'Playfar Dsplay', serf", fontSze: "clamp(1.75rem, 4vw, 2.5rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
+                  Parcourr par catégore
                 </h2>
-                <div className="flex flex-wrap justify-center gap-6 sm:gap-10">
+                <dv className="flex flex-wrap justfy-center gap-6 sm:gap-10">
                   {cats.map((c) => (
-                    <button key={c} onClick={() => { setActiveTab(c); goTo("menu"); }} className="group flex flex-col items-center gap-3">
-                      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full grid place-items-center text-4xl sm:text-5xl group-hover:scale-110 transition" style={{ background: "rgba(255,255,255,0.95)", boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}>
-                        <CategoryIcon name={c} />
-                      </div>
-                      <span className="text-sm font-medium" style={{ color: "#ffffff", textShadow: "0 1px 6px rgba(0,0,0,0.4)" }}>{c}</span>
+                    <button key={c} onClck={() => { setActveTab(c); goTo("menu"); }} className="group flex flex-col tems-center gap-3">
+                      <dv className="w-20 h-20 sm:w-24 sm:h-24 rounded-full grd place-tems-center text-4xl sm:text-5xl group-hover:scale-110 transton" style={{ background: "rgba(255,255,255,0.95)", boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}>
+                        <Categorycon name={c} />
+                      </dv>
+                      <span className="text-sm font-medum" style={{ color: "#ffffff", textShadow: "0 1px 6px rgba(0,0,0,0.4)" }}>{c}</span>
                     </button>
                   ))}
-                </div>
-              </div>
-            </section>
+                </dv>
+              </dv>
+            </secton>
           )}
 
-          {/* POPULAR DISHES with tabs */}
-          <section id="menu" className="px-5 py-12">
-            <div className="max-w-6xl mx-auto text-center">
-              <h2 className="font-black mb-6" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(1.75rem, 4vw, 2.5rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
-                Plats populaires
+          {/* POPULAR DSHES wth tabs */}
+          <secton d="menu" className="px-5 py-12">
+            <dv className="max-w-6xl mx-auto text-center">
+              <h2 className="font-black mb-6" style={{ fontFamly: "'Playfar Dsplay', serf", fontSze: "clamp(1.75rem, 4vw, 2.5rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
+                Plats populares
               </h2>
-              <div className="flex flex-wrap justify-center gap-2 mb-10">
-                <button onClick={() => setActiveTab(null)} className="px-4 py-1 text-sm font-medium" style={{ color: activeTab === null ? "#ffffff" : "rgba(255,255,255,0.7)", borderBottom: activeTab === null ? `2px solid #ffffff` : "2px solid transparent", textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>[Tous]</button>
+              <dv className="flex flex-wrap justfy-center gap-2 mb-10">
+                <button onClck={() => setActveTab(null)} className="px-4 py-1 text-sm font-medum" style={{ color: actveTab === null ? "#ffffff" : "rgba(255,255,255,0.7)", borderBottom: actveTab === null ? `2px sold #ffffff` : "2px sold transparent", textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>[Tous]</button>
                 {cats.map((c) => (
-                  <button key={c} onClick={() => setActiveTab(c)} className="px-4 py-1 text-sm font-medium" style={{ color: activeTab === c ? "#ffffff" : "rgba(255,255,255,0.7)", borderBottom: activeTab === c ? `2px solid #ffffff` : "2px solid transparent", textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>[{c}]</button>
+                  <button key={c} onClck={() => setActveTab(c)} className="px-4 py-1 text-sm font-medum" style={{ color: actveTab === c ? "#ffffff" : "rgba(255,255,255,0.7)", borderBottom: actveTab === c ? `2px sold #ffffff` : "2px sold transparent", textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>[{c}]</button>
                 ))}
-              </div>
+              </dv>
               {popular.length === 0 ? (
-                <p className="italic" style={{ color: theme.textMuted }}>Aucun plat disponible pour le moment.</p>
+                <p className="talc" style={{ color: theme.textMuted }}>Aucun plat dsponble pour le moment.</p>
               ) : (
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 text-left">
-                  {popular.map((d, i) => (
-                    <article key={d.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition group">
-                      <div className="aspect-[4/3] overflow-hidden relative" style={{ background: theme.surfaceAlt }}>
-                        {d.image_url ? (
-                          <StorageImage path={d.image_url} alt={d.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                <dv className="grd grd-cols-2 lg:grd-cols-4 gap-4 sm:gap-5 text-left">
+                  {popular.map((d, ) => (
+                    <artcle key={d.d} className="bg-whte rounded-2xl overflow-hdden shadow-sm hover:shadow-xl transton group">
+                      <dv className="aspect-[4/3] overflow-hdden relatve" style={{ background: theme.surfaceAlt }}>
+                        {d.mage_url ? (
+                          <Storagemage path={d.mage_url} alt={d.name} className="w-full h-full object-cover group-hover:scale-105 transton duraton-500" />
                         ) : (
-                          <div className="w-full h-full grid place-items-center text-4xl"><CategoryIcon name={d.category} /></div>
+                          <dv className="w-full h-full grd place-tems-center text-4xl"><Categorycon name={d.category} /></dv>
                         )}
-                        <span className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-white/95 text-[10px] font-bold" style={{ color: theme.text }}>
-                          {i < 2 ? "Best Seller" : "Hot"}
+                        <span className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-whte/95 text-[10px] font-bold" style={{ color: theme.text }}>
+                          { < 2 ? "Best Seller" : "Hot"}
                         </span>
-                      </div>
-                      <div className="p-3">
-                        <h3 className="text-sm font-bold leading-tight truncate">{d.name}</h3>
-                        <div className="flex items-center justify-between mt-2">
-                          <span className="text-sm font-bold" style={{ color: theme.accent }}>{fmtPrice(d.price)}</span>
-                          <span className="text-xs flex items-center gap-1"><span style={{ color: "#e8b400" }}>★</span> 4.8</span>
-                        </div>
-                      </div>
-                    </article>
+                      </dv>
+                      <dv className="p-3">
+                        <h3 className="text-sm font-bold leadng-tght truncate">{d.name}</h3>
+                        <dv className="flex tems-center justfy-between mt-2">
+                          <span className="text-sm font-bold" style={{ color: theme.accent }}>{fmtPrce(d.prce)}</span>
+                          <span className="text-xs flex tems-center gap-1"><span style={{ color: "#e8b400" }}>★</span> 4.8</span>
+                        </dv>
+                      </dv>
+                    </artcle>
                   ))}
-                </div>
+                </dv>
               )}
-            </div>
-          </section>
+            </dv>
+          </secton>
         </>
       )}
 
-      {/* MENU VIEW */}
-      {currentView === "menu" && (
-        <section id="menu" className="py-16 px-5" style={{ background: theme.surface }}>
-          <div className="max-w-6xl mx-auto">
-            <SectionHead kicker="La carte" title="Notre menu complet" theme={theme} align="center" />
-            <MenuGrid menu={menu} theme={theme} />
-          </div>
-        </section>
+      {/* MENU VEW */}
+      {currentVew === "menu" && (
+        <secton d="menu" className="py-16 px-5" style={{ background: theme.surface }}>
+          <dv className="max-w-6xl mx-auto">
+            <SectonHead kcker="La carte" ttle="Notre menu complet" theme={theme} algn="center" />
+            <MenuGrd menu={menu} theme={theme} />
+          </dv>
+        </secton>
       )}
 
-      {/* ABOUT VIEW */}
-      {currentView === "about" && (
-        <section id="about" className="py-16 px-5" style={{ background: theme.surfaceAlt }}>
-          <div className="max-w-6xl mx-auto">
-            <SectionHead kicker="Notre histoire" title="À propos de nous" theme={theme} align="center" />
-            <div className="max-w-3xl mx-auto text-center">
-              <p className="text-lg leading-relaxed mb-6" style={{ color: theme.text }}>
-                {restaurant.description ?? `Bienvenue au ${restaurant.name}, votre restaurant préféré à ${restaurant.city}. Nous vous proposons une cuisine ${restaurant.cuisine ?? "traditionnelle"} préparée avec des ingrédients frais et locaux.`}
+      {/* ABOUT VEW */}
+      {currentVew === "about" && (
+        <secton d="about" className="py-16 px-5" style={{ background: theme.surfaceAlt }}>
+          <dv className="max-w-6xl mx-auto">
+            <SectonHead kcker="Notre hstore" ttle="À propos de nous" theme={theme} algn="center" />
+            <dv className="max-w-3xl mx-auto text-center">
+              <p className="text-lg leadng-relaxed mb-6" style={{ color: theme.text }}>
+                {restaurant.descrpton ?? `Benvenue au ${restaurant.name}, votre restaurant préféré à ${restaurant.cty}. Nous vous proposons une cusne ${restaurant.cusne ?? "tradtonnelle"} préparée avec des ngrédents fras et locaux.`}
               </p>
               {restaurant.address && (
-                <div className="mt-6 p-6 rounded-2xl" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
-                  <p className="text-sm font-bold uppercase tracking-wider mb-2" style={{ color: theme.accent }}>📍 Adresse</p>
+                <dv className="mt-6 p-6 rounded-2xl" style={{ background: theme.surface, border: `1px sold ${theme.border}` }}>
+                  <p className="text-sm font-bold uppercase trackng-wder mb-2" style={{ color: theme.accent }}>📍 Adresse</p>
                   <p style={{ color: theme.text }}>{restaurant.address}</p>
                   {restaurant.hours && (
                     <>
-                      <p className="text-sm font-bold uppercase tracking-wider mt-4 mb-2" style={{ color: theme.accent }}>🕐 Horaires</p>
-                      <p style={{ color: theme.text }} className="whitespace-pre-line">{restaurant.hours}</p>
+                      <p className="text-sm font-bold uppercase trackng-wder mt-4 mb-2" style={{ color: theme.accent }}>🕐 Horares</p>
+                      <p style={{ color: theme.text }} className="whtespace-pre-lne">{restaurant.hours}</p>
                     </>
                   )}
-                </div>
+                </dv>
               )}
-            </div>
-          </div>
-        </section>
+            </dv>
+          </dv>
+        </secton>
       )}
 
-      {/* RESERVATION VIEW */}
-      {currentView === "reserve" && restaurant.plan !== "gratuit" && (
-        <section id="reserver" className="py-16 px-5 bg-white">
-          <div className="max-w-3xl mx-auto">
-            <SectionHead kicker="Réservation" title="Réservez votre table" theme={theme} align="center" />
-            <AdvancedReservationForm restaurantId={restaurant.id} restaurantName={restaurant.name} theme={theme} waLink={wa} />
-          </div>
-        </section>
+      {/* RESERVATON VEW */}
+      {currentVew === "reserve" && restaurant.plan !== "gratut" && (
+        <secton d="reserver" className="py-16 px-5 bg-whte">
+          <dv className="max-w-3xl mx-auto">
+            <SectonHead kcker="Réservaton" ttle="Réservez votre table" theme={theme} algn="center" />
+            <AdvancedReservatonForm restaurantd={restaurant.d} restaurantName={restaurant.name} theme={theme} waLnk={wa} />
+          </dv>
+        </secton>
       )}
 
-      {/* SECTION PREMIUM - Événements privés */}
-      <section className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}`, background: theme.surfaceAlt }}>
-        <div className="max-w-5xl mx-auto">
-          <SectionHead kicker="— Moments spéciaux —" title="Événements Privés" theme={theme} serif />
-          <div className="grid md:grid-cols-3 gap-6 mt-10">
-            <div className="p-6 rounded-2xl text-center" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
-              <div className="text-4xl mb-3">🎂</div>
-              <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Anniversaires</h3>
-              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Menu spécial et décoration personnalisée</p>
-              <p className="text-lg font-black" style={{ color: theme.accent }}>À partir de 15 000 F/pers</p>
-            </div>
-            <div className="p-6 rounded-2xl text-center" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
-              <div className="text-4xl mb-3">💼</div>
-              <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Repas d'affaires</h3>
-              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Espace privé et service dédié</p>
+      {/* SECTON PREMUM - Événements prvés */}
+      <secton className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px sold ${theme.border}`, background: theme.surfaceAlt }}>
+        <dv className="max-w-5xl mx-auto">
+          <SectonHead kcker="— Moments spécaux —" ttle="Événements Prvés" theme={theme} serf />
+          <dv className="grd md:grd-cols-3 gap-6 mt-10">
+            <dv className="p-6 rounded-2xl text-center" style={{ background: theme.surface, border: `1px sold ${theme.border}` }}>
+              <dv className="text-4xl mb-3">🎂</dv>
+              <h3 className="text-xl font-bold mb-2" style={{ fontFamly: "'Playfar Dsplay', serf" }}>Annversares</h3>
+              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Menu spécal et décoraton personnalsée</p>
+              <p className="text-lg font-black" style={{ color: theme.accent }}>À partr de 15 000 F/pers</p>
+            </dv>
+            <dv className="p-6 rounded-2xl text-center" style={{ background: theme.surface, border: `1px sold ${theme.border}` }}>
+              <dv className="text-4xl mb-3">💼</dv>
+              <h3 className="text-xl font-bold mb-2" style={{ fontFamly: "'Playfar Dsplay', serf" }}>Repas d'affares</h3>
+              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Espace prvé et servce dédé</p>
               <p className="text-lg font-black" style={{ color: theme.accent }}>Sur demande</p>
-            </div>
-            <div className="p-6 rounded-2xl text-center" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
-              <div className="text-4xl mb-3">🥂</div>
-              <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Dîners romantiques</h3>
-              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Ambiance intimiste et menu duo</p>
-              <p className="text-lg font-black" style={{ color: theme.accent }}>À partir de 20 000 F</p>
-            </div>
-          </div>
-        </div>
-      </section>
+            </dv>
+            <dv className="p-6 rounded-2xl text-center" style={{ background: theme.surface, border: `1px sold ${theme.border}` }}>
+              <dv className="text-4xl mb-3">🥂</dv>
+              <h3 className="text-xl font-bold mb-2" style={{ fontFamly: "'Playfar Dsplay', serf" }}>Dîners romantques</h3>
+              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Ambance ntmste et menu duo</p>
+              <p className="text-lg font-black" style={{ color: theme.accent }}>À partr de 20 000 F</p>
+            </dv>
+          </dv>
+        </dv>
+      </secton>
 
       {/* CTA BAND */}
-      {currentView === "home" && (
-        <div className="px-5 py-7" style={{ background: "#8b3a1c" }}>
-          <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-6">
-            <strong className="text-white text-xl sm:text-2xl" style={{ fontFamily: "'Playfair Display', serif" }}>Savourez le meilleur, commandez maintenant</strong>
-            <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="px-7 py-3 rounded-full bg-white font-bold text-sm hover:bg-[#fbf3e6] transition" style={{ color: "#8b3a1c" }}>
-              Commander en ligne
+      {currentVew === "home" && (
+        <dv className="px-5 py-7" style={{ background: "#8b3a1c" }}>
+          <dv className="max-w-6xl mx-auto flex flex-wrap tems-center justfy-center gap-6">
+            <strong className="text-whte text-xl sm:text-2xl" style={{ fontFamly: "'Playfar Dsplay', serf" }}>Savourez le melleur, commandez mantenant</strong>
+            <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="px-7 py-3 rounded-full bg-whte font-bold text-sm hover:bg-[#fbf3e6] transton" style={{ color: "#8b3a1c" }}>
+              Commander en lgne
             </a>
-          </div>
-        </div>
+          </dv>
+        </dv>
       )}
 
-      {/* SECTION PREMIUM - Chef's Table */}
-      <section className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}`, background: theme.surfaceAlt }}>
-        <div className="max-w-5xl mx-auto">
-          <SectionHead kicker="— Expérience exclusive —" title="Chef's Table" theme={theme} serif />
-          <div className="grid md:grid-cols-2 gap-6 mt-10">
-            <div className="p-8 rounded-2xl" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
-              <div className="text-4xl mb-3">👨‍🍳</div>
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>Table du Chef</h3>
-              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Dînez en cuisine et observez le chef à l'œuvre</p>
-              <p className="text-lg font-black" style={{ color: theme.accent }}>Sur réservation uniquement</p>
-            </div>
-            <div className="p-8 rounded-2xl" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
-              <div className="text-4xl mb-3">🍷</div>
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>Dégustation Privée</h3>
-              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Menu personnalisé avec accord mets-vins</p>
-              <p className="text-lg font-black" style={{ color: theme.accent }}>À partir de 40 000 F/pers</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* SECTON PREMUM - Chef's Table */}
+      <secton className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px sold ${theme.border}`, background: theme.surfaceAlt }}>
+        <dv className="max-w-5xl mx-auto">
+          <SectonHead kcker="— Expérence exclusve —" ttle="Chef's Table" theme={theme} serf />
+          <dv className="grd md:grd-cols-2 gap-6 mt-10">
+            <dv className="p-8 rounded-2xl" style={{ background: theme.surface, border: `1px sold ${theme.border}` }}>
+              <dv className="text-4xl mb-3">👨‍🍳</dv>
+              <h3 className="text-2xl font-bold mb-4" style={{ fontFamly: "'Playfar Dsplay', serf" }}>Table du Chef</h3>
+              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Dînez en cusne et observez le chef à l'œuvre</p>
+              <p className="text-lg font-black" style={{ color: theme.accent }}>Sur réservaton unquement</p>
+            </dv>
+            <dv className="p-8 rounded-2xl" style={{ background: theme.surface, border: `1px sold ${theme.border}` }}>
+              <dv className="text-4xl mb-3">🍷</dv>
+              <h3 className="text-2xl font-bold mb-4" style={{ fontFamly: "'Playfar Dsplay', serf" }}>Dégustaton Prvée</h3>
+              <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Menu personnalsé avec accord mets-vns</p>
+              <p className="text-lg font-black" style={{ color: theme.accent }}>À partr de 40 000 F/pers</p>
+            </dv>
+          </dv>
+        </dv>
+      </secton>
 
-      {/* GALERIE & AVIS - Intégrés dans l'accueil */}
-      {currentView === "home" && (
+      {/* GALERE & AVS - ntégrés dans l'accuel */}
+      {currentVew === "home" && (
         <>
           {gallery.length > 0 && (
-            <section className="py-16 px-5">
-              <div className="max-w-6xl mx-auto">
-                <SectionHead kicker="Galerie", title="L'ambiance chez nous" theme={theme} align="center" />
-                <GalleryGrid gallery={gallery} theme={theme} />
-              </div>
-            </section>
+            <secton className="py-16 px-5">
+              <dv className="max-w-6xl mx-auto">
+                <SectonHead kcker="Galere", ttle="L'ambance chez nous" theme={theme} algn="center" />
+                <GalleryGrd gallery={gallery} theme={theme} />
+              </dv>
+            </secton>
           )}
 
-          <section className="py-16 px-5" style={{ background: theme.surfaceAlt }}>
-            <div className="max-w-6xl mx-auto">
-              <SectionHead kicker="Témoignages" title="Ils ont aimé" theme={theme} align="center" />
-              <ReviewList reviews={reviews} theme={theme} />
-              <div className="mt-12 max-w-xl mx-auto p-6 bg-white rounded-2xl">
-                <h3 className="font-bold mb-4 text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>Laissez votre avis</h3>
-                <ReviewForm restaurantId={restaurant.id} theme={{ ...theme, surface: theme.bg }} />
-              </div>
-            </div>
-          </section>
+          <secton className="py-16 px-5" style={{ background: theme.surfaceAlt }}>
+            <dv className="max-w-6xl mx-auto">
+              <SectonHead kcker="Témognages" ttle="ls ont amé" theme={theme} algn="center" />
+              <RevewLst revews={revews} theme={theme} />
+              <dv className="mt-12 max-w-xl mx-auto p-6 bg-whte rounded-2xl">
+                <h3 className="font-bold mb-4 text-lg" style={{ fontFamly: "'Playfar Dsplay', serf" }}>Lassez votre avs</h3>
+                <RevewForm restaurantd={restaurant.d} theme={{ ...theme, surface: theme.bg }} />
+              </dv>
+            </dv>
+          </secton>
         </>
       )}
 
       <PoweredFooter restaurant={restaurant} wa={wa} theme={{ ...theme, surfaceAlt: "#1e1308", text: "#fbf3e6", textMuted: "rgba(251,243,230,0.65)", accent: "#f0a878", border: "rgba(255,255,255,0.1)" }} />
-      <FloatingWhatsApp href={wa} accent={theme.accent} ink={theme.accentInk} />
-    </div>
+      <FloatngWhatsApp href={wa} accent={theme.accent} nk={theme.accentnk} />
+    </dv>
   );
 }
 
@@ -793,11 +793,11 @@ export function TplSoleil(props: TemplateProps) {
 /*  3. SAVANE — Bold fast-food red/yellow (burger reference)          */
 /* ================================================================== */
 
-export function TplSavane(props: TemplateProps) {
-  const { restaurant, menu, reviews, gallery } = props;
-  const wa = buildWhatsAppLink(restaurant.whatsapp, restaurant.name);
-  const cover = pickCover(gallery, menu);
-  const signatures = signatureDishes(menu, 3);
+export functon TplSavane(props: TemplateProps) {
+  const { restaurant, menu, revews, gallery } = props;
+  const wa = buldWhatsAppLnk(restaurant.whatsapp, restaurant.name);
+  const cover = pckCover(gallery, menu);
+  const sgnatures = sgnatureDshes(menu, 3);
 
   const theme: Theme = {
     bg: "#fff8e7",
@@ -806,331 +806,331 @@ export function TplSavane(props: TemplateProps) {
     text: "#1a0d05",
     textMuted: "rgba(26,13,5,0.7)",
     accent: "#f5b921",
-    accentInk: "#1a0d05",
+    accentnk: "#1a0d05",
     border: "rgba(26,13,5,0.12)",
-    radius: "20px",
+    radus: "20px",
   };
 
   const RED = "#c8281e";
-  const heroOverlay = "linear-gradient(135deg, rgba(200,40,30,0.92) 0%, rgba(200,40,30,0.85) 50%, rgba(200,40,30,0.78) 100%)";
+  const heroOverlay = "lnear-gradent(135deg, rgba(200,40,30,0.92) 0%, rgba(200,40,30,0.85) 50%, rgba(200,40,30,0.78) 100%)";
 
-  const [currentView, setCurrentView] = useState<"home" | "menu" | "about" | "reserve">("home");
+  const [currentVew, setCurrentVew] = useState<"home" | "menu" | "about" | "reserve">("home");
   const [mobOpen, setMobOpen] = useState(false);
 
-  const goTo = (view: typeof currentView) => {
-    setCurrentView(view);
+  const goTo = (vew: typeof currentVew) => {
+    setCurrentVew(vew);
     setMobOpen(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    wndow.scrollTo({ top: 0, behavor: "smooth" });
   };
 
   return (
-    <div className="tpl-page min-h-screen" style={{ background: theme.bg, color: theme.text, fontFamily: "'Inter', sans-serif", isolation: "isolate" }}>
-      <FontImport />
+    <dv className="tpl-page mn-h-screen" style={{ background: theme.bg, color: theme.text, fontFamly: "'nter', sans-serf", solaton: "solate" }}>
+      <Fontmport />
       <style>{TPL_BG_CSS}</style>
 
-      <div className="tpl-bg" aria-hidden>
-        <img src={BG_SAVANE} alt="" />
+      <dv className="tpl-bg" ara-hdden>
+        <mg src={BG_SAVANE} alt="" />
         <span />
-      </div>
+      </dv>
 
       {/* HERO RED BANNER */}
-      <section className="relative overflow-hidden" style={{ background: heroOverlay }}>
+      <secton className="relatve overflow-hdden" style={{ background: heroOverlay }}>
         
         {/* NAV */}
-        <header className="relative">
-          <div className="max-w-7xl mx-auto px-5 py-5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
-            <div className="flex items-center gap-2 min-w-0">
+        <header className="relatve">
+          <dv className="max-w-7xl mx-auto px-5 py-5 grd grd-cols-[mnmax(0,1fr)_auto] tems-center gap-4">
+            <dv className="flex tems-center gap-2 mn-w-0">
               {restaurant.logo_url ? (
-                <img src={restaurant.logo_url} alt={restaurant.name} className="h-8 w-auto object-contain rounded" />
+                <mg src={restaurant.logo_url} alt={restaurant.name} className="h-8 w-auto object-contan rounded" />
               ) : (
-                <span className="text-2xl shrink-0">🍔</span>
+                <span className="text-2xl shrnk-0">🍔</span>
               )}
-              <strong className="text-xl sm:text-2xl truncate text-white" style={{ fontFamily: "'Archivo Black', sans-serif", letterSpacing: "0.05em" }}>
+              <strong className="text-xl sm:text-2xl truncate text-whte" style={{ fontFamly: "'Archvo Black', sans-serf", letterSpacng: "0.05em" }}>
                 {restaurant.name}
               </strong>
-            </div>
-            <div className="flex items-center gap-2 sm:gap-5">
-              <nav className="hidden md:flex gap-5 text-[12px] uppercase font-bold text-white/90" style={{ letterSpacing: "0.18em" }}>
-                <button onClick={() => goTo("home")} className={`hover:text-white ${currentView === "home" ? "text-white" : ""}`}>Accueil</button>
-                <button onClick={() => goTo("menu")} className={`hover:text-white ${currentView === "menu" ? "text-white" : ""}`}>Menu</button>
+            </dv>
+            <dv className="flex tems-center gap-2 sm:gap-5">
+              <nav className="hdden md:flex gap-5 text-[12px] uppercase font-bold text-whte/90" style={{ letterSpacng: "0.18em" }}>
+                <button onClck={() => goTo("home")} className={`hover:text-whte ${currentVew === "home" ? "text-whte" : ""}`}>Accuel</button>
+                <button onClck={() => goTo("menu")} className={`hover:text-whte ${currentVew === "menu" ? "text-whte" : ""}`}>Menu</button>
               </nav>
-              {restaurant.plan !== "gratuit" && (
-                <button onClick={() => goTo("reserve")} className="hidden md:block px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition border-2 border-white" style={{ color: "#ffffff" }}>
+              {restaurant.plan !== "gratut" && (
+                <button onClck={() => goTo("reserve")} className="hdden md:block px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transton border-2 border-whte" style={{ color: "#ffffff" }}>
                   Réserver
                 </button>
               )}
-              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="hidden md:inline-flex px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition" style={{ background: theme.accent, color: theme.accentInk }}>
+              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="hdden md:nlne-flex px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transton" style={{ background: theme.accent, color: theme.accentnk }}>
                 Commander
               </a>
               <button
-                onClick={() => setMobOpen((v) => !v)}
-                className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-white/10 transition-colors"
-                aria-label="Menu"
+                onClck={() => setMobOpen((v) => !v)}
+                className="md:hdden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-whte/10 transton-colors"
+                ara-label="Menu"
               >
-                <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
-                <span className={`block w-6 h-0.5 bg-current transition-opacity ${mobOpen ? "opacity-0" : ""}`} />
-                <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+                <span className={`block w-6 h-0.5 bg-current transton-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
+                <span className={`block w-6 h-0.5 bg-current transton-opacty ${mobOpen ? "opacty-0" : ""}`} />
+                <span className={`block w-6 h-0.5 bg-current transton-transform ${mobOpen ? "-rotate-45 -translate-y-2" : ""}`} />
               </button>
-            </div>
-          </div>
+            </dv>
+          </dv>
         </header>
         {mobOpen && (
-          <nav className="md:hidden border-t border-white/10 bg-[#0e0e10]/95 backdrop-blur-xl">
-            <div className="flex flex-col px-4 py-4 gap-1">
-              <button onClick={() => goTo("home")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">Accueil</button>
-              <button onClick={() => goTo("about")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">À propos</button>
-              <button onClick={() => goTo("menu")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">Menu</button>
-              {restaurant.plan !== "gratuit" && (
-                <button onClick={() => goTo("reserve")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">Réserver</button>
+          <nav className="md:hdden border-t border-whte/10 bg-[#0e0e10]/95 backdrop-blur-xl">
+            <dv className="flex flex-col px-4 py-4 gap-1">
+              <button onClck={() => goTo("home")} className="px-4 py-3 rounded-xl text-sm font-medum hover:bg-whte/10 transton-colors text-left">Accuel</button>
+              <button onClck={() => goTo("about")} className="px-4 py-3 rounded-xl text-sm font-medum hover:bg-whte/10 transton-colors text-left">À propos</button>
+              <button onClck={() => goTo("menu")} className="px-4 py-3 rounded-xl text-sm font-medum hover:bg-whte/10 transton-colors text-left">Menu</button>
+              {restaurant.plan !== "gratut" && (
+                <button onClck={() => goTo("reserve")} className="px-4 py-3 rounded-xl text-sm font-medum hover:bg-whte/10 transton-colors text-left">Réserver</button>
               )}
-            </div>
+            </dv>
           </nav>
         )}
 
-        {/* HOME VIEW */}
-        {currentView === "home" && (
-          <div className="relative max-w-7xl mx-auto px-5 pt-8 pb-28 grid lg:grid-cols-2 gap-8 items-center">
-            <div>
-              <p className="text-sm font-bold uppercase mb-3 tracking-widest" style={{ color: theme.accent, textShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>★ Le goût qui claque</p>
-              <h1 className="leading-[0.9] text-white" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(3rem, 9vw, 6.5rem)", textShadow: "0 4px 20px rgba(0,0,0,0.4)" }}>
-                Commande<br/>tes favoris
+        {/* HOME VEW */}
+        {currentVew === "home" && (
+          <dv className="relatve max-w-7xl mx-auto px-5 pt-8 pb-28 grd lg:grd-cols-2 gap-8 tems-center">
+            <dv>
+              <p className="text-sm font-bold uppercase mb-3 trackng-wdest" style={{ color: theme.accent, textShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>★ Le goût qu claque</p>
+              <h1 className="leadng-[0.9] text-whte" style={{ fontFamly: "'Archvo Black', sans-serf", fontSze: "clamp(3rem, 9vw, 6.5rem)", textShadow: "0 4px 20px rgba(0,0,0,0.4)" }}>
+                Commande<br/>tes favors
               </h1>
-              <p className="mt-6 text-white max-w-md text-lg leading-relaxed" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
-                {restaurant.description ?? `Les meilleurs burgers, brochettes et fast-food de ${restaurant.city}, livrés chauds.`}
+              <p className="mt-6 text-whte max-w-md text-lg leadng-relaxed" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
+                {restaurant.descrpton ?? `Les melleurs burgers, brochettes et fast-food de ${restaurant.cty}, lvrés chauds.`}
               </p>
-              <div className="mt-7 flex gap-3 flex-wrap">
-                <button onClick={() => goTo("menu")} className="inline-block px-8 py-4 rounded-full font-black text-sm hover:scale-105 transition shadow-xl" style={{ background: theme.accent, color: theme.accentInk }}>
-                  VOIR LE MENU →
+              <dv className="mt-7 flex gap-3 flex-wrap">
+                <button onClck={() => goTo("menu")} className="nlne-block px-8 py-4 rounded-full font-black text-sm hover:scale-105 transton shadow-xl" style={{ background: theme.accent, color: theme.accentnk }}>
+                  VOR LE MENU →
                 </button>
-                <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="inline-block px-8 py-4 rounded-full font-black text-sm border-2 border-white hover:bg-white hover:text-red-600 transition shadow-lg">
+                <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="nlne-block px-8 py-4 rounded-full font-black text-sm border-2 border-whte hover:bg-whte hover:text-red-600 transton shadow-lg">
                   COMMANDER
                 </a>
-              </div>
-            </div>
-            <div className="relative">
+              </dv>
+            </dv>
+            <dv className="relatve">
               {cover ? (
-                <StorageImage path={cover} alt={restaurant.name} className="w-full aspect-square object-cover rounded-full shadow-2xl border-8 border-white/20" />
+                <Storagemage path={cover} alt={restaurant.name} className="w-full aspect-square object-cover rounded-full shadow-2xl border-8 border-whte/20" />
               ) : (
-                <div className="w-full aspect-square rounded-full grid place-items-center text-9xl" style={{ background: "radial-gradient(circle,#f5b921,#c8281e)" }}>🍔</div>
+                <dv className="w-full aspect-square rounded-full grd place-tems-center text-9xl" style={{ background: "radal-gradent(crcle,#f5b921,#c8281e)" }}>🍔</dv>
               )}
-              <span className="absolute -top-2 -right-2 text-5xl rotate-12">✨</span>
+              <span className="absolute -top-2 -rght-2 text-5xl rotate-12">✨</span>
               <span className="absolute bottom-4 -left-4 text-4xl">⚡</span>
-            </div>
-          </div>
+            </dv>
+          </dv>
         )}
 
-        {/* MENU VIEW */}
-        {currentView === "menu" && (
-          <div className="max-w-6xl mx-auto px-5 py-12">
-            <div className="text-center">
-              <h2 className="font-black mb-6" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(2rem, 5vw, 3rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
+        {/* MENU VEW */}
+        {currentVew === "menu" && (
+          <dv className="max-w-6xl mx-auto px-5 py-12">
+            <dv className="text-center">
+              <h2 className="font-black mb-6" style={{ fontFamly: "'Archvo Black', sans-serf", fontSze: "clamp(2rem, 5vw, 3rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
                 Notre Menu
               </h2>
-              <MenuGrid menu={menu} theme={theme} />
-            </div>
-          </div>
+              <MenuGrd menu={menu} theme={theme} />
+            </dv>
+          </dv>
         )}
 
-        {/* ABOUT VIEW */}
-        {currentView === "about" && (
-          <div className="max-w-6xl mx-auto px-5 py-12">
-            <div className="max-w-3xl mx-auto text-center">
-              <h2 className="font-black mb-6" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(2rem, 5vw, 3rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
+        {/* ABOUT VEW */}
+        {currentVew === "about" && (
+          <dv className="max-w-6xl mx-auto px-5 py-12">
+            <dv className="max-w-3xl mx-auto text-center">
+              <h2 className="font-black mb-6" style={{ fontFamly: "'Archvo Black', sans-serf", fontSze: "clamp(2rem, 5vw, 3rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
                 À propos de nous
               </h2>
-              <p className="text-lg leading-relaxed mb-6" style={{ color: "#ffffff", textShadow: "0 1px 8px rgba(0,0,0,0.3)" }}>
-                {restaurant.description ?? `Bienvenue au ${restaurant.name}, votre fast-food préféré à ${restaurant.city}. Nous vous proposons les meilleurs burgers, brochettes et plats rapides, préparés avec des ingrédients frais.`}
+              <p className="text-lg leadng-relaxed mb-6" style={{ color: "#ffffff", textShadow: "0 1px 8px rgba(0,0,0,0.3)" }}>
+                {restaurant.descrpton ?? `Benvenue au ${restaurant.name}, votre fast-food préféré à ${restaurant.cty}. Nous vous proposons les melleurs burgers, brochettes et plats rapdes, préparés avec des ngrédents fras.`}
               </p>
               {restaurant.address && (
-                <div className="mt-6 p-6 rounded-2xl bg-white/10 backdrop-blur border border-white/20">
-                  <p className="text-sm font-bold uppercase tracking-wider mb-2" style={{ color: theme.accent }}>📍 Adresse</p>
+                <dv className="mt-6 p-6 rounded-2xl bg-whte/10 backdrop-blur border border-whte/20">
+                  <p className="text-sm font-bold uppercase trackng-wder mb-2" style={{ color: theme.accent }}>📍 Adresse</p>
                   <p style={{ color: "#ffffff" }}>{restaurant.address}</p>
                   {restaurant.hours && (
                     <>
-                      <p className="text-sm font-bold uppercase tracking-wider mt-4 mb-2" style={{ color: theme.accent }}>🕐 Horaires</p>
-                      <p style={{ color: "#ffffff" }} className="whitespace-pre-line">{restaurant.hours}</p>
+                      <p className="text-sm font-bold uppercase trackng-wder mt-4 mb-2" style={{ color: theme.accent }}>🕐 Horares</p>
+                      <p style={{ color: "#ffffff" }} className="whtespace-pre-lne">{restaurant.hours}</p>
                     </>
                   )}
-                </div>
+                </dv>
               )}
-            </div>
-          </div>
+            </dv>
+          </dv>
         )}
 
-        {/* RESERVATION VIEW */}
-        {currentView === "reserve" && restaurant.plan !== "gratuit" && (
-          <div className="max-w-3xl mx-auto px-5 py-12">
-            <div className="text-center mb-8">
-              <h2 className="font-black" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(2rem, 5vw, 3rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
+        {/* RESERVATON VEW */}
+        {currentVew === "reserve" && restaurant.plan !== "gratut" && (
+          <dv className="max-w-3xl mx-auto px-5 py-12">
+            <dv className="text-center mb-8">
+              <h2 className="font-black" style={{ fontFamly: "'Archvo Black', sans-serf", fontSze: "clamp(2rem, 5vw, 3rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
                 Réserve ta table
               </h2>
-            </div>
-            <AdvancedReservationForm restaurantId={restaurant.id} restaurantName={restaurant.name} theme={{ ...theme, surface: "rgba(255,255,255,0.1)", text: "#fff", textMuted: "rgba(255,255,255,0.7)", border: "rgba(255,255,255,0.2)", accent: theme.accent, accentInk: theme.accentInk }} waLink={wa} />
-          </div>
+            </dv>
+            <AdvancedReservatonForm restaurantd={restaurant.d} restaurantName={restaurant.name} theme={{ ...theme, surface: "rgba(255,255,255,0.1)", text: "#fff", textMuted: "rgba(255,255,255,0.7)", border: "rgba(255,255,255,0.2)", accent: theme.accent, accentnk: theme.accentnk }} waLnk={wa} />
+          </dv>
         )}
 
-        {/* COMBO PILL - only on home */}
-        {currentView === "home" && (
-          <div className="relative max-w-5xl mx-auto px-5 -mb-14 translate-y-14">
-            <div className="bg-white rounded-full shadow-2xl px-6 py-4 grid grid-cols-2 sm:grid-cols-[1fr_1fr_auto] gap-4 items-center">
-              <div className="flex items-center gap-3">
+        {/* COMBO PLL - only on home */}
+        {currentVew === "home" && (
+          <dv className="relatve max-w-5xl mx-auto px-5 -mb-14 translate-y-14">
+            <dv className="bg-whte rounded-full shadow-2xl px-6 py-4 grd grd-cols-2 sm:grd-cols-[1fr_1fr_auto] gap-4 tems-center">
+              <dv className="flex tems-center gap-3">
                 <span className="text-3xl">🚗</span>
-                <div>
-                  <strong className="text-sm block">Livraison rapide</strong>
-                  <span className="text-xs" style={{ color: theme.textMuted }}>Sous 30 min en ville</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
+                <dv>
+                  <strong className="text-sm block">Lvrason rapde</strong>
+                  <span className="text-xs" style={{ color: theme.textMuted }}>Sous 30 mn en vlle</span>
+                </dv>
+              </dv>
+              <dv className="flex tems-center gap-3">
                 <span className="text-3xl">🥤</span>
-                <div>
-                  <strong className="text-sm block">Combos & boissons</strong>
-                  <span className="text-xs" style={{ color: theme.textMuted }}>Économise jusqu'à 20%</span>
-                </div>
-              </div>
-              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="hidden sm:inline-block px-6 py-2.5 rounded-full font-bold text-sm whitespace-nowrap" style={{ background: theme.accent, color: theme.accentInk }}>
+                <dv>
+                  <strong className="text-sm block">Combos & bossons</strong>
+                  <span className="text-xs" style={{ color: theme.textMuted }}>Économse jusqu'à 20%</span>
+                </dv>
+              </dv>
+              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="hdden sm:nlne-block px-6 py-2.5 rounded-full font-bold text-sm whtespace-nowrap" style={{ background: theme.accent, color: theme.accentnk }}>
                 COMMANDER
               </a>
-            </div>
-          </div>
+            </dv>
+          </dv>
         )}
-      </section>
+      </secton>
 
       {/* SECONDARY RED CARD - only on home */}
-      {currentView === "home" && (
-        <section className="px-5 pt-28 pb-12">
-          <div className="max-w-6xl mx-auto rounded-[28px] overflow-hidden grid lg:grid-cols-[1fr_auto] gap-6 p-8 sm:p-10 items-center" style={{ background: RED }}>
-            <div className="text-white">
-              <h2 className="leading-[0.95]" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(2rem, 5vw, 3.5rem)" }}>
-                Commande en quelques minutes
+      {currentVew === "home" && (
+        <secton className="px-5 pt-28 pb-12">
+          <dv className="max-w-6xl mx-auto rounded-[28px] overflow-hdden grd lg:grd-cols-[1fr_auto] gap-6 p-8 sm:p-10 tems-center" style={{ background: RED }}>
+            <dv className="text-whte">
+              <h2 className="leadng-[0.95]" style={{ fontFamly: "'Archvo Black', sans-serf", fontSze: "clamp(2rem, 5vw, 3.5rem)" }}>
+                Commande en quelques mnutes
               </h2>
-              <p className="mt-3 text-white/85 max-w-md">Choisis, paie, et déguste — c'est aussi simple que ça.</p>
-              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="mt-5 inline-block px-7 py-3 rounded-full font-bold text-sm" style={{ background: theme.accent, color: theme.accentInk }}>
-                COMMANDER MAINTENANT
+              <p className="mt-3 text-whte/85 max-w-md">Choss, pae, et déguste — c'est auss smple que ça.</p>
+              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="mt-5 nlne-block px-7 py-3 rounded-full font-bold text-sm" style={{ background: theme.accent, color: theme.accentnk }}>
+                COMMANDER MANTENANT
               </a>
-            </div>
-            <div className="text-7xl sm:text-8xl text-center">🍔</div>
-          </div>
-        </section>
+            </dv>
+            <dv className="text-7xl sm:text-8xl text-center">🍔</dv>
+          </dv>
+        </secton>
       )}
 
-      {/* SIGNATURES 3-card - only on home */}
-      {currentView === "home" && signatures.length > 0 && (
-        <section id="menu" className="py-12 px-5">
-          <div className="max-w-6xl mx-auto text-center">
-            <p className="text-xs font-black uppercase tracking-[0.4em] mb-2" style={{ color: RED }}>★ Best Sellers</p>
-            <h2 className="font-black mb-12" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(2rem, 5vw, 3rem)" }}>
-              Nos incontournables
+      {/* SGNATURES 3-card - only on home */}
+      {currentVew === "home" && sgnatures.length > 0 && (
+        <secton d="menu" className="py-12 px-5">
+          <dv className="max-w-6xl mx-auto text-center">
+            <p className="text-xs font-black uppercase trackng-[0.4em] mb-2" style={{ color: RED }}>★ Best Sellers</p>
+            <h2 className="font-black mb-12" style={{ fontFamly: "'Archvo Black', sans-serf", fontSze: "clamp(2rem, 5vw, 3rem)" }}>
+              Nos ncontournables
             </h2>
-            <div className="grid sm:grid-cols-3 gap-5">
-              {signatures.map((d, i) => (
-                <article key={d.id} className="rounded-3xl overflow-hidden text-left shadow-md hover:shadow-2xl hover:-translate-y-1 transition" style={{ background: i % 2 === 0 ? RED : theme.accent, color: i % 2 === 0 ? "#fff" : theme.accentInk }}>
-                  <div className="aspect-[4/3] overflow-hidden">
-                    <StorageImage path={d.image_url} alt={d.name} className="w-full h-full object-cover" />
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-black uppercase text-lg" style={{ fontFamily: "'Archivo Black', sans-serif" }}>{d.name}</h3>
-                    {d.description && <p className="text-sm mt-1 opacity-85 line-clamp-2">{d.description}</p>}
-                    <div className="mt-4 flex items-center justify-between">
-                      <span className="font-black text-lg">{fmtPrice(d.price)}</span>
-                      <a href={wa ?? "#"} target="_blank" rel="noopener noreferrer" className="px-4 py-1.5 rounded-full font-bold text-xs bg-white" style={{ color: RED }}>COMMANDER</a>
-                    </div>
-                  </div>
-                </article>
+            <dv className="grd sm:grd-cols-3 gap-5">
+              {sgnatures.map((d, ) => (
+                <artcle key={d.d} className="rounded-3xl overflow-hdden text-left shadow-md hover:shadow-2xl hover:-translate-y-1 transton" style={{ background:  % 2 === 0 ? RED : theme.accent, color:  % 2 === 0 ? "#fff" : theme.accentnk }}>
+                  <dv className="aspect-[4/3] overflow-hdden">
+                    <Storagemage path={d.mage_url} alt={d.name} className="w-full h-full object-cover" />
+                  </dv>
+                  <dv className="p-5">
+                    <h3 className="font-black uppercase text-lg" style={{ fontFamly: "'Archvo Black', sans-serf" }}>{d.name}</h3>
+                    {d.descrpton && <p className="text-sm mt-1 opacty-85 lne-clamp-2">{d.descrpton}</p>}
+                    <dv className="mt-4 flex tems-center justfy-between">
+                      <span className="font-black text-lg">{fmtPrce(d.prce)}</span>
+                      <a href={wa ?? "#"} target="_blank" rel="noopener noreferrer" className="px-4 py-1.5 rounded-full font-bold text-xs bg-whte" style={{ color: RED }}>COMMANDER</a>
+                    </dv>
+                  </dv>
+                </artcle>
               ))}
-            </div>
-          </div>
-        </section>
+            </dv>
+          </dv>
+        </secton>
       )}
 
-      {/* FULL MENU - only on menu view */}
-      {currentView === "menu" && (
-        <section id="menu" className="py-16 px-5" style={{ background: theme.surface }}>
-          <div className="max-w-6xl mx-auto">
-            <SectionHead kicker="La carte complète" title="Tous nos plats" theme={theme} align="center" />
-            <MenuGrid menu={menu} theme={theme} />
-          </div>
-        </section>
+      {/* FULL MENU - only on menu vew */}
+      {currentVew === "menu" && (
+        <secton d="menu" className="py-16 px-5" style={{ background: theme.surface }}>
+          <dv className="max-w-6xl mx-auto">
+            <SectonHead kcker="La carte complète" ttle="Tous nos plats" theme={theme} algn="center" />
+            <MenuGrd menu={menu} theme={theme} />
+          </dv>
+        </secton>
       )}
 
-      {/* ABOUT SECTION - only on about view */}
-      {currentView === "about" && (
-        <section id="about" className="py-16 px-5" style={{ background: theme.surfaceAlt }}>
-          <div className="max-w-6xl mx-auto">
-            <SectionHead kicker="Notre histoire" title="À propos de nous" theme={theme} align="center" />
-            <div className="max-w-3xl mx-auto text-center">
-              <p className="text-lg leading-relaxed mb-6" style={{ color: theme.text }}>
-                {restaurant.description ?? `Bienvenue au ${restaurant.name}, votre fast-food préféré à ${restaurant.city}. Nous vous proposons les meilleurs burgers, brochettes et plats rapides, préparés avec des ingrédients frais.`}
+      {/* ABOUT SECTON - only on about vew */}
+      {currentVew === "about" && (
+        <secton d="about" className="py-16 px-5" style={{ background: theme.surfaceAlt }}>
+          <dv className="max-w-6xl mx-auto">
+            <SectonHead kcker="Notre hstore" ttle="À propos de nous" theme={theme} algn="center" />
+            <dv className="max-w-3xl mx-auto text-center">
+              <p className="text-lg leadng-relaxed mb-6" style={{ color: theme.text }}>
+                {restaurant.descrpton ?? `Benvenue au ${restaurant.name}, votre fast-food préféré à ${restaurant.cty}. Nous vous proposons les melleurs burgers, brochettes et plats rapdes, préparés avec des ngrédents fras.`}
               </p>
               {restaurant.address && (
-                <div className="mt-6 p-6 rounded-2xl" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
-                  <p className="text-sm font-bold uppercase tracking-wider mb-2" style={{ color: RED }}>📍 Adresse</p>
+                <dv className="mt-6 p-6 rounded-2xl" style={{ background: theme.surface, border: `1px sold ${theme.border}` }}>
+                  <p className="text-sm font-bold uppercase trackng-wder mb-2" style={{ color: RED }}>📍 Adresse</p>
                   <p style={{ color: theme.text }}>{restaurant.address}</p>
                   {restaurant.hours && (
                     <>
-                      <p className="text-sm font-bold uppercase tracking-wider mt-4 mb-2" style={{ color: RED }}>🕐 Horaires</p>
-                      <p style={{ color: theme.text }} className="whitespace-pre-line">{restaurant.hours}</p>
+                      <p className="text-sm font-bold uppercase trackng-wder mt-4 mb-2" style={{ color: RED }}>🕐 Horares</p>
+                      <p style={{ color: theme.text }} className="whtespace-pre-lne">{restaurant.hours}</p>
                     </>
                   )}
-                </div>
+                </dv>
               )}
-            </div>
-          </div>
-        </section>
+            </dv>
+          </dv>
+        </secton>
       )}
 
-      {/* RESERVATION SECTION */}
-      {currentView === "reserve" && restaurant.plan !== "gratuit" && (
-        <section className="py-16 px-5" style={{ background: RED, color: "#fff" }}>
-          <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-8">
-              <p className="text-xs font-black uppercase tracking-[0.4em] mb-2" style={{ color: theme.accent }}>★ Réservation</p>
-              <h2 className="font-black" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(2rem, 5vw, 3rem)" }}>Réserve ta table</h2>
-            </div>
-            <AdvancedReservationForm restaurantId={restaurant.id} restaurantName={restaurant.name} theme={{ ...theme, surface: "rgba(255,255,255,0.1)", text: "#fff", textMuted: "rgba(255,255,255,0.7)", border: "rgba(255,255,255,0.2)", accent: theme.accent, accentInk: theme.accentInk }} waLink={wa} />
-          </div>
-        </section>
+      {/* RESERVATON SECTON */}
+      {currentVew === "reserve" && restaurant.plan !== "gratut" && (
+        <secton className="py-16 px-5" style={{ background: RED, color: "#fff" }}>
+          <dv className="max-w-3xl mx-auto">
+            <dv className="text-center mb-8">
+              <p className="text-xs font-black uppercase trackng-[0.4em] mb-2" style={{ color: theme.accent }}>★ Réservaton</p>
+              <h2 className="font-black" style={{ fontFamly: "'Archvo Black', sans-serf", fontSze: "clamp(2rem, 5vw, 3rem)" }}>Réserve ta table</h2>
+            </dv>
+            <AdvancedReservatonForm restaurantd={restaurant.d} restaurantName={restaurant.name} theme={{ ...theme, surface: "rgba(255,255,255,0.1)", text: "#fff", textMuted: "rgba(255,255,255,0.7)", border: "rgba(255,255,255,0.2)", accent: theme.accent, accentnk: theme.accentnk }} waLnk={wa} />
+          </dv>
+        </secton>
       )}
 
-      {/* GALERIE & AVIS - Intégrés dans l'accueil */}
-      {currentView === "home" && (
+      {/* GALERE & AVS - ntégrés dans l'accuel */}
+      {currentVew === "home" && (
         <>
           {gallery.length > 0 && (
-            <section className="py-16 px-5">
-              <div className="max-w-6xl mx-auto">
-                <SectionHead kicker="Galerie" title="Dans nos cuisines" theme={theme} align="center" />
-                <GalleryGrid gallery={gallery} theme={theme} />
-              </div>
-            </section>
+            <secton className="py-16 px-5">
+              <dv className="max-w-6xl mx-auto">
+                <SectonHead kcker="Galere" ttle="Dans nos cusnes" theme={theme} algn="center" />
+                <GalleryGrd gallery={gallery} theme={theme} />
+              </dv>
+            </secton>
           )}
 
-          <section className="py-16 px-5" style={{ background: theme.surfaceAlt }}>
-            <div className="max-w-6xl mx-auto">
-              <SectionHead kicker="Avis" title="Ils nous adorent" theme={theme} align="center" />
-              <ReviewList reviews={reviews} theme={theme} />
-              <div className="mt-12 max-w-xl mx-auto bg-white p-6 rounded-2xl">
-                <h3 className="font-black mb-4 text-lg" style={{ fontFamily: "'Archivo Black', sans-serif" }}>Laisse ton avis</h3>
-                <ReviewForm restaurantId={restaurant.id} theme={theme} />
-              </div>
-            </div>
-          </section>
+          <secton className="py-16 px-5" style={{ background: theme.surfaceAlt }}>
+            <dv className="max-w-6xl mx-auto">
+              <SectonHead kcker="Avs" ttle="ls nous adorent" theme={theme} algn="center" />
+              <RevewLst revews={revews} theme={theme} />
+              <dv className="mt-12 max-w-xl mx-auto bg-whte p-6 rounded-2xl">
+                <h3 className="font-black mb-4 text-lg" style={{ fontFamly: "'Archvo Black', sans-serf" }}>Lasse ton avs</h3>
+                <RevewForm restaurantd={restaurant.d} theme={theme} />
+              </dv>
+            </dv>
+          </secton>
         </>
       )}
 
       <PoweredFooter restaurant={restaurant} wa={wa} theme={{ ...theme, surfaceAlt: "#1a0d05", text: "#fff8e7", textMuted: "rgba(255,248,231,0.65)", accent: theme.accent, border: "rgba(255,255,255,0.1)" }} />
-      <FloatingWhatsApp href={wa} accent={theme.accent} ink={theme.accentInk} />
-    </div>
+      <FloatngWhatsApp href={wa} accent={theme.accent} nk={theme.accentnk} />
+    </dv>
   );
 }
 
 /* ================================================================== */
-/*  4. MARCHE — Indian-inspired dark green + orange/gold              */
+/*  4. MARCHE — ndan-nspred dark green + orange/gold              */
 /* ================================================================== */
 
-export function TplMarche(props: TemplateProps) {
-  const { restaurant, menu, reviews, gallery } = props;
-  const wa = buildWhatsAppLink(restaurant.whatsapp, restaurant.name);
-  const cover = pickCover(gallery, menu);
-  const rating = avgRating(reviews);
+export functon TplMarche(props: TemplateProps) {
+  const { restaurant, menu, revews, gallery } = props;
+  const wa = buldWhatsAppLnk(restaurant.whatsapp, restaurant.name);
+  const cover = pckCover(gallery, menu);
+  const ratng = avgRatng(revews);
 
   const theme: Theme = {
     bg: "#0d2818",
@@ -1139,178 +1139,178 @@ export function TplMarche(props: TemplateProps) {
     text: "#f0e9d6",
     textMuted: "rgba(240,233,214,0.7)",
     accent: "#ed8023",
-    accentInk: "#0d2818",
+    accentnk: "#0d2818",
     border: "rgba(237,128,35,0.2)",
-    radius: "10px",
+    radus: "10px",
   };
 
-  const [currentView, setCurrentView] = useState<"home" | "menu" | "about" | "reserve">("home");
+  const [currentVew, setCurrentVew] = useState<"home" | "menu" | "about" | "reserve">("home");
   const [mobOpen, setMobOpen] = useState(false);
 
-  const goTo = (view: typeof currentView) => {
-    setCurrentView(view);
+  const goTo = (vew: typeof currentVew) => {
+    setCurrentVew(vew);
     setMobOpen(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    wndow.scrollTo({ top: 0, behavor: "smooth" });
   };
 
   return (
-    <div className="tpl-page min-h-screen" style={{ background: theme.bg, color: theme.text, fontFamily: "'Inter', sans-serif", isolation: "isolate" }}>
-      <FontImport />
+    <dv className="tpl-page mn-h-screen" style={{ background: theme.bg, color: theme.text, fontFamly: "'nter', sans-serf", solaton: "solate" }}>
+      <Fontmport />
       <style>{TPL_BG_CSS}</style>
 
-      <div className="tpl-bg" aria-hidden>
-        <img src={BG_MARCHE} alt="" />
+      <dv className="tpl-bg" ara-hdden>
+        <mg src={BG_MARCHE} alt="" />
         <span />
-      </div>
+      </dv>
 
       {/* NAV */}
-      <header className="sticky top-0 z-30 backdrop-blur" style={{ background: "rgba(13,40,24,0.92)", borderBottom: `1px solid ${theme.border}` }}>
-        <div className="max-w-7xl mx-auto px-5 py-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
-          <div className="flex items-center gap-2 min-w-0">
+      <header className="stcky top-0 z-30 backdrop-blur" style={{ background: "rgba(13,40,24,0.92)", borderBottom: `1px sold ${theme.border}` }}>
+        <dv className="max-w-7xl mx-auto px-5 py-4 grd grd-cols-[mnmax(0,1fr)_auto] tems-center gap-4">
+          <dv className="flex tems-center gap-2 mn-w-0">
             {restaurant.logo_url ? (
-              <img src={restaurant.logo_url} alt={restaurant.name} className="h-8 w-auto object-contain rounded" />
+              <mg src={restaurant.logo_url} alt={restaurant.name} className="h-8 w-auto object-contan rounded" />
             ) : (
-              <span className="text-2xl shrink-0">🌶️</span>
+              <span className="text-2xl shrnk-0">🌶️</span>
             )}
-            <strong className="text-xl sm:text-2xl truncate" style={{ fontFamily: "'Playfair Display', serif", color: theme.accent }}>
+            <strong className="text-xl sm:text-2xl truncate" style={{ fontFamly: "'Playfar Dsplay', serf", color: theme.accent }}>
               {restaurant.name}
             </strong>
-          </div>
-          <div className="flex items-center gap-2 sm:gap-5">
-            <nav className="hidden md:flex gap-5 text-[12px] uppercase font-medium" style={{ letterSpacing: "0.15em", color: theme.textMuted }}>
-              <button onClick={() => goTo("home")} className={`hover:text-[#ed8023] ${currentView === "home" ? "text-[#ed8023] border-b border-[#ed8023]" : ""}`}>Accueil</button>
-              <button onClick={() => goTo("about")} className={`hover:text-[#ed8023] ${currentView === "about" ? "text-[#ed8023] border-b border-[#ed8023]" : ""}`}>À propos</button>
-              <button onClick={() => goTo("menu")} className={`hover:text-[#ed8023] ${currentView === "menu" ? "text-[#ed8023] border-b border-[#ed8023]" : ""}`}>Menu</button>
+          </dv>
+          <dv className="flex tems-center gap-2 sm:gap-5">
+            <nav className="hdden md:flex gap-5 text-[12px] uppercase font-medum" style={{ letterSpacng: "0.15em", color: theme.textMuted }}>
+              <button onClck={() => goTo("home")} className={`hover:text-[#ed8023] ${currentVew === "home" ? "text-[#ed8023] border-b border-[#ed8023]" : ""}`}>Accuel</button>
+              <button onClck={() => goTo("about")} className={`hover:text-[#ed8023] ${currentVew === "about" ? "text-[#ed8023] border-b border-[#ed8023]" : ""}`}>À propos</button>
+              <button onClck={() => goTo("menu")} className={`hover:text-[#ed8023] ${currentVew === "menu" ? "text-[#ed8023] border-b border-[#ed8023]" : ""}`}>Menu</button>
             </nav>
-            {restaurant.plan !== "gratuit" && (
-              <button onClick={() => goTo("reserve")} className="px-5 py-2 rounded-full border text-xs font-semibold hover:bg-[#ed8023] hover:text-[#0d2818] transition" style={{ borderColor: theme.accent, color: theme.accent }}>
+            {restaurant.plan !== "gratut" && (
+              <button onClck={() => goTo("reserve")} className="px-5 py-2 rounded-full border text-xs font-sembold hover:bg-[#ed8023] hover:text-[#0d2818] transton" style={{ borderColor: theme.accent, color: theme.accent }}>
                 Réserver
               </button>
             )}
-          </div>
-        </div>
+          </dv>
+        </dv>
       </header>
 
-      {/* HOME VIEW */}
-      {currentView === "home" && (
-        <section id="home" className="relative overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(circle at 50% 50%, transparent 30%, #0d2818 90%)" }} />
-          <div className="relative max-w-7xl mx-auto px-5 py-16 lg:py-24 grid lg:grid-cols-2 gap-10 items-center">
-            <div>
-              <h1 className="leading-[0.95]" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(3rem, 8vw, 6rem)", color: theme.accent }}>
-                {restaurant.cuisine?.split(/[ &]/)[0] ?? restaurant.name}<br/>
+      {/* HOME VEW */}
+      {currentVew === "home" && (
+        <secton d="home" className="relatve overflow-hdden">
+          <dv className="absolute nset-0 ponter-events-none" style={{ background: "radal-gradent(crcle at 50% 50%, transparent 30%, #0d2818 90%)" }} />
+          <dv className="relatve max-w-7xl mx-auto px-5 py-16 lg:py-24 grd lg:grd-cols-2 gap-10 tems-center">
+            <dv>
+              <h1 className="leadng-[0.95]" style={{ fontFamly: "'Playfar Dsplay', serf", fontSze: "clamp(3rem, 8vw, 6rem)", color: theme.accent }}>
+                {restaurant.cusne?.splt(/[ &]/)[0] ?? restaurant.name}<br/>
                 <span style={{ color: theme.text }}>Restaurant</span>
               </h1>
-              <p className="mt-6 max-w-lg leading-relaxed" style={{ color: theme.textMuted }}>
-                {restaurant.description ?? `Plongez dans une expérience culinaire authentique à ${restaurant.city}. Épices, saveurs et tradition à chaque bouchée.`}
+              <p className="mt-6 max-w-lg leadng-relaxed" style={{ color: theme.textMuted }}>
+                {restaurant.descrpton ?? `Plongez dans une expérence culnare authentque à ${restaurant.cty}. Épces, saveurs et tradton à chaque bouchée.`}
               </p>
-              <div className="mt-8 flex gap-3 flex-wrap">
-                <button onClick={() => goTo("menu")} className="px-7 py-3 rounded-full font-bold text-sm hover:opacity-90 transition" style={{ background: theme.accent, color: theme.accentInk }}>
-                  Voir le menu
+              <dv className="mt-8 flex gap-3 flex-wrap">
+                <button onClck={() => goTo("menu")} className="px-7 py-3 rounded-full font-bold text-sm hover:opacty-90 transton" style={{ background: theme.accent, color: theme.accentnk }}>
+                  Vor le menu
                 </button>
-                <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="px-7 py-3 rounded-full font-bold text-sm border hover:bg-white/5 transition" style={{ borderColor: theme.accent, color: theme.accent }}>
+                <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="px-7 py-3 rounded-full font-bold text-sm border hover:bg-whte/5 transton" style={{ borderColor: theme.accent, color: theme.accent }}>
                   Commander
                 </a>
-              </div>
-            </div>
-            <div className="relative">
+              </dv>
+            </dv>
+            <dv className="relatve">
               {cover ? (
-                <StorageImage path={cover} alt={restaurant.name} className="w-full aspect-square object-cover rounded-full shadow-2xl" />
+                <Storagemage path={cover} alt={restaurant.name} className="w-full aspect-square object-cover rounded-full shadow-2xl" />
               ) : (
-                <div className="w-full aspect-square rounded-full grid place-items-center text-9xl" style={{ background: "radial-gradient(circle,#ed8023,#7a3a0e)" }}>🍛</div>
+                <dv className="w-full aspect-square rounded-full grd place-tems-center text-9xl" style={{ background: "radal-gradent(crcle,#ed8023,#7a3a0e)" }}>🍛</dv>
               )}
-            </div>
-          </div>
-        </section>
+            </dv>
+          </dv>
+        </secton>
       )}
 
-      {/* MENU VIEW */}
-      {currentView === "menu" && (
-        <section id="menu" className="py-20 px-5" style={{ background: theme.surfaceAlt }}>
-          <div className="max-w-6xl mx-auto">
-            <SectionHead kicker="La carte" title="Notre menu" theme={theme} align="center" serif />
-            <MenuGrid menu={menu} theme={theme} />
-          </div>
-        </section>
+      {/* MENU VEW */}
+      {currentVew === "menu" && (
+        <secton d="menu" className="py-20 px-5" style={{ background: theme.surfaceAlt }}>
+          <dv className="max-w-6xl mx-auto">
+            <SectonHead kcker="La carte" ttle="Notre menu" theme={theme} algn="center" serf />
+            <MenuGrd menu={menu} theme={theme} />
+          </dv>
+        </secton>
       )}
 
-      {/* ABOUT VIEW */}
-      {currentView === "about" && (
-        <section id="about" className="py-20 px-5" style={{ background: theme.surfaceAlt }}>
-          <div className="max-w-6xl mx-auto">
-            <p className="text-center max-w-3xl mx-auto leading-relaxed mb-14" style={{ color: theme.textMuted }}>
-              {restaurant.description ?? `Découvrez l'art de la cuisine ${restaurant.cuisine ?? "traditionnelle"} dans un cadre chaleureux à ${restaurant.city}.`}
+      {/* ABOUT VEW */}
+      {currentVew === "about" && (
+        <secton d="about" className="py-20 px-5" style={{ background: theme.surfaceAlt }}>
+          <dv className="max-w-6xl mx-auto">
+            <p className="text-center max-w-3xl mx-auto leadng-relaxed mb-14" style={{ color: theme.textMuted }}>
+              {restaurant.descrpton ?? `Découvrez l'art de la cusne ${restaurant.cusne ?? "tradtonnelle"} dans un cadre chaleureux à ${restaurant.cty}.`}
             </p>
-            <div className="grid lg:grid-cols-2 gap-10 items-center">
+            <dv className="grd lg:grd-cols-2 gap-10 tems-center">
               {cover && (
-                <div className="aspect-square rounded-full overflow-hidden mx-auto max-w-md">
-                  <StorageImage path={cover} alt={restaurant.name} className="w-full h-full object-cover" />
-                </div>
+                <dv className="aspect-square rounded-full overflow-hdden mx-auto max-w-md">
+                  <Storagemage path={cover} alt={restaurant.name} className="w-full h-full object-cover" />
+                </dv>
               )}
-              <div>
-                <h2 className="mb-8" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(2rem, 4vw, 3rem)" }}>
-                  Pourquoi nous choisir
+              <dv>
+                <h2 className="mb-8" style={{ fontFamly: "'Playfar Dsplay', serf", fontSze: "clamp(2rem, 4vw, 3rem)" }}>
+                  Pourquo nous chosr
                 </h2>
                 <ul className="space-y-4">
                   {[
-                    ["Ingrédients frais", "Sélectionnés chaque matin sur les marchés locaux."],
-                    ["Chefs passionnés", "Une équipe expérimentée à votre service."],
-                    ["Saveurs authentiques", "Des recettes traditionnelles transmises depuis des générations."],
-                    ["Cadre chaleureux", "Une ambiance qui invite à savourer."],
-                    ["Service rapide", "Commande et livraison sans attente."],
+                    ["ngrédents fras", "Sélectonnés chaque matn sur les marchés locaux."],
+                    ["Chefs passonnés", "Une équpe expérmentée à votre servce."],
+                    ["Saveurs authentques", "Des recettes tradtonnelles transmses depus des génératons."],
+                    ["Cadre chaleureux", "Une ambance qu nvte à savourer."],
+                    ["Servce rapde", "Commande et lvrason sans attente."],
                   ].map(([t, d]) => (
-                    <li key={t} className="flex items-start gap-3">
-                      <span className="text-lg shrink-0 mt-0.5" style={{ color: theme.accent }}>✦</span>
-                      <div>
+                    <l key={t} className="flex tems-start gap-3">
+                      <span className="text-lg shrnk-0 mt-0.5" style={{ color: theme.accent }}>✦</span>
+                      <dv>
                         <strong>{t}</strong>
                         <span className="block text-sm" style={{ color: theme.textMuted }}>{d}</span>
-                      </div>
-                    </li>
+                      </dv>
+                    </l>
                   ))}
                 </ul>
-              </div>
-            </div>
-          </div>
-        </section>
+              </dv>
+            </dv>
+          </dv>
+        </secton>
       )}
 
-      {/* RESERVATION VIEW */}
-      {currentView === "reserve" && restaurant.plan !== "gratuit" && (
-        <section className="py-20 px-5" style={{ background: theme.surfaceAlt }}>
-          <div className="max-w-3xl mx-auto">
-            <SectionHead kicker="Réservation" title="Réservez votre table" theme={theme} align="center" serif />
-            <AdvancedReservationForm restaurantId={restaurant.id} restaurantName={restaurant.name} theme={theme} waLink={wa} />
-          </div>
-        </section>
+      {/* RESERVATON VEW */}
+      {currentVew === "reserve" && restaurant.plan !== "gratut" && (
+        <secton className="py-20 px-5" style={{ background: theme.surfaceAlt }}>
+          <dv className="max-w-3xl mx-auto">
+            <SectonHead kcker="Réservaton" ttle="Réservez votre table" theme={theme} algn="center" serf />
+            <AdvancedReservatonForm restaurantd={restaurant.d} restaurantName={restaurant.name} theme={theme} waLnk={wa} />
+          </dv>
+        </secton>
       )}
 
-      {/* GALERIE & AVIS - Intégrés dans l'accueil */}
-      {currentView === "home" && (
+      {/* GALERE & AVS - ntégrés dans l'accuel */}
+      {currentVew === "home" && (
         <>
           {gallery.length > 0 && (
-            <section id="galerie" className="py-20 px-5">
-              <div className="max-w-6xl mx-auto">
-                <SectionHead kicker="Galerie" title="Notre univers" theme={theme} align="center" serif />
-                <GalleryGrid gallery={gallery} theme={theme} />
-              </div>
-            </section>
+            <secton d="galere" className="py-20 px-5">
+              <dv className="max-w-6xl mx-auto">
+                <SectonHead kcker="Galere" ttle="Notre unvers" theme={theme} algn="center" serf />
+                <GalleryGrd gallery={gallery} theme={theme} />
+              </dv>
+            </secton>
           )}
 
-          <section className="py-20 px-5">
-            <div className="max-w-6xl mx-auto">
-              <SectionHead kicker="Avis" title="Ils en parlent" theme={theme} align="center" serif />
-              <ReviewList reviews={reviews} theme={theme} />
-              <div className="mt-12 max-w-xl mx-auto">
-                <ReviewForm restaurantId={restaurant.id} theme={theme} />
-              </div>
-            </div>
-          </section>
+          <secton className="py-20 px-5">
+            <dv className="max-w-6xl mx-auto">
+              <SectonHead kcker="Avs" ttle="ls en parlent" theme={theme} algn="center" serf />
+              <RevewLst revews={revews} theme={theme} />
+              <dv className="mt-12 max-w-xl mx-auto">
+                <RevewForm restaurantd={restaurant.d} theme={theme} />
+              </dv>
+            </dv>
+          </secton>
         </>
       )}
 
       <PoweredFooter restaurant={restaurant} wa={wa} theme={theme} />
-      <FloatingWhatsApp href={wa} accent={theme.accent} ink={theme.accentInk} />
-    </div>
+      <FloatngWhatsApp href={wa} accent={theme.accent} nk={theme.accentnk} />
+    </dv>
   );
 }
 
@@ -1318,10 +1318,10 @@ export function TplMarche(props: TemplateProps) {
 /*  5. MODERNE — Dark elegant + gold (Food reference)                 */
 /* ================================================================== */
 
-export function TplModerne(props: TemplateProps) {
-  const { restaurant, menu, reviews, gallery } = props;
-  const wa = buildWhatsAppLink(restaurant.whatsapp, restaurant.name);
-  const cover = pickCover(gallery, menu);
+export functon TplModerne(props: TemplateProps) {
+  const { restaurant, menu, revews, gallery } = props;
+  const wa = buldWhatsAppLnk(restaurant.whatsapp, restaurant.name);
+  const cover = pckCover(gallery, menu);
 
   const theme: Theme = {
     bg: "#0e0e10",
@@ -1330,565 +1330,565 @@ export function TplModerne(props: TemplateProps) {
     text: "#f5f1e6",
     textMuted: "rgba(245,241,230,0.65)",
     accent: "#c9a35a",
-    accentInk: "#0e0e10",
+    accentnk: "#0e0e10",
     border: "rgba(201,163,90,0.25)",
-    radius: "4px",
+    radus: "4px",
   };
 
-  const [currentView, setCurrentView] = useState<"home" | "menu" | "about" | "reserve">("home");
+  const [currentVew, setCurrentVew] = useState<"home" | "menu" | "about" | "reserve">("home");
   const [mobOpen, setMobOpen] = useState(false);
 
-  const goTo = (view: typeof currentView) => {
-    setCurrentView(view);
+  const goTo = (vew: typeof currentVew) => {
+    setCurrentVew(vew);
     setMobOpen(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    wndow.scrollTo({ top: 0, behavor: "smooth" });
   };
 
   return (
-    <div className="tpl-page min-h-screen" style={{ background: theme.bg, color: theme.text, fontFamily: "'Inter', sans-serif", isolation: "isolate" }}>
-      <FontImport />
+    <dv className="tpl-page mn-h-screen" style={{ background: theme.bg, color: theme.text, fontFamly: "'nter', sans-serf", solaton: "solate" }}>
+      <Fontmport />
       <style>{TPL_BG_CSS}</style>
 
-      <div className="tpl-bg" aria-hidden>
-        <img src={BG_MODERNE} alt="" />
+      <dv className="tpl-bg" ara-hdden>
+        <mg src={BG_MODERNE} alt="" />
         <span />
-      </div>
+      </dv>
 
       {/* NAV */}
-      <header className="absolute top-0 inset-x-0 z-30">
-        <div className="max-w-7xl mx-auto px-5 py-5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
-          <div className="flex items-center gap-2 min-w-0">
+      <header className="absolute top-0 nset-x-0 z-30">
+        <dv className="max-w-7xl mx-auto px-5 py-5 grd grd-cols-[mnmax(0,1fr)_auto] tems-center gap-4">
+          <dv className="flex tems-center gap-2 mn-w-0">
             {restaurant.logo_url ? (
-              <img src={restaurant.logo_url} alt={restaurant.name} className="h-8 w-auto object-contain rounded" />
+              <mg src={restaurant.logo_url} alt={restaurant.name} className="h-8 w-auto object-contan rounded" />
             ) : (
-              <span className="text-2xl shrink-0">🌿</span>
+              <span className="text-2xl shrnk-0">🌿</span>
             )}
-            <strong className="text-xl sm:text-2xl truncate" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <strong className="text-xl sm:text-2xl truncate" style={{ fontFamly: "'Playfar Dsplay', serf" }}>
               {restaurant.name}
             </strong>
-          </div>
-          <div className="flex items-center gap-2 sm:gap-6">
-            <nav className="hidden md:flex gap-6 text-[12px] uppercase font-medium" style={{ letterSpacing: "0.15em", color: theme.textMuted }}>
-              <button onClick={() => goTo("home")} className={`hover:text-[#c9a35a] ${currentView === "home" ? "text-[#c9a35a]" : ""}`}>Accueil</button>
-              <button onClick={() => goTo("about")} className={`hover:text-[#c9a35a] ${currentView === "about" ? "text-[#c9a35a]" : ""}`}>À propos</button>
-              <button onClick={() => goTo("menu")} className={`hover:text-[#c9a35a] ${currentView === "menu" ? "text-[#c9a35a]" : ""}`}>Menu</button>
+          </dv>
+          <dv className="flex tems-center gap-2 sm:gap-6">
+            <nav className="hdden md:flex gap-6 text-[12px] uppercase font-medum" style={{ letterSpacng: "0.15em", color: theme.textMuted }}>
+              <button onClck={() => goTo("home")} className={`hover:text-[#c9a35a] ${currentVew === "home" ? "text-[#c9a35a]" : ""}`}>Accuel</button>
+              <button onClck={() => goTo("about")} className={`hover:text-[#c9a35a] ${currentVew === "about" ? "text-[#c9a35a]" : ""}`}>À propos</button>
+              <button onClck={() => goTo("menu")} className={`hover:text-[#c9a35a] ${currentVew === "menu" ? "text-[#c9a35a]" : ""}`}>Menu</button>
             </nav>
-            {restaurant.plan !== "gratuit" && (
-              <button onClick={() => goTo("reserve")} className="hidden md:block px-5 py-2.5 border text-xs font-semibold hover:bg-[#c9a35a] hover:text-[#0e0e10] transition rounded-full" style={{ borderColor: theme.accent, color: theme.accent }}>
+            {restaurant.plan !== "gratut" && (
+              <button onClck={() => goTo("reserve")} className="hdden md:block px-5 py-2.5 border text-xs font-sembold hover:bg-[#c9a35a] hover:text-[#0e0e10] transton rounded-full" style={{ borderColor: theme.accent, color: theme.accent }}>
                 Réserver une table →
               </button>
             )}
             <button
-              onClick={() => setMobOpen((v) => !v)}
-              className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-white/10 transition-colors"
-              aria-label="Menu"
+              onClck={() => setMobOpen((v) => !v)}
+              className="md:hdden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-whte/10 transton-colors"
+              ara-label="Menu"
             >
-              <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
-              <span className={`block w-6 h-0.5 bg-current transition-opacity ${mobOpen ? "opacity-0" : ""}`} />
-              <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+              <span className={`block w-6 h-0.5 bg-current transton-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
+              <span className={`block w-6 h-0.5 bg-current transton-opacty ${mobOpen ? "opacty-0" : ""}`} />
+              <span className={`block w-6 h-0.5 bg-current transton-transform ${mobOpen ? "-rotate-45 -translate-y-2" : ""}`} />
             </button>
-          </div>
-        </div>
+          </dv>
+        </dv>
       </header>
 
-      {/* HOME VIEW */}
-      {currentView === "home" && (
-        <section id="home" className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+      {/* HOME VEW */}
+      {currentVew === "home" && (
+        <secton d="home" className="relatve mn-h-[70vh] flex tems-center justfy-center overflow-hdden">
           {cover ? (
-            <StorageImage path={cover} alt={restaurant.name} className="absolute inset-0 w-full h-full object-cover" />
+            <Storagemage path={cover} alt={restaurant.name} className="absolute nset-0 w-full h-full object-cover" />
           ) : null}
 
-          <div className="relative text-center px-5 pt-32 pb-20 max-w-3xl">
-            <h1 className="leading-[1.05]" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(3rem, 7vw, 5.5rem)" }}>
-              La meilleure cuisine<br/>pour <em style={{ color: theme.accent, fontStyle: "italic" }}>votre goût</em>
+          <dv className="relatve text-center px-5 pt-32 pb-20 max-w-3xl">
+            <h1 className="leadng-[1.05]" style={{ fontFamly: "'Playfar Dsplay', serf", fontSze: "clamp(3rem, 7vw, 5.5rem)" }}>
+              La melleure cusne<br/>pour <em style={{ color: theme.accent, fontStyle: "talc" }}>votre goût</em>
             </h1>
             <p className="mt-5 max-w-xl mx-auto" style={{ color: theme.textMuted }}>
-              {restaurant.description ?? `Une expérience culinaire d'exception au cœur de ${restaurant.city}.`}
+              {restaurant.descrpton ?? `Une expérence culnare d'excepton au cœur de ${restaurant.cty}.`}
             </p>
-            <button onClick={() => goTo("menu")} className="mt-8 inline-block px-7 py-3 border font-medium text-sm hover:bg-[#c9a35a] hover:text-[#0e0e10] transition" style={{ borderColor: theme.accent, color: theme.accent }}>
-              Découvrir →
+            <button onClck={() => goTo("menu")} className="mt-8 nlne-block px-7 py-3 border font-medum text-sm hover:bg-[#c9a35a] hover:text-[#0e0e10] transton" style={{ borderColor: theme.accent, color: theme.accent }}>
+              Découvrr →
             </button>
-          </div>
-        </section>
+          </dv>
+        </secton>
       )}
 
-      {/* ABOUT VIEW */}
-      {currentView === "about" && (
-        <section id="about" className="relative py-24 px-5" style={{ background: theme.surface }}>
-          <div className="relative max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-            <div className="relative">
+      {/* ABOUT VEW */}
+      {currentVew === "about" && (
+        <secton d="about" className="relatve py-24 px-5" style={{ background: theme.surface }}>
+          <dv className="relatve max-w-6xl mx-auto grd lg:grd-cols-2 gap-12 tems-center">
+            <dv className="relatve">
               {cover ? (
-                <StorageImage path={cover} alt={restaurant.name} className="w-full aspect-square object-cover" />
+                <Storagemage path={cover} alt={restaurant.name} className="w-full aspect-square object-cover" />
               ) : (
-                <div className="w-full aspect-square grid place-items-center text-9xl" style={{ background: theme.surfaceAlt }}>🥗</div>
+                <dv className="w-full aspect-square grd place-tems-center text-9xl" style={{ background: theme.surfaceAlt }}>🥗</dv>
               )}
-              <div className="absolute -bottom-6 -right-6 w-32 h-32 hidden lg:block" style={{ background: `radial-gradient(circle, ${theme.accent} 1px, transparent 1px)`, backgroundSize: "10px 10px" }} />
-            </div>
-            <div>
-              <p className="italic mb-3" style={{ color: theme.accent, fontFamily: "'Playfair Display', serif" }}>À propos</p>
-              <h2 className="leading-tight mb-5" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(2rem, 5vw, 3.5rem)" }}>
-                Un voyage exceptionnel des saveurs
+              <dv className="absolute -bottom-6 -rght-6 w-32 h-32 hdden lg:block" style={{ background: `radal-gradent(crcle, ${theme.accent} 1px, transparent 1px)`, backgroundSze: "10px 10px" }} />
+            </dv>
+            <dv>
+              <p className="talc mb-3" style={{ color: theme.accent, fontFamly: "'Playfar Dsplay', serf" }}>À propos</p>
+              <h2 className="leadng-tght mb-5" style={{ fontFamly: "'Playfar Dsplay', serf", fontSze: "clamp(2rem, 5vw, 3.5rem)" }}>
+                Un voyage exceptonnel des saveurs
               </h2>
-              <p className="leading-relaxed mb-8" style={{ color: theme.textMuted }}>
-                {restaurant.description ?? "Depuis nos débuts, nous mettons l'accent sur la qualité, l'authenticité et l'art du dressage. Chaque plat est une promesse de découverte."}
+              <p className="leadng-relaxed mb-8" style={{ color: theme.textMuted }}>
+                {restaurant.descrpton ?? "Depus nos débuts, nous mettons l'accent sur la qualté, l'authentcté et l'art du dressage. Chaque plat est une promesse de découverte."}
               </p>
-              <div className="grid sm:grid-cols-2 gap-6 mb-6">
+              <dv className="grd sm:grd-cols-2 gap-6 mb-6">
                 {[
-                  ["🍴", "Spécialiste", "Une équipe formée aux meilleures techniques."],
-                  ["🏛️", "Restaurant", "Un cadre élégant pour vos moments précieux."],
-                ].map(([icon, t, d]) => (
-                  <div key={t}>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xl" style={{ color: theme.accent }}>{icon}</span>
-                      <strong style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.2rem" }}>{t}</strong>
-                    </div>
+                  ["🍴", "Spécalste", "Une équpe formée aux melleures technques."],
+                  ["🏛️", "Restaurant", "Un cadre élégant pour vos moments préceux."],
+                ].map(([con, t, d]) => (
+                  <dv key={t}>
+                    <dv className="flex tems-center gap-2 mb-2">
+                      <span className="text-xl" style={{ color: theme.accent }}>{con}</span>
+                      <strong style={{ fontFamly: "'Playfar Dsplay', serf", fontSze: "1.2rem" }}>{t}</strong>
+                    </dv>
                     <p className="text-sm" style={{ color: theme.textMuted }}>{d}</p>
-                  </div>
+                  </dv>
                 ))}
-              </div>
+              </dv>
               <ul className="space-y-2 mb-8">
-                {["Ingrédients sélectionnés avec soin", "Service attentionné et personnalisé", "Carte renouvelée selon les saisons"].map((s) => (
-                  <li key={s} className="flex items-center gap-3 text-sm" style={{ color: theme.textMuted }}>
+                {["ngrédents sélectonnés avec son", "Servce attentonné et personnalsé", "Carte renouvelée selon les sasons"].map((s) => (
+                  <l key={s} className="flex tems-center gap-3 text-sm" style={{ color: theme.textMuted }}>
                     <span style={{ color: theme.accent }}>✓</span>{s}
-                  </li>
+                  </l>
                 ))}
               </ul>
-              <button onClick={() => goTo("menu")} className="inline-block px-7 py-3 border text-sm hover:bg-[#c9a35a] hover:text-[#0e0e10] transition" style={{ borderColor: theme.accent, color: theme.accent }}>
-                En savoir plus →
+              <button onClck={() => goTo("menu")} className="nlne-block px-7 py-3 border text-sm hover:bg-[#c9a35a] hover:text-[#0e0e10] transton" style={{ borderColor: theme.accent, color: theme.accent }}>
+                En savor plus →
               </button>
-            </div>
-          </div>
-        </section>
+            </dv>
+          </dv>
+        </secton>
       )}
 
-      {/* MENU VIEW */}
-      {currentView === "menu" && (
-        <section id="menu" className="py-20 px-5" style={{ background: theme.surface, borderTop: `1px solid ${theme.border}` }}>
-          <div className="max-w-6xl mx-auto">
-            <SectionHead kicker="La carte" title="Notre menu" theme={theme} align="center" serif />
-            <MenuGrid menu={menu} theme={theme} />
-          </div>
-        </section>
+      {/* MENU VEW */}
+      {currentVew === "menu" && (
+        <secton d="menu" className="py-20 px-5" style={{ background: theme.surface, borderTop: `1px sold ${theme.border}` }}>
+          <dv className="max-w-6xl mx-auto">
+            <SectonHead kcker="La carte" ttle="Notre menu" theme={theme} algn="center" serf />
+            <MenuGrd menu={menu} theme={theme} />
+          </dv>
+        </secton>
       )}
 
-      {/* RESERVATION VIEW */}
-      {currentView === "reserve" && restaurant.plan !== "gratuit" && (
-        <section id="reserver" className="py-20 px-5" style={{ background: theme.surface, borderTop: `1px solid ${theme.border}` }}>
-          <div className="max-w-3xl mx-auto">
-            <SectionHead kicker="Réservation" title="Réservez votre table" theme={theme} align="center" serif />
-            <AdvancedReservationForm restaurantId={restaurant.id} restaurantName={restaurant.name} theme={theme} waLink={wa} />
-          </div>
-        </section>
+      {/* RESERVATON VEW */}
+      {currentVew === "reserve" && restaurant.plan !== "gratut" && (
+        <secton d="reserver" className="py-20 px-5" style={{ background: theme.surface, borderTop: `1px sold ${theme.border}` }}>
+          <dv className="max-w-3xl mx-auto">
+            <SectonHead kcker="Réservaton" ttle="Réservez votre table" theme={theme} algn="center" serf />
+            <AdvancedReservatonForm restaurantd={restaurant.d} restaurantName={restaurant.name} theme={theme} waLnk={wa} />
+          </dv>
+        </secton>
       )}
 
-      {/* GALERIE & AVIS - Intégrés dans l'accueil */}
-      {currentView === "home" && (
+      {/* GALERE & AVS - ntégrés dans l'accuel */}
+      {currentVew === "home" && (
         <>
           {gallery.length > 0 && (
-            <section id="galerie" className="py-20 px-5" style={{ borderTop: `1px solid ${theme.border}` }}>
-              <div className="max-w-6xl mx-auto">
-                <SectionHead kicker="Galerie" title="Notre maison" theme={theme} align="center" serif />
-                <GalleryGrid gallery={gallery} theme={theme} />
-              </div>
-            </section>
+            <secton d="galere" className="py-20 px-5" style={{ borderTop: `1px sold ${theme.border}` }}>
+              <dv className="max-w-6xl mx-auto">
+                <SectonHead kcker="Galere" ttle="Notre mason" theme={theme} algn="center" serf />
+                <GalleryGrd gallery={gallery} theme={theme} />
+              </dv>
+            </secton>
           )}
 
-          <section className="py-20 px-5" style={{ borderTop: `1px solid ${theme.border}` }}>
-            <div className="max-w-6xl mx-auto">
-              <SectionHead kicker="Avis" title="Ils nous recommandent" theme={theme} align="center" serif />
-              <ReviewList reviews={reviews} theme={theme} />
-              <div className="mt-12 max-w-xl mx-auto">
-                <ReviewForm restaurantId={restaurant.id} theme={theme} />
-              </div>
-            </div>
-          </section>
+          <secton className="py-20 px-5" style={{ borderTop: `1px sold ${theme.border}` }}>
+            <dv className="max-w-6xl mx-auto">
+              <SectonHead kcker="Avs" ttle="ls nous recommandent" theme={theme} algn="center" serf />
+              <RevewLst revews={revews} theme={theme} />
+              <dv className="mt-12 max-w-xl mx-auto">
+                <RevewForm restaurantd={restaurant.d} theme={theme} />
+              </dv>
+            </dv>
+          </secton>
         </>
       )}
 
       <PoweredFooter restaurant={restaurant} wa={wa} theme={theme} />
-      <FloatingWhatsApp href={wa} accent={theme.accent} ink={theme.accentInk} />
-    </div>
+      <FloatngWhatsApp href={wa} accent={theme.accent} nk={theme.accentnk} />
+    </dv>
   );
 }
 
 /* ================================================================== */
-/*  4. CLASSIQUE — Swiss minimal B&W (Gratuit)                        */
+/*  4. CLASSQUE — Swss mnmal B&W (Gratut)                        */
 /* ================================================================== */
 
-export function TplClassique(props: TemplateProps) {
-  return <ClassiqueGratuit {...props} />;
+export functon TplClassque(props: TemplateProps) {
+  return <ClassqueGratut {...props} />;
 }
 
-/* ============= Classique (Gratuit) — green minimal multi-section ============= */
+/* ============= Classque (Gratut) — green mnmal mult-secton ============= */
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+mport { useEffect, useMemo, useRef, useState } from "react";
+mport { supabase } from "@/ntegratons/supabase/clent";
+mport { toast } from "sonner";
 
-type CartLine = { name: string; price: number; qty: number };
+type CartLne = { name: strng; prce: number; qty: number };
 
-function ClassiqueGratuit({ restaurant, menu, reviews: initialReviews, gallery }: TemplateProps) {
-  const [reviews, setReviews] = useState(initialReviews);
+functon ClassqueGratut({ restaurant, menu, revews: ntalRevews, gallery }: TemplateProps) {
+  const [revews, setRevews] = useState(ntalRevews);
   const wa = (restaurant.whatsapp || "").replace(/\D/g, "");
-  const waLink = (text: string) =>
-    wa ? `https://wa.me/${wa}?text=${encodeURIComponent(text)}` : "#";
+  const waLnk = (text: strng) =>
+    wa ? `https://wa.me/${wa}?text=${encodeURComponent(text)}` : "#";
 
-  const available = useMemo(() => menu.filter((m) => m.available), [menu]);
-  const ratingAvg = reviews.length
-    ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
+  const avalable = useMemo(() => menu.flter((m) => m.avalable), [menu]);
+  const ratngAvg = revews.length
+    ? (revews.reduce((s, r) => s + r.ratng, 0) / revews.length).toFxed(1)
     : null;
 
   const [mobOpen, setMobOpen] = useState(false);
-  const [active, setActive] = useState<"home" | "menu" | "order" | "reserve" | "reviews">("home");
-  const [prefill, setPrefill] = useState<{ name: string; price: number } | null>(null);
+  const [actve, setActve] = useState<"home" | "menu" | "order" | "reserve" | "revews">("home");
+  const [prefll, setPrefll] = useState<{ name: strng; prce: number } | null>(null);
 
-  const go = (id: typeof active) => {
-    setActive(id);
+  const go = (d: typeof actve) => {
+    setActve(d);
     setMobOpen(false);
-    requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+    requestAnmatonFrame(() => wndow.scrollTo({ top: 0, behavor: "smooth" }));
   };
 
-  const navLinks: { id: typeof active; label: string; icon: string }[] = [
-    { id: "home", label: "Accueil", icon: "🏠" },
-    { id: "menu", label: "Menu", icon: "🍲" },
-    { id: "order", label: "Commander", icon: "🛒" },
-    { id: "reserve", label: "Réservation", icon: "📅" },
-    { id: "reviews", label: "Avis", icon: "⭐" },
+  const navLnks: { d: typeof actve; label: strng; con: strng }[] = [
+    { d: "home", label: "Accuel", con: "🏠" },
+    { d: "menu", label: "Menu", con: "🍲" },
+    { d: "order", label: "Commander", con: "🛒" },
+    { d: "reserve", label: "Réservaton", con: "📅" },
+    { d: "revews", label: "Avs", con: "⭐" },
   ];
 
   return (
-    <div className="cl-root">
+    <dv className="cl-root">
       <style>{CL_CSS}</style>
 
       <nav className="cl-nav">
-        <button className="cl-brand" onClick={() => go("home")}>
+        <button className="cl-brand" onClck={() => go("home")}>
           {restaurant.logo_url ? (
-            <img src={restaurant.logo_url} alt={restaurant.name} style={{ maxHeight: "32px", objectFit: "contain" }} />
+            <mg src={restaurant.logo_url} alt={restaurant.name} style={{ maxHeght: "32px", objectFt: "contan" }} />
           ) : (
             restaurant.name
           )}
         </button>
-        <div className="cl-nav-links">
-          {navLinks.map((l) => (
+        <dv className="cl-nav-lnks">
+          {navLnks.map((l) => (
             <button
-              key={l.id}
-              className={`cl-nav-link ${active === l.id ? "active" : ""}`}
-              onClick={() => go(l.id)}
+              key={l.d}
+              className={`cl-nav-lnk ${actve === l.d ? "actve" : ""}`}
+              onClck={() => go(l.d)}
             >
               {l.label}
             </button>
           ))}
-        </div>
-        <button className="cl-nav-cta" onClick={() => go("reserve")}>📅 Réserver</button>
-        <button className="cl-hamburger" onClick={() => setMobOpen((v) => !v)}>☰</button>
+        </dv>
+        <button className="cl-nav-cta" onClck={() => go("reserve")}>📅 Réserver</button>
+        <button className="cl-hamburger" onClck={() => setMobOpen((v) => !v)}>☰</button>
       </nav>
 
       {mobOpen && (
-        <div className="cl-mob-menu">
-          {navLinks.map((l) => (
-            <button key={l.id} onClick={() => go(l.id)}>{l.icon} {l.label}</button>
+        <dv className="cl-mob-menu">
+          {navLnks.map((l) => (
+            <button key={l.d} onClck={() => go(l.d)}>{l.con} {l.label}</button>
           ))}
-        </div>
+        </dv>
       )}
 
-      <div className="cl-page-wrap">
-        {active === "home" && (
-          <HomeView restaurant={restaurant} menu={available} reviews={reviews} ratingAvg={ratingAvg} waLink={waLink} onGo={go} />
+      <dv className="cl-page-wrap">
+        {actve === "home" && (
+          <HomeVew restaurant={restaurant} menu={avalable} revews={revews} ratngAvg={ratngAvg} waLnk={waLnk} onGo={go} />
         )}
-        {active === "menu" && (
-          <MenuView restaurant={restaurant} menu={available} waLink={waLink} onOrder={(n, p) => { setPrefill({ name: n, price: p }); go("order"); }} />
+        {actve === "menu" && (
+          <MenuVew restaurant={restaurant} menu={avalable} waLnk={waLnk} onOrder={(n, p) => { setPrefll({ name: n, prce: p }); go("order"); }} />
         )}
-        {active === "order" && (
-          <OrderView restaurant={restaurant} menu={available} waLink={waLink} prefill={prefill} clearPrefill={() => setPrefill(null)} />
+        {actve === "order" && (
+          <OrderVew restaurant={restaurant} menu={avalable} waLnk={waLnk} prefll={prefll} clearPrefll={() => setPrefll(null)} />
         )}
-        {active === "reserve" && (
-          <ReservationForm restaurantId={restaurant.id} theme={{ bg: "#ffffff", surface: "#f8f8f8", surfaceAlt: "#f0f0f0", text: "#111111", textMuted: "#666666", accent: "#111111", accentInk: "#ffffff", border: "#e0e0e0", radius: "10px" }} />
+        {actve === "reserve" && (
+          <ReservatonForm restaurantd={restaurant.d} theme={{ bg: "#ffffff", surface: "#f8f8f8", surfaceAlt: "#f0f0f0", text: "#111111", textMuted: "#666666", accent: "#111111", accentnk: "#ffffff", border: "#e0e0e0", radus: "10px" }} />
         )}
-        {active === "reviews" && (
-          <ReviewsView restaurant={restaurant} reviews={reviews} onAdded={(r) => setReviews((prev) => [r, ...prev])} />
+        {actve === "revews" && (
+          <RevewsVew restaurant={restaurant} revews={revews} onAdded={(r) => setRevews((prev) => [r, ...prev])} />
         )}
-      </div>
+      </dv>
 
       <footer className="cl-footer">
-        <div className="cl-footer-brand">{restaurant.name}</div>
-        <div className="cl-footer-sub">
-          {restaurant.cuisine || "Cuisine africaine"} — {restaurant.city}
-        </div>
-        <div className="cl-footer-links">
-          {navLinks.map((l) => (
-            <button key={l.id} onClick={() => go(l.id)}>{l.label}</button>
+        <dv className="cl-footer-brand">{restaurant.name}</dv>
+        <dv className="cl-footer-sub">
+          {restaurant.cusne || "Cusne afrcane"} — {restaurant.cty}
+        </dv>
+        <dv className="cl-footer-lnks">
+          {navLnks.map((l) => (
+            <button key={l.d} onClck={() => go(l.d)}>{l.label}</button>
           ))}
-        </div>
-        <div className="cl-footer-credit">
+        </dv>
+        <dv className="cl-footer-credt">
           Propulsé par <a href="/">Resto BF</a>
-        </div>
+        </dv>
       </footer>
 
       {wa && (
-        <a className="cl-fab" href={waLink(`Bonjour ${restaurant.name} !`)} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">💬</a>
+        <a className="cl-fab" href={waLnk(`Bonjour ${restaurant.name} !`)} target="_blank" rel="noopener noreferrer" ara-label="WhatsApp">💬</a>
       )}
-    </div>
+    </dv>
   );
 }
 
 
-/* === Subviews === */
+/* === Subvews === */
 
-function HomeView({ restaurant, menu, reviews, ratingAvg, waLink, onGo }: {
+functon HomeVew({ restaurant, menu, revews, ratngAvg, waLnk, onGo }: {
   restaurant: TemplateProps["restaurant"];
-  menu: PublicMenuItem[];
-  reviews: TemplateProps["reviews"];
-  ratingAvg: string | null;
-  waLink: (t: string) => string;
-  onGo: (id: any) => void;
+  menu: PublcMenutem[];
+  revews: TemplateProps["revews"];
+  ratngAvg: strng | null;
+  waLnk: (t: strng) => strng;
+  onGo: (d: any) => vod;
 }) {
-  const preview = menu.slice(0, 4);
-  const revPreview = reviews.slice(0, 3);
+  const prevew = menu.slce(0, 4);
+  const revPrevew = revews.slce(0, 3);
   return (
-    <div>
-      <div className="cl-hero">
-        <div className="cl-hero-inner">
-          <div>
-            <div className="cl-eyebrow">{restaurant.cuisine || "Restaurant"} · {restaurant.city}</div>
-            <h1 className="cl-hero-title">
-              Bienvenue <em>chez {restaurant.name}</em>
+    <dv>
+      <dv className="cl-hero">
+        <dv className="cl-hero-nner">
+          <dv>
+            <dv className="cl-eyebrow">{restaurant.cusne || "Restaurant"} · {restaurant.cty}</dv>
+            <h1 className="cl-hero-ttle">
+              Benvenue <em>chez {restaurant.name}</em>
             </h1>
             <p className="cl-hero-sub">
-              {restaurant.description || "Cuisine authentique servie avec le sourire."}
+              {restaurant.descrpton || "Cusne authentque serve avec le sourre."}
             </p>
-            <div className="cl-hero-btns">
-              <button className="cl-btn cl-btn-wa" onClick={() => onGo("menu")}>🍲 Voir le menu</button>
-              <button className="cl-btn cl-btn-outline-light" onClick={() => onGo("reserve")}>📅 Réserver</button>
-            </div>
-          </div>
-          <div className="cl-hero-img" aria-hidden />
-        </div>
-        <div className="cl-hero-stats">
-          <div className="cl-hero-stat"><span className="cl-stat-num">{menu.length}</span><span className="cl-stat-lbl">Plats</span></div>
-          <div className="cl-hero-stat"><span className="cl-stat-num">{ratingAvg ? `${ratingAvg}⭐` : "—"}</span><span className="cl-stat-lbl">Note</span></div>
-          <div className="cl-hero-stat"><span className="cl-stat-num">{reviews.length}</span><span className="cl-stat-lbl">Avis</span></div>
-        </div>
-      </div>
+            <dv className="cl-hero-btns">
+              <button className="cl-btn cl-btn-wa" onClck={() => onGo("menu")}>🍲 Vor le menu</button>
+              <button className="cl-btn cl-btn-outlne-lght" onClck={() => onGo("reserve")}>📅 Réserver</button>
+            </dv>
+          </dv>
+          <dv className="cl-hero-mg" ara-hdden />
+        </dv>
+        <dv className="cl-hero-stats">
+          <dv className="cl-hero-stat"><span className="cl-stat-num">{menu.length}</span><span className="cl-stat-lbl">Plats</span></dv>
+          <dv className="cl-hero-stat"><span className="cl-stat-num">{ratngAvg ? `${ratngAvg}⭐` : "—"}</span><span className="cl-stat-lbl">Note</span></dv>
+          <dv className="cl-hero-stat"><span className="cl-stat-num">{revews.length}</span><span className="cl-stat-lbl">Avs</span></dv>
+        </dv>
+      </dv>
 
-      <div className="cl-info-band">
-        <div className="cl-info-band-inner">
-          <div className="cl-info-item">📞 <span>{restaurant.phone || "—"}</span></div>
-          <div className="cl-info-item">📍 <span>{restaurant.address || restaurant.city}</span></div>
-          <div className="cl-info-item">🕐 <span>{restaurant.hours || "—"}</span></div>
-        </div>
-      </div>
+      <dv className="cl-nfo-band">
+        <dv className="cl-nfo-band-nner">
+          <dv className="cl-nfo-tem">📞 <span>{restaurant.phone || "—"}</span></dv>
+          <dv className="cl-nfo-tem">📍 <span>{restaurant.address || restaurant.cty}</span></dv>
+          <dv className="cl-nfo-tem">🕐 <span>{restaurant.hours || "—"}</span></dv>
+        </dv>
+      </dv>
 
-      <section className="cl-section">
-        <div className="cl-container">
-          <div className="cl-sec-head center">
-            <div className="cl-sec-label">Pourquoi nous choisir</div>
-            <h2 className="cl-sec-title">Une expérience complète</h2>
-          </div>
-          <div className="cl-features">
+      <secton className="cl-secton">
+        <dv className="cl-contaner">
+          <dv className="cl-sec-head center">
+            <dv className="cl-sec-label">Pourquo nous chosr</dv>
+            <h2 className="cl-sec-ttle">Une expérence complète</h2>
+          </dv>
+          <dv className="cl-features">
             {[
-              { i: "🔥", t: "Grillades au feu de bois", d: "Nos viandes sont marinées et grillées à la commande." },
-              { i: "🛒", t: "Commande en ligne", d: "Commandez directement via WhatsApp sans vous déplacer." },
-              { i: "📅", t: "Réservation facile", d: "Réservez votre table en quelques secondes, 7j/7." },
-              { i: "⭐", t: "Clients satisfaits", d: "Plus de 95% de nos clients reviennent." },
+              { : "🔥", t: "Grllades au feu de bos", d: "Nos vandes sont marnées et grllées à la commande." },
+              { : "🛒", t: "Commande en lgne", d: "Commandez drectement va WhatsApp sans vous déplacer." },
+              { : "📅", t: "Réservaton facle", d: "Réservez votre table en quelques secondes, 7j/7." },
+              { : "⭐", t: "Clents satsfats", d: "Plus de 95% de nos clents revennent." },
             ].map((f) => (
-              <div key={f.t} className="cl-card cl-feat">
-                <div className="cl-feat-icon">{f.i}</div>
-                <div className="cl-feat-title">{f.t}</div>
-                <div className="cl-feat-desc">{f.d}</div>
-              </div>
+              <dv key={f.t} className="cl-card cl-feat">
+                <dv className="cl-feat-con">{f.}</dv>
+                <dv className="cl-feat-ttle">{f.t}</dv>
+                <dv className="cl-feat-desc">{f.d}</dv>
+              </dv>
             ))}
-          </div>
-        </div>
-      </section>
+          </dv>
+        </dv>
+      </secton>
 
-      <div className="cl-divider" />
+      <dv className="cl-dvder" />
 
-      <section className="cl-section cl-section-alt">
-        <div className="cl-container">
-          <div className="cl-sec-head row">
-            <div>
-              <div className="cl-sec-label">Notre carte</div>
-              <h2 className="cl-sec-title">Quelques spécialités</h2>
-            </div>
-            <button className="cl-btn cl-btn-outline cl-btn-sm" onClick={() => onGo("menu")}>Voir tout →</button>
-          </div>
-          <div className="cl-menu-preview">
-            {preview.length ? preview.map((d) => (
-              <button key={d.id} className="cl-card cl-dish-mini" onClick={() => onGo("menu")}>
-                <div className="cl-dish-mini-icon">🍽️</div>
-                <div style={{ textAlign: "left", flex: 1 }}>
-                  <div className="cl-dish-mini-cat">{d.category}</div>
-                  <div className="cl-dish-mini-name">{d.name}</div>
-                </div>
-                <div className="cl-dish-mini-price">{d.price.toLocaleString("fr-FR")} F</div>
+      <secton className="cl-secton cl-secton-alt">
+        <dv className="cl-contaner">
+          <dv className="cl-sec-head row">
+            <dv>
+              <dv className="cl-sec-label">Notre carte</dv>
+              <h2 className="cl-sec-ttle">Quelques spécaltés</h2>
+            </dv>
+            <button className="cl-btn cl-btn-outlne cl-btn-sm" onClck={() => onGo("menu")}>Vor tout →</button>
+          </dv>
+          <dv className="cl-menu-prevew">
+            {prevew.length ? prevew.map((d) => (
+              <button key={d.d} className="cl-card cl-dsh-mn" onClck={() => onGo("menu")}>
+                <dv className="cl-dsh-mn-con">🍽️</dv>
+                <dv style={{ textAlgn: "left", flex: 1 }}>
+                  <dv className="cl-dsh-mn-cat">{d.category}</dv>
+                  <dv className="cl-dsh-mn-name">{d.name}</dv>
+                </dv>
+                <dv className="cl-dsh-mn-prce">{d.prce.toLocaleStrng("fr-FR")} F</dv>
               </button>
             )) : <p style={{ color: "var(--cl-muted)" }}>Aucun plat encore.</p>}
-          </div>
-        </div>
-      </section>
+          </dv>
+        </dv>
+      </secton>
 
-      <div className="cl-divider" />
+      <dv className="cl-dvder" />
 
-      <section className="cl-section">
-        <div className="cl-container">
-          <div className="cl-sec-head row">
-            <div>
-              <div className="cl-sec-label">Ce qu'ils disent</div>
-              <h2 className="cl-sec-title">Avis de nos clients</h2>
-            </div>
-            <button className="cl-btn cl-btn-outline cl-btn-sm" onClick={() => onGo("reviews")}>Tous les avis →</button>
-          </div>
-          <div className="cl-reviews-row">
-            {revPreview.length ? revPreview.map((r) => (
-              <div key={r.id} className="cl-card cl-rev-card">
-                <div className="cl-rev-stars">{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</div>
-                <div className="cl-rev-text">"{r.comment}"</div>
-                <div className="cl-rev-name">{r.author_name}</div>
-              </div>
-            )) : <p style={{ color: "var(--cl-muted)" }}>Aucun avis encore.</p>}
-          </div>
-        </div>
-      </section>
+      <secton className="cl-secton">
+        <dv className="cl-contaner">
+          <dv className="cl-sec-head row">
+            <dv>
+              <dv className="cl-sec-label">Ce qu'ls dsent</dv>
+              <h2 className="cl-sec-ttle">Avs de nos clents</h2>
+            </dv>
+            <button className="cl-btn cl-btn-outlne cl-btn-sm" onClck={() => onGo("revews")}>Tous les avs →</button>
+          </dv>
+          <dv className="cl-revews-row">
+            {revPrevew.length ? revPrevew.map((r) => (
+              <dv key={r.d} className="cl-card cl-rev-card">
+                <dv className="cl-rev-stars">{"★".repeat(r.ratng)}{"☆".repeat(5 - r.ratng)}</dv>
+                <dv className="cl-rev-text">"{r.comment}"</dv>
+                <dv className="cl-rev-name">{r.author_name}</dv>
+              </dv>
+            )) : <p style={{ color: "var(--cl-muted)" }}>Aucun avs encore.</p>}
+          </dv>
+        </dv>
+      </secton>
 
-      <div className="cl-divider" />
+      <dv className="cl-dvder" />
 
-      <section className="cl-section cl-section-alt">
-        <div className="cl-container" style={{ textAlign: "center" }}>
-          <div className="cl-sec-label">Prêt ?</div>
-          <h2 className="cl-sec-title">Réservez votre table ce soir</h2>
-          <p className="cl-sec-sub" style={{ margin: "0 auto 28px" }}>Places limitées. Réservez maintenant.</p>
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <button className="cl-btn cl-btn-green" onClick={() => onGo("reserve")}>📅 Réserver maintenant</button>
-            <a className="cl-btn cl-btn-wa" href={waLink(`Bonjour ${restaurant.name} !`)} target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
-          </div>
-        </div>
-      </section>
-    </div>
+      <secton className="cl-secton cl-secton-alt">
+        <dv className="cl-contaner" style={{ textAlgn: "center" }}>
+          <dv className="cl-sec-label">Prêt ?</dv>
+          <h2 className="cl-sec-ttle">Réservez votre table ce sor</h2>
+          <p className="cl-sec-sub" style={{ margn: "0 auto 28px" }}>Places lmtées. Réservez mantenant.</p>
+          <dv style={{ dsplay: "flex", gap: 12, justfyContent: "center", flexWrap: "wrap" }}>
+            <button className="cl-btn cl-btn-green" onClck={() => onGo("reserve")}>📅 Réserver mantenant</button>
+            <a className="cl-btn cl-btn-wa" href={waLnk(`Bonjour ${restaurant.name} !`)} target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
+          </dv>
+        </dv>
+      </secton>
+    </dv>
   );
 }
 
-function MenuView({ restaurant, menu, waLink, onOrder }: {
+functon MenuVew({ restaurant, menu, waLnk, onOrder }: {
   restaurant: TemplateProps["restaurant"];
-  menu: PublicMenuItem[];
-  waLink: (t: string) => string;
-  onOrder: (name: string, price: number) => void;
+  menu: PublcMenutem[];
+  waLnk: (t: strng) => strng;
+  onOrder: (name: strng, prce: number) => vod;
 }) {
   const cats = useMemo(() => ["Tout", ...Array.from(new Set(menu.map((d) => d.category)))], [menu]);
-  const [active, setActive] = useState("Tout");
-  const [open, setOpen] = useState<PublicMenuItem | null>(null);
-  const filtered = active === "Tout" ? menu : menu.filter((d) => d.category === active);
+  const [actve, setActve] = useState("Tout");
+  const [open, setOpen] = useState<PublcMenutem | null>(null);
+  const fltered = actve === "Tout" ? menu : menu.flter((d) => d.category === actve);
 
   return (
     <>
-      <div className="cl-page-hero">
+      <dv className="cl-page-hero">
         <h1>Notre Menu</h1>
-        <p>{menu.length} plats · {restaurant.cuisine || "Cuisine africaine"}</p>
-      </div>
-      <div className="cl-cat-bar">
-        <div className="cl-cat-bar-inner">
+        <p>{menu.length} plats · {restaurant.cusne || "Cusne afrcane"}</p>
+      </dv>
+      <dv className="cl-cat-bar">
+        <dv className="cl-cat-bar-nner">
           {cats.map((c) => (
-            <button key={c} className={`cl-cat-pill ${c === active ? "active" : ""}`} onClick={() => setActive(c)}>{c}</button>
+            <button key={c} className={`cl-cat-pll ${c === actve ? "actve" : ""}`} onClck={() => setActve(c)}>{c}</button>
           ))}
-        </div>
-      </div>
-      <section className="cl-section">
-        <div className="cl-container">
-          {filtered.length ? (
-            <div className="cl-dishes-grid">
-              {filtered.map((d) => (
-                <button key={d.id} className="cl-card cl-dish-card" onClick={() => setOpen(d)}>
-                  <div className="cl-dish-img">
-                    {d.image_url ? <StorageImage path={d.image_url} alt={d.name} className="w-full h-full object-cover" /> : "🍽️"}
-                    <span className="cl-dish-avail cl-badge cl-badge-green">✅</span>
-                  </div>
-                  <div className="cl-dish-body">
-                    <div className="cl-dish-cat">{d.category}</div>
-                    <div className="cl-dish-name">{d.name}</div>
-                    {d.description && <div className="cl-dish-desc">{d.description}</div>}
-                    <div className="cl-dish-foot">
-                      <span className="cl-dish-price">{d.price.toLocaleString("fr-FR")} FCFA</span>
-                    </div>
-                  </div>
+        </dv>
+      </dv>
+      <secton className="cl-secton">
+        <dv className="cl-contaner">
+          {fltered.length ? (
+            <dv className="cl-dshes-grd">
+              {fltered.map((d) => (
+                <button key={d.d} className="cl-card cl-dsh-card" onClck={() => setOpen(d)}>
+                  <dv className="cl-dsh-mg">
+                    {d.mage_url ? <Storagemage path={d.mage_url} alt={d.name} className="w-full h-full object-cover" /> : "🍽️"}
+                    <span className="cl-dsh-aval cl-badge cl-badge-green">✅</span>
+                  </dv>
+                  <dv className="cl-dsh-body">
+                    <dv className="cl-dsh-cat">{d.category}</dv>
+                    <dv className="cl-dsh-name">{d.name}</dv>
+                    {d.descrpton && <dv className="cl-dsh-desc">{d.descrpton}</dv>}
+                    <dv className="cl-dsh-foot">
+                      <span className="cl-dsh-prce">{d.prce.toLocaleStrng("fr-FR")} FCFA</span>
+                    </dv>
+                  </dv>
                 </button>
               ))}
-            </div>
+            </dv>
           ) : (
-            <div className="cl-empty">🍽️<br /><br />Aucun plat ici.</div>
+            <dv className="cl-empty">🍽️<br /><br />Aucun plat c.</dv>
           )}
-        </div>
-      </section>
+        </dv>
+      </secton>
 
       {open && (
-        <div className="cl-modal-bg open" onClick={(e) => { if (e.target === e.currentTarget) setOpen(null); }}>
-          <div className="cl-modal-box">
-            <div className="cl-dm-img">
-              {open.image_url ? <StorageImage path={open.image_url} alt={open.name} className="w-full h-full object-cover" /> : "🍽️"}
-            </div>
-            <div className="cl-dm-body">
-              <button className="cl-modal-close" onClick={() => setOpen(null)}>✕</button>
-              <div className="cl-dm-cat">{open.category}</div>
-              <div className="cl-dm-name">{open.name}</div>
-              {open.description && <div className="cl-dm-desc">{open.description}</div>}
-              <div className="cl-dm-price">{open.price.toLocaleString("fr-FR")} FCFA</div>
-              <div className="cl-dm-actions">
-                <button className="cl-btn cl-btn-green" onClick={() => { onOrder(open.name, open.price); setOpen(null); }}>🛒 Commander</button>
-                <a className="cl-btn cl-btn-wa" target="_blank" rel="noopener noreferrer" href={waLink(`Bonjour ! Je voudrais *${open.name}* (${open.price.toLocaleString("fr-FR")} FCFA).`)}>💬 WhatsApp</a>
-                <button className="cl-btn cl-btn-outline cl-btn-sm" onClick={() => setOpen(null)}>Fermer</button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <dv className="cl-modal-bg open" onClck={(e) => { f (e.target === e.currentTarget) setOpen(null); }}>
+          <dv className="cl-modal-box">
+            <dv className="cl-dm-mg">
+              {open.mage_url ? <Storagemage path={open.mage_url} alt={open.name} className="w-full h-full object-cover" /> : "🍽️"}
+            </dv>
+            <dv className="cl-dm-body">
+              <button className="cl-modal-close" onClck={() => setOpen(null)}>✕</button>
+              <dv className="cl-dm-cat">{open.category}</dv>
+              <dv className="cl-dm-name">{open.name}</dv>
+              {open.descrpton && <dv className="cl-dm-desc">{open.descrpton}</dv>}
+              <dv className="cl-dm-prce">{open.prce.toLocaleStrng("fr-FR")} FCFA</dv>
+              <dv className="cl-dm-actons">
+                <button className="cl-btn cl-btn-green" onClck={() => { onOrder(open.name, open.prce); setOpen(null); }}>🛒 Commander</button>
+                <a className="cl-btn cl-btn-wa" target="_blank" rel="noopener noreferrer" href={waLnk(`Bonjour ! Je voudras *${open.name}* (${open.prce.toLocaleStrng("fr-FR")} FCFA).`)}>💬 WhatsApp</a>
+                <button className="cl-btn cl-btn-outlne cl-btn-sm" onClck={() => setOpen(null)}>Fermer</button>
+              </dv>
+            </dv>
+          </dv>
+        </dv>
       )}
     </>
   );
 }
 
-function OrderView({ restaurant, menu, waLink, prefill, clearPrefill }: {
+functon OrderVew({ restaurant, menu, waLnk, prefll, clearPrefll }: {
   restaurant: TemplateProps["restaurant"];
-  menu: PublicMenuItem[];
-  waLink: (t: string) => string;
-  prefill: { name: string; price: number } | null;
-  clearPrefill: () => void;
+  menu: PublcMenutem[];
+  waLnk: (t: strng) => strng;
+  prefll: { name: strng; prce: number } | null;
+  clearPrefll: () => vod;
 }) {
   const cats = useMemo(() => ["Tout", ...Array.from(new Set(menu.map((d) => d.category)))], [menu]);
-  const [active, setActive] = useState("Tout");
-  const [cart, setCart] = useState<CartLine[]>([]);
-  const [delMode, setDelMode] = useState<"place" | "livraison">("place");
+  const [actve, setActve] = useState("Tout");
+  const [cart, setCart] = useState<CartLne[]>([]);
+  const [delMode, setDelMode] = useState<"place" | "lvrason">("place");
   const [form, setForm] = useState({ name: "", phone: "", addr: "", note: "" });
 
-  const didPrefill = useRef(false);
+  const ddPrefll = useRef(false);
   useEffect(() => {
-    if (prefill && !didPrefill.current) {
-      didPrefill.current = true;
-      addItem(prefill.name, prefill.price);
-      clearPrefill();
+    f (prefll && !ddPrefll.current) {
+      ddPrefll.current = true;
+      addtem(prefll.name, prefll.prce);
+      clearPrefll();
     }
-  }, [prefill, clearPrefill]);
+  }, [prefll, clearPrefll]);
 
-  const addItem = (name: string, price: number) => {
+  const addtem = (name: strng, prce: number) => {
     setCart((c) => {
-      const ex = c.find((x) => x.name === name);
-      if (ex) return c.map((x) => x.name === name ? { ...x, qty: x.qty + 1 } : x);
-      return [...c, { name, price, qty: 1 }];
+      const ex = c.fnd((x) => x.name === name);
+      f (ex) return c.map((x) => x.name === name ? { ...x, qty: x.qty + 1 } : x);
+      return [...c, { name, prce, qty: 1 }];
     });
   };
-  const changeQty = (name: string, d: number) => {
+  const changeQty = (name: strng, d: number) => {
     setCart((c) => c.flatMap((x) => x.name === name ? (x.qty + d <= 0 ? [] : [{ ...x, qty: x.qty + d }]) : [x]));
   };
 
-  const filtered = active === "Tout" ? menu : menu.filter((d) => d.category === active);
-  const total = cart.reduce((s, c) => s + c.qty * c.price, 0);
+  const fltered = actve === "Tout" ? menu : menu.flter((d) => d.category === actve);
+  const total = cart.reduce((s, c) => s + c.qty * c.prce, 0);
   const count = cart.reduce((s, c) => s + c.qty, 0);
 
-  const submit = () => {
-    if (!cart.length) return toast.error("Panier vide");
-    if (!form.name.trim() || !form.phone.trim()) return toast.error("Nom et téléphone requis");
-    const items = cart.map((c) => `• ${c.name} x${c.qty} = ${(c.qty * c.price).toLocaleString("fr-FR")} FCFA`).join("\n");
-    let msg = `🛒 *Commande — ${restaurant.name}*\n\n👤 ${form.name}\n📞 ${form.phone}\n🚀 ${delMode === "livraison" ? "Livraison" : "Sur place"}`;
-    if (form.addr) msg += `\n📍 ${form.addr}`;
-    msg += `\n\n${items}\n\n💰 *Total: ${total.toLocaleString("fr-FR")} FCFA*`;
-    if (form.note) msg += `\n💬 ${form.note}`;
-    window.open(waLink(msg), "_blank");
+  const submt = () => {
+    f (!cart.length) return toast.error("Paner vde");
+    f (!form.name.trm() || !form.phone.trm()) return toast.error("Nom et téléphone requs");
+    const tems = cart.map((c) => `• ${c.name} x${c.qty} = ${(c.qty * c.prce).toLocaleStrng("fr-FR")} FCFA`).jon("\n");
+    let msg = `🛒 *Commande — ${restaurant.name}*\n\n👤 ${form.name}\n📞 ${form.phone}\n🚀 ${delMode === "lvrason" ? "Lvrason" : "Sur place"}`;
+    f (form.addr) msg += `\n📍 ${form.addr}`;
+    msg += `\n\n${tems}\n\n💰 *Total: ${total.toLocaleStrng("fr-FR")} FCFA*`;
+    f (form.note) msg += `\n💬 ${form.note}`;
+    wndow.open(waLnk(msg), "_blank");
     setCart([]);
     setForm({ name: "", phone: "", addr: "", note: "" });
     toast.success("Commande envoyée 🎉");
@@ -1896,524 +1896,524 @@ function OrderView({ restaurant, menu, waLink, prefill, clearPrefill }: {
 
   return (
     <>
-      <div className="cl-page-hero">
+      <dv className="cl-page-hero">
         <h1>🛒 Passer une commande</h1>
-        <p>Choisissez vos plats et envoyez via WhatsApp</p>
-      </div>
-      <div className="cl-order-wrap">
-        <div>
-          <div className="cl-catalogue-title">Choisissez vos plats</div>
-          <div className="cl-cat-pills">
+        <p>Chosssez vos plats et envoyez va WhatsApp</p>
+      </dv>
+      <dv className="cl-order-wrap">
+        <dv>
+          <dv className="cl-catalogue-ttle">Chosssez vos plats</dv>
+          <dv className="cl-cat-plls">
             {cats.map((c) => (
-              <button key={c} className={`cl-cat-pill ${c === active ? "active" : ""}`} onClick={() => setActive(c)}>{c}</button>
+              <button key={c} className={`cl-cat-pll ${c === actve ? "actve" : ""}`} onClck={() => setActve(c)}>{c}</button>
             ))}
-          </div>
-          <div className="cl-catalogue-grid">
-            {filtered.length ? filtered.map((d) => (
-              <div key={d.id} className="cl-card cl-cat-item" onClick={() => addItem(d.name, d.price)}>
-                <div className="cl-cat-item-img">
-                  {d.image_url ? <StorageImage path={d.image_url} alt={d.name} className="w-full h-full object-cover" /> : "🍽️"}
-                </div>
-                <div className="cl-cat-item-body">
-                  <div className="cl-cat-item-name">{d.name}</div>
-                  <div className="cl-cat-item-foot">
-                    <span className="cl-cat-item-price">{d.price.toLocaleString("fr-FR")} F</span>
-                    <button className="cl-cat-item-add" onClick={(e) => { e.stopPropagation(); addItem(d.name, d.price); }}>+</button>
-                  </div>
-                </div>
-              </div>
-            )) : <p style={{ color: "var(--cl-muted)", gridColumn: "1/-1", padding: 20 }}>Aucun plat.</p>}
-          </div>
-        </div>
+          </dv>
+          <dv className="cl-catalogue-grd">
+            {fltered.length ? fltered.map((d) => (
+              <dv key={d.d} className="cl-card cl-cat-tem" onClck={() => addtem(d.name, d.prce)}>
+                <dv className="cl-cat-tem-mg">
+                  {d.mage_url ? <Storagemage path={d.mage_url} alt={d.name} className="w-full h-full object-cover" /> : "🍽️"}
+                </dv>
+                <dv className="cl-cat-tem-body">
+                  <dv className="cl-cat-tem-name">{d.name}</dv>
+                  <dv className="cl-cat-tem-foot">
+                    <span className="cl-cat-tem-prce">{d.prce.toLocaleStrng("fr-FR")} F</span>
+                    <button className="cl-cat-tem-add" onClck={(e) => { e.stopPropagaton(); addtem(d.name, d.prce); }}>+</button>
+                  </dv>
+                </dv>
+              </dv>
+            )) : <p style={{ color: "var(--cl-muted)", grdColumn: "1/-1", paddng: 20 }}>Aucun plat.</p>}
+          </dv>
+        </dv>
 
-        <div>
-          <div className="cl-cart-sticky">
-            <div className="cl-card cl-cart-box">
-              <div className="cl-cart-head">
-                <h3>🛒 Mon panier</h3>
+        <dv>
+          <dv className="cl-cart-stcky">
+            <dv className="cl-card cl-cart-box">
+              <dv className="cl-cart-head">
+                <h3>🛒 Mon paner</h3>
                 <span className="cl-cart-count">{count}</span>
-              </div>
-              <div className="cl-cart-body">
+              </dv>
+              <dv className="cl-cart-body">
                 {cart.length ? cart.map((c) => (
-                  <div key={c.name} className="cl-cart-row">
-                    <div className="cl-cart-row-name">{c.name}</div>
-                    <div className="cl-cart-qty">
-                      <button className="cl-qty-btn" onClick={() => changeQty(c.name, -1)}>−</button>
-                      <span style={{ fontSize: 13, fontWeight: 800, minWidth: 16, textAlign: "center" }}>{c.qty}</span>
-                      <button className="cl-qty-btn" onClick={() => changeQty(c.name, 1)}>+</button>
-                    </div>
-                    <div className="cl-cart-row-price">{(c.qty * c.price).toLocaleString("fr-FR")} F</div>
-                  </div>
-                )) : <div className="cl-cart-empty">Ajoutez des plats</div>}
-              </div>
-              <div className="cl-cart-total-row">
+                  <dv key={c.name} className="cl-cart-row">
+                    <dv className="cl-cart-row-name">{c.name}</dv>
+                    <dv className="cl-cart-qty">
+                      <button className="cl-qty-btn" onClck={() => changeQty(c.name, -1)}>−</button>
+                      <span style={{ fontSze: 13, fontWeght: 800, mnWdth: 16, textAlgn: "center" }}>{c.qty}</span>
+                      <button className="cl-qty-btn" onClck={() => changeQty(c.name, 1)}>+</button>
+                    </dv>
+                    <dv className="cl-cart-row-prce">{(c.qty * c.prce).toLocaleStrng("fr-FR")} F</dv>
+                  </dv>
+                )) : <dv className="cl-cart-empty">Ajoutez des plats</dv>}
+              </dv>
+              <dv className="cl-cart-total-row">
                 <span className="cl-cart-total-lbl">Total</span>
-                <span className="cl-cart-total-val">{total.toLocaleString("fr-FR")} FCFA</span>
-              </div>
-              <div className="cl-cart-form">
-                <div className="cl-lbl">Mode de récupération</div>
-                <div className="cl-del-toggle">
-                  <div className={`cl-del-opt ${delMode === "place" ? "active" : ""}`} onClick={() => setDelMode("place")}>🏠 Sur place</div>
-                  <div className={`cl-del-opt ${delMode === "livraison" ? "active" : ""}`} onClick={() => setDelMode("livraison")}>🛵 Livraison</div>
-                </div>
-                <div className="cl-form-group"><label>Nom *</label><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Votre nom" /></div>
-                <div className="cl-form-group"><label>Téléphone *</label><input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+226 70 00 00 00" /></div>
-                {delMode === "livraison" && (
-                  <div className="cl-form-group"><label>Adresse</label><input value={form.addr} onChange={(e) => setForm({ ...form, addr: e.target.value })} placeholder="Quartier, rue..." /></div>
+                <span className="cl-cart-total-val">{total.toLocaleStrng("fr-FR")} FCFA</span>
+              </dv>
+              <dv className="cl-cart-form">
+                <dv className="cl-lbl">Mode de récupératon</dv>
+                <dv className="cl-del-toggle">
+                  <dv className={`cl-del-opt ${delMode === "place" ? "actve" : ""}`} onClck={() => setDelMode("place")}>🏠 Sur place</dv>
+                  <dv className={`cl-del-opt ${delMode === "lvrason" ? "actve" : ""}`} onClck={() => setDelMode("lvrason")}>🛵 Lvrason</dv>
+                </dv>
+                <dv className="cl-form-group"><label>Nom *</label><nput value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Votre nom" /></dv>
+                <dv className="cl-form-group"><label>Téléphone *</label><nput type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+226 70 00 00 00" /></dv>
+                {delMode === "lvrason" && (
+                  <dv className="cl-form-group"><label>Adresse</label><nput value={form.addr} onChange={(e) => setForm({ ...form, addr: e.target.value })} placeholder="Quarter, rue..." /></dv>
                 )}
-                <div className="cl-form-group"><label>Note</label><input value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder="Pas trop épicé..." /></div>
-                <button className="cl-btn cl-btn-green cl-btn-block" onClick={submit}>💬 Envoyer via WhatsApp</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+                <dv className="cl-form-group"><label>Note</label><nput value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder="Pas trop épcé..." /></dv>
+                <button className="cl-btn cl-btn-green cl-btn-block" onClck={submt}>💬 Envoyer va WhatsApp</button>
+              </dv>
+            </dv>
+          </dv>
+        </dv>
+      </dv>
     </>
   );
 }
 
-function ReserveView({ restaurant, waLink }: { restaurant: TemplateProps["restaurant"]; waLink: (t: string) => string }) {
+functon ReserveVew({ restaurant, waLnk }: { restaurant: TemplateProps["restaurant"]; waLnk: (t: strng) => strng }) {
   const [form, setForm] = useState({ name: "", phone: "", date: "", occ: "", msg: "" });
-  const [time, setTime] = useState("");
+  const [tme, setTme] = useState("");
   const [guests, setGuests] = useState("");
   const [done, setDone] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  const times = ["12h00", "12h30", "13h00", "13h30", "19h00", "19h30", "20h00", "20h30", "21h00", "21h30", "22h00", "22h30"];
-  const guestList = ["1", "2", "3", "4", "5", "6", "7", "8+"];
+  const tmes = ["12h00", "12h30", "13h00", "13h30", "19h00", "19h30", "20h00", "20h30", "21h00", "21h30", "22h00", "22h30"];
+  const guestLst = ["1", "2", "3", "4", "5", "6", "7", "8+"];
 
-  const submit = async () => {
-    if (!form.name.trim() || !form.phone.trim()) return toast.error("Nom et téléphone requis");
-    if (!form.date) return toast.error("Choisissez une date");
-    if (!time) return toast.error("Choisissez une heure");
-    if (!guests) return toast.error("Indiquez le nombre de personnes");
+  const submt = async () => {
+    f (!form.name.trm() || !form.phone.trm()) return toast.error("Nom et téléphone requs");
+    f (!form.date) return toast.error("Chosssez une date");
+    f (!tme) return toast.error("Chosssez une heure");
+    f (!guests) return toast.error("ndquez le nombre de personnes");
     setBusy(true);
-    const partySize = Number(guests.replace("+", "")) || 8;
-    const t24 = time.replace("h", ":");
-    const { error } = await supabase.from("reservations").insert({
-      restaurant_id: restaurant.id,
+    const partySze = Number(guests.replace("+", "")) || 8;
+    const t24 = tme.replace("h", ":");
+    const { error } = awat supabase.from("reservatons").nsert({
+      restaurant_d: restaurant.d,
       customer_name: form.name,
       customer_phone: form.phone,
-      party_size: partySize,
-      reservation_date: form.date,
-      reservation_time: t24,
-      notes: [form.occ && `Occasion: ${form.occ}`, form.msg].filter(Boolean).join(" — "),
+      party_sze: partySze,
+      reservaton_date: form.date,
+      reservaton_tme: t24,
+      notes: [form.occ && `Occason: ${form.occ}`, form.msg].flter(Boolean).jon(" — "),
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
-    let wa = `📅 *Réservation — ${restaurant.name}*\n\n👤 ${form.name}\n📞 ${form.phone}\n📅 ${form.date} à ${time}\n👥 ${guests} personne(s)`;
-    if (form.occ) wa += `\n🎉 ${form.occ}`;
-    if (form.msg) wa += `\n💬 ${form.msg}`;
-    window.open(waLink(wa), "_blank");
+    f (error) return toast.error(error.message);
+    let wa = `📅 *Réservaton — ${restaurant.name}*\n\n👤 ${form.name}\n📞 ${form.phone}\n📅 ${form.date} à ${tme}\n👥 ${guests} personne(s)`;
+    f (form.occ) wa += `\n🎉 ${form.occ}`;
+    f (form.msg) wa += `\n💬 ${form.msg}`;
+    wndow.open(waLnk(wa), "_blank");
     setDone(true);
   };
 
   const reset = () => {
     setForm({ name: "", phone: "", date: "", occ: "", msg: "" });
-    setTime("");
+    setTme("");
     setGuests("");
     setDone(false);
   };
 
   return (
     <>
-      <div className="cl-page-hero">
+      <dv className="cl-page-hero">
         <h1>📅 Réserver une table</h1>
-        <p>Réservez en ligne, confirmation rapide !</p>
-      </div>
-      <div className="cl-res-wrap">
-        <div>
+        <p>Réservez en lgne, confrmaton rapde !</p>
+      </dv>
+      <dv className="cl-res-wrap">
+        <dv>
           {!done ? (
-            <div className="cl-card cl-res-card">
-              <p className="cl-step-title">👤 Vos coordonnées</p>
-              <div className="cl-form-2col">
-                <div className="cl-form-group"><label>Nom *</label><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Alassane Kaboré" /></div>
-                <div className="cl-form-group"><label>Téléphone *</label><input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+226 70 00 00 00" /></div>
-              </div>
-              <p className="cl-step-title" style={{ marginTop: 18 }}>📅 Date & heure</p>
-              <div className="cl-form-group" style={{ marginBottom: 14 }}><label>Date *</label><input type="date" min={new Date().toISOString().split("T")[0]} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></div>
+            <dv className="cl-card cl-res-card">
+              <p className="cl-step-ttle">👤 Vos coordonnées</p>
+              <dv className="cl-form-2col">
+                <dv className="cl-form-group"><label>Nom *</label><nput value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Alassane Kaboré" /></dv>
+                <dv className="cl-form-group"><label>Téléphone *</label><nput type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+226 70 00 00 00" /></dv>
+              </dv>
+              <p className="cl-step-ttle" style={{ margnTop: 18 }}>📅 Date & heure</p>
+              <dv className="cl-form-group" style={{ margnBottom: 14 }}><label>Date *</label><nput type="date" mn={new Date().toSOStrng().splt("T")[0]} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></dv>
               <p className="cl-sub-label">Heure *</p>
-              <div className="cl-time-grid">
-                {times.map((t) => (
-                  <div key={t} className={`cl-time-slot ${time === t ? "active" : ""}`} onClick={() => setTime(t)}>{t}</div>
+              <dv className="cl-tme-grd">
+                {tmes.map((t) => (
+                  <dv key={t} className={`cl-tme-slot ${tme === t ? "actve" : ""}`} onClck={() => setTme(t)}>{t}</dv>
                 ))}
-              </div>
-              <p className="cl-step-title" style={{ marginTop: 18 }}>👥 Nombre de personnes *</p>
-              <div className="cl-guests-row">
-                {guestList.map((g) => (
-                  <button key={g} className={`cl-guest-btn ${guests === g ? "active" : ""}`} onClick={() => setGuests(g)}>{g}</button>
+              </dv>
+              <p className="cl-step-ttle" style={{ margnTop: 18 }}>👥 Nombre de personnes *</p>
+              <dv className="cl-guests-row">
+                {guestLst.map((g) => (
+                  <button key={g} className={`cl-guest-btn ${guests === g ? "actve" : ""}`} onClck={() => setGuests(g)}>{g}</button>
                 ))}
-              </div>
-              <p className="cl-step-title" style={{ marginTop: 18 }}>🎉 Extras</p>
-              <div className="cl-form-group"><label>Occasion</label><input value={form.occ} onChange={(e) => setForm({ ...form, occ: e.target.value })} placeholder="Anniversaire, réunion..." /></div>
-              <div className="cl-form-group"><label>Message</label><textarea value={form.msg} onChange={(e) => setForm({ ...form, msg: e.target.value })} placeholder="Demandes spéciales, allergies..." /></div>
-              <button className="cl-btn cl-btn-green cl-btn-block" disabled={busy} onClick={submit}>{busy ? "Envoi..." : "✅ Confirmer ma réservation"}</button>
-            </div>
+              </dv>
+              <p className="cl-step-ttle" style={{ margnTop: 18 }}>🎉 Extras</p>
+              <dv className="cl-form-group"><label>Occason</label><nput value={form.occ} onChange={(e) => setForm({ ...form, occ: e.target.value })} placeholder="Annversare, réunon..." /></dv>
+              <dv className="cl-form-group"><label>Message</label><textarea value={form.msg} onChange={(e) => setForm({ ...form, msg: e.target.value })} placeholder="Demandes spécales, allerges..." /></dv>
+              <button className="cl-btn cl-btn-green cl-btn-block" dsabled={busy} onClck={submt}>{busy ? "Envo..." : "✅ Confrmer ma réservaton"}</button>
+            </dv>
           ) : (
-            <div className="cl-card cl-success-box">
-              <div className="cl-success-icon">🎉</div>
-              <div className="cl-success-title">Réservation envoyée !</div>
-              <div className="cl-success-sub">Table pour {guests} personne(s) le {form.date} à {time}.</div>
-              <div style={{ marginTop: 20, display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-                <button className="cl-btn cl-btn-outline" onClick={reset}>+ Nouvelle réservation</button>
-              </div>
-            </div>
+            <dv className="cl-card cl-success-box">
+              <dv className="cl-success-con">🎉</dv>
+              <dv className="cl-success-ttle">Réservaton envoyée !</dv>
+              <dv className="cl-success-sub">Table pour {guests} personne(s) le {form.date} à {tme}.</dv>
+              <dv style={{ margnTop: 20, dsplay: "flex", gap: 12, justfyContent: "center", flexWrap: "wrap" }}>
+                <button className="cl-btn cl-btn-outlne" onClck={reset}>+ Nouvelle réservaton</button>
+              </dv>
+            </dv>
           )}
-        </div>
-        <div>
-          <div className="cl-card cl-side-card">
-            <div className="cl-side-title">Infos pratiques</div>
-            <div className="cl-side-row"><span className="cl-side-icon">📍</span><div><div className="cl-side-lbl">Adresse</div><div className="cl-side-val">{restaurant.address || "—"}</div></div></div>
-            <div className="cl-side-row"><span className="cl-side-icon">📞</span><div><div className="cl-side-lbl">Téléphone</div><div className="cl-side-val">{restaurant.phone || "—"}</div></div></div>
-            <div className="cl-side-row"><span className="cl-side-icon">🕐</span><div><div className="cl-side-lbl">Horaires</div><div className="cl-side-val">{restaurant.hours || "—"}</div></div></div>
-          </div>
-          <div className="cl-wa-box">
+        </dv>
+        <dv>
+          <dv className="cl-card cl-sde-card">
+            <dv className="cl-sde-ttle">nfos pratques</dv>
+            <dv className="cl-sde-row"><span className="cl-sde-con">📍</span><dv><dv className="cl-sde-lbl">Adresse</dv><dv className="cl-sde-val">{restaurant.address || "—"}</dv></dv></dv>
+            <dv className="cl-sde-row"><span className="cl-sde-con">📞</span><dv><dv className="cl-sde-lbl">Téléphone</dv><dv className="cl-sde-val">{restaurant.phone || "—"}</dv></dv></dv>
+            <dv className="cl-sde-row"><span className="cl-sde-con">🕐</span><dv><dv className="cl-sde-lbl">Horares</dv><dv className="cl-sde-val">{restaurant.hours || "—"}</dv></dv></dv>
+          </dv>
+          <dv className="cl-wa-box">
             <p>Préférez réserver par WhatsApp ?</p>
-            <a className="cl-btn cl-btn-block" style={{ background: "rgba(255,255,255,0.15)", color: "#fff", border: "1px solid rgba(255,255,255,0.4)" }} target="_blank" rel="noopener noreferrer" href={waLink(`Bonjour ${restaurant.name} ! Je voudrais réserver.`)}>💬 WhatsApp</a>
-          </div>
-        </div>
-      </div>
+            <a className="cl-btn cl-btn-block" style={{ background: "rgba(255,255,255,0.15)", color: "#fff", border: "1px sold rgba(255,255,255,0.4)" }} target="_blank" rel="noopener noreferrer" href={waLnk(`Bonjour ${restaurant.name} ! Je voudras réserver.`)}>💬 WhatsApp</a>
+          </dv>
+        </dv>
+      </dv>
     </>
   );
 }
 
-function ReviewsView({ restaurant, reviews, onAdded }: {
+functon RevewsVew({ restaurant, revews, onAdded }: {
   restaurant: TemplateProps["restaurant"];
-  reviews: TemplateProps["reviews"];
-  onAdded: (r: TemplateProps["reviews"][number]) => void;
+  revews: TemplateProps["revews"];
+  onAdded: (r: TemplateProps["revews"][number]) => vod;
 }) {
-  const [filterStar, setFilterStar] = useState(0);
-  const [picked, setPicked] = useState(0);
+  const [flterStar, setFlterStar] = useState(0);
+  const [pcked, setPcked] = useState(0);
   const [form, setForm] = useState({ name: "", occ: "", text: "" });
   const [busy, setBusy] = useState(false);
 
-  const counts = [5, 4, 3, 2, 1].map((n) => reviews.filter((r) => r.rating === n).length);
+  const counts = [5, 4, 3, 2, 1].map((n) => revews.flter((r) => r.ratng === n).length);
   const max = Math.max(...counts, 1);
-  const avg = reviews.length ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1) : null;
-  const filtered = reviews.filter((r) => filterStar === 0 || r.rating === filterStar);
+  const avg = revews.length ? (revews.reduce((s, r) => s + r.ratng, 0) / revews.length).toFxed(1) : null;
+  const fltered = revews.flter((r) => flterStar === 0 || r.ratng === flterStar);
 
-  const submit = async () => {
-    if (!picked) return toast.error("Choisissez une note");
-    if (!form.name.trim()) return toast.error("Entrez votre nom");
-    if (!form.text.trim()) return toast.error("Écrivez votre avis");
+  const submt = async () => {
+    f (!pcked) return toast.error("Chosssez une note");
+    f (!form.name.trm()) return toast.error("Entrez votre nom");
+    f (!form.text.trm()) return toast.error("Écrvez votre avs");
     setBusy(true);
-    const { data, error } = await supabase.from("reviews").insert({
-      restaurant_id: restaurant.id,
+    const { data, error } = awat supabase.from("revews").nsert({
+      restaurant_d: restaurant.d,
       author_name: form.name,
-      rating: picked,
+      ratng: pcked,
       comment: form.text,
-    }).select("id, author_name, rating, comment, created_at").maybeSingle();
+    }).select("d, author_name, ratng, comment, created_at").maybeSngle();
     setBusy(false);
-    if (error) return toast.error(error.message);
-    if (data) onAdded(data as any);
-    toast.success("Merci pour votre avis ! ⭐ (en attente de validation)");
+    f (error) return toast.error(error.message);
+    f (data) onAdded(data as any);
+    toast.success("Merc pour votre avs ! ⭐ (en attente de valdaton)");
     setForm({ name: "", occ: "", text: "" });
-    setPicked(0);
+    setPcked(0);
   };
 
   return (
     <>
-      <div className="cl-page-hero">
-        <h1>⭐ Avis clients</h1>
-        <p>{reviews.length} avis · Note {avg || "—"}/5</p>
-      </div>
-      <section className="cl-section">
-        <div className="cl-container">
-          <div className="cl-card cl-summary-wrap">
-            <div className="cl-summary-big">
-              <div className="cl-summary-num">{avg || "—"}</div>
-              <div className="cl-summary-stars">{avg ? "★".repeat(Math.round(parseFloat(avg))) + "☆".repeat(5 - Math.round(parseFloat(avg))) : "☆☆☆☆☆"}</div>
-              <div className="cl-summary-count">{reviews.length} avis</div>
-            </div>
-            <div className="cl-bars">
-              {[5, 4, 3, 2, 1].map((n, i) => (
-                <div key={n} className="cl-bar-row">
+      <dv className="cl-page-hero">
+        <h1>⭐ Avs clents</h1>
+        <p>{revews.length} avs · Note {avg || "—"}/5</p>
+      </dv>
+      <secton className="cl-secton">
+        <dv className="cl-contaner">
+          <dv className="cl-card cl-summary-wrap">
+            <dv className="cl-summary-bg">
+              <dv className="cl-summary-num">{avg || "—"}</dv>
+              <dv className="cl-summary-stars">{avg ? "★".repeat(Math.round(parseFloat(avg))) + "☆".repeat(5 - Math.round(parseFloat(avg))) : "☆☆☆☆☆"}</dv>
+              <dv className="cl-summary-count">{revews.length} avs</dv>
+            </dv>
+            <dv className="cl-bars">
+              {[5, 4, 3, 2, 1].map((n, ) => (
+                <dv key={n} className="cl-bar-row">
                   <span className="cl-bar-lbl">{n}</span>
-                  <div className="cl-bar-track"><div className="cl-bar-fill" style={{ width: `${(counts[i] / max) * 100}%` }} /></div>
-                  <span className="cl-bar-count">{counts[i]}</span>
-                </div>
+                  <dv className="cl-bar-track"><dv className="cl-bar-fll" style={{ wdth: `${(counts[] / max) * 100}%` }} /></dv>
+                  <span className="cl-bar-count">{counts[]}</span>
+                </dv>
               ))}
-            </div>
-          </div>
+            </dv>
+          </dv>
 
-          <div className="cl-filt-row">
-            <button className={`cl-filt-btn ${filterStar === 0 ? "active" : ""}`} onClick={() => setFilterStar(0)}>Tous</button>
+          <dv className="cl-flt-row">
+            <button className={`cl-flt-btn ${flterStar === 0 ? "actve" : ""}`} onClck={() => setFlterStar(0)}>Tous</button>
             {[5, 4, 3].map((n) => (
-              <button key={n} className={`cl-filt-btn ${filterStar === n ? "active" : ""}`} onClick={() => setFilterStar(n)}>{"⭐".repeat(n)}</button>
+              <button key={n} className={`cl-flt-btn ${flterStar === n ? "actve" : ""}`} onClck={() => setFlterStar(n)}>{"⭐".repeat(n)}</button>
             ))}
-          </div>
+          </dv>
 
-          {filtered.length ? (
-            <div className="cl-reviews-grid">
-              {filtered.map((r) => (
-                <div key={r.id} className="cl-card cl-rev-card2">
-                  <div className="cl-rev-head">
-                    <div className="cl-rev-avatar">{r.author_name[0]?.toUpperCase()}</div>
-                    <div className="cl-rev-info">
-                      <div className="cl-rev-name">{r.author_name}</div>
-                      <div className="cl-rev-date">{new Date(r.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}</div>
-                    </div>
-                    <div className="cl-rev-stars">{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</div>
-                  </div>
-                  {r.comment && <div className="cl-rev-text">"{r.comment}"</div>}
-                </div>
+          {fltered.length ? (
+            <dv className="cl-revews-grd">
+              {fltered.map((r) => (
+                <dv key={r.d} className="cl-card cl-rev-card2">
+                  <dv className="cl-rev-head">
+                    <dv className="cl-rev-avatar">{r.author_name[0]?.toUpperCase()}</dv>
+                    <dv className="cl-rev-nfo">
+                      <dv className="cl-rev-name">{r.author_name}</dv>
+                      <dv className="cl-rev-date">{new Date(r.created_at).toLocaleDateStrng("fr-FR", { day: "numerc", month: "long", year: "numerc" })}</dv>
+                    </dv>
+                    <dv className="cl-rev-stars">{"★".repeat(r.ratng)}{"☆".repeat(5 - r.ratng)}</dv>
+                  </dv>
+                  {r.comment && <dv className="cl-rev-text">"{r.comment}"</dv>}
+                </dv>
               ))}
-            </div>
+            </dv>
           ) : (
-            <div className="cl-empty-state"><div className="cl-empty-icon">💬</div><p>{filterStar ? `Aucun avis ${filterStar}⭐` : "Soyez le premier !"}</p></div>
+            <dv className="cl-empty-state"><dv className="cl-empty-con">💬</dv><p>{flterStar ? `Aucun avs ${flterStar}⭐` : "Soyez le premer !"}</p></dv>
           )}
 
-          <div className="cl-divider" style={{ margin: "40px 0" }} />
+          <dv className="cl-dvder" style={{ margn: "40px 0" }} />
 
-          <div className="cl-card cl-add-wrap">
-            <div className="cl-add-title">✍️ Donnez votre avis</div>
-            <div className="cl-stars-row">
+          <dv className="cl-card cl-add-wrap">
+            <dv className="cl-add-ttle">✍️ Donnez votre avs</dv>
+            <dv className="cl-stars-row">
               {[1, 2, 3, 4, 5].map((n) => (
-                <button key={n} className={`cl-star-pick ${n <= picked ? "on" : ""}`} onClick={() => setPicked(n)}>⭐</button>
+                <button key={n} className={`cl-star-pck ${n <= pcked ? "on" : ""}`} onClck={() => setPcked(n)}>⭐</button>
               ))}
-            </div>
-            <div className="cl-form-2col">
-              <div className="cl-form-group"><label>Nom *</label><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Mariam O." /></div>
-              <div className="cl-form-group"><label>Occasion</label><input value={form.occ} onChange={(e) => setForm({ ...form, occ: e.target.value })} placeholder="Déjeuner, anniversaire..." /></div>
-            </div>
-            <div className="cl-form-group"><label>Votre avis *</label><textarea value={form.text} onChange={(e) => setForm({ ...form, text: e.target.value })} placeholder="Partagez votre expérience..." /></div>
-            <button className="cl-btn cl-btn-green cl-btn-block" disabled={busy} onClick={submit}>{busy ? "Envoi..." : "⭐ Publier mon avis"}</button>
-          </div>
-        </div>
-      </section>
+            </dv>
+            <dv className="cl-form-2col">
+              <dv className="cl-form-group"><label>Nom *</label><nput value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Maram O." /></dv>
+              <dv className="cl-form-group"><label>Occason</label><nput value={form.occ} onChange={(e) => setForm({ ...form, occ: e.target.value })} placeholder="Déjeuner, annversare..." /></dv>
+            </dv>
+            <dv className="cl-form-group"><label>Votre avs *</label><textarea value={form.text} onChange={(e) => setForm({ ...form, text: e.target.value })} placeholder="Partagez votre expérence..." /></dv>
+            <button className="cl-btn cl-btn-green cl-btn-block" dsabled={busy} onClck={submt}>{busy ? "Envo..." : "⭐ Publer mon avs"}</button>
+          </dv>
+        </dv>
+      </secton>
     </>
   );
 }
 
 const CL_CSS = `
-.cl-root{--cl-green:#2d6a4f;--cl-green-light:#40916c;--cl-green-soft:rgba(45,106,79,0.10);--cl-accent:#f4a261;--cl-bg:#fafaf8;--cl-bg2:#f3f2ee;--cl-bg3:#e8e6df;--cl-text:#1a1a14;--cl-muted:#6b6b55;--cl-border:#dddbd2;--cl-card:#ffffff;--cl-radius:8px;--cl-shadow:0 2px 12px rgba(0,0,0,0.07);font-family:'Segoe UI',-apple-system,sans-serif;background:var(--cl-bg);color:var(--cl-text);min-height:100vh;}
-.cl-root *,.cl-root *::before,.cl-root *::after{box-sizing:border-box;}
-.cl-nav{position:sticky;top:0;left:0;right:0;z-index:100;background:var(--cl-green);height:58px;display:flex;align-items:center;padding:0 24px;gap:24px;}
-.cl-brand{color:#fff;font-size:17px;font-weight:800;background:none;border:none;cursor:pointer;padding:0;}
-.cl-nav-links{display:flex;gap:4px;flex:1;}
-.cl-nav-link{color:rgba(255,255,255,0.75);font-size:13px;font-weight:600;background:none;border:none;cursor:pointer;padding:6px 12px;border-radius:6px;transition:all 0.2s;}
-.cl-nav-link:hover,.cl-nav-link.active{color:#fff;background:rgba(255,255,255,0.15);}
-.cl-nav-cta{background:#fff;color:var(--cl-green);font-size:12px;font-weight:800;padding:8px 16px;border-radius:6px;border:none;cursor:pointer;flex-shrink:0;}
+.cl-root{--cl-green:#2d6a4f;--cl-green-lght:#40916c;--cl-green-soft:rgba(45,106,79,0.10);--cl-accent:#f4a261;--cl-bg:#fafaf8;--cl-bg2:#f3f2ee;--cl-bg3:#e8e6df;--cl-text:#1a1a14;--cl-muted:#6b6b55;--cl-border:#dddbd2;--cl-card:#ffffff;--cl-radus:8px;--cl-shadow:0 2px 12px rgba(0,0,0,0.07);font-famly:'Segoe U',-apple-system,sans-serf;background:var(--cl-bg);color:var(--cl-text);mn-heght:100vh;}
+.cl-root *,.cl-root *::before,.cl-root *::after{box-szng:border-box;}
+.cl-nav{poston:stcky;top:0;left:0;rght:0;z-ndex:100;background:var(--cl-green);heght:58px;dsplay:flex;algn-tems:center;paddng:0 24px;gap:24px;}
+.cl-brand{color:#fff;font-sze:17px;font-weght:800;background:none;border:none;cursor:ponter;paddng:0;}
+.cl-nav-lnks{dsplay:flex;gap:4px;flex:1;}
+.cl-nav-lnk{color:rgba(255,255,255,0.75);font-sze:13px;font-weght:600;background:none;border:none;cursor:ponter;paddng:6px 12px;border-radus:6px;transton:all 0.2s;}
+.cl-nav-lnk:hover,.cl-nav-lnk.actve{color:#fff;background:rgba(255,255,255,0.15);}
+.cl-nav-cta{background:#fff;color:var(--cl-green);font-sze:12px;font-weght:800;paddng:8px 16px;border-radus:6px;border:none;cursor:ponter;flex-shrnk:0;}
 .cl-nav-cta:hover{background:var(--cl-accent);color:#fff;}
-.cl-hamburger{display:none;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;margin-left:auto;}
-.cl-mob-menu{position:sticky;top:58px;background:var(--cl-green);padding:12px 24px;display:flex;flex-direction:column;gap:4px;z-index:99;}
-.cl-mob-menu button{color:rgba(255,255,255,0.85);font-size:14px;font-weight:600;background:none;border:none;text-align:left;cursor:pointer;padding:10px 14px;border-radius:6px;}
+.cl-hamburger{dsplay:none;background:none;border:none;color:#fff;font-sze:22px;cursor:ponter;margn-left:auto;}
+.cl-mob-menu{poston:stcky;top:58px;background:var(--cl-green);paddng:12px 24px;dsplay:flex;flex-drecton:column;gap:4px;z-ndex:99;}
+.cl-mob-menu button{color:rgba(255,255,255,0.85);font-sze:14px;font-weght:600;background:none;border:none;text-algn:left;cursor:ponter;paddng:10px 14px;border-radus:6px;}
 .cl-mob-menu button:hover{background:rgba(255,255,255,0.15);color:#fff;}
-.cl-container{max-width:1060px;margin:0 auto;padding:0 24px;}
-.cl-section{padding:64px 0;}.cl-section-alt{background:var(--cl-bg2);}
-.cl-sec-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--cl-green);margin-bottom:8px;}
-.cl-sec-title{font-size:clamp(22px,4vw,34px);font-weight:900;color:var(--cl-text);margin-bottom:10px;}
-.cl-sec-sub{font-size:14px;color:var(--cl-muted);line-height:1.7;max-width:480px;}
-.cl-sec-head{margin-bottom:40px;}.cl-sec-head.center{text-align:center;}.cl-sec-head.center .cl-sec-sub{margin:0 auto;}
-.cl-sec-head.row{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;}
-.cl-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:var(--cl-radius);font-size:14px;font-weight:700;text-decoration:none;border:none;cursor:pointer;transition:all 0.2s;}
+.cl-contaner{max-wdth:1060px;margn:0 auto;paddng:0 24px;}
+.cl-secton{paddng:64px 0;}.cl-secton-alt{background:var(--cl-bg2);}
+.cl-sec-label{font-sze:11px;font-weght:800;text-transform:uppercase;letter-spacng:2px;color:var(--cl-green);margn-bottom:8px;}
+.cl-sec-ttle{font-sze:clamp(22px,4vw,34px);font-weght:900;color:var(--cl-text);margn-bottom:10px;}
+.cl-sec-sub{font-sze:14px;color:var(--cl-muted);lne-heght:1.7;max-wdth:480px;}
+.cl-sec-head{margn-bottom:40px;}.cl-sec-head.center{text-algn:center;}.cl-sec-head.center .cl-sec-sub{margn:0 auto;}
+.cl-sec-head.row{dsplay:flex;algn-tems:flex-end;justfy-content:space-between;flex-wrap:wrap;gap:12px;}
+.cl-btn{dsplay:nlne-flex;algn-tems:center;gap:8px;paddng:12px 24px;border-radus:var(--cl-radus);font-sze:14px;font-weght:700;text-decoraton:none;border:none;cursor:ponter;transton:all 0.2s;}
 .cl-btn-green{background:var(--cl-green);color:#fff;box-shadow:0 4px 14px rgba(45,106,79,0.3);}
-.cl-btn-green:hover{background:var(--cl-green-light);transform:translateY(-1px);}
-.cl-btn-outline{background:transparent;border:2px solid var(--cl-green);color:var(--cl-green);}
-.cl-btn-outline:hover{background:var(--cl-green-soft);}
-.cl-btn-outline-light{background:transparent;border:2px solid rgba(255,255,255,0.5);color:#fff;}
-.cl-btn-outline-light:hover{background:rgba(255,255,255,0.15);}
-.cl-btn-wa{background:rgba(37,211,102,0.12);color:#25d366;border:1px solid rgba(37,211,102,0.3);}
+.cl-btn-green:hover{background:var(--cl-green-lght);transform:translateY(-1px);}
+.cl-btn-outlne{background:transparent;border:2px sold var(--cl-green);color:var(--cl-green);}
+.cl-btn-outlne:hover{background:var(--cl-green-soft);}
+.cl-btn-outlne-lght{background:transparent;border:2px sold rgba(255,255,255,0.5);color:#fff;}
+.cl-btn-outlne-lght:hover{background:rgba(255,255,255,0.15);}
+.cl-btn-wa{background:rgba(37,211,102,0.12);color:#25d366;border:1px sold rgba(37,211,102,0.3);}
 .cl-btn-wa:hover{background:#25d366;color:#fff;}
-.cl-btn-sm{padding:8px 16px;font-size:12px;}.cl-btn-block{width:100%;justify-content:center;}
-.cl-card{background:var(--cl-card);border:1px solid var(--cl-border);border-radius:var(--cl-radius);box-shadow:var(--cl-shadow);}
-.cl-divider{height:1px;background:var(--cl-border);}
-.cl-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800;}
+.cl-btn-sm{paddng:8px 16px;font-sze:12px;}.cl-btn-block{wdth:100%;justfy-content:center;}
+.cl-card{background:var(--cl-card);border:1px sold var(--cl-border);border-radus:var(--cl-radus);box-shadow:var(--cl-shadow);}
+.cl-dvder{heght:1px;background:var(--cl-border);}
+.cl-badge{dsplay:nlne-flex;algn-tems:center;paddng:3px 10px;border-radus:20px;font-sze:11px;font-weght:800;}
 .cl-badge-green{background:rgba(45,106,79,0.12);color:var(--cl-green);}
-.cl-hero{position:relative;color:#fff;padding:80px 0 0;overflow:hidden;background:#1a0a0a;}
-.cl-hero::before{content:"";position:absolute;inset:0;background-image:url("/hero-jollof.png");background-size:cover;background-position:center;opacity:0.55;z-index:0;}
-.cl-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,8,8,0.55) 0%,rgba(20,8,8,0.9) 100%);z-index:0;}
-.cl-hero-inner{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
-.cl-eyebrow{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--cl-accent);margin-bottom:14px;}
-.cl-hero-title{font-size:clamp(28px,5vw,52px);font-weight:900;line-height:1.1;margin-bottom:16px;text-shadow:0 2px 20px rgba(0,0,0,0.5);}
-.cl-hero-title em{color:var(--cl-accent);font-style:normal;}
-.cl-hero-sub{font-size:15px;opacity:0.92;line-height:1.7;margin-bottom:28px;text-shadow:0 1px 10px rgba(0,0,0,0.5);}
-.cl-hero-btns{display:flex;gap:12px;flex-wrap:wrap;}
-.cl-hero-img{background-image:url("/hero-jollof.png");background-size:contain;background-repeat:no-repeat;background-position:center;border-radius:12px;height:380px;}
-.cl-hero-stats{position:relative;z-index:1;display:flex;gap:0;background:rgba(0,0,0,0.55);margin-top:48px;backdrop-filter:blur(6px);}
-.cl-hero-stat{flex:1;text-align:center;padding:20px 12px;border-right:1px solid rgba(255,255,255,0.1);}
-.cl-hero-stat:last-child{border-right:none;}
-.cl-stat-num{font-size:26px;font-weight:900;color:var(--cl-accent);display:block;}
-.cl-stat-lbl{font-size:10px;opacity:0.65;text-transform:uppercase;letter-spacing:0.5px;}
-.cl-info-band{background:var(--cl-accent);}
-.cl-info-band-inner{max-width:1060px;margin:0 auto;padding:16px 24px;display:flex;gap:32px;align-items:center;flex-wrap:wrap;justify-content:center;}
-.cl-info-item{display:flex;align-items:center;gap:8px;color:#fff;font-size:13px;font-weight:600;}
-.cl-features{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;}
-.cl-feat{padding:24px;text-align:center;}
-.cl-feat-icon{font-size:36px;margin-bottom:14px;}
-.cl-feat-title{font-size:14px;font-weight:800;margin-bottom:6px;}
-.cl-feat-desc{font-size:13px;color:var(--cl-muted);line-height:1.6;}
-.cl-menu-preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;}
-.cl-dish-mini{display:flex;align-items:center;gap:14px;padding:14px;background:var(--cl-card);border:1px solid var(--cl-border);border-radius:var(--cl-radius);box-shadow:var(--cl-shadow);cursor:pointer;text-align:left;}
-.cl-dish-mini:hover{transform:translateY(-2px);}
-.cl-dish-mini-icon{width:52px;height:52px;border-radius:8px;background:var(--cl-bg2);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
-.cl-dish-mini-name{font-size:14px;font-weight:700;margin-bottom:2px;color:var(--cl-text);}
-.cl-dish-mini-cat{font-size:11px;color:var(--cl-green);font-weight:700;text-transform:uppercase;}
-.cl-dish-mini-price{font-size:14px;font-weight:800;color:var(--cl-green);margin-left:auto;flex-shrink:0;}
-.cl-reviews-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
-.cl-rev-card{padding:20px;}
-.cl-rev-stars{color:var(--cl-accent);font-size:15px;margin-bottom:8px;}
-.cl-rev-text{font-size:13px;color:var(--cl-muted);line-height:1.6;font-style:italic;margin-bottom:12px;}
-.cl-rev-name{font-size:13px;font-weight:700;color:var(--cl-text);}
-.cl-footer{background:var(--cl-green);color:#fff;padding:32px 24px;text-align:center;}
-.cl-footer-brand{font-size:20px;font-weight:900;margin-bottom:6px;}
-.cl-footer-sub{font-size:13px;opacity:0.7;margin-bottom:16px;}
-.cl-footer-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
-.cl-footer-links button{background:none;border:none;color:rgba(255,255,255,0.75);font-size:13px;cursor:pointer;}
-.cl-footer-links button:hover{color:#fff;}
-.cl-footer-credit{font-size:11px;opacity:0.5;}
-.cl-footer-credit a{color:#fff;}
-.cl-fab{position:fixed;bottom:24px;right:24px;width:54px;height:54px;border-radius:50%;background:#25d366;color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,0.25);z-index:200;}
-.cl-page-hero{background:var(--cl-green);color:#fff;padding:48px 24px 40px;text-align:center;}
-.cl-page-hero h1{font-size:clamp(24px,4vw,40px);font-weight:900;margin-bottom:8px;}
-.cl-page-hero p{font-size:14px;opacity:0.8;}
-.cl-cat-bar{background:#fff;border-bottom:1px solid var(--cl-border);position:sticky;top:58px;z-index:50;}
-.cl-cat-bar-inner{max-width:1060px;margin:0 auto;padding:12px 24px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;}
-.cl-cat-bar-inner::-webkit-scrollbar{display:none;}
-.cl-cat-pill{padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;border:1.5px solid var(--cl-border);background:transparent;color:var(--cl-muted);cursor:pointer;white-space:nowrap;transition:all 0.2s;}
-.cl-cat-pill.active,.cl-cat-pill:hover{background:var(--cl-green);color:#fff;border-color:var(--cl-green);}
-.cl-dishes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;}
-.cl-dish-card{cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;overflow:hidden;padding:0;text-align:left;border:1px solid var(--cl-border);background:#fff;}
-.cl-dish-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,0.12);}
-.cl-dish-img{height:150px;background:var(--cl-bg2);display:flex;align-items:center;justify-content:center;font-size:52px;position:relative;overflow:hidden;}
-.cl-dish-avail{position:absolute;top:8px;right:8px;}
-.cl-dish-body{padding:14px 16px;}
-.cl-dish-cat{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--cl-green);margin-bottom:3px;}
-.cl-dish-name{font-size:15px;font-weight:800;margin-bottom:4px;color:var(--cl-text);}
-.cl-dish-desc{font-size:12px;color:var(--cl-muted);line-height:1.5;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-line-orient:vertical;overflow:hidden;}
-.cl-dish-foot{display:flex;align-items:center;justify-content:space-between;}
-.cl-dish-price{font-size:16px;font-weight:900;color:var(--cl-green);}
-.cl-empty{text-align:center;padding:56px;color:var(--cl-muted);}
-.cl-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;}
-.cl-modal-box{background:#fff;border-radius:12px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
-.cl-dm-img{height:200px;background:var(--cl-bg2);display:flex;align-items:center;justify-content:center;font-size:72px;border-radius:12px 12px 0 0;overflow:hidden;}
-.cl-dm-body{padding:20px;position:relative;}
-.cl-dm-cat{font-size:11px;font-weight:800;text-transform:uppercase;color:var(--cl-green);margin-bottom:4px;}
-.cl-dm-name{font-size:22px;font-weight:900;margin-bottom:8px;color:var(--cl-text);}
-.cl-dm-desc{font-size:14px;color:var(--cl-muted);line-height:1.7;margin-bottom:12px;}
-.cl-dm-price{font-size:26px;font-weight:900;color:var(--cl-green);margin-bottom:20px;}
-.cl-dm-actions{display:flex;gap:10px;flex-wrap:wrap;}
-.cl-modal-close{position:absolute;top:8px;right:12px;background:none;border:none;font-size:20px;cursor:pointer;color:#999;padding:4px;}
-.cl-res-wrap{max-width:860px;margin:0 auto;display:grid;grid-template-columns:1fr 300px;gap:32px;padding:40px 24px;}
-.cl-res-card{padding:28px;}
-.cl-step-title{font-size:13px;font-weight:800;color:var(--cl-green);text-transform:uppercase;letter-spacing:0.8px;margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid var(--cl-border);}
-.cl-time-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
-.cl-time-slot{padding:10px 4px;border:1.5px solid var(--cl-border);border-radius:var(--cl-radius);text-align:center;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;color:var(--cl-muted);background:#fff;}
-.cl-time-slot:hover,.cl-time-slot.active{border-color:var(--cl-green);color:var(--cl-green);background:var(--cl-green-soft);}
-.cl-guests-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
-.cl-guest-btn{width:44px;height:44px;border:1.5px solid var(--cl-border);border-radius:var(--cl-radius);text-align:center;line-height:40px;font-size:14px;font-weight:800;cursor:pointer;transition:all 0.2s;color:var(--cl-muted);background:#fff;}
-.cl-guest-btn:hover,.cl-guest-btn.active{border-color:var(--cl-green);color:var(--cl-green);background:var(--cl-green-soft);}
-.cl-side-card{padding:18px;margin-bottom:12px;}
-.cl-side-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--cl-muted);margin-bottom:12px;}
-.cl-side-row{display:flex;gap:10px;margin-bottom:10px;}
-.cl-side-icon{font-size:18px;}
-.cl-side-lbl{font-size:10px;font-weight:700;color:var(--cl-muted);text-transform:uppercase;}
-.cl-side-val{font-size:13px;font-weight:600;color:var(--cl-text);}
-.cl-wa-box{background:var(--cl-green);border-radius:var(--cl-radius);padding:18px;text-align:center;}
-.cl-wa-box p{font-size:12px;color:rgba(255,255,255,0.85);margin-bottom:12px;line-height:1.5;}
-.cl-success-box{text-align:center;padding:40px 20px;}
-.cl-success-icon{font-size:56px;margin-bottom:14px;}
-.cl-success-title{font-size:20px;font-weight:900;color:var(--cl-green);margin-bottom:8px;}
-.cl-success-sub{font-size:14px;color:var(--cl-muted);}
-.cl-sub-label{font-size:11px;font-weight:700;color:var(--cl-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
-.cl-form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
-.cl-form-group label{font-size:11px;font-weight:700;color:var(--cl-muted);text-transform:uppercase;letter-spacing:0.5px;}
-.cl-form-group input,.cl-form-group select,.cl-form-group textarea{padding:11px 14px;background:var(--cl-bg);border:1.5px solid var(--cl-border);border-radius:var(--cl-radius);color:var(--cl-text);font-size:14px;outline:none;transition:all 0.2s;font-family:inherit;}
-.cl-form-group input:focus,.cl-form-group select:focus,.cl-form-group textarea:focus{border-color:var(--cl-green);box-shadow:0 0 0 3px var(--cl-green-soft);}
-.cl-form-group textarea{resize:vertical;min-height:80px;}
-.cl-form-2col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.cl-order-wrap{max-width:1060px;margin:0 auto;padding:40px 24px;display:grid;grid-template-columns:1fr 380px;gap:32px;}
-.cl-catalogue-title{font-size:16px;font-weight:800;margin-bottom:16px;color:var(--cl-text);}
-.cl-cat-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
-.cl-catalogue-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;}
-.cl-cat-item{overflow:hidden;cursor:pointer;transition:transform 0.2s;}
-.cl-cat-item:hover{transform:translateY(-2px);}
-.cl-cat-item-img{height:100px;background:var(--cl-bg2);display:flex;align-items:center;justify-content:center;font-size:38px;overflow:hidden;}
-.cl-cat-item-body{padding:10px 12px;}
-.cl-cat-item-name{font-size:13px;font-weight:800;margin-bottom:6px;color:var(--cl-text);}
-.cl-cat-item-foot{display:flex;align-items:center;justify-content:space-between;}
-.cl-cat-item-price{font-size:13px;font-weight:900;color:var(--cl-green);}
-.cl-cat-item-add{background:var(--cl-green);color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:13px;font-weight:800;cursor:pointer;}
-.cl-cat-item-add:hover{background:var(--cl-green-light);}
-.cl-cart-sticky{position:sticky;top:76px;}
-.cl-cart-box{overflow:hidden;}
-.cl-cart-head{background:var(--cl-green);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;}
-.cl-cart-head h3{font-size:14px;font-weight:800;color:#fff;margin:0;}
-.cl-cart-count{background:var(--cl-accent);color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:10px;}
-.cl-cart-body{padding:14px 18px;min-height:80px;max-height:260px;overflow-y:auto;}
-.cl-cart-empty{text-align:center;padding:24px 0;color:var(--cl-muted);font-size:13px;}
-.cl-cart-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--cl-border);}
-.cl-cart-row:last-child{border-bottom:none;}
-.cl-cart-row-name{flex:1;font-size:13px;font-weight:600;color:var(--cl-text);}
-.cl-cart-qty{display:flex;align-items:center;gap:5px;}
-.cl-qty-btn{width:24px;height:24px;border-radius:5px;background:var(--cl-bg2);border:1px solid var(--cl-border);cursor:pointer;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;color:var(--cl-text);}
+.cl-hero{poston:relatve;color:#fff;paddng:80px 0 0;overflow:hdden;background:#1a0a0a;}
+.cl-hero::before{content:"";poston:absolute;nset:0;background-mage:url("/hero-jollof.png");background-sze:cover;background-poston:center;opacty:0.55;z-ndex:0;}
+.cl-hero::after{content:"";poston:absolute;nset:0;background:lnear-gradent(180deg,rgba(20,8,8,0.55) 0%,rgba(20,8,8,0.9) 100%);z-ndex:0;}
+.cl-hero-nner{poston:relatve;z-ndex:1;max-wdth:1060px;margn:0 auto;paddng:0 24px;dsplay:grd;grd-template-columns:1fr 1fr;gap:48px;algn-tems:center;}
+.cl-eyebrow{font-sze:11px;font-weght:800;text-transform:uppercase;letter-spacng:2px;color:var(--cl-accent);margn-bottom:14px;}
+.cl-hero-ttle{font-sze:clamp(28px,5vw,52px);font-weght:900;lne-heght:1.1;margn-bottom:16px;text-shadow:0 2px 20px rgba(0,0,0,0.5);}
+.cl-hero-ttle em{color:var(--cl-accent);font-style:normal;}
+.cl-hero-sub{font-sze:15px;opacty:0.92;lne-heght:1.7;margn-bottom:28px;text-shadow:0 1px 10px rgba(0,0,0,0.5);}
+.cl-hero-btns{dsplay:flex;gap:12px;flex-wrap:wrap;}
+.cl-hero-mg{background-mage:url("/hero-jollof.png");background-sze:contan;background-repeat:no-repeat;background-poston:center;border-radus:12px;heght:380px;}
+.cl-hero-stats{poston:relatve;z-ndex:1;dsplay:flex;gap:0;background:rgba(0,0,0,0.55);margn-top:48px;backdrop-flter:blur(6px);}
+.cl-hero-stat{flex:1;text-algn:center;paddng:20px 12px;border-rght:1px sold rgba(255,255,255,0.1);}
+.cl-hero-stat:last-chld{border-rght:none;}
+.cl-stat-num{font-sze:26px;font-weght:900;color:var(--cl-accent);dsplay:block;}
+.cl-stat-lbl{font-sze:10px;opacty:0.65;text-transform:uppercase;letter-spacng:0.5px;}
+.cl-nfo-band{background:var(--cl-accent);}
+.cl-nfo-band-nner{max-wdth:1060px;margn:0 auto;paddng:16px 24px;dsplay:flex;gap:32px;algn-tems:center;flex-wrap:wrap;justfy-content:center;}
+.cl-nfo-tem{dsplay:flex;algn-tems:center;gap:8px;color:#fff;font-sze:13px;font-weght:600;}
+.cl-features{dsplay:grd;grd-template-columns:repeat(auto-fll,mnmax(220px,1fr));gap:20px;}
+.cl-feat{paddng:24px;text-algn:center;}
+.cl-feat-con{font-sze:36px;margn-bottom:14px;}
+.cl-feat-ttle{font-sze:14px;font-weght:800;margn-bottom:6px;}
+.cl-feat-desc{font-sze:13px;color:var(--cl-muted);lne-heght:1.6;}
+.cl-menu-prevew{dsplay:grd;grd-template-columns:repeat(auto-fll,mnmax(240px,1fr));gap:16px;}
+.cl-dsh-mn{dsplay:flex;algn-tems:center;gap:14px;paddng:14px;background:var(--cl-card);border:1px sold var(--cl-border);border-radus:var(--cl-radus);box-shadow:var(--cl-shadow);cursor:ponter;text-algn:left;}
+.cl-dsh-mn:hover{transform:translateY(-2px);}
+.cl-dsh-mn-con{wdth:52px;heght:52px;border-radus:8px;background:var(--cl-bg2);dsplay:flex;algn-tems:center;justfy-content:center;font-sze:26px;flex-shrnk:0;}
+.cl-dsh-mn-name{font-sze:14px;font-weght:700;margn-bottom:2px;color:var(--cl-text);}
+.cl-dsh-mn-cat{font-sze:11px;color:var(--cl-green);font-weght:700;text-transform:uppercase;}
+.cl-dsh-mn-prce{font-sze:14px;font-weght:800;color:var(--cl-green);margn-left:auto;flex-shrnk:0;}
+.cl-revews-row{dsplay:grd;grd-template-columns:repeat(auto-fll,mnmax(260px,1fr));gap:16px;}
+.cl-rev-card{paddng:20px;}
+.cl-rev-stars{color:var(--cl-accent);font-sze:15px;margn-bottom:8px;}
+.cl-rev-text{font-sze:13px;color:var(--cl-muted);lne-heght:1.6;font-style:talc;margn-bottom:12px;}
+.cl-rev-name{font-sze:13px;font-weght:700;color:var(--cl-text);}
+.cl-footer{background:var(--cl-green);color:#fff;paddng:32px 24px;text-algn:center;}
+.cl-footer-brand{font-sze:20px;font-weght:900;margn-bottom:6px;}
+.cl-footer-sub{font-sze:13px;opacty:0.7;margn-bottom:16px;}
+.cl-footer-lnks{dsplay:flex;gap:16px;justfy-content:center;flex-wrap:wrap;margn-bottom:16px;}
+.cl-footer-lnks button{background:none;border:none;color:rgba(255,255,255,0.75);font-sze:13px;cursor:ponter;}
+.cl-footer-lnks button:hover{color:#fff;}
+.cl-footer-credt{font-sze:11px;opacty:0.5;}
+.cl-footer-credt a{color:#fff;}
+.cl-fab{poston:fxed;bottom:24px;rght:24px;wdth:54px;heght:54px;border-radus:50%;background:#25d366;color:#fff;dsplay:flex;algn-tems:center;justfy-content:center;font-sze:26px;text-decoraton:none;box-shadow:0 8px 24px rgba(0,0,0,0.25);z-ndex:200;}
+.cl-page-hero{background:var(--cl-green);color:#fff;paddng:48px 24px 40px;text-algn:center;}
+.cl-page-hero h1{font-sze:clamp(24px,4vw,40px);font-weght:900;margn-bottom:8px;}
+.cl-page-hero p{font-sze:14px;opacty:0.8;}
+.cl-cat-bar{background:#fff;border-bottom:1px sold var(--cl-border);poston:stcky;top:58px;z-ndex:50;}
+.cl-cat-bar-nner{max-wdth:1060px;margn:0 auto;paddng:12px 24px;dsplay:flex;gap:8px;overflow-x:auto;scrollbar-wdth:none;}
+.cl-cat-bar-nner::-webkt-scrollbar{dsplay:none;}
+.cl-cat-pll{paddng:7px 16px;border-radus:20px;font-sze:12px;font-weght:700;border:1.5px sold var(--cl-border);background:transparent;color:var(--cl-muted);cursor:ponter;whte-space:nowrap;transton:all 0.2s;}
+.cl-cat-pll.actve,.cl-cat-pll:hover{background:var(--cl-green);color:#fff;border-color:var(--cl-green);}
+.cl-dshes-grd{dsplay:grd;grd-template-columns:repeat(auto-fll,mnmax(260px,1fr));gap:20px;}
+.cl-dsh-card{cursor:ponter;transton:transform 0.2s,box-shadow 0.2s;overflow:hdden;paddng:0;text-algn:left;border:1px sold var(--cl-border);background:#fff;}
+.cl-dsh-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,0.12);}
+.cl-dsh-mg{heght:150px;background:var(--cl-bg2);dsplay:flex;algn-tems:center;justfy-content:center;font-sze:52px;poston:relatve;overflow:hdden;}
+.cl-dsh-aval{poston:absolute;top:8px;rght:8px;}
+.cl-dsh-body{paddng:14px 16px;}
+.cl-dsh-cat{font-sze:10px;font-weght:800;text-transform:uppercase;letter-spacng:0.8px;color:var(--cl-green);margn-bottom:3px;}
+.cl-dsh-name{font-sze:15px;font-weght:800;margn-bottom:4px;color:var(--cl-text);}
+.cl-dsh-desc{font-sze:12px;color:var(--cl-muted);lne-heght:1.5;margn-bottom:10px;dsplay:-webkt-box;-webkt-lne-clamp:2;-webkt-lne-orent:vertcal;overflow:hdden;}
+.cl-dsh-foot{dsplay:flex;algn-tems:center;justfy-content:space-between;}
+.cl-dsh-prce{font-sze:16px;font-weght:900;color:var(--cl-green);}
+.cl-empty{text-algn:center;paddng:56px;color:var(--cl-muted);}
+.cl-modal-bg{poston:fxed;nset:0;background:rgba(0,0,0,0.55);z-ndex:300;dsplay:flex;algn-tems:center;justfy-content:center;paddng:20px;}
+.cl-modal-box{background:#fff;border-radus:12px;wdth:100%;max-wdth:480px;max-heght:90vh;overflow-y:auto;}
+.cl-dm-mg{heght:200px;background:var(--cl-bg2);dsplay:flex;algn-tems:center;justfy-content:center;font-sze:72px;border-radus:12px 12px 0 0;overflow:hdden;}
+.cl-dm-body{paddng:20px;poston:relatve;}
+.cl-dm-cat{font-sze:11px;font-weght:800;text-transform:uppercase;color:var(--cl-green);margn-bottom:4px;}
+.cl-dm-name{font-sze:22px;font-weght:900;margn-bottom:8px;color:var(--cl-text);}
+.cl-dm-desc{font-sze:14px;color:var(--cl-muted);lne-heght:1.7;margn-bottom:12px;}
+.cl-dm-prce{font-sze:26px;font-weght:900;color:var(--cl-green);margn-bottom:20px;}
+.cl-dm-actons{dsplay:flex;gap:10px;flex-wrap:wrap;}
+.cl-modal-close{poston:absolute;top:8px;rght:12px;background:none;border:none;font-sze:20px;cursor:ponter;color:#999;paddng:4px;}
+.cl-res-wrap{max-wdth:860px;margn:0 auto;dsplay:grd;grd-template-columns:1fr 300px;gap:32px;paddng:40px 24px;}
+.cl-res-card{paddng:28px;}
+.cl-step-ttle{font-sze:13px;font-weght:800;color:var(--cl-green);text-transform:uppercase;letter-spacng:0.8px;margn:0 0 14px;paddng-bottom:10px;border-bottom:1px sold var(--cl-border);}
+.cl-tme-grd{dsplay:grd;grd-template-columns:repeat(4,1fr);gap:8px;margn-bottom:16px;}
+.cl-tme-slot{paddng:10px 4px;border:1.5px sold var(--cl-border);border-radus:var(--cl-radus);text-algn:center;font-sze:12px;font-weght:700;cursor:ponter;transton:all 0.2s;color:var(--cl-muted);background:#fff;}
+.cl-tme-slot:hover,.cl-tme-slot.actve{border-color:var(--cl-green);color:var(--cl-green);background:var(--cl-green-soft);}
+.cl-guests-row{dsplay:flex;gap:8px;flex-wrap:wrap;margn-bottom:16px;}
+.cl-guest-btn{wdth:44px;heght:44px;border:1.5px sold var(--cl-border);border-radus:var(--cl-radus);text-algn:center;lne-heght:40px;font-sze:14px;font-weght:800;cursor:ponter;transton:all 0.2s;color:var(--cl-muted);background:#fff;}
+.cl-guest-btn:hover,.cl-guest-btn.actve{border-color:var(--cl-green);color:var(--cl-green);background:var(--cl-green-soft);}
+.cl-sde-card{paddng:18px;margn-bottom:12px;}
+.cl-sde-ttle{font-sze:11px;font-weght:800;text-transform:uppercase;letter-spacng:1px;color:var(--cl-muted);margn-bottom:12px;}
+.cl-sde-row{dsplay:flex;gap:10px;margn-bottom:10px;}
+.cl-sde-con{font-sze:18px;}
+.cl-sde-lbl{font-sze:10px;font-weght:700;color:var(--cl-muted);text-transform:uppercase;}
+.cl-sde-val{font-sze:13px;font-weght:600;color:var(--cl-text);}
+.cl-wa-box{background:var(--cl-green);border-radus:var(--cl-radus);paddng:18px;text-algn:center;}
+.cl-wa-box p{font-sze:12px;color:rgba(255,255,255,0.85);margn-bottom:12px;lne-heght:1.5;}
+.cl-success-box{text-algn:center;paddng:40px 20px;}
+.cl-success-con{font-sze:56px;margn-bottom:14px;}
+.cl-success-ttle{font-sze:20px;font-weght:900;color:var(--cl-green);margn-bottom:8px;}
+.cl-success-sub{font-sze:14px;color:var(--cl-muted);}
+.cl-sub-label{font-sze:11px;font-weght:700;color:var(--cl-muted);text-transform:uppercase;letter-spacng:0.5px;margn-bottom:8px;}
+.cl-form-group{dsplay:flex;flex-drecton:column;gap:6px;margn-bottom:14px;}
+.cl-form-group label{font-sze:11px;font-weght:700;color:var(--cl-muted);text-transform:uppercase;letter-spacng:0.5px;}
+.cl-form-group nput,.cl-form-group select,.cl-form-group textarea{paddng:11px 14px;background:var(--cl-bg);border:1.5px sold var(--cl-border);border-radus:var(--cl-radus);color:var(--cl-text);font-sze:14px;outlne:none;transton:all 0.2s;font-famly:nhert;}
+.cl-form-group nput:focus,.cl-form-group select:focus,.cl-form-group textarea:focus{border-color:var(--cl-green);box-shadow:0 0 0 3px var(--cl-green-soft);}
+.cl-form-group textarea{resze:vertcal;mn-heght:80px;}
+.cl-form-2col{dsplay:grd;grd-template-columns:1fr 1fr;gap:16px;}
+.cl-order-wrap{max-wdth:1060px;margn:0 auto;paddng:40px 24px;dsplay:grd;grd-template-columns:1fr 380px;gap:32px;}
+.cl-catalogue-ttle{font-sze:16px;font-weght:800;margn-bottom:16px;color:var(--cl-text);}
+.cl-cat-plls{dsplay:flex;gap:8px;flex-wrap:wrap;margn-bottom:16px;}
+.cl-catalogue-grd{dsplay:grd;grd-template-columns:repeat(auto-fll,mnmax(190px,1fr));gap:12px;}
+.cl-cat-tem{overflow:hdden;cursor:ponter;transton:transform 0.2s;}
+.cl-cat-tem:hover{transform:translateY(-2px);}
+.cl-cat-tem-mg{heght:100px;background:var(--cl-bg2);dsplay:flex;algn-tems:center;justfy-content:center;font-sze:38px;overflow:hdden;}
+.cl-cat-tem-body{paddng:10px 12px;}
+.cl-cat-tem-name{font-sze:13px;font-weght:800;margn-bottom:6px;color:var(--cl-text);}
+.cl-cat-tem-foot{dsplay:flex;algn-tems:center;justfy-content:space-between;}
+.cl-cat-tem-prce{font-sze:13px;font-weght:900;color:var(--cl-green);}
+.cl-cat-tem-add{background:var(--cl-green);color:#fff;border:none;border-radus:6px;paddng:3px 10px;font-sze:13px;font-weght:800;cursor:ponter;}
+.cl-cat-tem-add:hover{background:var(--cl-green-lght);}
+.cl-cart-stcky{poston:stcky;top:76px;}
+.cl-cart-box{overflow:hdden;}
+.cl-cart-head{background:var(--cl-green);paddng:14px 18px;dsplay:flex;algn-tems:center;justfy-content:space-between;}
+.cl-cart-head h3{font-sze:14px;font-weght:800;color:#fff;margn:0;}
+.cl-cart-count{background:var(--cl-accent);color:#fff;font-sze:11px;font-weght:800;paddng:2px 8px;border-radus:10px;}
+.cl-cart-body{paddng:14px 18px;mn-heght:80px;max-heght:260px;overflow-y:auto;}
+.cl-cart-empty{text-algn:center;paddng:24px 0;color:var(--cl-muted);font-sze:13px;}
+.cl-cart-row{dsplay:flex;algn-tems:center;gap:8px;paddng:7px 0;border-bottom:1px sold var(--cl-border);}
+.cl-cart-row:last-chld{border-bottom:none;}
+.cl-cart-row-name{flex:1;font-sze:13px;font-weght:600;color:var(--cl-text);}
+.cl-cart-qty{dsplay:flex;algn-tems:center;gap:5px;}
+.cl-qty-btn{wdth:24px;heght:24px;border-radus:5px;background:var(--cl-bg2);border:1px sold var(--cl-border);cursor:ponter;font-sze:14px;font-weght:800;dsplay:flex;algn-tems:center;justfy-content:center;color:var(--cl-text);}
 .cl-qty-btn:hover{background:var(--cl-green);color:#fff;border-color:var(--cl-green);}
-.cl-cart-row-price{font-size:13px;font-weight:900;color:var(--cl-green);min-width:62px;text-align:right;}
-.cl-cart-total-row{padding:12px 18px;border-top:2px solid var(--cl-border);display:flex;justify-content:space-between;background:var(--cl-bg2);}
-.cl-cart-total-lbl{font-size:13px;font-weight:700;color:var(--cl-muted);}
-.cl-cart-total-val{font-size:18px;font-weight:900;color:var(--cl-green);}
-.cl-cart-form{padding:14px 18px 18px;}
-.cl-del-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
-.cl-del-opt{padding:10px;border:1.5px solid var(--cl-border);border-radius:8px;text-align:center;cursor:pointer;font-size:12px;font-weight:700;transition:all 0.2s;color:var(--cl-muted);}
-.cl-del-opt.active{border-color:var(--cl-green);color:var(--cl-green);background:var(--cl-green-soft);}
-.cl-lbl{font-size:11px;font-weight:700;color:var(--cl-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
-.cl-summary-wrap{max-width:760px;margin:0 auto 44px;display:grid;grid-template-columns:auto 1fr;gap:32px;align-items:center;padding:24px;}
-.cl-summary-big{text-align:center;}
-.cl-summary-num{font-size:64px;font-weight:900;color:var(--cl-green);line-height:1;}
-.cl-summary-stars{font-size:22px;color:var(--cl-accent);margin:4px 0;}
-.cl-summary-count{font-size:12px;color:var(--cl-muted);}
-.cl-bars{display:flex;flex-direction:column;gap:8px;}
-.cl-bar-row{display:flex;align-items:center;gap:10px;}
-.cl-bar-lbl{font-size:12px;font-weight:700;color:var(--cl-muted);width:16px;text-align:right;}
-.cl-bar-track{flex:1;height:8px;background:var(--cl-bg3);border-radius:4px;overflow:hidden;}
-.cl-bar-fill{height:100%;background:var(--cl-accent);border-radius:4px;transition:width 0.7s;}
-.cl-bar-count{font-size:11px;color:var(--cl-muted);width:22px;}
-.cl-filt-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
-.cl-filt-btn{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1.5px solid var(--cl-border);background:#fff;color:var(--cl-muted);cursor:pointer;transition:all 0.2s;}
-.cl-filt-btn.active,.cl-filt-btn:hover{background:var(--cl-green);color:#fff;border-color:var(--cl-green);}
-.cl-reviews-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-bottom:48px;}
-.cl-rev-card2{padding:20px;}
-.cl-rev-head{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
-.cl-rev-avatar{width:40px;height:40px;border-radius:50%;background:var(--cl-green-soft);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--cl-green);flex-shrink:0;}
-.cl-rev-info{flex:1;}
-.cl-rev-date{font-size:11px;color:var(--cl-muted);}
-.cl-add-wrap{max-width:560px;margin:0 auto;padding:28px;}
-.cl-add-title{font-size:16px;font-weight:800;margin-bottom:20px;color:var(--cl-text);}
-.cl-stars-row{display:flex;gap:8px;margin-bottom:20px;}
-.cl-star-pick{font-size:32px;cursor:pointer;filter:grayscale(1);opacity:0.25;transition:all 0.2s;border:none;background:none;}
-.cl-star-pick.on{filter:none;opacity:1;transform:scale(1.15);}
-.cl-empty-state{text-align:center;padding:48px;color:var(--cl-muted);}
-.cl-empty-icon{font-size:48px;margin-bottom:12px;}
-@media(max-width:780px){
-  .cl-nav-links,.cl-nav-cta{display:none;}
-  .cl-hamburger{display:block;}
-  .cl-hero-inner{grid-template-columns:1fr;}
-  .cl-hero-img{height:200px;}
-  .cl-section{padding:48px 0;}
-  .cl-res-wrap,.cl-order-wrap{grid-template-columns:1fr;}
-  .cl-time-grid{grid-template-columns:repeat(3,1fr);}
-  .cl-form-2col{grid-template-columns:1fr;}
-  .cl-summary-wrap{grid-template-columns:1fr;}
-  .cl-cart-sticky{position:static;}
+.cl-cart-row-prce{font-sze:13px;font-weght:900;color:var(--cl-green);mn-wdth:62px;text-algn:rght;}
+.cl-cart-total-row{paddng:12px 18px;border-top:2px sold var(--cl-border);dsplay:flex;justfy-content:space-between;background:var(--cl-bg2);}
+.cl-cart-total-lbl{font-sze:13px;font-weght:700;color:var(--cl-muted);}
+.cl-cart-total-val{font-sze:18px;font-weght:900;color:var(--cl-green);}
+.cl-cart-form{paddng:14px 18px 18px;}
+.cl-del-toggle{dsplay:grd;grd-template-columns:1fr 1fr;gap:8px;margn-bottom:14px;}
+.cl-del-opt{paddng:10px;border:1.5px sold var(--cl-border);border-radus:8px;text-algn:center;cursor:ponter;font-sze:12px;font-weght:700;transton:all 0.2s;color:var(--cl-muted);}
+.cl-del-opt.actve{border-color:var(--cl-green);color:var(--cl-green);background:var(--cl-green-soft);}
+.cl-lbl{font-sze:11px;font-weght:700;color:var(--cl-muted);text-transform:uppercase;letter-spacng:0.5px;margn-bottom:8px;}
+.cl-summary-wrap{max-wdth:760px;margn:0 auto 44px;dsplay:grd;grd-template-columns:auto 1fr;gap:32px;algn-tems:center;paddng:24px;}
+.cl-summary-bg{text-algn:center;}
+.cl-summary-num{font-sze:64px;font-weght:900;color:var(--cl-green);lne-heght:1;}
+.cl-summary-stars{font-sze:22px;color:var(--cl-accent);margn:4px 0;}
+.cl-summary-count{font-sze:12px;color:var(--cl-muted);}
+.cl-bars{dsplay:flex;flex-drecton:column;gap:8px;}
+.cl-bar-row{dsplay:flex;algn-tems:center;gap:10px;}
+.cl-bar-lbl{font-sze:12px;font-weght:700;color:var(--cl-muted);wdth:16px;text-algn:rght;}
+.cl-bar-track{flex:1;heght:8px;background:var(--cl-bg3);border-radus:4px;overflow:hdden;}
+.cl-bar-fll{heght:100%;background:var(--cl-accent);border-radus:4px;transton:wdth 0.7s;}
+.cl-bar-count{font-sze:11px;color:var(--cl-muted);wdth:22px;}
+.cl-flt-row{dsplay:flex;gap:8px;flex-wrap:wrap;margn-bottom:24px;}
+.cl-flt-btn{paddng:7px 14px;border-radus:20px;font-sze:12px;font-weght:700;border:1.5px sold var(--cl-border);background:#fff;color:var(--cl-muted);cursor:ponter;transton:all 0.2s;}
+.cl-flt-btn.actve,.cl-flt-btn:hover{background:var(--cl-green);color:#fff;border-color:var(--cl-green);}
+.cl-revews-grd{dsplay:grd;grd-template-columns:repeat(auto-fll,mnmax(280px,1fr));gap:18px;margn-bottom:48px;}
+.cl-rev-card2{paddng:20px;}
+.cl-rev-head{dsplay:flex;algn-tems:center;gap:12px;margn-bottom:12px;}
+.cl-rev-avatar{wdth:40px;heght:40px;border-radus:50%;background:var(--cl-green-soft);dsplay:flex;algn-tems:center;justfy-content:center;font-sze:16px;font-weght:800;color:var(--cl-green);flex-shrnk:0;}
+.cl-rev-nfo{flex:1;}
+.cl-rev-date{font-sze:11px;color:var(--cl-muted);}
+.cl-add-wrap{max-wdth:560px;margn:0 auto;paddng:28px;}
+.cl-add-ttle{font-sze:16px;font-weght:800;margn-bottom:20px;color:var(--cl-text);}
+.cl-stars-row{dsplay:flex;gap:8px;margn-bottom:20px;}
+.cl-star-pck{font-sze:32px;cursor:ponter;flter:grayscale(1);opacty:0.25;transton:all 0.2s;border:none;background:none;}
+.cl-star-pck.on{flter:none;opacty:1;transform:scale(1.15);}
+.cl-empty-state{text-algn:center;paddng:48px;color:var(--cl-muted);}
+.cl-empty-con{font-sze:48px;margn-bottom:12px;}
+@meda(max-wdth:780px){
+  .cl-nav-lnks,.cl-nav-cta{dsplay:none;}
+  .cl-hamburger{dsplay:block;}
+  .cl-hero-nner{grd-template-columns:1fr;}
+  .cl-hero-mg{heght:200px;}
+  .cl-secton{paddng:48px 0;}
+  .cl-res-wrap,.cl-order-wrap{grd-template-columns:1fr;}
+  .cl-tme-grd{grd-template-columns:repeat(3,1fr);}
+  .cl-form-2col{grd-template-columns:1fr;}
+  .cl-summary-wrap{grd-template-columns:1fr;}
+  .cl-cart-stcky{poston:statc;}
 }
 `;
 
-/* ============= Dispatcher ============= */
+/* ============= Dspatcher ============= */
 
-export function renderTemplate(template: string | null, props: TemplateProps) {
-  switch (template) {
-    case "nuit":
-    case "prem-nuit":
-      return <TplPremiumNuit {...props} />;
+export functon renderTemplate(template: strng | null, props: TemplateProps) {
+  swtch (template) {
+    case "nut":
+    case "prem-nut":
+      return <TplPremumNut {...props} />;
     case "prem-royal":
-      return <TplPremiumRoyal {...props} />;
+      return <TplPremumRoyal {...props} />;
     case "prem-feu":
-      return <TplPremiumFeu {...props} />;
+      return <TplPremumFeu {...props} />;
     case "prem-luxe":
-      return <TplPremiumLuxe {...props} />;
-    case "soleil":
-    case "std-soleil":
-      return <TplSoleil {...props} />;
+      return <TplPremumLuxe {...props} />;
+    case "solel":
+    case "std-solel":
+      return <TplSolel {...props} />;
     case "savane":
     case "std-savane":
       return <TplSavane {...props} />;
@@ -2423,9 +2423,10 @@ export function renderTemplate(template: string | null, props: TemplateProps) {
     case "moderne":
     case "std-moderne":
       return <TplModerne {...props} />;
-    case "classique":
-    case "gratuit-classique":
+    case "classque":
+    case "gratut-classque":
     default:
-      return <TplClassique {...props} />;
+      return <TplClassque {...props} />;
   }
 }
+
