@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import logoAsset from "@/assets/restobf-logo.png.asset.json";
+
+
+const LOGO_URL = "/restobf-logo.png";
 
 export function Footer() {
   return (
@@ -7,7 +9,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto grid gap-10 md:grid-cols-4">
         <div>
           <div className="flex items-center gap-3 mb-4">
-            <img src={logoAsset.url} alt="RestoBF" width={48} height={48} className="w-12 h-12 rounded-xl bg-white object-contain p-1 shadow-gold" />
+            <img src={LOGO_URL} alt="RestoBF" width={48} height={48} className="w-12 h-12 rounded-xl bg-white object-contain p-1 shadow-gold" />
             <strong className="text-lg font-bold">RestoBF</strong>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">

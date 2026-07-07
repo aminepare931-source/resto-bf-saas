@@ -20,8 +20,13 @@ function QrCodePage() {
   const [svgString, setSvgString] = useState<string>("");
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const override = (r as unknown as { public_site_url?: string | null })?.public_site_url ?? null;
+  const override = r?.public_site_url ?? null;
   const targetUrl = r?.slug ? buildRestaurantUrl(r.slug, tableNum.trim() || null, override) : "";
+  
+  const isLocalhost = typeof window !== "undefined" && 
+    (window.location.hostname === "localhost" || 
+     window.location.hostname === "127.0.0.1" ||
+     window.location.hostname.startsWith("192.168."));
 
   useEffect(() => {
     if (!targetUrl) return;
@@ -54,13 +59,76 @@ function QrCodePage() {
       </div>
     );
 
+  if (isLocalhost)
+    return (
+      <div className="max-w-5xl">
+        <div className="mb-8">
+          <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">QR Code</p>
+          <h1 className="text-3xl font-black">QR Code professionnel</h1>
+        </div>
+
+        <div className="max-w-2xl p-8 rounded-3xl border border-red-400/30 bg-red-400/5">
+          <div className="flex items-start gap-4">
+            <span className="text-4xl">⚠️</span>
+            <div>
+              <h2 className="text-xl font-bold text-red-300 mb-3">
+                Mode développement détecté
+              </h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                Vous êtes en mode <strong>localhost</strong>. Les QR codes générés ne seront pas accessibles depuis un téléphone externe.
+              </p>
+              
+              <div className="space-y-3 text-sm">
+                <p className="font-semibold text-foreground">Pour tester avec votre téléphone :</p>
+                
+                <div className="p-4 rounded-xl bg-dark-card border border-white/8">
+                  <p className="font-semibold text-gold mb-2">Option 1 : Utiliser un tunnel (Recommandé)</p>
+                  <p className="text-muted-foreground mb-2">
+                    Utilisez <strong>ngrok</strong> ou <strong>Cloudflare Tunnel</strong> pour exposer votre site local :
+                  </p>
+                  <code className="block p-2 rounded bg-black/30 text-xs text-gold font-mono">
+                    ngrok http 5173
+                  </code>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Copiez l'URL publique générée (ex: https://abc123.ngrok.io) et utilisez-la pour scanner le QR code.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-dark-card border border-white/8">
+                  <p className="font-semibold text-gold mb-2">Option 2 : Déployer en production</p>
+                  <p className="text-muted-foreground">
+                    Déployez votre site sur Vercel, Netlify, ou tout autre hébergeur. Le QR code pointera automatiquement vers l'URL de production.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-dark-card border border-white/8">
+                  <p className="font-semibold text-gold mb-2">Option 3 : Configurer une URL personnalisée</p>
+                  <p className="text-muted-foreground mb-2">
+                    Dans le dashboard, allez dans <strong>Paramètres</strong> et définissez une <strong>URL publique personnalisée</strong> pour votre restaurant.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6 p-4 rounded-xl bg-amber-400/10 border border-amber-400/20">
+                <p className="text-sm text-amber-200">
+                  <strong>Note :</strong> Une fois votre site accessible publiquement, revenez sur cette page pour générer un QR code fonctionnel.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
   return (
     <div className="max-w-5xl">
       <div className="mb-8">
         <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">QR Code</p>
         <h1 className="text-3xl font-black">QR Code professionnel</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          À imprimer sur vos cartes de table, vitrines, flyers. Pointe vers <strong className="text-gold">{getPublicSiteOrigin(override)}</strong>.
+          À imprimer sur vos cartes de table, vitrines, flyers. Pointe vers{" "}
+          <strong className="text-gold">{getPublicSiteOrigin(override)}</strong>.
+          <br />
           Optionnel : entrez un numéro de table pour générer un QR par table (la commande sera automatiquement rattachée).
         </p>
       </div>
@@ -115,7 +183,9 @@ function QrCodePage() {
             <input
               type="text"
               value={tableNum}
-              onChange={(e) => setTableNum(e.target.value.replace(/[^A-Za-z0-9-]/g, "").slice(0, 10))}
+              onChange={(e) =>
+                setTableNum(e.target.value.replace(/[^A-Za-z0-9-]/g, "").slice(0, 10))
+              }
               placeholder="ex : 12"
               className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
             />
@@ -134,7 +204,9 @@ function QrCodePage() {
               onChange={(e) => setSize(+e.target.value)}
               className="w-full accent-gold"
             />
-            <p className="text-xs text-muted-foreground mt-1">{size}×{size} px</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {size}×{size} px
+            </p>
           </SettingCard>
 
           <SettingCard label="Marge">
@@ -146,7 +218,9 @@ function QrCodePage() {
               onChange={(e) => setMargin(+e.target.value)}
               className="w-full accent-gold"
             />
-            <p className="text-xs text-muted-foreground mt-1">{margin} blocs</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {margin} blocs
+            </p>
           </SettingCard>
 
           <SettingCard label="Couleur du QR">
@@ -173,6 +247,7 @@ function QrCodePage() {
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed">
               Pour l'impression, choisissez 1024×1024 et téléchargez en SVG pour
+              <br />
               une qualité parfaite à toutes les tailles.
             </p>
           </div>

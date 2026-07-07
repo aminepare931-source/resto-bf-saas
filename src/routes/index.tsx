@@ -4,7 +4,8 @@ import { Footer } from "@/components/landing/Footer";
 import { Particles } from "@/components/landing/Particles";
 import { Reveal } from "@/components/landing/Reveal";
 import { Counter } from "@/components/landing/Counter";
-import landingBg from "@/assets/landing-bg.jpg.asset.json";
+import { useState } from "react";
+import { X } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -24,18 +25,27 @@ export const Route = createFileRoute("/")({
 });
 
 const features = [
-  { icon: "📱", title: "Menu digital", desc: "Photos, descriptions, prix et catégories. Vos clients voient tout en un coup d'œil." },
-  { icon: "💬", title: "WhatsApp intégré", desc: "Chaque plat a un bouton Commander. Le message WhatsApp est déjà préparé." },
-  { icon: "📅", title: "Réservation en ligne", desc: "Formulaire avec choix de table, occasion, budget. Confirmation immédiate." },
-  { icon: "🖼️", title: "Galerie ambiance", desc: "Montrez votre salle, votre terrasse, votre équipe. Les clients réservent plus." },
-  { icon: "⭐", title: "Avis clients", desc: "Affichez les témoignages. Chaque avis est un motif de confiance." },
-  { icon: "📊", title: "Tableau de bord", desc: "Gérez votre menu, vos prix et vos infos depuis un espace simple." },
+  { icon: "📱", title: "Menu digital intelligent", desc: "Photos, descriptions, prix et catégories. Vos clients commandent directement en ligne." },
+  { icon: "💬", title: "Commandes WhatsApp automatiques", desc: "Chaque plat a un bouton Commander. Le message est pré-rempli avec les détails de la commande." },
+  { icon: "🛎️", title: "Gestion des commandes en temps réel", desc: "Recevez, validez et suivez toutes les commandes depuis votre tableau de bord." },
+  { icon: "📅", title: "Réservations & gestion des tables", desc: "Plan de salle interactif, attribution automatique des tables, confirmations instantanées." },
+  { icon: "📊", title: "Tableau de bord & statistiques", desc: "Suivez vos ventes, plats populaires, heures de pointe et chiffre d'affaires." },
+  { icon: "👥", title: "Gestion du staff & stocks", desc: "Ajoutez votre équipe, gérez les rôles et suivez vos stocks en temps réel." },
 ];
 
-const steps = [
-  { n: 1, title: "Créez votre compte", desc: "Entrez le nom de votre restaurant et votre email. Gratuit et sans engagement." },
-  { n: 2, title: "Ajoutez vos plats", desc: "Photos, noms, prix et catégories. Commencez avec 3 plats ou tout votre menu." },
-  { n: 3, title: "Partagez votre page", desc: "Un lien unique à partager sur WhatsApp, Facebook ou en QR code sur vos tables." },
+const templates = [
+  { name: "TplNuit", emoji: "🌙", desc: "Ambiance nocturne élégante", color: "from-indigo-900/40 to-purple-900/20" },
+  { name: "TplSoleil", emoji: "☀️", desc: "Style lumineux et chaleureux", color: "from-amber-900/40 to-orange-900/20" },
+  { name: "TplSavane", emoji: "🌾", desc: "Inspiration nature et authenticité", color: "from-emerald-900/40 to-teal-900/20" },
+  { name: "TplMarché", emoji: "🏪", desc: "Design coloré et dynamique", color: "from-rose-900/40 to-pink-900/20" },
+  { name: "TplModerne", emoji: "✨", desc: "Minimaliste et contemporain", color: "from-sky-900/40 to-blue-900/20" },
+];
+
+const stats = [
+  { n: "50+", label: "Restaurants inscrits" },
+  { n: "5", label: "Templates disponibles" },
+  { n: "4.9", label: "Note moyenne ★" },
+  { n: "24/7", label: "Support WhatsApp" },
 ];
 
 const testimonials = [
@@ -64,18 +74,22 @@ const testimonials = [
 
 const plans = [
   {
-    name: "Essai gratuit",
+    name: "Basique",
     price: "0",
     unit: "FCFA",
-    period: "14 jours offerts",
+    period: "30 jours gratuits",
     popular: false,
-    cta: "Démarrer mon essai",
+    cta: "Essai gratuit 30 jours",
     href: "/auth/inscription" as const,
+    plan: "basique" as const,
     features: [
-      "Toutes les fonctionnalités Standard",
-      "Aucune carte bancaire",
-      "Site en ligne immédiatement",
-      "À la fin : choix d'un abonnement",
+      "Template basique unique",
+      "Menu jusqu'à 10 plats",
+      "Commande WhatsApp",
+      "QR Code restaurant",
+      "Réservations basiques",
+      "Statistiques essentielles",
+      "Puis 5 000 FCFA/mois",
     ],
   },
   {
@@ -83,9 +97,10 @@ const plans = [
     price: "10 000",
     unit: "FCFA",
     period: "/ mois",
-    popular: false,
+    popular: true,
     cta: "Choisir Standard",
     href: "/auth/inscription" as const,
+    plan: "standard" as const,
     features: [
       "Menu jusqu'à 30 plats",
       "Commande WhatsApp",
@@ -93,76 +108,54 @@ const plans = [
       "QR Code restaurant",
       "Réservations avancées",
       "Statistiques basiques",
-    ],
-  },
-  {
-    name: "Standard Plus",
-    price: "15 000",
-    unit: "FCFA",
-    period: "/ mois",
-    popular: true,
-    cta: "Choisir Standard Plus",
-    href: "/auth/inscription" as const,
-    features: [
-      "Tout Standard",
-      "Menu jusqu'à 80 plats",
-      "Galerie ambiance améliorée",
-      "Personnalisation avancée",
-      "Avis clients modérés",
-      "Support prioritaire",
+      "Galerie photos",
     ],
   },
   {
     name: "Premium",
-    price: "25 000",
+    price: "15 000",
     unit: "FCFA",
     period: "/ mois",
     popular: false,
     cta: "Passer Premium",
     href: "/auth/inscription" as const,
+    plan: "premium" as const,
     features: [
       "Menu illimité",
       "4 templates Premium animés",
-      "Facturation + logo personnalisé",
+      "Facturation PDF + logo",
       "Statistiques avancées",
       "Gestion employés & promotions",
-      "Rapports PDF mensuels",
-      "Export & sauvegardes auto",
+      "Rapports mensuels",
+      "Support prioritaire",
     ],
   },
 ];
 
 const faqs = [
-  { q: "Combien coûte vraiment Resto BF ?", a: "Vous démarrez par un essai gratuit de 14 jours. Ensuite : Standard 10 000 FCFA/mois, Standard Plus 15 000 FCFA/mois, Premium 25 000 FCFA/mois. Pas de frais d'installation, pas de commission." },
-  { q: "Mes clients n'ont pas forcément internet rapide. Ça marche ?", a: "Votre page se charge en moins de 2 secondes même en 3G. Chaque image est optimisée pour le réseau burkinabè." },
-  { q: "Comment mes clients trouvent ma page ?", a: "Vous recevez un lien unique et un QR code à imprimer. Partagez-le sur WhatsApp, sur vos tables ou sur votre enseigne." },
-  { q: "Est-ce que je peux essayer gratuitement ?", a: "Oui ! L'essai gratuit de 14 jours vous donne accès à toutes les fonctionnalités Standard. À la fin, vous choisissez votre abonnement." },
-  { q: "Comment fonctionne la commande WhatsApp ?", a: "Chaque plat a un bouton Commander. Le client clique, un message WhatsApp s'ouvre déjà préparé avec le nom du plat, le prix et vos coordonnées." },
-  { q: "Je veux un site 100% personnalisé. C'est possible ?", a: "Oui, avec notre offre Sur Mesure (à partir de 250 000 FCFA) : nom de domaine personnalisé, design unique, fonctionnalités spécifiques selon vos besoins. Contactez-nous au +226 55 30 08 68." },
+  { q: "Combien de temps pour être opérationnel ?", a: "5 minutes pour créer votre compte et accéder à votre tableau de bord. Ajoutez votre menu et vos plats en 30 minutes. Votre page est immédiatement en ligne et partageable." },
+  { q: "Est-ce que je peux vraiment essayer gratuitement ?", a: "Oui, 30 jours d'essai gratuit avec toutes les fonctionnalités. Aucune carte bancaire requise. À la fin de l'essai, choisissez le forfait qui vous convient ou arrêtez simplement." },
+  { q: "Mes employés peuvent-ils utiliser l'application ?", a: "Oui, ajoutez votre équipe avec des rôles spécifiques : serveur, cuisinier, manager. Chacun accède aux fonctionnalités adaptées à son poste. Chat interne inclus pour la communication." },
+  { q: "Comment fonctionnent les commandes WhatsApp ?", a: "Chaque plat a un bouton Commander. Le client clique, un message WhatsApp s'ouvre avec le nom du plat, le prix et vos coordonnées. Vous recevez la commande et pouvez la valider depuis votre tableau de bord." },
+  { q: "Est-ce que je peux gérer mes stocks ?", a: "Oui, suivez vos ingrédients en temps réel. Recevez des alertes automatiques quand un stock est bas. Générez des rapports de consommation. Idéal pour maîtriser vos coûts et éviter les ruptures." },
+  { q: "Que se passe-t-il si je veux résilier ?", a: "Annulation à tout moment, sans frais. Vos données sont exportables. Vous pouvez télécharger votre menu, vos statistiques et vos factures. Aucun engagement, pas de pénalité." },
 ];
 
 function LandingPage() {
+  const [selectedPlan, setSelectedPlan] = useState<typeof plans[0] | null>(null);
+
   return (
-    <div className="relative min-h-screen text-foreground overflow-x-hidden">
-      {/* Background plein écran */}
-      <div
-        className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${landingBg.url})` }}
-        aria-hidden="true"
-      />
-      <div
-        className="fixed inset-0 -z-10 pointer-events-none"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(8,8,16,0.85) 0%, rgba(8,8,16,0.92) 40%, rgba(8,8,16,0.97) 100%)",
-        }}
-        aria-hidden="true"
-      />
+    <div className="relative min-h-screen text-foreground overflow-x-hidden" style={{ isolation: "isolate" }}>
+      <div className="tpl-bg" aria-hidden>
+        <img src="/bg-saas.jpg" alt="" />
+        <span />
+      </div>
+
       <Topbar />
 
       <main>
         {/* HERO */}
-        <section className="relative pt-32 pb-20 px-6 min-h-[100vh] flex items-center overflow-hidden">
+        <section className="relative pt-24 sm:pt-32 pb-16 sm:pb-20 px-4 sm:px-6 min-h-[90vh] sm:min-h-[100vh] flex items-center overflow-hidden">
           <div className="absolute inset-0 grid-bg opacity-60" aria-hidden="true" />
           <div
             className="absolute inset-0 opacity-40 pointer-events-none"
@@ -174,166 +167,196 @@ function LandingPage() {
           />
           <Particles count={8} />
 
-          <div className="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center w-full">
+          <div className="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 sm:gap-16 items-center w-full">
             <div>
               <Reveal>
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gold/30 bg-gold/5 text-xs font-semibold text-gold mb-6">
+                <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-gold/30 bg-gold/5 text-[10px] sm:text-xs font-semibold text-gold mb-4 sm:mb-6">
                   <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
                   Pour les restaurants, maquis & fast-foods
                 </div>
               </Reveal>
               <Reveal delay={1}>
-                <h1 className="text-5xl md:text-7xl font-black leading-[1.05] tracking-tight">
+                <h1 className="text-4xl sm:text-5xl md:text-7xl font-black leading-[1.05] tracking-tight">
                   Votre restaurant<br />
                   <span className="text-gradient-gold">en ligne en 5 minutes</span>
                 </h1>
               </Reveal>
               <Reveal delay={2}>
-                <p className="mt-6 text-lg text-muted-foreground max-w-xl leading-relaxed">
-                  Offrez à vos clients une belle page web avec menu digital, photos de vos plats,
-                  commande WhatsApp et réservation. <strong className="text-foreground">Simple, rapide, pas cher.</strong>
+                <p className="mt-4 sm:mt-6 text-base sm:text-lg text-muted-foreground max-w-xl leading-relaxed">
+                  L'application web complète pour gérer votre restaurant : menu digital, commandes en temps réel,
+                  gestion de cuisine, stocks, facturation et statistiques. <strong className="text-foreground">Tout-en-un, simple et puissant.</strong>
                 </p>
               </Reveal>
               <Reveal delay={3}>
-                <div className="mt-8 flex flex-wrap gap-3">
+                <div className="mt-6 sm:mt-8 flex flex-wrap gap-3">
                   <Link
                     to="/auth/inscription"
-                    className="inline-flex items-center px-7 py-4 rounded-2xl bg-gradient-gold text-[#0a0a0f] font-bold shadow-gold hover:-translate-y-0.5 transition-transform"
+                    className="inline-flex items-center px-5 sm:px-7 py-3 sm:py-4 rounded-2xl bg-gradient-gold text-[#0a0a0f] font-bold shadow-gold hover:-translate-y-0.5 transition-transform text-sm sm:text-base"
                   >
                     ✨ Créer ma page gratuite
                   </Link>
                   <a
-                    href="#fonctionnalites"
-                    className="inline-flex items-center px-7 py-4 rounded-2xl border border-white/10 hover:border-gold/40 hover:bg-white/[0.03] text-foreground font-semibold transition-colors"
+                    href="#tarifs"
+                    className="inline-flex items-center px-5 sm:px-7 py-3 sm:py-4 rounded-2xl border border-white/10 hover:border-gold/40 hover:bg-white/[0.03] text-foreground font-semibold transition-colors text-sm sm:text-base"
                   >
-                    Voir les fonctionnalités →
+                    Voir les tarifs →
                   </a>
                 </div>
               </Reveal>
               <Reveal delay={4}>
-                <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
-                  <span>🔒 Sans carte bancaire</span>
+                <div className="mt-6 sm:mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs sm:text-sm text-muted-foreground">
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                    🔒 Sans carte bancaire
+                  </span>
                   <span>🚫 Annulation à tout moment</span>
+                  <span>⚡ Installation en 5 minutes</span>
                   <span>🇧🇫 Conçu pour le Burkina</span>
                 </div>
               </Reveal>
             </div>
 
-            {/* Mockup */}
-            <Reveal delay={2} className="lg:justify-self-end w-full max-w-md">
+            {/* Dashboard aperçu */}
+            <Reveal delay={2} className="lg:justify-self-end w-full max-w-sm sm:max-w-md mx-auto lg:mx-0">
               <div className="relative">
-                <span className="absolute -top-3 -right-3 z-10 px-3 py-1 rounded-lg bg-gradient-gold text-[#0a0a0f] text-[10px] font-black uppercase tracking-wider shadow-gold">
-                  Plan Premium
+                <span className="absolute -top-3 -right-3 z-10 px-2 sm:px-3 py-1 rounded-lg bg-gradient-gold text-[#0a0a0f] text-[8px] sm:text-[10px] font-black uppercase tracking-wider shadow-gold">
+                  🚀 En direct
                 </span>
-                <div className="rounded-3xl border border-white/10 bg-dark-card overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
-                  <div className="flex gap-1.5 p-4 border-b border-white/5">
-                    <span className="w-3 h-3 rounded-full bg-red-500/60" />
-                    <span className="w-3 h-3 rounded-full bg-yellow-500/60" />
-                    <span className="w-3 h-3 rounded-full bg-green-500/60" />
-                  </div>
-                  <div className="p-5">
-                    <div className="flex items-center gap-3 mb-5">
-                      <span className="w-10 h-10 rounded-xl bg-gradient-gold flex items-center justify-center font-black text-[#0a0a0f]">
-                        R
-                      </span>
-                      <strong className="text-base">Maquis Le Karité</strong>
+                <div className="rounded-2xl sm:rounded-3xl border border-white/10 bg-dark-card overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
+                  {/* Header */}
+                  <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                      <span className="text-[10px] sm:text-xs font-semibold text-muted-foreground">Tableau de bord</span>
                     </div>
+                    <span className="text-[9px] sm:text-[10px] text-gold font-bold">Maquis Le Karité</span>
+                  </div>
+                  
+                  {/* Stats rapides */}
+                  <div className="grid grid-cols-3 gap-2 p-3 sm:p-4 border-b border-white/5">
                     {[
-                      { name: "Poulet braisé royal", price: "3 000 FCFA", emoji: "🍗" },
-                      { name: "Poisson grillé Airfryer", price: "4 500 FCFA", emoji: "🐟" },
-                      { name: "Brochettes de bœuf & frites", price: "3 500 FCFA", emoji: "🥩" },
-                    ].map((d) => (
-                      <div key={d.name} className="flex items-center gap-3 py-3 border-t border-white/5 first:border-t-0">
-                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-gold/20 to-gold/5 flex items-center justify-center text-2xl">
-                          {d.emoji}
+                      { label: "Commandes", value: "12", change: "+3", up: true },
+                      { label: "Chiffre", value: "45 500", change: "+18%", up: true },
+                      { label: "Clients", value: "8", change: "-2", up: false },
+                    ].map((stat) => (
+                      <div key={stat.label} className="text-center">
+                        <div className="text-xs sm:text-sm font-black text-foreground">{stat.value}</div>
+                        <div className="text-[8px] sm:text-[9px] text-muted-foreground">{stat.label}</div>
+                        <span className={`text-[8px] font-bold ${stat.up ? "text-green-500" : "text-red-400"}`}>
+                          {stat.change}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Dernières commandes */}
+                  <div className="p-3 sm:p-4 space-y-2">
+                    <div className="text-[9px] sm:text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Dernières commandes</div>
+                    {[
+                      { plat: "Poulet braisé royal", qte: "x2", time: "18:42", statut: "Prêt" },
+                      { plat: "Poisson grillé Airfryer", qte: "x1", time: "18:38", statut: "En cours" },
+                      { plat: "Brochettes bœuf & frites", qte: "x3", time: "18:30", statut: "Livré" },
+                    ].map((cmd) => (
+                      <div key={cmd.plat} className="flex items-center justify-between py-1.5 border-t border-white/5 first:border-t-0">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="text-[10px] sm:text-xs truncate">{cmd.plat}</span>
+                          <span className="text-[8px] text-muted-foreground shrink-0">{cmd.qte}</span>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <strong className="block text-sm truncate">{d.name}</strong>
-                          <span className="text-xs text-gold font-bold">{d.price}</span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-[8px] text-muted-foreground">{cmd.time}</span>
+                          <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full ${
+                            cmd.statut === "Prêt" ? "bg-green-500/20 text-green-400" :
+                            cmd.statut === "En cours" ? "bg-gold/20 text-gold" :
+                            "bg-white/10 text-muted-foreground"
+                          }`}>
+                            {cmd.statut}
+                          </span>
                         </div>
                       </div>
                     ))}
-                    <button className="mt-4 w-full py-3 rounded-xl bg-[#25D366] text-white font-bold text-sm hover:opacity-90 transition-opacity">
-                      📱 Commander sur WhatsApp
-                    </button>
                   </div>
+
+                  {/* Bouton CTA */}
+                  <Link
+                    to="/auth/inscription"
+                    className="block w-full py-2.5 sm:py-3 text-center bg-gradient-gold text-[#0a0a0f] font-bold text-[11px] sm:text-xs hover:opacity-90 transition-opacity"
+                  >
+                    ✨ Créer mon tableau de bord gratuit →
+                  </Link>
                 </div>
               </div>
             </Reveal>
           </div>
         </section>
 
-        {/* STATS */}
-        <section className="relative border-y border-white/5 bg-[#080810] py-12 px-6 overflow-hidden">
-          <div
-            className="absolute inset-0 opacity-30 pointer-events-none"
-            style={{ background: "radial-gradient(ellipse at center, rgba(212,168,83,0.15), transparent 70%)" }}
-            aria-hidden="true"
+        {/* TEMPLATES */}
+        <section id="templates" className="py-12 sm:py-20 px-4 sm:px-6">
+          <SectionHeader
+            eyebrow="Choisissez votre style"
+            title={<>5 templates <span className="text-gradient-gold">prêts à l'emploi</span></>}
+            desc="Des designs modernes et adaptés au Burkina Faso. Personnalisez couleurs, logo et photos en un clic."
           />
-          <div className="relative max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            {[
-              { n: 5, suffix: "", label: "Minutes pour créer sa page" },
-              { n: 14, suffix: " j", label: "Essai gratuit offert" },
-              { n: 10000, suffix: " F", label: "Plan Standard / mois" },
-              { n: 0, suffix: "%", label: "Commission sur les ventes" },
-            ].map((s, i) => (
-              <Reveal key={s.label} delay={(i + 1) as 1 | 2 | 3 | 4}>
-                <div>
-                  <div className="text-3xl md:text-4xl font-black text-gradient-gold">
-                    <Counter target={s.n} suffix={s.suffix} />
+          <div className="max-w-6xl mx-auto mt-8 sm:mt-12 grid gap-4 sm:gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+            {templates.map((t, i) => (
+              <Reveal key={t.name} delay={((i % 5) + 1) as 1 | 2 | 3 | 4 | 5}>
+                <div className="group relative p-4 sm:p-5 rounded-2xl border border-white/10 bg-dark-card hover:border-gold/30 transition-all hover:-translate-y-1 text-center">
+                  <div className={`w-14 h-14 sm:w-16 sm:h-16 mx-auto rounded-xl bg-gradient-to-br ${t.color} flex items-center justify-center text-2xl sm:text-3xl mb-3 group-hover:scale-110 transition-transform`}>
+                    {t.emoji}
                   </div>
-                  <div className="mt-2 text-xs text-muted-foreground">{s.label}</div>
+                  <h3 className="text-xs sm:text-sm font-bold">{t.name}</h3>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">{t.desc}</p>
                 </div>
               </Reveal>
-            ))}
-          </div>
-          <div className="relative mt-8 flex flex-wrap justify-center gap-3 max-w-5xl mx-auto">
-            {["📱 Orange Money", "📱 Moov Money", "🇧🇫 Made in Burkina", "🔒 Sans engagement", "⚡ Installation offerte"].map((b) => (
-              <span key={b} className="px-3 py-1.5 rounded-full text-xs border border-white/10 bg-white/[0.02] text-muted-foreground">
-                {b}
-              </span>
             ))}
           </div>
         </section>
 
         {/* FEATURES */}
-        <section id="fonctionnalites" className="py-28 px-6">
+        <section id="fonctionnalites" className="py-12 sm:py-20 px-4 sm:px-6">
           <SectionHeader
             eyebrow="Tout ce qu'il vous faut"
-            title={<>Une solution <span className="text-gradient-gold">complète</span> pour votre restaurant</>}
-            desc="Pas besoin de compétences techniques. En quelques clics, votre restaurant a une présence en ligne professionnelle."
+            title={<>Une application web <span className="text-gradient-gold">complète</span> pour votre restaurant</>}
+            desc="Menu digital, commandes en temps réel, gestion de cuisine, stocks, facturation, statistiques. Tout est inclus."
           />
-          <div className="max-w-6xl mx-auto mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="max-w-6xl mx-auto mt-8 sm:mt-12 grid gap-3 sm:gap-5 grid-cols-2 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f, i) => (
               <Reveal key={f.title} delay={((i % 5) + 1) as 1 | 2 | 3 | 4 | 5}>
-                <article className="group relative h-full p-7 rounded-3xl border border-white/8 bg-dark-card hover:bg-dark-card-hover hover:border-gold/30 transition-all hover:-translate-y-1 hover:shadow-gold">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold/15 to-gold/5 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">
-                    {f.icon}
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">{f.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
-                </article>
-              </Reveal>
-            ))}
-          </div>
-        </section>
+                <article className="group relative h-full p-3 sm:p-7 rounded-2xl sm:rounded-3xl border border-white/8 bg-dark-card hover:bg-dark-card-hover hover:border-gold/30 transition-all hover:-translate-y-1 hover:shadow-gold overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-gold/0 to-gold/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="relative w-8 sm:w-14 h-8 sm:h-14 rounded-lg sm:rounded-2xl bg-gradient-to-br from-gold/15 to-gold/5 flex items-center justify-center text-lg sm:text-2xl mb-2 sm:mb-5 group-hover:scale-110 transition-transform">
+                      {f.icon}
+                    </div>
+                    <h3 className="text-xs sm:text-xl font-bold mb-1 sm:mb-2 leading-tight">{f.title}</h3>
+                    <p className="text-[10px] sm:text-sm text-muted-foreground leading-relaxed hidden sm:block">{f.desc}</p>
+                  </article>
+                </Reveal>
+              ))}
+            </div>
+          </section>
 
-        {/* STEPS */}
-        <section id="demo" className="py-28 px-6 bg-[#080810] border-y border-white/5">
+        {/* POURQUOI RESTO BF */}
+        <section id="pourquoi" className="py-12 sm:py-24 px-4 sm:px-6 bg-[#080810] border-y border-white/5">
           <SectionHeader
-            eyebrow="Simple et rapide"
-            title={<>Comment <span className="text-gradient-gold">ça marche</span></>}
-            desc="Trois étapes suffisent pour lancer votre page."
+            eyebrow="Pourquoi Resto BF"
+            title={<>Tout ce qu'il faut pour <span className="text-gradient-gold">booster votre restaurant</span></>}
+            desc="Une solution complète pensée pour les restaurateurs du Burkina Faso."
           />
-          <div className="max-w-5xl mx-auto mt-16 grid gap-8 md:grid-cols-3">
-            {steps.map((s, i) => (
-              <Reveal key={s.n} delay={((i * 2) + 1) as 1 | 3 | 5}>
-                <div className="relative text-center px-4">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-gold text-[#0a0a0f] text-2xl font-black shadow-gold mb-5">
-                    {s.n}
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">{s.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
+          <div className="max-w-6xl mx-auto mt-8 sm:mt-16 grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4">
+            {[
+              { icon: "🇧🇫", title: "100% Burkina", desc: "Conçu pour les restaurateurs burkinabè. Paiements Orange Money & Moov Money." },
+              { icon: "⚡", title: "Installation rapide", desc: "Créez votre page en 5 minutes. Menu, photos, prix : tout est prêt." },
+              { icon: "📱", title: "Commandes WhatsApp", desc: "Chaque plat a son bouton Commander. Le client clique, vous recevez." },
+              { icon: "🔒", title: "Sans engagement", desc: "30 jours gratuits, annulation à tout moment. Pas de carte bancaire." },
+              { icon: "🎨", title: "5 templates pro", desc: "Des designs modernes et adaptés. Personnalisez couleurs et logo." },
+              { icon: "📊", title: "Statistiques en temps réel", desc: "Suivez vos ventes, plats populaires et heures d'affluence." },
+              { icon: "👨‍🍳", title: "Interface cuisine", desc: "Les cuisiniers voient les commandes en direct. Plus d'erreurs." },
+              { icon: "💎", title: "Support prioritaire", desc: "Une équipe dédiée sur WhatsApp 7j/7 pour vous accompagner." },
+            ].map((item, i) => (
+              <Reveal key={item.title} delay={((i % 4) + 1) as 1 | 2 | 3 | 4}>
+                <div className="group relative p-4 sm:p-6 rounded-2xl border border-white/10 bg-dark-card hover:border-gold/30 transition-all hover:-translate-y-1">
+                  <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">{item.icon}</div>
+                  <h3 className="text-sm sm:text-base font-bold mb-1">{item.title}</h3>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -341,28 +364,31 @@ function LandingPage() {
         </section>
 
         {/* TESTIMONIALS */}
-        <section id="avis" className="py-28 px-6">
+        <section id="avis" className="py-12 sm:py-28 px-4 sm:px-6">
           <SectionHeader
             eyebrow="Ils nous font confiance"
             title={<>Des restaurateurs qui en parlent <span className="text-gradient-gold">mieux que nous</span></>}
             desc="Découvrez ce que disent les restaurateurs qui utilisent déjà Resto BF au quotidien."
           />
-          <div className="max-w-6xl mx-auto mt-14 grid gap-6 md:grid-cols-3">
+          <div className="max-w-6xl mx-auto mt-8 sm:mt-14 grid gap-3 sm:gap-6 grid-cols-2 sm:grid-cols-2 lg:grid-cols-3">
             {testimonials.map((t, i) => (
               <Reveal key={t.name} delay={(i + 1) as 1 | 2 | 3}>
-                <article className="relative h-full p-7 rounded-3xl border border-white/8 bg-dark-card">
-                  <div className="text-gold text-sm tracking-widest mb-3">★★★★★</div>
-                  <p className="text-foreground/90 leading-relaxed text-[15px]">"{t.text}"</p>
-                  <div className="mt-6 flex items-center gap-3 pt-5 border-t border-white/5">
+                <article className="relative h-full p-3 sm:p-7 rounded-2xl sm:rounded-3xl border border-white/8 bg-dark-card">
+                  <div className="flex items-center gap-1.5 mb-2 sm:mb-3">
+                    <div className="text-gold text-[10px] sm:text-sm tracking-widest">★★★★★</div>
+                    <span className="text-[9px] sm:text-xs text-muted-foreground">Avis vérifié</span>
+                  </div>
+                  <p className="text-foreground/90 leading-relaxed text-xs sm:text-[15px]">"{t.text}"</p>
+                  <div className="mt-3 sm:mt-6 flex items-center gap-2 sm:gap-3 pt-3 sm:pt-5 border-t border-white/5">
                     <div
-                      className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-white text-sm"
+                      className="w-7 sm:w-11 h-7 sm:h-11 rounded-full flex items-center justify-center font-bold text-white text-[10px] sm:text-sm shrink-0"
                       style={{ background: t.color }}
                     >
                       {t.avatar}
                     </div>
-                    <div>
-                      <strong className="block text-sm">{t.name}</strong>
-                      <span className="text-xs text-muted-foreground">{t.role}</span>
+                    <div className="min-w-0">
+                      <strong className="block text-[10px] sm:text-sm truncate">{t.name}</strong>
+                      <span className="text-[9px] sm:text-xs text-muted-foreground truncate block">{t.role}</span>
                     </div>
                   </div>
                 </article>
@@ -372,67 +398,181 @@ function LandingPage() {
         </section>
 
         {/* PRICING */}
-        <section id="tarifs" className="py-28 px-6">
+        <section id="tarifs" className="py-12 sm:py-28 px-4 sm:px-6">
           <SectionHeader
             eyebrow="Prix transparents"
             title={<>Nos <span className="text-gradient-gold">abonnements</span></>}
             desc="Pas de frais cachés. Pas de commission sur vos ventes. Annulation à tout moment."
           />
-          <div className="max-w-7xl mx-auto mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {plans.map((p, i) => (
-              <Reveal key={p.name} delay={((i % 4) + 1) as 1 | 2 | 3 | 4}>
-                <div
-                  className={`relative h-full p-8 rounded-3xl border transition-all hover:-translate-y-1 ${
-                    p.popular
-                      ? "border-gold bg-gradient-to-b from-gold/10 to-transparent shadow-gold scale-[1.02]"
-                      : "border-white/10 bg-dark-card hover:border-gold/30"
-                  }`}
-                >
-                  {p.popular && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-gradient-gold text-[#0a0a0f] shadow-gold">
-                      Populaire
-                    </span>
-                  )}
-                  <h3 className="text-xl font-bold">{p.name}</h3>
-                  <div className="mt-4 flex items-baseline gap-1">
-                    <span className="text-5xl font-black text-gradient-gold">{p.price}</span>
-                    <small className="text-sm text-muted-foreground font-semibold">{p.unit}</small>
+          
+          <div className="max-w-7xl mx-auto mt-8 sm:mt-14">
+            {/* Desktop: grille 3 colonnes */}
+            <div className="hidden md:grid gap-5 lg:gap-6 grid-cols-3">
+              {plans.map((p, i) => (
+                <Reveal key={p.name} delay={((i % 4) + 1) as 1 | 2 | 3 | 4}>
+                  <div
+                    className={`relative h-full p-6 sm:p-8 rounded-2xl sm:rounded-3xl border transition-all hover:-translate-y-1 ${
+                      p.popular
+                        ? "border-gold bg-gradient-to-b from-gold/10 to-transparent shadow-gold scale-[1.02]"
+                        : "border-white/10 bg-dark-card hover:border-gold/30"
+                    }`}
+                    style={p.popular ? { boxShadow: "0 0 40px rgba(212,168,83,0.15)" } : {}}
+                  >
+                    {p.popular && (
+                      <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-2 sm:px-3 py-1 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-wider bg-gradient-gold text-[#0a0a0f] shadow-gold whitespace-nowrap">
+                        Populaire
+                      </span>
+                    )}
+                    <h3 className="text-lg sm:text-xl font-bold">{p.name}</h3>
+                    <div className="mt-3 sm:mt-4 flex items-baseline gap-1">
+                      <span className="text-3xl sm:text-5xl font-black text-gradient-gold">{p.price}</span>
+                      <small className="text-xs sm:text-sm text-muted-foreground font-semibold">{p.unit}</small>
+                    </div>
+                    <p className="text-[11px] sm:text-xs text-muted-foreground mt-1">{p.period}</p>
+                    <ul className="mt-4 sm:mt-6 space-y-2 sm:space-y-3 text-xs sm:text-sm">
+                      {p.features.map((f) => (
+                        <li key={f} className="flex items-start gap-2">
+                          <span className="text-gold mt-0.5 shrink-0">✓</span>
+                          <span className="text-foreground/85">{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Link
+                      to={p.href}
+                      search={{ plan: p.plan }}
+                      className={`mt-6 sm:mt-8 inline-flex w-full items-center justify-center px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm transition-all ${
+                        p.popular
+                          ? "bg-gradient-gold text-[#0a0a0f] hover:shadow-gold"
+                          : "border border-white/10 hover:border-gold/40 hover:bg-white/[0.03]"
+                      }`}
+                    >
+                      {p.cta}
+                    </Link>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">{p.period}</p>
-                  <ul className="mt-6 space-y-3 text-sm">
-                    {p.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2">
-                        <span className="text-gold mt-0.5">✓</span>
+                </Reveal>
+              ))}
+            </div>
+
+            {/* Mobile: cartes empilées cliquables */}
+            <div className="md:hidden space-y-4">
+              {plans.map((p, i) => (
+                <Reveal key={p.name} delay={((i % 4) + 1) as 1 | 2 | 3 | 4}>
+                  <button
+                    onClick={() => setSelectedPlan(p)}
+                    className={`w-full text-left relative p-5 rounded-2xl border transition-all cursor-pointer ${
+                      p.popular
+                        ? "border-gold bg-gradient-to-b from-gold/10 to-transparent shadow-gold"
+                        : "border-white/10 bg-dark-card hover:border-gold/30"
+                    }`}
+                    style={p.popular ? { boxShadow: "0 0 30px rgba(212,168,83,0.15)" } : {}}
+                  >
+                    {p.popular && (
+                      <span className="absolute -top-2 left-4 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-gradient-gold text-[#0a0a0f] shadow-gold whitespace-nowrap">
+                        ⭐ Populaire
+                      </span>
+                    )}
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1">
+                        <h3 className="text-base font-bold">{p.name}</h3>
+                        <div className="mt-2 flex items-baseline gap-1.5">
+                          <span className="text-2xl font-black text-gradient-gold">{p.price}</span>
+                          <small className="text-[10px] text-muted-foreground font-semibold">{p.unit}</small>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{p.period}</p>
+                      </div>
+                      <span className={`shrink-0 px-3 py-1.5 rounded-lg font-bold text-[11px] ${
+                        p.popular
+                          ? "bg-gradient-gold text-[#0a0a0f]"
+                          : "border border-white/10"
+                      }`}>
+                        {p.cta}
+                      </span>
+                    </div>
+                    <ul className="mt-3 space-y-1.5 text-[11px]">
+                      {p.features.slice(0, 4).map((f) => (
+                        <li key={f} className="flex items-start gap-1.5">
+                          <span className="text-gold mt-0.5 shrink-0 text-[10px]">✓</span>
+                          <span className="text-foreground/85">{f}</span>
+                        </li>
+                      ))}
+                      {p.features.length > 4 && (
+                        <li className="text-[10px] text-muted-foreground pl-3">
+                          +{p.features.length - 4} autres avantages
+                        </li>
+                      )}
+                    </ul>
+                  </button>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+
+          {/* MODAL PLAN */}
+          {selectedPlan && (
+            <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setSelectedPlan(null)}>
+              <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+              <div
+                className="relative w-full sm:max-w-lg max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-3xl border border-white/10 bg-dark-card p-6 sm:p-8 shadow-2xl animate-slide-up"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  onClick={() => setSelectedPlan(null)}
+                  className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+
+                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-4 ${
+                  selectedPlan.popular ? "bg-gradient-gold text-[#0a0a0f]" : "border border-gold/30 text-gold"
+                }`}>
+                  {selectedPlan.popular ? "⭐ Populaire" : selectedPlan.name}
+                </div>
+
+                <h3 className="text-2xl font-black">{selectedPlan.name}</h3>
+                <div className="mt-3 flex items-baseline gap-1.5">
+                  <span className="text-4xl font-black text-gradient-gold">{selectedPlan.price}</span>
+                  <small className="text-sm text-muted-foreground font-semibold">{selectedPlan.unit}</small>
+                  <span className="text-xs text-muted-foreground ml-1">{selectedPlan.period}</span>
+                </div>
+
+                <div className="mt-6 space-y-3">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Ce qui est inclus :</p>
+                  <ul className="space-y-2.5">
+                    {selectedPlan.features.map((f) => (
+                      <li key={f} className="flex items-start gap-2.5 text-sm">
+                        <span className="text-gold mt-0.5 shrink-0">✓</span>
                         <span className="text-foreground/85">{f}</span>
                       </li>
                     ))}
                   </ul>
-                  <Link
-                    to={p.href}
-                    className={`mt-8 inline-flex w-full items-center justify-center px-5 py-3 rounded-xl font-bold text-sm transition-all ${
-                      p.popular
-                        ? "bg-gradient-gold text-[#0a0a0f] hover:shadow-gold"
-                        : "border border-white/10 hover:border-gold/40 hover:bg-white/[0.03]"
-                    }`}
-                  >
-                    {p.cta}
-                  </Link>
                 </div>
-              </Reveal>
-            ))}
-          </div>
+
+                <Link
+                  to={selectedPlan.href}
+                  search={{ plan: selectedPlan.plan }}
+                  className={`mt-6 inline-flex w-full items-center justify-center px-5 py-3 rounded-xl font-bold text-sm transition-all ${
+                    selectedPlan.popular
+                      ? "bg-gradient-gold text-[#0a0a0f] hover:shadow-gold"
+                      : "border border-white/10 hover:border-gold/40"
+                  }`}
+                >
+                  {selectedPlan.cta}
+                </Link>
+              </div>
+            </div>
+          )}
 
           {/* SUR MESURE */}
           <Reveal>
-            <div className="max-w-7xl mx-auto mt-8 p-8 lg:p-10 rounded-3xl border-2 border-gold/30 bg-gradient-to-br from-gold/10 via-transparent to-transparent grid lg:grid-cols-[1fr_auto] gap-6 items-center">
+            <div className="max-w-7xl mx-auto mt-6 sm:mt-8 p-6 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl border-2 border-gold/30 bg-gradient-to-br from-gold/10 via-transparent to-transparent grid lg:grid-cols-[1fr_auto] gap-4 sm:gap-6 items-center">
               <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">
+                <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-1 sm:mb-2">
                   💎 Offre Sur Mesure
                 </p>
-                <h3 className="text-2xl md:text-3xl font-black">
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-black">
                   Un site 100% personnalisé pour votre restaurant
                 </h3>
-                <p className="mt-3 text-muted-foreground max-w-2xl">
+                <p className="mt-2 sm:mt-3 text-sm sm:text-base text-muted-foreground max-w-2xl">
                   Nom de domaine personnalisé, design unique, fonctionnalités spécifiques
                   selon vos besoins. À partir de <strong className="text-gold">250 000 FCFA</strong>.
                 </p>
@@ -441,7 +581,7 @@ function LandingPage() {
                 href="https://wa.me/22655300868?text=Bonjour%2C%20je%20souhaite%20une%20offre%20sur%20mesure%20Resto%20BF"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center justify-center px-7 py-4 rounded-2xl bg-gradient-gold text-[#0a0a0f] font-bold shadow-gold hover:-translate-y-0.5 transition-transform whitespace-nowrap"
+                className="inline-flex items-center justify-center px-5 sm:px-7 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-gold text-[#0a0a0f] font-bold shadow-gold hover:-translate-y-0.5 transition-transform whitespace-nowrap text-sm sm:text-base"
               >
                 Demander une offre sur mesure →
               </a>
@@ -450,24 +590,24 @@ function LandingPage() {
         </section>
 
         {/* FAQ */}
-        <section id="faq" className="py-28 px-6 bg-[#080810] border-y border-white/5">
+        <section id="faq" className="py-16 sm:py-28 px-4 sm:px-6 bg-[#080810] border-y border-white/5">
           <SectionHeader
             eyebrow="Questions fréquentes"
             title={<>On répond à vos <span className="text-gradient-gold">questions</span></>}
             desc="Les réponses aux questions que les restaurateurs nous posent le plus souvent."
           />
-          <div className="max-w-3xl mx-auto mt-14 space-y-3">
+          <div className="max-w-3xl mx-auto mt-10 sm:mt-14 space-y-3">
             {faqs.map((f, i) => (
               <Reveal key={f.q} delay={((i % 4) + 1) as 1 | 2 | 3 | 4}>
                 <details
-                  className="group rounded-2xl border border-white/8 bg-dark-card open:border-gold/30 transition-colors"
+                  className="group rounded-xl sm:rounded-2xl border border-white/8 bg-dark-card open:border-gold/30 transition-colors"
                   open={i === 0}
                 >
-                  <summary className="cursor-pointer list-none p-5 flex items-center justify-between gap-4 text-base font-semibold">
+                  <summary className="cursor-pointer list-none p-4 sm:p-5 flex items-center justify-between gap-4 text-sm sm:text-base font-semibold">
                     {f.q}
-                    <span className="text-gold text-xl transition-transform group-open:rotate-45">+</span>
+                    <span className="text-gold text-lg sm:text-xl transition-transform group-open:rotate-45 shrink-0">+</span>
                   </summary>
-                  <p className="px-5 pb-5 text-sm text-muted-foreground leading-relaxed">{f.a}</p>
+                  <p className="px-4 sm:px-5 pb-4 sm:pb-5 text-xs sm:text-sm text-muted-foreground leading-relaxed">{f.a}</p>
                 </details>
               </Reveal>
             ))}
@@ -475,7 +615,7 @@ function LandingPage() {
         </section>
 
         {/* CTA */}
-        <section id="contact" className="relative py-28 px-6 overflow-hidden">
+        <section id="contact" className="relative py-16 sm:py-28 px-4 sm:px-6 overflow-hidden">
           <div
             className="absolute inset-0 opacity-40 pointer-events-none"
             style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(212,168,83,0.18), transparent 70%)" }}
@@ -483,25 +623,25 @@ function LandingPage() {
           />
           <Reveal>
             <div className="relative max-w-3xl mx-auto text-center">
-              <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">On discute ?</p>
-              <h2 className="text-4xl md:text-5xl font-black">
+              <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2 sm:mb-3">On discute ?</p>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black">
                 Vous avez des <span className="text-gradient-gold">questions</span> ?
               </h2>
-              <p className="mt-4 text-muted-foreground">
+              <p className="mt-3 sm:mt-4 text-sm sm:text-base text-muted-foreground">
                 Envoyez-nous un message sur WhatsApp, on vous répond en 5 minutes.
               </p>
-              <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <div className="mt-6 sm:mt-8 flex flex-wrap justify-center gap-3">
                 <a
                   href="https://wa.me/22655300868"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center px-7 py-4 rounded-2xl bg-gradient-gold text-[#0a0a0f] font-bold shadow-gold hover:-translate-y-0.5 transition-transform"
+                  className="inline-flex items-center px-5 sm:px-7 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-gold text-[#0a0a0f] font-bold shadow-gold hover:-translate-y-0.5 transition-transform text-sm sm:text-base"
                 >
                   💬 Nous écrire sur WhatsApp
                 </a>
                 <a
                   href="tel:+22655300868"
-                  className="inline-flex items-center px-7 py-4 rounded-2xl border border-white/10 hover:border-gold/40 hover:bg-white/[0.03] font-semibold transition-colors"
+                  className="inline-flex items-center px-5 sm:px-7 py-3 sm:py-4 rounded-xl sm:rounded-2xl border border-white/10 hover:border-gold/40 hover:bg-white/[0.03] font-semibold transition-colors text-sm sm:text-base"
                 >
                   📞 +226 55 30 08 68
                 </a>
@@ -528,9 +668,9 @@ function SectionHeader({
   return (
     <Reveal>
       <div className="text-center max-w-3xl mx-auto">
-        <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">{eyebrow}</p>
-        <h2 className="text-4xl md:text-5xl font-black leading-tight">{title}</h2>
-        <p className="mt-4 text-muted-foreground">{desc}</p>
+        <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2 sm:mb-3">{eyebrow}</p>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black leading-tight">{title}</h2>
+        <p className="mt-2 sm:mt-4 text-sm sm:text-base text-muted-foreground">{desc}</p>
       </div>
     </Reveal>
   );

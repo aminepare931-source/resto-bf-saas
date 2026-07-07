@@ -5,6 +5,7 @@ import {
   GalleryGrid,
   ReviewList,
   ReservationForm,
+  AdvancedReservationForm,
   ReviewForm,
   SectionHead,
   FloatingWhatsApp,
@@ -14,6 +15,7 @@ import {
 } from "./shared";
 import { StorageImage } from "@/components/StorageImage";
 import { TplPremiumFeu, TplPremiumLuxe, TplPremiumNuit, TplPremiumRoyal } from "./premium-templates";
+import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
 
 /* ============= Helpers ============= */
 
@@ -146,10 +148,12 @@ function PoweredFooter({
 
 export function TplNuit(props: TemplateProps) {
   const { restaurant, menu, reviews, gallery } = props;
+  const features = useRestaurantFeatures(restaurant.id, restaurant.plan);
   const wa = buildWhatsAppLink(restaurant.whatsapp, restaurant.name);
   const cover = pickCover(gallery, menu);
   const signatures = signatureDishes(menu, 3);
   const rating = avgRating(reviews);
+  const [mobOpen, setMobOpen] = useState(false);
 
   const theme: Theme = {
     bg: "#0a0907",
@@ -169,7 +173,7 @@ export function TplNuit(props: TemplateProps) {
 
       {/* NAV */}
       <header className="absolute top-0 inset-x-0 z-30">
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 py-6 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 py-6 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <span className="w-6 h-px shrink-0" style={{ background: theme.accent }} />
             <span
@@ -185,17 +189,33 @@ export function TplNuit(props: TemplateProps) {
             <a href="#galerie" className="hover:text-[#c9a35a] transition-colors">Galerie</a>
             <a href="#reserver" className="hover:text-[#c9a35a] transition-colors">Réserver</a>
           </nav>
+          <button
+            onClick={() => setMobOpen((v) => !v)}
+            className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-white/5 transition-colors"
+            aria-label="Menu"
+          >
+            <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
+            <span className={`block w-6 h-0.5 bg-current transition-opacity ${mobOpen ? "opacity-0" : ""}`} />
+            <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+          </button>
         </div>
+        {mobOpen && (
+          <nav className="md:hidden border-t border-white/10 bg-[#0a0907]/95 backdrop-blur-xl">
+            <div className="flex flex-col px-4 py-4 gap-1">
+              <a href="#histoire" onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Histoire</a>
+              <a href="#carte" onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Carte</a>
+              <a href="#galerie" onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Galerie</a>
+              <a href="#reserver" onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Réserver</a>
+            </div>
+          </nav>
+        )}
       </header>
 
       {/* HERO */}
       <section className="relative min-h-screen flex items-end overflow-hidden">
         {cover ? (
           <StorageImage path={cover} alt={restaurant.name} className="absolute inset-0 w-full h-full object-cover" />
-        ) : (
-          <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 30% 40%, #3a2a14, #0a0907 70%)" }} />
-        )}
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to top, #0a0907 5%, rgba(10,9,7,0.6) 40%, rgba(10,9,7,0.2) 100%)" }} />
+        ) : null}
 
         <div className="relative max-w-7xl mx-auto w-full px-5 sm:px-8 pb-20 pt-40">
           <p className="text-[10px] uppercase mb-6" style={{ color: theme.accent, letterSpacing: "0.55em" }}>
@@ -224,7 +244,7 @@ export function TplNuit(props: TemplateProps) {
               >
                 Découvrir la carte
               </a>
-              {restaurant.plan === "premium" && (
+              {features.can_reserve && (
                 <a
                   href="#reserver"
                   className="px-8 py-4 text-center text-xs uppercase hover:opacity-90 transition"
@@ -251,8 +271,8 @@ export function TplNuit(props: TemplateProps) {
       </div>
 
       {/* HISTOIRE */}
-      <section id="histoire" className="py-24 px-5 sm:px-8">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 items-start">
+      <section id="histoire" className="py-14 sm:py-24 px-4 sm:px-8">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-8 sm:gap-12 items-start">
           <div className="lg:col-span-7">
             <p className="text-[10px] uppercase mb-4" style={{ color: theme.accent, letterSpacing: "0.45em" }}>— Notre maison —</p>
             <h2
@@ -285,13 +305,13 @@ export function TplNuit(props: TemplateProps) {
 
       {/* SIGNATURES */}
       {signatures.length > 0 && (
-        <section className="py-20 px-5 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
+        <section className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
           <div className="max-w-7xl mx-auto">
             <SectionHead kicker="— Signatures —" title="Les incontournables" theme={theme} serif />
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-4 sm:gap-6">
               {signatures.map((d) => (
                 <article key={d.id} className="group">
-                  <div className="aspect-[4/5] overflow-hidden" style={{ background: theme.surface }}>
+                  <div className="aspect-[3/4] sm:aspect-[4/5] overflow-hidden" style={{ background: theme.surface }}>
                     <StorageImage path={d.image_url} alt={d.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
                   </div>
                   <div className="mt-5 flex items-baseline justify-between gap-4">
@@ -309,7 +329,7 @@ export function TplNuit(props: TemplateProps) {
       )}
 
       {/* CARTE */}
-      <section id="carte" className="py-20 px-5 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
+      <section id="carte" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
         <div className="max-w-7xl mx-auto">
           <SectionHead kicker="— La carte —" title="Notre menu" theme={theme} serif />
           <MenuGrid menu={menu} theme={theme} />
@@ -318,7 +338,7 @@ export function TplNuit(props: TemplateProps) {
 
       {/* GALERIE */}
       {gallery.length > 0 && (
-        <section id="galerie" className="py-20 px-5 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
+        <section id="galerie" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
           <div className="max-w-7xl mx-auto">
             <SectionHead kicker="— Galerie —" title="L'ambiance" theme={theme} serif />
             <GalleryGrid gallery={gallery} theme={theme} />
@@ -327,21 +347,21 @@ export function TplNuit(props: TemplateProps) {
       )}
 
       {/* RESERVATION */}
-      {restaurant.plan === "premium" && (
-        <section id="reserver" className="py-20 px-5 sm:px-8" style={{ borderTop: `1px solid ${theme.border}`, background: theme.surfaceAlt }}>
+      {features.can_reserve && (
+        <section id="reserver" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}`, background: theme.surfaceAlt }}>
           <div className="max-w-3xl mx-auto">
             <SectionHead kicker="— Réservation —" title="Réserver votre table" theme={theme} serif />
-            <ReservationForm restaurantId={restaurant.id} theme={theme} />
+            <AdvancedReservationForm restaurantId={restaurant.id} restaurantName={restaurant.name} theme={theme} waLink={wa} />
           </div>
         </section>
       )}
 
       {/* AVIS */}
-      <section id="avis" className="py-20 px-5 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
+      <section id="avis" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
         <div className="max-w-7xl mx-auto">
           <SectionHead kicker="— Ils en parlent —" title="Avis de nos clients" theme={theme} serif />
           <ReviewList reviews={reviews} theme={theme} />
-          <div className="mt-12 max-w-xl">
+          <div className="mt-10 sm:mt-12 max-w-xl">
             <h3 className="text-lg italic mb-4" style={{ fontFamily: "'Cormorant Garamond', serif", color: theme.text }}>
               Laissez votre avis
             </h3>
@@ -369,10 +389,13 @@ function Stat({ label, value, theme }: { label: string; value: React.ReactNode; 
 /*  Decorative backgrounds (CDN patterns from the references)         */
 /* ================================================================== */
 
-const BG_SOLEIL = "/__l5e/assets-v1/1709f8f1-a1c9-4c11-932a-5aebf40b7a20/bg-soleil.png";
-const BG_SAVANE = "/__l5e/assets-v1/4187dbf8-ac8d-44fd-aad7-22d207879b17/bg-savane.png";
-const BG_MARCHE = "/__l5e/assets-v1/a8824a67-a7ba-41db-a74d-0cf752103bd4/bg-marche.png";
-const BG_MODERNE = "/__l5e/assets-v1/23123fcb-c1db-4d3f-8762-46eb378c6026/bg-moderne.png";
+const BG_SOLEIL = "/bg-soleil.webp";
+const BG_SAVANE = "/bg-savane.jpg";
+const BG_MARCHE = "/bg-marché.jpg";
+const BG_MODERNE = "/bg-moderne.jpg";
+
+const TPL_BG_CSS = "\n/* Standard template full-screen backgrounds */\n.tpl-page{position:relative;min-height:100vh;overflow:hidden;isolation:isolate;}\n.tpl-bg{position:fixed;inset:0;z-index:-2;overflow:hidden;background:transparent;}\n.tpl-bg img{width:100%;height:100%;object-fit:cover;filter:saturate(1.08) contrast(1.1);transform:scale(1.08);animation:tpl-bg-drift 22s ease-in-out infinite alternate;}\n.tpl-bg span{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.78),rgba(0,0,0,.40),rgba(0,0,0,.80));}\n@keyframes tpl-bg-drift{0%{transform:scale(1.08) translate3d(-1.5%,0,0)}100%{transform:scale(1.18) translate3d(1.5%,-1.5%,0)}}\n@media(prefers-reduced-motion:reduce){.tpl-bg img{animation:none;transition:none}}\n";
+
 
 function CategoryIcon({ name }: { name: string }) {
   const n = name.toLowerCase();
@@ -401,6 +424,9 @@ export function TplSoleil(props: TemplateProps) {
   const cats = Array.from(new Set(menu.filter((m) => m.available).map((m) => m.category))).slice(0, 6);
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const popular = (activeTab ? menu.filter((m) => m.available && m.category === activeTab) : menu.filter((m) => m.available)).slice(0, 8);
+  
+  const [currentView, setCurrentView] = useState<"home" | "menu" | "about" | "reserve">("home");
+  const [mobOpen, setMobOpen] = useState(false);
 
   const theme: Theme = {
     bg: "#fbf3e6",
@@ -414,13 +440,26 @@ export function TplSoleil(props: TemplateProps) {
     radius: "14px",
   };
 
+  const heroOverlay = "linear-gradient(135deg, rgba(251,243,230,0.92) 0%, rgba(251,243,230,0.88) 50%, rgba(251,243,230,0.82) 100%)";
+
+  const goTo = (view: typeof currentView) => {
+    setCurrentView(view);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <div className="min-h-screen" style={{ background: theme.bg, color: theme.text, fontFamily: "'Inter', sans-serif" }}>
+    <div className="tpl-page min-h-screen" style={{ background: theme.bg, color: theme.text, fontFamily: "'Inter', sans-serif", isolation: "isolate" }}>
       <FontImport />
+      <style>{TPL_BG_CSS}</style>
+
+      <div className="tpl-bg" aria-hidden>
+        <img src={BG_SOLEIL} alt="" />
+        <span />
+      </div>
 
       {/* TOP STRIP */}
       <div style={{ background: theme.surfaceAlt, color: theme.text }} className="text-xs">
-        <div className="max-w-6xl mx-auto px-5 py-2 flex flex-wrap items-center justify-between gap-2">
+        <div className="max-w-6xl mx-auto px-4 sm:px-5 py-2 flex flex-wrap items-center justify-between gap-2">
           <div className="flex flex-wrap gap-x-5 gap-y-1">
             <span><strong>Tél :</strong> {restaurant.phone}</span>
             <span className="hidden sm:inline"><strong>Email :</strong> {restaurant.email}</span>
@@ -431,178 +470,249 @@ export function TplSoleil(props: TemplateProps) {
 
       {/* NAV */}
       <header className="sticky top-0 z-30 backdrop-blur" style={{ background: "rgba(251,243,230,0.95)", borderBottom: `1px solid ${theme.border}` }}>
-        <div className="max-w-6xl mx-auto px-5 py-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
-          <div className="min-w-0">
-            <strong className="block text-2xl sm:text-3xl tracking-[0.25em] truncate" style={{ fontFamily: "'Playfair Display', serif", color: theme.text }}>
-              {restaurant.name.toUpperCase()}
-            </strong>
-            <span className="block text-[10px] tracking-[0.5em] mt-0.5" style={{ color: theme.accent }}>~ KITCHEN ~</span>
+        <div className="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            {restaurant.logo_url ? (
+              <img src={restaurant.logo_url} alt={restaurant.name} className="h-10 w-auto object-contain rounded" />
+            ) : null}
+            <div>
+              <strong className="block text-2xl sm:text-3xl tracking-[0.25em] truncate" style={{ fontFamily: "'Playfair Display', serif", color: theme.text }}>
+                {restaurant.name.toUpperCase()}
+              </strong>
+              <span className="block text-[10px] tracking-[0.5em] mt-0.5" style={{ color: theme.accent }}>~ KITCHEN ~</span>
+            </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-5">
             <nav className="hidden md:flex gap-5 text-sm font-medium" style={{ color: theme.text }}>
-              <a href="#home" style={{ color: theme.accent, borderBottom: `2px solid ${theme.accent}`, paddingBottom: 2 }}>Accueil</a>
-              <a href="#menu" className="hover:text-[#c7522a] transition">Menu</a>
-              <a href="#about" className="hover:text-[#c7522a] transition">À propos</a>
-              <a href="#contact" className="hover:text-[#c7522a] transition">Contact</a>
+              <button onClick={() => goTo("home")} className={`hover:text-[#c7522a] transition ${currentView === "home" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}>Accueil</button>
+              <button onClick={() => goTo("menu")} className={`hover:text-[#c7522a] transition ${currentView === "menu" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}>Menu</button>
+              <button onClick={() => goTo("about")} className={`hover:text-[#c7522a] transition ${currentView === "about" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}>À propos</button>
             </nav>
-            <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full grid place-items-center text-base hover:scale-105 transition" style={{ background: theme.accent, color: theme.accentInk }} aria-label="Commander">
+            {restaurant.plan !== "gratuit" && (
+              <button onClick={() => goTo("reserve")} className="hidden md:block px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition border-2 border-white" style={{ color: "#ffffff" }}>
+                Réserver
+              </button>
+            )}
+            <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="hidden md:flex w-10 h-10 rounded-full grid place-items-center text-base hover:scale-105 transition" style={{ background: theme.accent, color: theme.accentInk }} aria-label="Commander">
               🛒
             </a>
+            <button
+              onClick={() => setMobOpen((v) => !v)}
+              className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-black/5 transition-colors"
+              aria-label="Menu"
+            >
+              <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
+              <span className={`block w-6 h-0.5 bg-current transition-opacity ${mobOpen ? "opacity-0" : ""}`} />
+              <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+            </button>
           </div>
         </div>
+        {mobOpen && (
+          <nav className="md:hidden border-t border-black/10 bg-white/95 backdrop-blur-xl">
+            <div className="flex flex-col px-4 py-4 gap-1">
+              <button onClick={() => goTo("home")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">Accueil</button>
+              <button onClick={() => goTo("menu")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">Menu</button>
+              <button onClick={() => goTo("about")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">À propos</button>
+              {restaurant.plan !== "gratuit" && (
+                <button onClick={() => goTo("reserve")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">Réserver</button>
+              )}
+              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors">🛒 Commander</a>
+            </div>
+          </nav>
+        )}
       </header>
 
-      {/* HERO card */}
-      <section id="home" className="px-5 pt-8 pb-12">
-        <div className="max-w-6xl mx-auto rounded-[28px] overflow-hidden relative" style={{ background: theme.surfaceAlt }}>
-          <div className="absolute inset-0 opacity-[0.07] pointer-events-none" style={{ backgroundImage: `url(${BG_SOLEIL})`, backgroundSize: "320px" }} />
-          <div className="relative grid lg:grid-cols-2 gap-6 p-8 sm:p-12 items-center">
-            <div>
-              <h1 className="font-black leading-[0.95]" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}>
-                Délicieux instants<br/>pour <em style={{ color: theme.accent, fontStyle: "italic" }}>chaque goût</em>
-              </h1>
-              <p className="mt-5 max-w-md leading-relaxed" style={{ color: theme.textMuted }}>
-                {restaurant.description ?? `Une cuisine d'excellence préparée avec passion à ${restaurant.city}, ingrédients frais et locaux.`}
-              </p>
-              <div className="mt-7 flex gap-3 flex-wrap">
-                <a href={wa ?? "#menu"} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="px-7 py-3.5 rounded-full font-bold text-sm hover:opacity-90 transition" style={{ background: theme.accent, color: theme.accentInk }}>
-                  Commander
-                </a>
-                <a href="#menu" className="px-7 py-3.5 rounded-full font-bold text-sm border-2 hover:bg-[#1e1308] hover:text-white transition" style={{ borderColor: theme.text, color: theme.text }}>
-                  Voir le menu
-                </a>
+      {/* HOME VIEW */}
+      {currentView === "home" && (
+        <>
+          {/* HERO card */}
+          <section id="home" className="px-4 sm:px-5 pt-6 sm:pt-8 pb-10 sm:pb-12">
+            <div className="max-w-6xl mx-auto rounded-[28px] overflow-hidden relative" style={{ background: heroOverlay }}>
+              
+              <div className="relative grid lg:grid-cols-2 gap-4 sm:gap-6 p-6 sm:p-12 items-center">
+                <div>
+                  <h1 className="font-black leading-[0.95]" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(2.5rem, 6vw, 4.5rem)", color: "#ffffff", textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}>
+                    Délicieux instants<br/>pour <em style={{ color: theme.accent, fontStyle: "italic" }}>chaque goût</em>
+                  </h1>
+                  <p className="mt-5 max-w-md leading-relaxed" style={{ color: "#ffffff", fontWeight: 500, textShadow: "0 1px 10px rgba(0,0,0,0.5)" }}>
+                    {restaurant.description ?? `Une cuisine d'excellence préparée avec passion à ${restaurant.city}, ingrédients frais et locaux.`}
+                  </p>
+                  <div className="mt-7 flex gap-3 flex-wrap">
+                    <a href={wa ?? "#menu"} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="px-7 py-3.5 rounded-full font-bold text-sm hover:opacity-90 transition shadow-lg" style={{ background: theme.accent, color: theme.accentInk }}>
+                      Commander
+                    </a>
+                    {restaurant.plan !== "gratuit" && (
+                      <button onClick={() => goTo("reserve")} className="px-7 py-3.5 rounded-full font-bold text-sm border-2 border-white hover:bg-white hover:text-[#1e1308] transition shadow-md" style={{ color: "#ffffff" }}>
+                        Réserver une table
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="relative">
+                  {cover ? (
+                    <StorageImage path={cover} alt={restaurant.name} className="w-full aspect-[4/3] object-cover rounded-[20px]" />
+                  ) : (
+                    <div className="w-full aspect-[4/3] rounded-[20px] grid place-items-center text-8xl" style={{ background: "linear-gradient(135deg,#e5c89a,#c7522a)" }}>👨‍🍳</div>
+                  )}
+                  {rating !== null && (
+                    <div className="absolute bottom-4 left-4 bg-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 text-sm">
+                      <span style={{ color: theme.accent }}>★</span>
+                      <strong>{rating.toFixed(1)}</strong>
+                      <span style={{ color: theme.textMuted }}>· {reviews.length} avis</span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-            <div className="relative">
-              {cover ? (
-                <StorageImage path={cover} alt={restaurant.name} className="w-full aspect-[4/3] object-cover rounded-[20px]" />
+          </section>
+
+          {/* CATEGORIES circular */}
+          {cats.length > 0 && (
+            <section className="px-5 py-12">
+              <div className="max-w-6xl mx-auto text-center">
+                <h2 className="font-black mb-10" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(1.75rem, 4vw, 2.5rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
+                  Parcourir par catégorie
+                </h2>
+                <div className="flex flex-wrap justify-center gap-6 sm:gap-10">
+                  {cats.map((c) => (
+                    <button key={c} onClick={() => { setActiveTab(c); goTo("menu"); }} className="group flex flex-col items-center gap-3">
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full grid place-items-center text-4xl sm:text-5xl group-hover:scale-110 transition" style={{ background: "rgba(255,255,255,0.95)", boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}>
+                        <CategoryIcon name={c} />
+                      </div>
+                      <span className="text-sm font-medium" style={{ color: "#ffffff", textShadow: "0 1px 6px rgba(0,0,0,0.4)" }}>{c}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* POPULAR DISHES with tabs */}
+          <section id="menu" className="px-5 py-12">
+            <div className="max-w-6xl mx-auto text-center">
+              <h2 className="font-black mb-6" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(1.75rem, 4vw, 2.5rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
+                Plats populaires
+              </h2>
+              <div className="flex flex-wrap justify-center gap-2 mb-10">
+                <button onClick={() => setActiveTab(null)} className="px-4 py-1 text-sm font-medium" style={{ color: activeTab === null ? "#ffffff" : "rgba(255,255,255,0.7)", borderBottom: activeTab === null ? `2px solid #ffffff` : "2px solid transparent", textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>[Tous]</button>
+                {cats.map((c) => (
+                  <button key={c} onClick={() => setActiveTab(c)} className="px-4 py-1 text-sm font-medium" style={{ color: activeTab === c ? "#ffffff" : "rgba(255,255,255,0.7)", borderBottom: activeTab === c ? `2px solid #ffffff` : "2px solid transparent", textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>[{c}]</button>
+                ))}
+              </div>
+              {popular.length === 0 ? (
+                <p className="italic" style={{ color: theme.textMuted }}>Aucun plat disponible pour le moment.</p>
               ) : (
-                <div className="w-full aspect-[4/3] rounded-[20px] grid place-items-center text-8xl" style={{ background: "linear-gradient(135deg,#e5c89a,#c7522a)" }}>👨‍🍳</div>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 text-left">
+                  {popular.map((d, i) => (
+                    <article key={d.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition group">
+                      <div className="aspect-[4/3] overflow-hidden relative" style={{ background: theme.surfaceAlt }}>
+                        {d.image_url ? (
+                          <StorageImage path={d.image_url} alt={d.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                        ) : (
+                          <div className="w-full h-full grid place-items-center text-4xl"><CategoryIcon name={d.category} /></div>
+                        )}
+                        <span className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-white/95 text-[10px] font-bold" style={{ color: theme.text }}>
+                          {i < 2 ? "Best Seller" : "Hot"}
+                        </span>
+                      </div>
+                      <div className="p-3">
+                        <h3 className="text-sm font-bold leading-tight truncate">{d.name}</h3>
+                        <div className="flex items-center justify-between mt-2">
+                          <span className="text-sm font-bold" style={{ color: theme.accent }}>{fmtPrice(d.price)}</span>
+                          <span className="text-xs flex items-center gap-1"><span style={{ color: "#e8b400" }}>★</span> 4.8</span>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
               )}
-              {rating !== null && (
-                <div className="absolute bottom-4 left-4 bg-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 text-sm">
-                  <span style={{ color: theme.accent }}>★</span>
-                  <strong>{rating.toFixed(1)}</strong>
-                  <span style={{ color: theme.textMuted }}>· {reviews.length} avis</span>
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* MENU VIEW */}
+      {currentView === "menu" && (
+        <section id="menu" className="py-16 px-5" style={{ background: theme.surface }}>
+          <div className="max-w-6xl mx-auto">
+            <SectionHead kicker="La carte" title="Notre menu complet" theme={theme} align="center" />
+            <MenuGrid menu={menu} theme={theme} />
+          </div>
+        </section>
+      )}
+
+      {/* ABOUT VIEW */}
+      {currentView === "about" && (
+        <section id="about" className="py-16 px-5" style={{ background: theme.surfaceAlt }}>
+          <div className="max-w-6xl mx-auto">
+            <SectionHead kicker="Notre histoire" title="À propos de nous" theme={theme} align="center" />
+            <div className="max-w-3xl mx-auto text-center">
+              <p className="text-lg leading-relaxed mb-6" style={{ color: theme.text }}>
+                {restaurant.description ?? `Bienvenue au ${restaurant.name}, votre restaurant préféré à ${restaurant.city}. Nous vous proposons une cuisine ${restaurant.cuisine ?? "traditionnelle"} préparée avec des ingrédients frais et locaux.`}
+              </p>
+              {restaurant.address && (
+                <div className="mt-6 p-6 rounded-2xl" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
+                  <p className="text-sm font-bold uppercase tracking-wider mb-2" style={{ color: theme.accent }}>📍 Adresse</p>
+                  <p style={{ color: theme.text }}>{restaurant.address}</p>
+                  {restaurant.hours && (
+                    <>
+                      <p className="text-sm font-bold uppercase tracking-wider mt-4 mb-2" style={{ color: theme.accent }}>🕐 Horaires</p>
+                      <p style={{ color: theme.text }} className="whitespace-pre-line">{restaurant.hours}</p>
+                    </>
+                  )}
                 </div>
               )}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* CATEGORIES circular */}
-      {cats.length > 0 && (
-        <section className="px-5 py-12">
-          <div className="max-w-6xl mx-auto text-center">
-            <h2 className="font-black mb-10" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(1.75rem, 4vw, 2.5rem)" }}>
-              Parcourir par catégorie
-            </h2>
-            <div className="flex flex-wrap justify-center gap-6 sm:gap-10">
-              {cats.map((c) => (
-                <button key={c} onClick={() => { setActiveTab(c); document.getElementById("menu")?.scrollIntoView({ behavior: "smooth" }); }} className="group flex flex-col items-center gap-3">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full grid place-items-center text-4xl sm:text-5xl group-hover:scale-110 transition" style={{ background: theme.surfaceAlt }}>
-                    <CategoryIcon name={c} />
-                  </div>
-                  <span className="text-sm font-medium">{c}</span>
-                </button>
-              ))}
-            </div>
-          </div>
         </section>
       )}
 
-      {/* POPULAR DISHES with tabs */}
-      <section id="menu" className="px-5 py-12">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="font-black mb-6" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(1.75rem, 4vw, 2.5rem)" }}>
-            Plats populaires
-          </h2>
-          <div className="flex flex-wrap justify-center gap-2 mb-10">
-            <button onClick={() => setActiveTab(null)} className="px-4 py-1 text-sm font-medium" style={{ color: activeTab === null ? theme.accent : theme.textMuted, borderBottom: activeTab === null ? `2px solid ${theme.accent}` : "2px solid transparent" }}>[Tous]</button>
-            {cats.map((c) => (
-              <button key={c} onClick={() => setActiveTab(c)} className="px-4 py-1 text-sm font-medium" style={{ color: activeTab === c ? theme.accent : theme.textMuted, borderBottom: activeTab === c ? `2px solid ${theme.accent}` : "2px solid transparent" }}>[{c}]</button>
-            ))}
-          </div>
-          {popular.length === 0 ? (
-            <p className="italic" style={{ color: theme.textMuted }}>Aucun plat disponible pour le moment.</p>
-          ) : (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 text-left">
-              {popular.map((d, i) => (
-                <article key={d.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition group">
-                  <div className="aspect-[4/3] overflow-hidden relative" style={{ background: theme.surfaceAlt }}>
-                    {d.image_url ? (
-                      <StorageImage path={d.image_url} alt={d.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
-                    ) : (
-                      <div className="w-full h-full grid place-items-center text-4xl"><CategoryIcon name={d.category} /></div>
-                    )}
-                    <span className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-white/95 text-[10px] font-bold" style={{ color: theme.text }}>
-                      {i < 2 ? "Best Seller" : "Hot"}
-                    </span>
-                  </div>
-                  <div className="p-3">
-                    <h3 className="text-sm font-bold leading-tight truncate">{d.name}</h3>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-sm font-bold" style={{ color: theme.accent }}>{fmtPrice(d.price)}</span>
-                      <span className="text-xs flex items-center gap-1"><span style={{ color: "#e8b400" }}>★</span> 4.8</span>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* CARTE COMPLETE */}
-      <section id="about" className="py-16 px-5" style={{ background: theme.surfaceAlt }}>
-        <div className="max-w-6xl mx-auto">
-          <SectionHead kicker="La carte" title="Notre menu complet" theme={theme} align="center" />
-          <MenuGrid menu={menu} theme={theme} />
-        </div>
-      </section>
-
-      {/* GALERIE */}
-      {gallery.length > 0 && (
-        <section className="py-16 px-5">
-          <div className="max-w-6xl mx-auto">
-            <SectionHead kicker="Galerie" title="L'ambiance chez nous" theme={theme} align="center" />
-            <GalleryGrid gallery={gallery} theme={theme} />
-          </div>
-        </section>
-      )}
-
-      {/* RESERVATION */}
-      {restaurant.plan === "premium" && (
+      {/* RESERVATION VIEW */}
+      {currentView === "reserve" && restaurant.plan !== "gratuit" && (
         <section id="reserver" className="py-16 px-5 bg-white">
           <div className="max-w-3xl mx-auto">
             <SectionHead kicker="Réservation" title="Réservez votre table" theme={theme} align="center" />
-            <ReservationForm restaurantId={restaurant.id} theme={theme} />
+            <AdvancedReservationForm restaurantId={restaurant.id} restaurantName={restaurant.name} theme={theme} waLink={wa} />
           </div>
         </section>
       )}
 
-      {/* AVIS */}
-      <section className="py-16 px-5" style={{ background: theme.surfaceAlt }}>
-        <div className="max-w-6xl mx-auto">
-          <SectionHead kicker="Témoignages" title="Ils ont aimé" theme={theme} align="center" />
-          <ReviewList reviews={reviews} theme={theme} />
-          <div className="mt-12 max-w-xl mx-auto p-6 bg-white rounded-2xl">
-            <h3 className="font-bold mb-4 text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>Laissez votre avis</h3>
-            <ReviewForm restaurantId={restaurant.id} theme={{ ...theme, surface: theme.bg }} />
+      {/* CTA BAND */}
+      {currentView === "home" && (
+        <div className="px-5 py-7" style={{ background: "#8b3a1c" }}>
+          <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-6">
+            <strong className="text-white text-xl sm:text-2xl" style={{ fontFamily: "'Playfair Display', serif" }}>Savourez le meilleur, commandez maintenant</strong>
+            <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="px-7 py-3 rounded-full bg-white font-bold text-sm hover:bg-[#fbf3e6] transition" style={{ color: "#8b3a1c" }}>
+              Commander en ligne
+            </a>
           </div>
         </div>
-      </section>
+      )}
 
-      {/* CTA BAND */}
-      <div className="px-5 py-7" style={{ background: "#8b3a1c" }}>
-        <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-6">
-          <strong className="text-white text-xl sm:text-2xl" style={{ fontFamily: "'Playfair Display', serif" }}>Savourez le meilleur, commandez maintenant</strong>
-          <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="px-7 py-3 rounded-full bg-white font-bold text-sm hover:bg-[#fbf3e6] transition" style={{ color: "#8b3a1c" }}>
-            Commander en ligne
-          </a>
-        </div>
-      </div>
+      {/* GALERIE & AVIS - Intégrés dans l'accueil */}
+      {currentView === "home" && (
+        <>
+          {gallery.length > 0 && (
+            <section className="py-16 px-5">
+              <div className="max-w-6xl mx-auto">
+                <SectionHead kicker="Galerie" title="L'ambiance chez nous" theme={theme} align="center" />
+                <GalleryGrid gallery={gallery} theme={theme} />
+              </div>
+            </section>
+          )}
+
+          <section className="py-16 px-5" style={{ background: theme.surfaceAlt }}>
+            <div className="max-w-6xl mx-auto">
+              <SectionHead kicker="Témoignages" title="Ils ont aimé" theme={theme} align="center" />
+              <ReviewList reviews={reviews} theme={theme} />
+              <div className="mt-12 max-w-xl mx-auto p-6 bg-white rounded-2xl">
+                <h3 className="font-bold mb-4 text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>Laissez votre avis</h3>
+                <ReviewForm restaurantId={restaurant.id} theme={{ ...theme, surface: theme.bg }} />
+              </div>
+            </div>
+          </section>
+        </>
+      )}
 
       <PoweredFooter restaurant={restaurant} wa={wa} theme={{ ...theme, surfaceAlt: "#1e1308", text: "#fbf3e6", textMuted: "rgba(251,243,230,0.65)", accent: "#f0a878", border: "rgba(255,255,255,0.1)" }} />
       <FloatingWhatsApp href={wa} accent={theme.accent} ink={theme.accentInk} />
@@ -633,103 +743,209 @@ export function TplSavane(props: TemplateProps) {
   };
 
   const RED = "#c8281e";
+  const heroOverlay = "linear-gradient(135deg, rgba(200,40,30,0.92) 0%, rgba(200,40,30,0.85) 50%, rgba(200,40,30,0.78) 100%)";
+
+  const [currentView, setCurrentView] = useState<"home" | "menu" | "about" | "reserve">("home");
+  const [mobOpen, setMobOpen] = useState(false);
+
+  const goTo = (view: typeof currentView) => {
+    setCurrentView(view);
+    setMobOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
-    <div className="min-h-screen" style={{ background: theme.bg, color: theme.text, fontFamily: "'Inter', sans-serif" }}>
+    <div className="tpl-page min-h-screen" style={{ background: theme.bg, color: theme.text, fontFamily: "'Inter', sans-serif", isolation: "isolate" }}>
       <FontImport />
+      <style>{TPL_BG_CSS}</style>
+
+      <div className="tpl-bg" aria-hidden>
+        <img src={BG_SAVANE} alt="" />
+        <span />
+      </div>
 
       {/* HERO RED BANNER */}
-      <section className="relative overflow-hidden" style={{ background: RED }}>
-        <div className="absolute inset-0 opacity-[0.12] pointer-events-none" style={{ backgroundImage: `url(${BG_SAVANE})`, backgroundSize: "300px", mixBlendMode: "overlay" }} />
+      <section className="relative overflow-hidden" style={{ background: heroOverlay }}>
+        
         {/* NAV */}
         <header className="relative">
           <div className="max-w-7xl mx-auto px-5 py-5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
             <div className="flex items-center gap-2 min-w-0">
-              <span className="text-2xl shrink-0">🍔</span>
+              {restaurant.logo_url ? (
+                <img src={restaurant.logo_url} alt={restaurant.name} className="h-8 w-auto object-contain rounded" />
+              ) : (
+                <span className="text-2xl shrink-0">🍔</span>
+              )}
               <strong className="text-xl sm:text-2xl truncate text-white" style={{ fontFamily: "'Archivo Black', sans-serif", letterSpacing: "0.05em" }}>
                 {restaurant.name}
               </strong>
             </div>
             <div className="flex items-center gap-2 sm:gap-5">
               <nav className="hidden md:flex gap-5 text-[12px] uppercase font-bold text-white/90" style={{ letterSpacing: "0.18em" }}>
-                <a href="#home" className="hover:text-white">Accueil</a>
-                <a href="#menu" className="hover:text-white">Menu</a>
-                <a href="#galerie" className="hover:text-white">Galerie</a>
-                <a href="#contact" className="hover:text-white">Contact</a>
+                <button onClick={() => goTo("home")} className={`hover:text-white ${currentView === "home" ? "text-white" : ""}`}>Accueil</button>
+                <button onClick={() => goTo("menu")} className={`hover:text-white ${currentView === "menu" ? "text-white" : ""}`}>Menu</button>
               </nav>
-              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition" style={{ background: theme.accent, color: theme.accentInk }}>
+              {restaurant.plan !== "gratuit" && (
+                <button onClick={() => goTo("reserve")} className="hidden md:block px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition border-2 border-white" style={{ color: "#ffffff" }}>
+                  Réserver
+                </button>
+              )}
+              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="hidden md:inline-flex px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition" style={{ background: theme.accent, color: theme.accentInk }}>
                 Commander
               </a>
+              <button
+                onClick={() => setMobOpen((v) => !v)}
+                className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-white/10 transition-colors"
+                aria-label="Menu"
+              >
+                <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
+                <span className={`block w-6 h-0.5 bg-current transition-opacity ${mobOpen ? "opacity-0" : ""}`} />
+                <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+              </button>
             </div>
           </div>
         </header>
+        {mobOpen && (
+          <nav className="md:hidden border-t border-white/10 bg-[#0e0e10]/95 backdrop-blur-xl">
+            <div className="flex flex-col px-4 py-4 gap-1">
+              <button onClick={() => goTo("home")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">Accueil</button>
+              <button onClick={() => goTo("about")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">À propos</button>
+              <button onClick={() => goTo("menu")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">Menu</button>
+              {restaurant.plan !== "gratuit" && (
+                <button onClick={() => goTo("reserve")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">Réserver</button>
+              )}
+            </div>
+          </nav>
+        )}
 
-        <div className="relative max-w-7xl mx-auto px-5 pt-8 pb-28 grid lg:grid-cols-2 gap-8 items-center">
-          <div>
-            <p className="text-sm font-bold uppercase mb-3 tracking-widest" style={{ color: theme.accent }}>★ Le goût qui claque</p>
-            <h1 className="leading-[0.9] text-white" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(3rem, 9vw, 6.5rem)" }}>
-              Commande<br/>tes favoris
-            </h1>
-            <p className="mt-6 text-white/85 max-w-md text-lg leading-relaxed">
-              {restaurant.description ?? `Les meilleurs burgers, brochettes et fast-food de ${restaurant.city}, livrés chauds.`}
-            </p>
-            <a href="#menu" className="mt-7 inline-block px-8 py-4 rounded-full font-black text-sm hover:scale-105 transition" style={{ background: theme.accent, color: theme.accentInk }}>
-              VOIR LE MENU →
-            </a>
-          </div>
-          <div className="relative">
-            {cover ? (
-              <StorageImage path={cover} alt={restaurant.name} className="w-full aspect-square object-cover rounded-full shadow-2xl border-8 border-white/20" />
-            ) : (
-              <div className="w-full aspect-square rounded-full grid place-items-center text-9xl" style={{ background: "radial-gradient(circle,#f5b921,#c8281e)" }}>🍔</div>
-            )}
-            <span className="absolute -top-2 -right-2 text-5xl rotate-12">✨</span>
-            <span className="absolute bottom-4 -left-4 text-4xl">⚡</span>
-          </div>
-        </div>
-
-        {/* COMBO PILL */}
-        <div className="relative max-w-5xl mx-auto px-5 -mb-14 translate-y-14">
-          <div className="bg-white rounded-full shadow-2xl px-6 py-4 grid grid-cols-2 sm:grid-cols-[1fr_1fr_auto] gap-4 items-center">
-            <div className="flex items-center gap-3">
-              <span className="text-3xl">🚗</span>
-              <div>
-                <strong className="text-sm block">Livraison rapide</strong>
-                <span className="text-xs" style={{ color: theme.textMuted }}>Sous 30 min en ville</span>
+        {/* HOME VIEW */}
+        {currentView === "home" && (
+          <div className="relative max-w-7xl mx-auto px-5 pt-8 pb-28 grid lg:grid-cols-2 gap-8 items-center">
+            <div>
+              <p className="text-sm font-bold uppercase mb-3 tracking-widest" style={{ color: theme.accent, textShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>★ Le goût qui claque</p>
+              <h1 className="leading-[0.9] text-white" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(3rem, 9vw, 6.5rem)", textShadow: "0 4px 20px rgba(0,0,0,0.4)" }}>
+                Commande<br/>tes favoris
+              </h1>
+              <p className="mt-6 text-white max-w-md text-lg leading-relaxed" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
+                {restaurant.description ?? `Les meilleurs burgers, brochettes et fast-food de ${restaurant.city}, livrés chauds.`}
+              </p>
+              <div className="mt-7 flex gap-3 flex-wrap">
+                <button onClick={() => goTo("menu")} className="inline-block px-8 py-4 rounded-full font-black text-sm hover:scale-105 transition shadow-xl" style={{ background: theme.accent, color: theme.accentInk }}>
+                  VOIR LE MENU →
+                </button>
+                <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="inline-block px-8 py-4 rounded-full font-black text-sm border-2 border-white hover:bg-white hover:text-red-600 transition shadow-lg">
+                  COMMANDER
+                </a>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-3xl">🥤</span>
-              <div>
-                <strong className="text-sm block">Combos & boissons</strong>
-                <span className="text-xs" style={{ color: theme.textMuted }}>Économise jusqu'à 20%</span>
-              </div>
+            <div className="relative">
+              {cover ? (
+                <StorageImage path={cover} alt={restaurant.name} className="w-full aspect-square object-cover rounded-full shadow-2xl border-8 border-white/20" />
+              ) : (
+                <div className="w-full aspect-square rounded-full grid place-items-center text-9xl" style={{ background: "radial-gradient(circle,#f5b921,#c8281e)" }}>🍔</div>
+              )}
+              <span className="absolute -top-2 -right-2 text-5xl rotate-12">✨</span>
+              <span className="absolute bottom-4 -left-4 text-4xl">⚡</span>
             </div>
-            <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="hidden sm:inline-block px-6 py-2.5 rounded-full font-bold text-sm whitespace-nowrap" style={{ background: theme.accent, color: theme.accentInk }}>
-              COMMANDER
-            </a>
           </div>
-        </div>
+        )}
+
+        {/* MENU VIEW */}
+        {currentView === "menu" && (
+          <div className="max-w-6xl mx-auto px-5 py-12">
+            <div className="text-center">
+              <h2 className="font-black mb-6" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(2rem, 5vw, 3rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
+                Notre Menu
+              </h2>
+              <MenuGrid menu={menu} theme={theme} />
+            </div>
+          </div>
+        )}
+
+        {/* ABOUT VIEW */}
+        {currentView === "about" && (
+          <div className="max-w-6xl mx-auto px-5 py-12">
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="font-black mb-6" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(2rem, 5vw, 3rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
+                À propos de nous
+              </h2>
+              <p className="text-lg leading-relaxed mb-6" style={{ color: "#ffffff", textShadow: "0 1px 8px rgba(0,0,0,0.3)" }}>
+                {restaurant.description ?? `Bienvenue au ${restaurant.name}, votre fast-food préféré à ${restaurant.city}. Nous vous proposons les meilleurs burgers, brochettes et plats rapides, préparés avec des ingrédients frais.`}
+              </p>
+              {restaurant.address && (
+                <div className="mt-6 p-6 rounded-2xl bg-white/10 backdrop-blur border border-white/20">
+                  <p className="text-sm font-bold uppercase tracking-wider mb-2" style={{ color: theme.accent }}>📍 Adresse</p>
+                  <p style={{ color: "#ffffff" }}>{restaurant.address}</p>
+                  {restaurant.hours && (
+                    <>
+                      <p className="text-sm font-bold uppercase tracking-wider mt-4 mb-2" style={{ color: theme.accent }}>🕐 Horaires</p>
+                      <p style={{ color: "#ffffff" }} className="whitespace-pre-line">{restaurant.hours}</p>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* RESERVATION VIEW */}
+        {currentView === "reserve" && restaurant.plan !== "gratuit" && (
+          <div className="max-w-3xl mx-auto px-5 py-12">
+            <div className="text-center mb-8">
+              <h2 className="font-black" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(2rem, 5vw, 3rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
+                Réserve ta table
+              </h2>
+            </div>
+            <AdvancedReservationForm restaurantId={restaurant.id} restaurantName={restaurant.name} theme={{ ...theme, surface: "rgba(255,255,255,0.1)", text: "#fff", textMuted: "rgba(255,255,255,0.7)", border: "rgba(255,255,255,0.2)", accent: theme.accent, accentInk: theme.accentInk }} waLink={wa} />
+          </div>
+        )}
+
+        {/* COMBO PILL - only on home */}
+        {currentView === "home" && (
+          <div className="relative max-w-5xl mx-auto px-5 -mb-14 translate-y-14">
+            <div className="bg-white rounded-full shadow-2xl px-6 py-4 grid grid-cols-2 sm:grid-cols-[1fr_1fr_auto] gap-4 items-center">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">🚗</span>
+                <div>
+                  <strong className="text-sm block">Livraison rapide</strong>
+                  <span className="text-xs" style={{ color: theme.textMuted }}>Sous 30 min en ville</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">🥤</span>
+                <div>
+                  <strong className="text-sm block">Combos & boissons</strong>
+                  <span className="text-xs" style={{ color: theme.textMuted }}>Économise jusqu'à 20%</span>
+                </div>
+              </div>
+              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="hidden sm:inline-block px-6 py-2.5 rounded-full font-bold text-sm whitespace-nowrap" style={{ background: theme.accent, color: theme.accentInk }}>
+                COMMANDER
+              </a>
+            </div>
+          </div>
+        )}
       </section>
 
-      {/* SECONDARY RED CARD */}
-      <section className="px-5 pt-28 pb-12">
-        <div className="max-w-6xl mx-auto rounded-[28px] overflow-hidden grid lg:grid-cols-[1fr_auto] gap-6 p-8 sm:p-10 items-center" style={{ background: RED }}>
-          <div className="text-white">
-            <h2 className="leading-[0.95]" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(2rem, 5vw, 3.5rem)" }}>
-              Commande en quelques minutes
-            </h2>
-            <p className="mt-3 text-white/85 max-w-md">Choisis, paie, et déguste — c'est aussi simple que ça.</p>
-            <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="mt-5 inline-block px-7 py-3 rounded-full font-bold text-sm" style={{ background: theme.accent, color: theme.accentInk }}>
-              COMMANDER MAINTENANT
-            </a>
+      {/* SECONDARY RED CARD - only on home */}
+      {currentView === "home" && (
+        <section className="px-5 pt-28 pb-12">
+          <div className="max-w-6xl mx-auto rounded-[28px] overflow-hidden grid lg:grid-cols-[1fr_auto] gap-6 p-8 sm:p-10 items-center" style={{ background: RED }}>
+            <div className="text-white">
+              <h2 className="leading-[0.95]" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(2rem, 5vw, 3.5rem)" }}>
+                Commande en quelques minutes
+              </h2>
+              <p className="mt-3 text-white/85 max-w-md">Choisis, paie, et déguste — c'est aussi simple que ça.</p>
+              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="mt-5 inline-block px-7 py-3 rounded-full font-bold text-sm" style={{ background: theme.accent, color: theme.accentInk }}>
+                COMMANDER MAINTENANT
+              </a>
+            </div>
+            <div className="text-7xl sm:text-8xl text-center">🍔</div>
           </div>
-          <div className="text-7xl sm:text-8xl text-center">🍔</div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* SIGNATURES 3-card */}
-      {signatures.length > 0 && (
+      {/* SIGNATURES 3-card - only on home */}
+      {currentView === "home" && signatures.length > 0 && (
         <section id="menu" className="py-12 px-5">
           <div className="max-w-6xl mx-auto text-center">
             <p className="text-xs font-black uppercase tracking-[0.4em] mb-2" style={{ color: RED }}>★ Best Sellers</p>
@@ -757,43 +973,79 @@ export function TplSavane(props: TemplateProps) {
         </section>
       )}
 
-      {/* FULL MENU */}
-      <section className="py-16 px-5" style={{ background: theme.surfaceAlt }}>
-        <div className="max-w-6xl mx-auto">
-          <SectionHead kicker="La carte complète" title="Tous nos plats" theme={theme} align="center" />
-          <MenuGrid menu={menu} theme={theme} />
-        </div>
-      </section>
-
-      {gallery.length > 0 && (
-        <section id="galerie" className="py-16 px-5">
+      {/* FULL MENU - only on menu view */}
+      {currentView === "menu" && (
+        <section id="menu" className="py-16 px-5" style={{ background: theme.surface }}>
           <div className="max-w-6xl mx-auto">
-            <SectionHead kicker="Galerie" title="Dans nos cuisines" theme={theme} align="center" />
-            <GalleryGrid gallery={gallery} theme={theme} />
+            <SectionHead kicker="La carte complète" title="Tous nos plats" theme={theme} align="center" />
+            <MenuGrid menu={menu} theme={theme} />
           </div>
         </section>
       )}
 
-      {restaurant.plan === "premium" && (
+      {/* ABOUT SECTION - only on about view */}
+      {currentView === "about" && (
+        <section id="about" className="py-16 px-5" style={{ background: theme.surfaceAlt }}>
+          <div className="max-w-6xl mx-auto">
+            <SectionHead kicker="Notre histoire" title="À propos de nous" theme={theme} align="center" />
+            <div className="max-w-3xl mx-auto text-center">
+              <p className="text-lg leading-relaxed mb-6" style={{ color: theme.text }}>
+                {restaurant.description ?? `Bienvenue au ${restaurant.name}, votre fast-food préféré à ${restaurant.city}. Nous vous proposons les meilleurs burgers, brochettes et plats rapides, préparés avec des ingrédients frais.`}
+              </p>
+              {restaurant.address && (
+                <div className="mt-6 p-6 rounded-2xl" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
+                  <p className="text-sm font-bold uppercase tracking-wider mb-2" style={{ color: RED }}>📍 Adresse</p>
+                  <p style={{ color: theme.text }}>{restaurant.address}</p>
+                  {restaurant.hours && (
+                    <>
+                      <p className="text-sm font-bold uppercase tracking-wider mt-4 mb-2" style={{ color: RED }}>🕐 Horaires</p>
+                      <p style={{ color: theme.text }} className="whitespace-pre-line">{restaurant.hours}</p>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* RESERVATION SECTION */}
+      {currentView === "reserve" && restaurant.plan !== "gratuit" && (
         <section className="py-16 px-5" style={{ background: RED, color: "#fff" }}>
           <div className="max-w-3xl mx-auto">
-            <p className="text-xs font-black uppercase tracking-[0.4em] mb-2" style={{ color: theme.accent }}>★ Réservation</p>
-            <h2 className="font-black mb-8" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(2rem, 5vw, 3rem)" }}>Réserve ta table</h2>
-            <ReservationForm restaurantId={restaurant.id} theme={{ ...theme, surface: "rgba(255,255,255,0.1)", text: "#fff", textMuted: "rgba(255,255,255,0.7)", border: "rgba(255,255,255,0.2)", accent: theme.accent, accentInk: theme.accentInk }} />
+            <div className="text-center mb-8">
+              <p className="text-xs font-black uppercase tracking-[0.4em] mb-2" style={{ color: theme.accent }}>★ Réservation</p>
+              <h2 className="font-black" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(2rem, 5vw, 3rem)" }}>Réserve ta table</h2>
+            </div>
+            <AdvancedReservationForm restaurantId={restaurant.id} restaurantName={restaurant.name} theme={{ ...theme, surface: "rgba(255,255,255,0.1)", text: "#fff", textMuted: "rgba(255,255,255,0.7)", border: "rgba(255,255,255,0.2)", accent: theme.accent, accentInk: theme.accentInk }} waLink={wa} />
           </div>
         </section>
       )}
 
-      <section className="py-16 px-5" style={{ background: theme.surfaceAlt }}>
-        <div className="max-w-6xl mx-auto">
-          <SectionHead kicker="Avis" title="Ils nous adorent" theme={theme} align="center" />
-          <ReviewList reviews={reviews} theme={theme} />
-          <div className="mt-12 max-w-xl mx-auto bg-white p-6 rounded-2xl">
-            <h3 className="font-black mb-4 text-lg" style={{ fontFamily: "'Archivo Black', sans-serif" }}>Laisse ton avis</h3>
-            <ReviewForm restaurantId={restaurant.id} theme={theme} />
-          </div>
-        </div>
-      </section>
+      {/* GALERIE & AVIS - Intégrés dans l'accueil */}
+      {currentView === "home" && (
+        <>
+          {gallery.length > 0 && (
+            <section className="py-16 px-5">
+              <div className="max-w-6xl mx-auto">
+                <SectionHead kicker="Galerie" title="Dans nos cuisines" theme={theme} align="center" />
+                <GalleryGrid gallery={gallery} theme={theme} />
+              </div>
+            </section>
+          )}
+
+          <section className="py-16 px-5" style={{ background: theme.surfaceAlt }}>
+            <div className="max-w-6xl mx-auto">
+              <SectionHead kicker="Avis" title="Ils nous adorent" theme={theme} align="center" />
+              <ReviewList reviews={reviews} theme={theme} />
+              <div className="mt-12 max-w-xl mx-auto bg-white p-6 rounded-2xl">
+                <h3 className="font-black mb-4 text-lg" style={{ fontFamily: "'Archivo Black', sans-serif" }}>Laisse ton avis</h3>
+                <ReviewForm restaurantId={restaurant.id} theme={theme} />
+              </div>
+            </div>
+          </section>
+        </>
+      )}
 
       <PoweredFooter restaurant={restaurant} wa={wa} theme={{ ...theme, surfaceAlt: "#1a0d05", text: "#fff8e7", textMuted: "rgba(255,248,231,0.65)", accent: theme.accent, border: "rgba(255,255,255,0.1)" }} />
       <FloatingWhatsApp href={wa} accent={theme.accent} ink={theme.accentInk} />
@@ -823,163 +1075,169 @@ export function TplMarche(props: TemplateProps) {
     radius: "10px",
   };
 
+  const [currentView, setCurrentView] = useState<"home" | "menu" | "about" | "reserve">("home");
+  const [mobOpen, setMobOpen] = useState(false);
+
+  const goTo = (view: typeof currentView) => {
+    setCurrentView(view);
+    setMobOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <div className="min-h-screen" style={{ background: theme.bg, color: theme.text, fontFamily: "'Inter', sans-serif" }}>
+    <div className="tpl-page min-h-screen" style={{ background: theme.bg, color: theme.text, fontFamily: "'Inter', sans-serif", isolation: "isolate" }}>
       <FontImport />
+      <style>{TPL_BG_CSS}</style>
+
+      <div className="tpl-bg" aria-hidden>
+        <img src={BG_MARCHE} alt="" />
+        <span />
+      </div>
 
       {/* NAV */}
       <header className="sticky top-0 z-30 backdrop-blur" style={{ background: "rgba(13,40,24,0.92)", borderBottom: `1px solid ${theme.border}` }}>
         <div className="max-w-7xl mx-auto px-5 py-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="text-2xl shrink-0">🌶️</span>
+            {restaurant.logo_url ? (
+              <img src={restaurant.logo_url} alt={restaurant.name} className="h-8 w-auto object-contain rounded" />
+            ) : (
+              <span className="text-2xl shrink-0">🌶️</span>
+            )}
             <strong className="text-xl sm:text-2xl truncate" style={{ fontFamily: "'Playfair Display', serif", color: theme.accent }}>
               {restaurant.name}
             </strong>
           </div>
           <div className="flex items-center gap-2 sm:gap-5">
             <nav className="hidden md:flex gap-5 text-[12px] uppercase font-medium" style={{ letterSpacing: "0.15em", color: theme.textMuted }}>
-              <a href="#home" style={{ color: theme.accent, borderBottom: `1px solid ${theme.accent}` }}>Accueil</a>
-              <a href="#about" className="hover:text-[#ed8023]">À propos</a>
-              <a href="#menu" className="hover:text-[#ed8023]">Menu</a>
-              <a href="#galerie" className="hover:text-[#ed8023]">Galerie</a>
-              <a href="#contact" className="hover:text-[#ed8023]">Contact</a>
+              <button onClick={() => goTo("home")} className={`hover:text-[#ed8023] ${currentView === "home" ? "text-[#ed8023] border-b border-[#ed8023]" : ""}`}>Accueil</button>
+              <button onClick={() => goTo("about")} className={`hover:text-[#ed8023] ${currentView === "about" ? "text-[#ed8023] border-b border-[#ed8023]" : ""}`}>À propos</button>
+              <button onClick={() => goTo("menu")} className={`hover:text-[#ed8023] ${currentView === "menu" ? "text-[#ed8023] border-b border-[#ed8023]" : ""}`}>Menu</button>
             </nav>
-            <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="px-5 py-2 rounded-full border text-xs font-semibold hover:bg-[#ed8023] hover:text-[#0d2818] transition" style={{ borderColor: theme.accent, color: theme.accent }}>
-              Réserver
-            </a>
+            {restaurant.plan !== "gratuit" && (
+              <button onClick={() => goTo("reserve")} className="px-5 py-2 rounded-full border text-xs font-semibold hover:bg-[#ed8023] hover:text-[#0d2818] transition" style={{ borderColor: theme.accent, color: theme.accent }}>
+                Réserver
+              </button>
+            )}
           </div>
         </div>
       </header>
 
-      {/* HERO with chili decoration */}
-      <section id="home" className="relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.18] pointer-events-none" style={{ backgroundImage: `url(${BG_MARCHE})`, backgroundSize: "cover", backgroundPosition: "center" }} />
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(circle at 50% 50%, transparent 30%, #0d2818 90%)" }} />
-        <div className="relative max-w-7xl mx-auto px-5 py-16 lg:py-24 grid lg:grid-cols-2 gap-10 items-center">
-          <div>
-            <h1 className="leading-[0.95]" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(3rem, 8vw, 6rem)", color: theme.accent }}>
-              {restaurant.cuisine?.split(/[ &]/)[0] ?? restaurant.name}<br/>
-              <span style={{ color: theme.text }}>Restaurant</span>
-            </h1>
-            <p className="mt-6 max-w-lg leading-relaxed" style={{ color: theme.textMuted }}>
-              {restaurant.description ?? `Plongez dans une expérience culinaire authentique à ${restaurant.city}. Épices, saveurs et tradition à chaque bouchée.`}
-            </p>
-            <div className="mt-8 flex gap-3 flex-wrap">
-              <a href="#menu" className="px-7 py-3 rounded-full font-bold text-sm hover:opacity-90 transition" style={{ background: theme.accent, color: theme.accentInk }}>
-                Voir le menu
-              </a>
-              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="px-7 py-3 rounded-full font-bold text-sm border hover:bg-white/5 transition" style={{ borderColor: theme.accent, color: theme.accent }}>
-                Commander
-              </a>
-            </div>
-          </div>
-          <div className="relative">
-            {cover ? (
-              <StorageImage path={cover} alt={restaurant.name} className="w-full aspect-square object-cover rounded-full shadow-2xl" />
-            ) : (
-              <div className="w-full aspect-square rounded-full grid place-items-center text-9xl" style={{ background: "radial-gradient(circle,#ed8023,#7a3a0e)" }}>🍛</div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ABOUT / FEATURES */}
-      <section id="about" className="py-20 px-5" style={{ background: theme.surfaceAlt }}>
-        <div className="max-w-6xl mx-auto">
-          <p className="text-center max-w-3xl mx-auto leading-relaxed mb-14" style={{ color: theme.textMuted }}>
-            {restaurant.description ?? `Découvrez l'art de la cuisine ${restaurant.cuisine ?? "traditionnelle"} dans un cadre chaleureux à ${restaurant.city}.`}
-          </p>
-          <div className="grid lg:grid-cols-2 gap-10 items-center">
-            {cover && (
-              <div className="aspect-square rounded-full overflow-hidden mx-auto max-w-md">
-                <StorageImage path={cover} alt={restaurant.name} className="w-full h-full object-cover" />
-              </div>
-            )}
+      {/* HOME VIEW */}
+      {currentView === "home" && (
+        <section id="home" className="relative overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(circle at 50% 50%, transparent 30%, #0d2818 90%)" }} />
+          <div className="relative max-w-7xl mx-auto px-5 py-16 lg:py-24 grid lg:grid-cols-2 gap-10 items-center">
             <div>
-              <h2 className="mb-8" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(2rem, 4vw, 3rem)" }}>
-                Pourquoi nous choisir
-              </h2>
-              <ul className="space-y-4">
-                {[
-                  ["Ingrédients frais", "Sélectionnés chaque matin sur les marchés locaux."],
-                  ["Chefs passionnés", "Une équipe expérimentée à votre service."],
-                  ["Saveurs authentiques", "Des recettes traditionnelles transmises depuis des générations."],
-                  ["Cadre chaleureux", "Une ambiance qui invite à savourer."],
-                  ["Service rapide", "Commande et livraison sans attente."],
-                ].map(([t, d]) => (
-                  <li key={t} className="flex items-start gap-3">
-                    <span className="text-lg shrink-0 mt-0.5" style={{ color: theme.accent }}>✦</span>
-                    <div>
-                      <strong>{t}</strong>
-                      <span className="block text-sm" style={{ color: theme.textMuted }}>{d}</span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* STATS CARDS */}
-      <section className="py-20 px-5">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="mb-3" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(2rem, 4vw, 3rem)" }}>
-            Mangez chez <span style={{ color: theme.accent }}>nous</span>
-          </h2>
-          <p className="max-w-xl mx-auto mb-12" style={{ color: theme.textMuted }}>
-            Des chiffres qui parlent : qualité, fidélité et passion.
-          </p>
-          <div className="grid sm:grid-cols-3 gap-5">
-            {[
-              { v: `${menu.filter((m) => m.available).length}`, l: "Plats à la carte", d: "Préparés frais, sans compromis sur la qualité." },
-              { v: `${reviews.length || "100"}+`, l: "Clients satisfaits", d: "Une communauté fidèle qui revient pour nos saveurs." },
-              { v: rating !== null ? rating.toFixed(1) : "4.8", l: "Note moyenne", d: "Évaluée par nos clients sur l'ensemble des plats." },
-            ].map((s) => (
-              <div key={s.l} className="bg-white text-[#0d2818] p-8 rounded-2xl text-left">
-                <strong className="text-5xl block mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{s.v}</strong>
-                <span className="text-sm font-bold block mb-3" style={{ color: theme.accent }}>{s.l}</span>
-                <span className="text-sm text-slate-600">{s.d}</span>
+              <h1 className="leading-[0.95]" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(3rem, 8vw, 6rem)", color: theme.accent }}>
+                {restaurant.cuisine?.split(/[ &]/)[0] ?? restaurant.name}<br/>
+                <span style={{ color: theme.text }}>Restaurant</span>
+              </h1>
+              <p className="mt-6 max-w-lg leading-relaxed" style={{ color: theme.textMuted }}>
+                {restaurant.description ?? `Plongez dans une expérience culinaire authentique à ${restaurant.city}. Épices, saveurs et tradition à chaque bouchée.`}
+              </p>
+              <div className="mt-8 flex gap-3 flex-wrap">
+                <button onClick={() => goTo("menu")} className="px-7 py-3 rounded-full font-bold text-sm hover:opacity-90 transition" style={{ background: theme.accent, color: theme.accentInk }}>
+                  Voir le menu
+                </button>
+                <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="px-7 py-3 rounded-full font-bold text-sm border hover:bg-white/5 transition" style={{ borderColor: theme.accent, color: theme.accent }}>
+                  Commander
+                </a>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="menu" className="py-20 px-5" style={{ background: theme.surfaceAlt }}>
-        <div className="max-w-6xl mx-auto">
-          <SectionHead kicker="La carte" title="Notre menu" theme={theme} align="center" serif />
-          <MenuGrid menu={menu} theme={theme} />
-        </div>
-      </section>
-
-      {gallery.length > 0 && (
-        <section id="galerie" className="py-20 px-5">
-          <div className="max-w-6xl mx-auto">
-            <SectionHead kicker="Galerie" title="Notre univers" theme={theme} align="center" serif />
-            <GalleryGrid gallery={gallery} theme={theme} />
+            </div>
+            <div className="relative">
+              {cover ? (
+                <StorageImage path={cover} alt={restaurant.name} className="w-full aspect-square object-cover rounded-full shadow-2xl" />
+              ) : (
+                <div className="w-full aspect-square rounded-full grid place-items-center text-9xl" style={{ background: "radial-gradient(circle,#ed8023,#7a3a0e)" }}>🍛</div>
+              )}
+            </div>
           </div>
         </section>
       )}
 
-      {restaurant.plan === "premium" && (
+      {/* MENU VIEW */}
+      {currentView === "menu" && (
+        <section id="menu" className="py-20 px-5" style={{ background: theme.surfaceAlt }}>
+          <div className="max-w-6xl mx-auto">
+            <SectionHead kicker="La carte" title="Notre menu" theme={theme} align="center" serif />
+            <MenuGrid menu={menu} theme={theme} />
+          </div>
+        </section>
+      )}
+
+      {/* ABOUT VIEW */}
+      {currentView === "about" && (
+        <section id="about" className="py-20 px-5" style={{ background: theme.surfaceAlt }}>
+          <div className="max-w-6xl mx-auto">
+            <p className="text-center max-w-3xl mx-auto leading-relaxed mb-14" style={{ color: theme.textMuted }}>
+              {restaurant.description ?? `Découvrez l'art de la cuisine ${restaurant.cuisine ?? "traditionnelle"} dans un cadre chaleureux à ${restaurant.city}.`}
+            </p>
+            <div className="grid lg:grid-cols-2 gap-10 items-center">
+              {cover && (
+                <div className="aspect-square rounded-full overflow-hidden mx-auto max-w-md">
+                  <StorageImage path={cover} alt={restaurant.name} className="w-full h-full object-cover" />
+                </div>
+              )}
+              <div>
+                <h2 className="mb-8" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(2rem, 4vw, 3rem)" }}>
+                  Pourquoi nous choisir
+                </h2>
+                <ul className="space-y-4">
+                  {[
+                    ["Ingrédients frais", "Sélectionnés chaque matin sur les marchés locaux."],
+                    ["Chefs passionnés", "Une équipe expérimentée à votre service."],
+                    ["Saveurs authentiques", "Des recettes traditionnelles transmises depuis des générations."],
+                    ["Cadre chaleureux", "Une ambiance qui invite à savourer."],
+                    ["Service rapide", "Commande et livraison sans attente."],
+                  ].map(([t, d]) => (
+                    <li key={t} className="flex items-start gap-3">
+                      <span className="text-lg shrink-0 mt-0.5" style={{ color: theme.accent }}>✦</span>
+                      <div>
+                        <strong>{t}</strong>
+                        <span className="block text-sm" style={{ color: theme.textMuted }}>{d}</span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* RESERVATION VIEW */}
+      {currentView === "reserve" && restaurant.plan !== "gratuit" && (
         <section className="py-20 px-5" style={{ background: theme.surfaceAlt }}>
           <div className="max-w-3xl mx-auto">
             <SectionHead kicker="Réservation" title="Réservez votre table" theme={theme} align="center" serif />
-            <ReservationForm restaurantId={restaurant.id} theme={theme} />
+            <AdvancedReservationForm restaurantId={restaurant.id} restaurantName={restaurant.name} theme={theme} waLink={wa} />
           </div>
         </section>
       )}
 
-      <section className="py-20 px-5">
-        <div className="max-w-6xl mx-auto">
-          <SectionHead kicker="Avis" title="Ils en parlent" theme={theme} align="center" serif />
-          <ReviewList reviews={reviews} theme={theme} />
-          <div className="mt-12 max-w-xl mx-auto">
-            <ReviewForm restaurantId={restaurant.id} theme={theme} />
-          </div>
-        </div>
-      </section>
+      {/* GALERIE & AVIS - Intégrés dans l'accueil */}
+      {currentView === "home" && (
+        <>
+          {gallery.length > 0 && (
+            <section id="galerie" className="py-20 px-5">
+              <div className="max-w-6xl mx-auto">
+                <SectionHead kicker="Galerie" title="Notre univers" theme={theme} align="center" serif />
+                <GalleryGrid gallery={gallery} theme={theme} />
+              </div>
+            </section>
+          )}
+
+          <section className="py-20 px-5">
+            <div className="max-w-6xl mx-auto">
+              <SectionHead kicker="Avis" title="Ils en parlent" theme={theme} align="center" serif />
+              <ReviewList reviews={reviews} theme={theme} />
+              <div className="mt-12 max-w-xl mx-auto">
+                <ReviewForm restaurantId={restaurant.id} theme={theme} />
+              </div>
+            </div>
+          </section>
+        </>
+      )}
 
       <PoweredFooter restaurant={restaurant} wa={wa} theme={theme} />
       <FloatingWhatsApp href={wa} accent={theme.accent} ink={theme.accentInk} />
@@ -1008,161 +1266,175 @@ export function TplModerne(props: TemplateProps) {
     radius: "4px",
   };
 
+  const [currentView, setCurrentView] = useState<"home" | "menu" | "about" | "reserve">("home");
+  const [mobOpen, setMobOpen] = useState(false);
+
+  const goTo = (view: typeof currentView) => {
+    setCurrentView(view);
+    setMobOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <div className="min-h-screen" style={{ background: theme.bg, color: theme.text, fontFamily: "'Inter', sans-serif" }}>
+    <div className="tpl-page min-h-screen" style={{ background: theme.bg, color: theme.text, fontFamily: "'Inter', sans-serif", isolation: "isolate" }}>
       <FontImport />
+      <style>{TPL_BG_CSS}</style>
+
+      <div className="tpl-bg" aria-hidden>
+        <img src={BG_MODERNE} alt="" />
+        <span />
+      </div>
 
       {/* NAV */}
       <header className="absolute top-0 inset-x-0 z-30">
         <div className="max-w-7xl mx-auto px-5 py-5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="text-2xl shrink-0">🌿</span>
+            {restaurant.logo_url ? (
+              <img src={restaurant.logo_url} alt={restaurant.name} className="h-8 w-auto object-contain rounded" />
+            ) : (
+              <span className="text-2xl shrink-0">🌿</span>
+            )}
             <strong className="text-xl sm:text-2xl truncate" style={{ fontFamily: "'Playfair Display', serif" }}>
               {restaurant.name}
             </strong>
           </div>
           <div className="flex items-center gap-2 sm:gap-6">
             <nav className="hidden md:flex gap-6 text-[12px] uppercase font-medium" style={{ letterSpacing: "0.15em", color: theme.textMuted }}>
-              <a href="#home" style={{ color: theme.accent }}>Accueil</a>
-              <a href="#about" className="hover:text-[#c9a35a]">À propos</a>
-              <a href="#menu" className="hover:text-[#c9a35a]">Menu</a>
-              <a href="#galerie" className="hover:text-[#c9a35a]">Galerie</a>
-              <a href="#contact" className="hover:text-[#c9a35a]">Contact</a>
+              <button onClick={() => goTo("home")} className={`hover:text-[#c9a35a] ${currentView === "home" ? "text-[#c9a35a]" : ""}`}>Accueil</button>
+              <button onClick={() => goTo("about")} className={`hover:text-[#c9a35a] ${currentView === "about" ? "text-[#c9a35a]" : ""}`}>À propos</button>
+              <button onClick={() => goTo("menu")} className={`hover:text-[#c9a35a] ${currentView === "menu" ? "text-[#c9a35a]" : ""}`}>Menu</button>
             </nav>
-            <a href={wa ?? "#reserver"} target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 border text-xs font-semibold hover:bg-[#c9a35a] hover:text-[#0e0e10] transition rounded-full" style={{ borderColor: theme.accent, color: theme.accent }}>
-              Réserver une table →
-            </a>
+            {restaurant.plan !== "gratuit" && (
+              <button onClick={() => goTo("reserve")} className="hidden md:block px-5 py-2.5 border text-xs font-semibold hover:bg-[#c9a35a] hover:text-[#0e0e10] transition rounded-full" style={{ borderColor: theme.accent, color: theme.accent }}>
+                Réserver une table →
+              </button>
+            )}
+            <button
+              onClick={() => setMobOpen((v) => !v)}
+              className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-white/10 transition-colors"
+              aria-label="Menu"
+            >
+              <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
+              <span className={`block w-6 h-0.5 bg-current transition-opacity ${mobOpen ? "opacity-0" : ""}`} />
+              <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+            </button>
           </div>
         </div>
       </header>
 
-      {/* HERO full-width image */}
-      <section id="home" className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        {cover ? (
-          <StorageImage path={cover} alt={restaurant.name} className="absolute inset-0 w-full h-full object-cover" />
-        ) : (
-          <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 50% 50%, #2a1a0a, #0e0e10 70%)" }} />
-        )}
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(14,14,16,0.4) 0%, rgba(14,14,16,0.85) 100%)" }} />
-        <div className="relative text-center px-5 pt-32 pb-20 max-w-3xl">
-          <h1 className="leading-[1.05]" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(3rem, 7vw, 5.5rem)" }}>
-            La meilleure cuisine<br/>pour <em style={{ color: theme.accent, fontStyle: "italic" }}>votre goût</em>
-          </h1>
-          <p className="mt-5 max-w-xl mx-auto" style={{ color: theme.textMuted }}>
-            {restaurant.description ?? `Une expérience culinaire d'exception au cœur de ${restaurant.city}.`}
-          </p>
-          <a href="#menu" className="mt-8 inline-block px-7 py-3 border font-medium text-sm hover:bg-[#c9a35a] hover:text-[#0e0e10] transition" style={{ borderColor: theme.accent, color: theme.accent }}>
-            Découvrir →
-          </a>
-        </div>
-      </section>
+      {/* HOME VIEW */}
+      {currentView === "home" && (
+        <section id="home" className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+          {cover ? (
+            <StorageImage path={cover} alt={restaurant.name} className="absolute inset-0 w-full h-full object-cover" />
+          ) : null}
 
-      {/* ABOUT split */}
-      <section id="about" className="relative py-24 px-5" style={{ background: theme.surface }}>
-        <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: `url(${BG_MODERNE})`, backgroundSize: "400px" }} />
-        <div className="relative max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-          <div className="relative">
-            {cover ? (
-              <StorageImage path={cover} alt={restaurant.name} className="w-full aspect-square object-cover" />
-            ) : (
-              <div className="w-full aspect-square grid place-items-center text-9xl" style={{ background: theme.surfaceAlt }}>🥗</div>
-            )}
-            <div className="absolute -bottom-6 -right-6 w-32 h-32 hidden lg:block" style={{ background: `radial-gradient(circle, ${theme.accent} 1px, transparent 1px)`, backgroundSize: "10px 10px" }} />
-          </div>
-          <div>
-            <p className="italic mb-3" style={{ color: theme.accent, fontFamily: "'Playfair Display', serif" }}>À propos</p>
-            <h2 className="leading-tight mb-5" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(2rem, 5vw, 3.5rem)" }}>
-              Un voyage exceptionnel des saveurs
-            </h2>
-            <p className="leading-relaxed mb-8" style={{ color: theme.textMuted }}>
-              {restaurant.description ?? "Depuis nos débuts, nous mettons l'accent sur la qualité, l'authenticité et l'art du dressage. Chaque plat est une promesse de découverte."}
+          <div className="relative text-center px-5 pt-32 pb-20 max-w-3xl">
+            <h1 className="leading-[1.05]" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(3rem, 7vw, 5.5rem)" }}>
+              La meilleure cuisine<br/>pour <em style={{ color: theme.accent, fontStyle: "italic" }}>votre goût</em>
+            </h1>
+            <p className="mt-5 max-w-xl mx-auto" style={{ color: theme.textMuted }}>
+              {restaurant.description ?? `Une expérience culinaire d'exception au cœur de ${restaurant.city}.`}
             </p>
-            <div className="grid sm:grid-cols-2 gap-6 mb-6">
-              {[
-                ["🍴", "Spécialiste", "Une équipe formée aux meilleures techniques."],
-                ["🏛️", "Restaurant", "Un cadre élégant pour vos moments précieux."],
-              ].map(([icon, t, d]) => (
-                <div key={t}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xl" style={{ color: theme.accent }}>{icon}</span>
-                    <strong style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.2rem" }}>{t}</strong>
-                  </div>
-                  <p className="text-sm" style={{ color: theme.textMuted }}>{d}</p>
-                </div>
-              ))}
-            </div>
-            <ul className="space-y-2 mb-8">
-              {["Ingrédients sélectionnés avec soin", "Service attentionné et personnalisé", "Carte renouvelée selon les saisons"].map((s) => (
-                <li key={s} className="flex items-center gap-3 text-sm" style={{ color: theme.textMuted }}>
-                  <span style={{ color: theme.accent }}>✓</span>{s}
-                </li>
-              ))}
-            </ul>
-            <a href="#menu" className="inline-block px-7 py-3 border text-sm hover:bg-[#c9a35a] hover:text-[#0e0e10] transition" style={{ borderColor: theme.accent, color: theme.accent }}>
-              En savoir plus →
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* SERVICES (3 framed cards) */}
-      <section className="py-24 px-5" style={{ background: theme.bg }}>
-        <div className="max-w-6xl mx-auto text-center">
-          <p className="italic mb-3" style={{ color: theme.accent, fontFamily: "'Playfair Display', serif" }}>Services</p>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(2rem, 5vw, 3.5rem)" }} className="mb-12">
-            Nos offres spéciales
-          </h2>
-          <div className="grid sm:grid-cols-3 gap-5">
-            {[
-              { icon: "🍟", title: "Produits frais", desc: "Sélectionnés chaque jour, du marché à votre assiette." },
-              { icon: "👨‍🍳", title: "Chefs experts", desc: "Une brigade passionnée, à l'écoute de vos envies." },
-              { icon: "🌿", title: "Cuisine soignée", desc: "Du dressage à la saveur, l'excellence dans chaque détail." },
-            ].map((s, i) => (
-              <article key={s.title} className="relative p-8 transition hover:-translate-y-1" style={{ border: `1px solid ${theme.border}` }}>
-                {i === 1 && <span className="absolute inset-2 pointer-events-none" style={{ border: `1px solid ${theme.accent}` }} />}
-                <div className="text-4xl mb-5" style={{ color: theme.accent }}>{s.icon}</div>
-                <h3 className="text-xl mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>{s.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: theme.textMuted }}>{s.desc}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="menu" className="py-20 px-5" style={{ background: theme.surface, borderTop: `1px solid ${theme.border}` }}>
-        <div className="max-w-6xl mx-auto">
-          <SectionHead kicker="La carte" title="Notre menu" theme={theme} align="center" serif />
-          <MenuGrid menu={menu} theme={theme} />
-        </div>
-      </section>
-
-      {gallery.length > 0 && (
-        <section id="galerie" className="py-20 px-5" style={{ borderTop: `1px solid ${theme.border}` }}>
-          <div className="max-w-6xl mx-auto">
-            <SectionHead kicker="Galerie" title="Notre maison" theme={theme} align="center" serif />
-            <GalleryGrid gallery={gallery} theme={theme} />
+            <button onClick={() => goTo("menu")} className="mt-8 inline-block px-7 py-3 border font-medium text-sm hover:bg-[#c9a35a] hover:text-[#0e0e10] transition" style={{ borderColor: theme.accent, color: theme.accent }}>
+              Découvrir →
+            </button>
           </div>
         </section>
       )}
 
-      {restaurant.plan === "premium" && (
+      {/* ABOUT VIEW */}
+      {currentView === "about" && (
+        <section id="about" className="relative py-24 px-5" style={{ background: theme.surface }}>
+          <div className="relative max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+            <div className="relative">
+              {cover ? (
+                <StorageImage path={cover} alt={restaurant.name} className="w-full aspect-square object-cover" />
+              ) : (
+                <div className="w-full aspect-square grid place-items-center text-9xl" style={{ background: theme.surfaceAlt }}>🥗</div>
+              )}
+              <div className="absolute -bottom-6 -right-6 w-32 h-32 hidden lg:block" style={{ background: `radial-gradient(circle, ${theme.accent} 1px, transparent 1px)`, backgroundSize: "10px 10px" }} />
+            </div>
+            <div>
+              <p className="italic mb-3" style={{ color: theme.accent, fontFamily: "'Playfair Display', serif" }}>À propos</p>
+              <h2 className="leading-tight mb-5" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(2rem, 5vw, 3.5rem)" }}>
+                Un voyage exceptionnel des saveurs
+              </h2>
+              <p className="leading-relaxed mb-8" style={{ color: theme.textMuted }}>
+                {restaurant.description ?? "Depuis nos débuts, nous mettons l'accent sur la qualité, l'authenticité et l'art du dressage. Chaque plat est une promesse de découverte."}
+              </p>
+              <div className="grid sm:grid-cols-2 gap-6 mb-6">
+                {[
+                  ["🍴", "Spécialiste", "Une équipe formée aux meilleures techniques."],
+                  ["🏛️", "Restaurant", "Un cadre élégant pour vos moments précieux."],
+                ].map(([icon, t, d]) => (
+                  <div key={t}>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-xl" style={{ color: theme.accent }}>{icon}</span>
+                      <strong style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.2rem" }}>{t}</strong>
+                    </div>
+                    <p className="text-sm" style={{ color: theme.textMuted }}>{d}</p>
+                  </div>
+                ))}
+              </div>
+              <ul className="space-y-2 mb-8">
+                {["Ingrédients sélectionnés avec soin", "Service attentionné et personnalisé", "Carte renouvelée selon les saisons"].map((s) => (
+                  <li key={s} className="flex items-center gap-3 text-sm" style={{ color: theme.textMuted }}>
+                    <span style={{ color: theme.accent }}>✓</span>{s}
+                  </li>
+                ))}
+              </ul>
+              <button onClick={() => goTo("menu")} className="inline-block px-7 py-3 border text-sm hover:bg-[#c9a35a] hover:text-[#0e0e10] transition" style={{ borderColor: theme.accent, color: theme.accent }}>
+                En savoir plus →
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* MENU VIEW */}
+      {currentView === "menu" && (
+        <section id="menu" className="py-20 px-5" style={{ background: theme.surface, borderTop: `1px solid ${theme.border}` }}>
+          <div className="max-w-6xl mx-auto">
+            <SectionHead kicker="La carte" title="Notre menu" theme={theme} align="center" serif />
+            <MenuGrid menu={menu} theme={theme} />
+          </div>
+        </section>
+      )}
+
+      {/* RESERVATION VIEW */}
+      {currentView === "reserve" && restaurant.plan !== "gratuit" && (
         <section id="reserver" className="py-20 px-5" style={{ background: theme.surface, borderTop: `1px solid ${theme.border}` }}>
           <div className="max-w-3xl mx-auto">
             <SectionHead kicker="Réservation" title="Réservez votre table" theme={theme} align="center" serif />
-            <ReservationForm restaurantId={restaurant.id} theme={theme} />
+            <AdvancedReservationForm restaurantId={restaurant.id} restaurantName={restaurant.name} theme={theme} waLink={wa} />
           </div>
         </section>
       )}
 
-      <section className="py-20 px-5" style={{ borderTop: `1px solid ${theme.border}` }}>
-        <div className="max-w-6xl mx-auto">
-          <SectionHead kicker="Avis" title="Ils nous recommandent" theme={theme} align="center" serif />
-          <ReviewList reviews={reviews} theme={theme} />
-          <div className="mt-12 max-w-xl mx-auto">
-            <ReviewForm restaurantId={restaurant.id} theme={theme} />
-          </div>
-        </div>
-      </section>
+      {/* GALERIE & AVIS - Intégrés dans l'accueil */}
+      {currentView === "home" && (
+        <>
+          {gallery.length > 0 && (
+            <section id="galerie" className="py-20 px-5" style={{ borderTop: `1px solid ${theme.border}` }}>
+              <div className="max-w-6xl mx-auto">
+                <SectionHead kicker="Galerie" title="Notre maison" theme={theme} align="center" serif />
+                <GalleryGrid gallery={gallery} theme={theme} />
+              </div>
+            </section>
+          )}
+
+          <section className="py-20 px-5" style={{ borderTop: `1px solid ${theme.border}` }}>
+            <div className="max-w-6xl mx-auto">
+              <SectionHead kicker="Avis" title="Ils nous recommandent" theme={theme} align="center" serif />
+              <ReviewList reviews={reviews} theme={theme} />
+              <div className="mt-12 max-w-xl mx-auto">
+                <ReviewForm restaurantId={restaurant.id} theme={theme} />
+              </div>
+            </div>
+          </section>
+        </>
+      )}
 
       <PoweredFooter restaurant={restaurant} wa={wa} theme={theme} />
       <FloatingWhatsApp href={wa} accent={theme.accent} ink={theme.accentInk} />
@@ -1220,7 +1492,13 @@ function ClassiqueGratuit({ restaurant, menu, reviews: initialReviews, gallery }
       <style>{CL_CSS}</style>
 
       <nav className="cl-nav">
-        <button className="cl-brand" onClick={() => go("home")}>{restaurant.name}</button>
+        <button className="cl-brand" onClick={() => go("home")}>
+          {restaurant.logo_url ? (
+            <img src={restaurant.logo_url} alt={restaurant.name} style={{ maxHeight: "32px", objectFit: "contain" }} />
+          ) : (
+            restaurant.name
+          )}
+        </button>
         <div className="cl-nav-links">
           {navLinks.map((l) => (
             <button
@@ -1255,7 +1533,7 @@ function ClassiqueGratuit({ restaurant, menu, reviews: initialReviews, gallery }
           <OrderView restaurant={restaurant} menu={available} waLink={waLink} prefill={prefill} clearPrefill={() => setPrefill(null)} />
         )}
         {active === "reserve" && (
-          <ReserveView restaurant={restaurant} waLink={waLink} />
+          <ReservationForm restaurantId={restaurant.id} theme={{ bg: "#ffffff", surface: "#f8f8f8", surfaceAlt: "#f0f0f0", text: "#111111", textMuted: "#666666", accent: "#111111", accentInk: "#ffffff", border: "#e0e0e0", radius: "10px" }} />
         )}
         {active === "reviews" && (
           <ReviewsView restaurant={restaurant} reviews={reviews} onAdded={(r) => setReviews((prev) => [r, ...prev])} />
@@ -1298,7 +1576,7 @@ function HomeView({ restaurant, menu, reviews, ratingAvg, waLink, onGo }: {
   const preview = menu.slice(0, 4);
   const revPreview = reviews.slice(0, 3);
   return (
-    <>
+    <div>
       <div className="cl-hero">
         <div className="cl-hero-inner">
           <div>
@@ -1416,7 +1694,7 @@ function HomeView({ restaurant, menu, reviews, ratingAvg, waLink, onGo }: {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }
 
@@ -1874,7 +2152,7 @@ const CL_CSS = `
 .cl-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800;}
 .cl-badge-green{background:rgba(45,106,79,0.12);color:var(--cl-green);}
 .cl-hero{position:relative;color:#fff;padding:80px 0 0;overflow:hidden;background:#1a0a0a;}
-.cl-hero::before{content:"";position:absolute;inset:0;background-image:url('/__l5e/assets-v1/79c2d287-d3ad-4770-9b39-d35a1b4b4ccb/hero-jollof.png');background-size:cover;background-position:center;opacity:0.55;z-index:0;}
+.cl-hero::before{content:"";position:absolute;inset:0;background-image:url("/hero-jollof.png");background-size:cover;background-position:center;opacity:0.55;z-index:0;}
 .cl-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,8,8,0.55) 0%,rgba(20,8,8,0.9) 100%);z-index:0;}
 .cl-hero-inner{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
 .cl-eyebrow{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--cl-accent);margin-bottom:14px;}
@@ -1882,7 +2160,7 @@ const CL_CSS = `
 .cl-hero-title em{color:var(--cl-accent);font-style:normal;}
 .cl-hero-sub{font-size:15px;opacity:0.92;line-height:1.7;margin-bottom:28px;text-shadow:0 1px 10px rgba(0,0,0,0.5);}
 .cl-hero-btns{display:flex;gap:12px;flex-wrap:wrap;}
-.cl-hero-img{background-image:url('/__l5e/assets-v1/79c2d287-d3ad-4770-9b39-d35a1b4b4ccb/hero-jollof.png');background-size:contain;background-repeat:no-repeat;background-position:center;border-radius:12px;height:380px;}
+.cl-hero-img{background-image:url("/hero-jollof.png");background-size:contain;background-repeat:no-repeat;background-position:center;border-radius:12px;height:380px;}
 .cl-hero-stats{position:relative;z-index:1;display:flex;gap:0;background:rgba(0,0,0,0.55);margin-top:48px;backdrop-filter:blur(6px);}
 .cl-hero-stat{flex:1;text-align:center;padding:20px 12px;border-right:1px solid rgba(255,255,255,0.1);}
 .cl-hero-stat:last-child{border-right:none;}
@@ -1933,7 +2211,7 @@ const CL_CSS = `
 .cl-dish-body{padding:14px 16px;}
 .cl-dish-cat{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--cl-green);margin-bottom:3px;}
 .cl-dish-name{font-size:15px;font-weight:800;margin-bottom:4px;color:var(--cl-text);}
-.cl-dish-desc{font-size:12px;color:var(--cl-muted);line-height:1.5;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.cl-dish-desc{font-size:12px;color:var(--cl-muted);line-height:1.5;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-line-orient:vertical;overflow:hidden;}
 .cl-dish-foot{display:flex;align-items:center;justify-content:space-between;}
 .cl-dish-price{font-size:16px;font-weight:900;color:var(--cl-green);}
 .cl-empty{text-align:center;padding:56px;color:var(--cl-muted);}

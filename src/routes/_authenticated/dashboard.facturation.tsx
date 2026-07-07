@@ -5,12 +5,14 @@ import { useMyRestaurant } from "@/hooks/use-my-restaurant";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { getTemplateForPlan, getReceiptTemplate, defaultColors } from "@/lib/invoice-templates";
+import { InvoiceCustomizer } from "@/components/InvoiceCustomizer";
 
 export const Route = createFileRoute("/_authenticated/dashboard/facturation")({
   component: BillingPage,
 });
 
-type Line = { description: string; quantity: number; unit_price: number };
+type Line = { description: string; quantity: number; unit_price: number; discount?: number };
 type Invoice = {
   id: string;
   invoice_number: string;
@@ -25,6 +27,9 @@ type Invoice = {
   issued_at: string;
   due_at: string | null;
   notes: string | null;
+  payment_method: string | null;
+  table_number: string | null;
+  waiter: string | null;
 };
 
 function BillingPage() {
@@ -34,6 +39,7 @@ function BillingPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [customizingColors, setCustomizingColors] = useState(false);
 
   const load = async () => {
     if (!r) return;
@@ -68,9 +74,14 @@ function BillingPage() {
           <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Facturation</p>
           <h1 className="text-3xl font-black">Factures</h1>
         </div>
-        <button onClick={() => setCreating(true)} className="px-5 py-2.5 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold">
-          + Nouvelle facture
-        </button>
+        <div className="flex gap-2">
+          <button onClick={() => setCustomizingColors(true)} className="px-5 py-2.5 rounded-xl border border-gold/40 text-gold font-bold hover:bg-gold/10 transition-colors">
+            🎨 Personnaliser
+          </button>
+          <button onClick={() => setCreating(true)} className="px-5 py-2.5 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold">
+            + Nouvelle facture
+          </button>
+        </div>
       </div>
 
       {loading ? <p className="text-muted-foreground">Chargement...</p> : (
@@ -105,12 +116,31 @@ function BillingPage() {
                       }} />
                     </td>
                     <td className="p-4 text-right">
-                      <button onClick={() => downloadPdf(inv, r!)} className="px-3 py-1.5 rounded-lg border border-gold/40 text-gold text-xs font-bold hover:bg-gold/10">PDF</button>
-                      <button onClick={async () => {
-                        if (!confirm("Supprimer cette facture ?")) return;
-                        await supabase.from("invoices").delete().eq("id", inv.id);
-                        load();
-                      }} className="ml-2 px-3 py-1.5 rounded-lg border border-white/10 text-xs hover:border-destructive hover:text-destructive">×</button>
+                      <button 
+                        onClick={() => downloadPdf(inv, r!)} 
+                        className="px-3 py-1.5 rounded-lg border border-gold/40 text-gold text-xs font-bold hover:bg-gold/10 transition-all"
+                        title="Télécharger PDF"
+                      >
+                        PDF
+                      </button>
+                      <button 
+                        onClick={() => downloadReceipt(inv, r!)} 
+                        className="ml-2 px-3 py-1.5 rounded-lg border border-white/10 text-xs font-bold hover:border-gold/40 hover:text-gold transition-all"
+                        title="Télécharger Reçu"
+                      >
+                        Reçu
+                      </button>
+                      <button 
+                        onClick={async () => {
+                          if (!confirm("Supprimer cette facture ?")) return;
+                          await supabase.from("invoices").delete().eq("id", inv.id);
+                          load();
+                        }} 
+                        className="ml-2 px-3 py-1.5 rounded-lg border border-white/10 text-xs hover:border-destructive hover:text-destructive transition-all"
+                        title="Supprimer"
+                      >
+                        ×
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -122,6 +152,14 @@ function BillingPage() {
 
       {creating && r && (
         <InvoiceModal restaurantId={r.id} prefix={(r as any).invoice_prefix ?? "FACT"} onClose={() => setCreating(false)} onSaved={() => { setCreating(false); load(); }} />
+      )}
+
+      {customizingColors && r && (
+        <InvoiceCustomizer 
+          restaurantId={r.id} 
+          onClose={() => setCustomizingColors(false)} 
+          onSaved={() => { setCustomizingColors(false); }} 
+        />
       )}
     </div>
   );
@@ -143,27 +181,33 @@ function StatusBadge({ status, onChange }: { status: string; onChange: (s: strin
 }
 
 function InvoiceModal({ restaurantId, prefix, onClose, onSaved }: { restaurantId: string; prefix: string; onClose: () => void; onSaved: () => void }) {
-  const [customer, setCustomer] = useState({ name: "", email: "", phone: "" });
-  const [lines, setLines] = useState<Line[]>([{ description: "", quantity: 1, unit_price: 0 }]);
-  const [taxRate, setTaxRate] = useState(0);
+  const [customerName, setCustomerName] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [customerAddress, setCustomerAddress] = useState("");
+  const [taxRate, setTaxRate] = useState(18);
   const [dueDate, setDueDate] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("Espèces");
+  const [tableNumber, setTableNumber] = useState("");
+  const [waiter, setWaiter] = useState("");
   const [notes, setNotes] = useState("");
+  const [lines, setLines] = useState<Line[]>([{ description: "", quantity: 1, unit_price: 0, discount: 0 }]);
   const [saving, setSaving] = useState(false);
 
   const subtotal = lines.reduce((s, l) => s + l.quantity * l.unit_price, 0);
   const total = subtotal * (1 + taxRate / 100);
 
   const submit = async () => {
-    if (!customer.name) return toast.error("Nom du client requis");
+    if (!customerName) return toast.error("Nom du client requis");
     if (lines.some((l) => !l.description)) return toast.error("Toutes les lignes doivent être décrites");
     setSaving(true);
     const number = `${prefix}-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`;
     const { error } = await supabase.from("invoices").insert({
       restaurant_id: restaurantId,
       invoice_number: number,
-      customer_name: customer.name,
-      customer_email: customer.email || null,
-      customer_phone: customer.phone || null,
+      customer_name: customerName,
+      customer_email: customerEmail || null,
+      customer_phone: customerPhone || null,
       items: lines as any,
       subtotal,
       tax_rate: taxRate,
@@ -171,6 +215,9 @@ function InvoiceModal({ restaurantId, prefix, onClose, onSaved }: { restaurantId
       status: "unpaid",
       due_at: dueDate || null,
       notes: notes || null,
+      payment_method: paymentMethod || null,
+      table_number: tableNumber || null,
+      waiter: waiter || null,
     });
     setSaving(false);
     if (error) return toast.error(error.message);
@@ -185,12 +232,46 @@ function InvoiceModal({ restaurantId, prefix, onClose, onSaved }: { restaurantId
           <h3 className="text-xl font-black">Nouvelle facture</h3>
           <button onClick={onClose} className="text-2xl text-muted-foreground hover:text-foreground">×</button>
         </div>
+        
         <div className="p-6 space-y-5">
           <div className="grid sm:grid-cols-2 gap-3">
-            <input placeholder="Nom du client *" value={customer.name} onChange={(e) => setCustomer({ ...customer, name: e.target.value })} className="px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm" />
-            <input placeholder="Email" value={customer.email} onChange={(e) => setCustomer({ ...customer, email: e.target.value })} className="px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm" />
-            <input placeholder="Téléphone" value={customer.phone} onChange={(e) => setCustomer({ ...customer, phone: e.target.value })} className="px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm" />
-            <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className="px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm" />
+            <div className="flex flex-col gap-1">
+              <span className="text-xs uppercase tracking-wider text-muted-foreground">Client</span>
+              <input value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="Nom + prénom" className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs uppercase tracking-wider text-muted-foreground">Téléphone</span>
+              <input value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} placeholder="+226..." className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs uppercase tracking-wider text-muted-foreground">Email</span>
+              <input value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} placeholder="client@email.com" className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs uppercase tracking-wider text-muted-foreground">Adresse</span>
+              <input value={customerAddress} onChange={(e) => setCustomerAddress(e.target.value)} placeholder="Adresse du client" className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm" />
+            </div>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-3">
+            <div className="flex flex-col gap-1">
+              <span className="text-xs uppercase tracking-wider text-muted-foreground">N° Table</span>
+              <input value={tableNumber} onChange={(e) => setTableNumber(e.target.value)} placeholder="ex: 12" className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs uppercase tracking-wider text-muted-foreground">Serveur / Serveuse</span>
+              <input value={waiter} onChange={(e) => setWaiter(e.target.value)} placeholder="Nom" className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs uppercase tracking-wider text-muted-foreground">Mode de paiement</span>
+              <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm">
+                <option value="">--</option>
+                <option>Espèces</option>
+                <option>Mobile Money</option>
+                <option>Carte bancaire</option>
+                <option>Virement</option>
+              </select>
+            </div>
           </div>
 
           <div>
@@ -211,10 +292,10 @@ function InvoiceModal({ restaurantId, prefix, onClose, onSaved }: { restaurantId
           </div>
 
           <div className="grid sm:grid-cols-2 gap-3">
-            <label className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1">
               <span className="text-xs uppercase tracking-wider text-muted-foreground">TVA %</span>
               <input type="number" value={taxRate} onChange={(e) => setTaxRate(+e.target.value)} className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm" />
-            </label>
+            </div>
             <div className="flex flex-col gap-1">
               <span className="text-xs uppercase tracking-wider text-muted-foreground">Total</span>
               <strong className="text-2xl text-gold">{total.toLocaleString("fr-FR")} F</strong>
@@ -236,49 +317,121 @@ function InvoiceModal({ restaurantId, prefix, onClose, onSaved }: { restaurantId
 }
 
 function downloadPdf(inv: Invoice, r: any) {
-  const doc = new jsPDF();
-  doc.setFontSize(22);
-  doc.text(r.name ?? "Restaurant", 14, 22);
-  doc.setFontSize(10);
-  doc.setTextColor(100);
-  if (r.address) doc.text(r.address, 14, 30);
-  if (r.phone) doc.text(`Tél: ${r.phone}`, 14, 36);
-  doc.setFontSize(16);
-  doc.setTextColor(0);
-  doc.text(`FACTURE ${inv.invoice_number}`, 200, 22, { align: "right" });
-  doc.setFontSize(10);
-  doc.setTextColor(100);
-  doc.text(`Date: ${new Date(inv.issued_at).toLocaleDateString("fr-FR")}`, 200, 30, { align: "right" });
-  if (inv.due_at) doc.text(`Échéance: ${new Date(inv.due_at).toLocaleDateString("fr-FR")}`, 200, 36, { align: "right" });
+  try {
+    console.log("Downloading PDF for invoice:", inv.invoice_number);
+    
+    if (!r) {
+      toast.error("Restaurant non trouvé");
+      return;
+    }
 
-  doc.setTextColor(0);
-  doc.setFontSize(11);
-  doc.text("Facturé à:", 14, 52);
-  doc.setFontSize(12);
-  doc.text(inv.customer_name, 14, 58);
-  if (inv.customer_email) { doc.setFontSize(9); doc.setTextColor(100); doc.text(inv.customer_email, 14, 64); }
+    const template = getTemplateForPlan(r.plan);
+    const colors = defaultColors[r.plan] || defaultColors.standard;
+    
+    const data = {
+      invoiceNumber: inv.invoice_number,
+      issuedAt: inv.issued_at,
+      dueAt: inv.due_at || undefined,
+      restaurant: {
+        name: r.name || "Restaurant",
+        address: r.address || undefined,
+        phone: r.phone || undefined,
+        email: r.email || undefined,
+        logoUrl: r.logo_url || undefined,
+      },
+      customer: {
+        name: inv.customer_name,
+        email: inv.customer_email || undefined,
+        phone: inv.customer_phone || undefined,
+      },
+      items: inv.items.map((item) => ({
+        description: item.description,
+        quantity: item.quantity,
+        unitPrice: item.unit_price,
+        discount: item.discount || 0,
+      })),
+      subtotal: inv.subtotal,
+      taxRate: inv.tax_rate,
+      taxAmount: inv.total - inv.subtotal,
+      total: inv.total,
+      notes: inv.notes || undefined,
+      paymentMethod: inv.payment_method || undefined,
+      tableNumber: inv.table_number || undefined,
+      waiter: inv.waiter || undefined,
+    };
 
-  autoTable(doc, {
-    startY: 75,
-    head: [["Description", "Qté", "PU", "Total"]],
-    body: inv.items.map((l) => [l.description, l.quantity, l.unit_price.toLocaleString("fr-FR"), (l.quantity * l.unit_price).toLocaleString("fr-FR")]),
-    foot: [
-      ["", "", "Sous-total", `${inv.subtotal.toLocaleString("fr-FR")} F`],
-      ...(inv.tax_rate ? [["", "", `TVA ${inv.tax_rate}%`, `${(inv.total - inv.subtotal).toLocaleString("fr-FR")} F`]] : []),
-      ["", "", "TOTAL", `${inv.total.toLocaleString("fr-FR")} F`],
-    ],
-    theme: "striped",
-    headStyles: { fillColor: [201, 161, 74] },
-    footStyles: { fillColor: [240, 240, 240], textColor: 0, fontStyle: "bold" },
-  });
-
-  if (inv.notes || r.invoice_footer) {
-    const y = (doc as any).lastAutoTable.finalY + 15;
-    doc.setFontSize(9);
-    doc.setTextColor(100);
-    if (inv.notes) doc.text(`Notes: ${inv.notes}`, 14, y);
-    if (r.invoice_footer) doc.text(r.invoice_footer, 14, y + 8);
+    const doc = new jsPDF();
+    const result = template.render(data, colors, r.logo_url);
+    
+    if (result.pdf) {
+      result.pdf(doc);
+    }
+    
+    doc.save(`facture-${inv.invoice_number}.pdf`);
+    toast.success("PDF téléchargé avec succès");
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Erreur inconnue";
+    console.error("Error downloading PDF:", error);
+    toast.error(`Erreur: ${errorMessage}`);
   }
+}
 
-  doc.save(`facture-${inv.invoice_number}.pdf`);
+function downloadReceipt(inv: Invoice, r: any) {
+  try {
+    console.log("Downloading receipt for invoice:", inv.invoice_number);
+    
+    if (!r) {
+      toast.error("Restaurant non trouvé");
+      return;
+    }
+
+    const template = getReceiptTemplate();
+    const colors = defaultColors[r.plan] || defaultColors.standard;
+    
+    const data = {
+      invoiceNumber: inv.invoice_number,
+      issuedAt: inv.issued_at,
+      dueAt: inv.due_at || undefined,
+      restaurant: {
+        name: r.name || "Restaurant",
+        address: r.address || undefined,
+        phone: r.phone || undefined,
+        email: r.email || undefined,
+        logoUrl: r.logo_url || undefined,
+      },
+      customer: {
+        name: inv.customer_name,
+        email: inv.customer_email || undefined,
+        phone: inv.customer_phone || undefined,
+      },
+      items: inv.items.map((item) => ({
+        description: item.description,
+        quantity: item.quantity,
+        unitPrice: item.unit_price,
+        discount: item.discount || 0,
+      })),
+      subtotal: inv.subtotal,
+      taxRate: inv.tax_rate,
+      taxAmount: inv.total - inv.subtotal,
+      total: inv.total,
+      notes: inv.notes || undefined,
+      paymentMethod: inv.payment_method || undefined,
+      tableNumber: inv.table_number || undefined,
+      waiter: inv.waiter || undefined,
+    };
+
+    const doc = new jsPDF();
+    const result = template.render(data, colors, r.logo_url);
+    
+    if (result.pdf) {
+      result.pdf(doc);
+    }
+    
+    doc.save(`recu-${inv.invoice_number}.pdf`);
+    toast.success("Reçu téléchargé avec succès");
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Erreur inconnue";
+    console.error("Error downloading receipt:", error);
+    toast.error(`Erreur: ${errorMessage}`);
+  }
 }

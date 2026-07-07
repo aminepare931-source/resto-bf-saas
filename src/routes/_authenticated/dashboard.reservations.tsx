@@ -60,9 +60,7 @@ function ReservationsPage() {
       <div className="mb-6">
         <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Réservations</p>
         <h1 className="text-3xl font-black">{list.length} réservation{list.length > 1 ? "s" : ""}</h1>
-        {restaurant?.plan === "gratuit" && (
-          <p className="mt-2 text-sm text-amber-400">Les réservations en ligne nécessitent un forfait Standard ou Premium.</p>
-        )}
+        
       </div>
 
       {list.length === 0 ? (

@@ -13,7 +13,11 @@ export function StorageImage({ path, alt, className, fallback }: Props) {
 
   useEffect(() => {
     let cancel = false;
-    signedUrl(path ?? null).then((u) => {
+    if (!path || path.trim() === "") {
+      setUrl(null);
+      return;
+    }
+    signedUrl(path).then((u) => {
       if (!cancel) setUrl(u);
     });
     return () => {

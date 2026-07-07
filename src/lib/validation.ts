@@ -16,7 +16,7 @@ export const signupSchema = z
       .max(72)
       .regex(/[A-Za-z]/, "Doit contenir une lettre")
       .regex(/[0-9]/, "Doit contenir un chiffre"),
-    confirm: z.string(),
+    confirm: z.string().min(8, "Mot de passe : 8 caractères minimum"),
     accept: z.literal(true, { errorMap: () => ({ message: "Acceptez les conditions" }) }),
   })
   .refine((d) => d.password === d.confirm, {

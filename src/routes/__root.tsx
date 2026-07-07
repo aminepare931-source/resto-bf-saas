@@ -13,6 +13,9 @@ import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
+import { registerSW } from "@/lib/pwa";
+import { OfflineBanner } from "@/components/OfflineBanner";
+import { ThemeProviderWrapper } from "@/hooks/use-theme";
 
 function NotFoundComponent() {
   return (
@@ -90,8 +93,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "manifest", href: "/manifest.webmanifest" },
-      { rel: "icon", type: "image/png", href: "/__l5e/assets-v1/7ed5f573-4a43-4515-ad78-6a59b5ff4083/restobf-logo.png" },
-      { rel: "apple-touch-icon", href: "/__l5e/assets-v1/7ed5f573-4a43-4515-ad78-6a59b5ff4083/restobf-logo.png" },
+      { rel: "icon", type: "image/png", href: "/restobf-logo.png" },
+      { rel: "apple-touch-icon", href: "/restobf-logo.png" },
     ],
   }),
   shellComponent: RootShell,
@@ -102,7 +105,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="fr" className="dark">
+    <html lang="fr">
       <head>
         <HeadContent />
       </head>
@@ -119,6 +122,9 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
+    // Enregistrer le Service Worker PWA
+    registerSW();
+
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
@@ -129,8 +135,11 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
-      <Toaster position="top-right" theme="dark" richColors closeButton />
+      <ThemeProviderWrapper>
+        <Outlet />
+        <OfflineBanner />
+        <Toaster position="top-right" theme="dark" richColors closeButton />
+      </ThemeProviderWrapper>
     </QueryClientProvider>
   );
 }

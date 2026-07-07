@@ -33,20 +33,30 @@ function PublicRestaurantPage() {
     (async () => {
       const { data: rRaw } = await supabase
         .from("public_restaurants" as never)
-        .select("id, name, city, cuisine, description, address, hours, phone, whatsapp, template")
+        .select("id, name, city, cuisine, description, address, hours, phone, whatsapp, logo_url, template, subscription_status")
         .eq("slug", slug)
         .maybeSingle();
 
       const r = rRaw as null | {
         id: string; name: string; city: string; cuisine: string | null;
         description: string | null; address: string | null; hours: string | null;
-        phone: string; whatsapp: string | null; template: string | null;
+        phone: string; whatsapp: string | null; logo_url: string | null;
+        template: string | null;
+        subscription_status: string | null;
       };
       if (!r) {
         setMissing(true);
         setLoading(false);
         return;
       }
+
+      // Vérifier si l'abonnement est expiré
+      if (r.subscription_status === "expired") {
+        setMissing(true);
+        setLoading(false);
+        return;
+      }
+
       // The public view omits owner email/plan; fill with safe defaults for the renderer.
       setRestaurant({ ...r, email: "", plan: "standard" });
 

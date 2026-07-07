@@ -2,66 +2,42 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyRestaurant } from "@/hooks/use-my-restaurant";
+import { useDebounce } from "@/hooks/use-debounce";
 import { toast } from "sonner";
+import { Search, Filter, Clock, ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
+import { OrderCardSkeleton } from "@/components/ui/skeleton";
+import type { Order, OrderStatus } from "@/types";
+import { ORDER_STATUS_LABEL, ORDER_STATUS_COLOR, ORDER_NEXT_STATUS, formatCurrency, formatDate } from "@/types";
 
 export const Route = createFileRoute("/_authenticated/dashboard/commandes")({
   component: OrdersPage,
 });
 
-type OrderItem = { name: string; price: number; qty: number };
-type Order = {
-  id: string;
-  restaurant_id: string;
-  table_number: string | null;
-  customer_name: string | null;
-  customer_phone: string | null;
-  items: OrderItem[];
-  total: number;
-  status: "new" | "in_kitchen" | "ready" | "served" | "paid" | "cancelled";
-  source: string;
-  notes: string | null;
-  created_at: string;
-  whatsapp_sent_at: string | null;
-};
-
-const STATUS_LABEL: Record<Order["status"], string> = {
-  new: "Nouveau",
-  in_kitchen: "En cuisine",
-  ready: "Prêt",
-  served: "Servi",
-  paid: "Payé",
-  cancelled: "Annulé",
-};
-const STATUS_COLOR: Record<Order["status"], string> = {
-  new: "bg-amber-500/15 text-amber-300 border-amber-500/30",
-  in_kitchen: "bg-blue-500/15 text-blue-300 border-blue-500/30",
-  ready: "bg-green-500/15 text-green-300 border-green-500/30",
-  served: "bg-purple-500/15 text-purple-300 border-purple-500/30",
-  paid: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-  cancelled: "bg-red-500/15 text-red-300 border-red-500/30",
-};
-const NEXT_STATUS: Record<Order["status"], Order["status"] | null> = {
-  new: "in_kitchen",
-  in_kitchen: "ready",
-  ready: "served",
-  served: "paid",
-  paid: null,
-  cancelled: null,
-};
-
-function fmt(n: number) {
-  return new Intl.NumberFormat("fr-FR").format(n) + " F";
-}
+type SortField = "date" | "total" | "status";
+type SortDir = "asc" | "desc";
 
 function OrdersPage() {
   const { restaurant: r } = useMyRestaurant();
   const [orders, setOrders] = useState<Order[]>([]);
-  const [filter, setFilter] = useState<Order["status"] | "all">("all");
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<OrderStatus | "all">("all");
+  const [search, setSearch] = useState("");
+  const [dateFilter, setDateFilter] = useState<"all" | "today" | "week">("all");
+  const [sortField, setSortField] = useState<SortField>("date");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const PER_PAGE = 20;
   const lastSeenCount = useRef(0);
+
+  // Debounce la recherche
+  const debouncedSearch = useDebounce(search, 300);
 
   useEffect(() => {
     if (!r) return;
     let cancelled = false;
+    setLoading(true);
+
     (async () => {
       const { data } = await supabase
         .from("orders" as never)
@@ -69,10 +45,12 @@ function OrdersPage() {
         .eq("restaurant_id", r.id)
         .order("created_at", { ascending: false })
         .limit(200);
+
       if (!cancelled && data) {
         setOrders(data as unknown as Order[]);
         lastSeenCount.current = data.length;
       }
+      if (!cancelled) setLoading(false);
     })();
 
     const channel = supabase
@@ -103,37 +81,78 @@ function OrdersPage() {
     };
   }, [r]);
 
-  const setStatus = async (o: Order, status: Order["status"]) => {
+  const setStatus = async (o: Order, status: OrderStatus) => {
     const { error } = await supabase
       .from("orders" as never)
       .update({ status } as never)
       .eq("id", o.id);
     if (error) toast.error(error.message);
+    else toast.success(`Commande #${o.id.slice(0, 8)} → ${ORDER_STATUS_LABEL[status]}`);
   };
 
-  const sendToWhatsApp = (o: Order) => {
-    if (!r?.whatsapp) {
-      toast.error("Configurez votre numéro WhatsApp dans Paramètres.");
-      return;
+  // Filtrage et tri
+  const filtered = useMemo(() => {
+    let result = orders;
+
+    // Filtre statut
+    if (filter !== "all") {
+      result = result.filter((o) => o.status === filter);
     }
-    const lines = o.items.map((it) => `• ${it.qty}× ${it.name} — ${fmt(it.price * it.qty)}`).join("\n");
-    const msg = encodeURIComponent(
-      `🛎️ Nouvelle commande${o.table_number ? ` — Table ${o.table_number}` : ""}\n\n${lines}\n\nTotal : ${fmt(o.total)}${o.notes ? `\n\nNotes : ${o.notes}` : ""}${o.customer_phone ? `\n\nClient : ${o.customer_name ?? ""} ${o.customer_phone}` : ""}`,
-    );
-    window.open(`https://wa.me/${r.whatsapp.replace(/\D/g, "")}?text=${msg}`, "_blank");
-    void supabase.from("orders" as never).update({ whatsapp_sent_at: new Date().toISOString() } as never).eq("id", o.id);
-  };
 
-  const filtered = useMemo(
-    () => (filter === "all" ? orders : orders.filter((o) => o.status === filter)),
-    [orders, filter],
-  );
+    // Filtre date
+    if (dateFilter === "today") {
+      const today = new Date().toDateString();
+      result = result.filter((o) => new Date(o.created_at).toDateString() === today);
+    } else if (dateFilter === "week") {
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      result = result.filter((o) => new Date(o.created_at) >= weekAgo);
+    }
+
+    // Recherche (debounced)
+    if (debouncedSearch.trim()) {
+      const q = debouncedSearch.toLowerCase();
+      result = result.filter(
+        (o) =>
+          o.table_number?.toLowerCase().includes(q) ||
+          o.customer_name?.toLowerCase().includes(q) ||
+          o.customer_phone?.toLowerCase().includes(q) ||
+          o.items.some((item) => item.name.toLowerCase().includes(q)) ||
+          o.notes?.toLowerCase().includes(q) ||
+          o.id.toLowerCase().includes(q),
+      );
+    }
+
+    // Tri
+    result.sort((a, b) => {
+      let cmp = 0;
+      if (sortField === "date") cmp = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      else if (sortField === "total") cmp = a.total - b.total;
+      else if (sortField === "status") cmp = a.status.localeCompare(b.status);
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+
+    return result;
+  }, [orders, filter, debouncedSearch, dateFilter, sortField, sortDir]);
+
+  // Pagination
+  const totalPages = Math.ceil(filtered.length / PER_PAGE);
+  const paginatedOrders = filtered.slice(0, page * PER_PAGE);
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: orders.length };
-    for (const s of Object.keys(STATUS_LABEL)) c[s] = orders.filter((o) => o.status === s).length;
+    for (const s of Object.keys(ORDER_STATUS_LABEL)) c[s] = orders.filter((o) => o.status === s).length;
     return c;
   }, [orders]);
+
+  const toggleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortDir("desc");
+    }
+  };
 
   if (!r) return <p className="text-muted-foreground">Chargement...</p>;
 
@@ -147,95 +166,213 @@ function OrdersPage() {
         </p>
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-5">
-        {(["all", ...Object.keys(STATUS_LABEL)] as Array<Order["status"] | "all">).map((s) => (
+      {/* Barre de recherche */}
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+          placeholder="Rechercher par table, client, plat, notes..."
+          className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm outline-none focus:border-gold/50 transition-colors"
+        />
+        {search && (
           <button
-            key={s}
-            onClick={() => setFilter(s)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
-              filter === s ? "bg-gold/20 border-gold/40 text-gold" : "border-white/10 text-muted-foreground hover:text-foreground"
-            }`}
+            onClick={() => setSearch("")}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground text-xs"
           >
-            {s === "all" ? "Toutes" : STATUS_LABEL[s as Order["status"]]} · {counts[s] ?? 0}
+            ✕
           </button>
-        ))}
-      </div>
-
-      <div className="space-y-3">
-        {filtered.length === 0 && (
-          <div className="p-10 text-center rounded-2xl border border-dashed border-white/10 text-muted-foreground">
-            Aucune commande pour le moment.
-          </div>
         )}
-        {filtered.map((o) => {
-          const next = NEXT_STATUS[o.status];
-          return (
-            <article key={o.id} className="p-5 rounded-2xl border border-white/8 bg-dark-card">
-              <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
-                <div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <strong className="text-base">
-                      {o.table_number ? `🪑 Table ${o.table_number}` : "🛍️ À emporter"}
-                    </strong>
-                    <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider border ${STATUS_COLOR[o.status]}`}>
-                      {STATUS_LABEL[o.status]}
-                    </span>
-                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                      {o.source}
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {new Date(o.created_at).toLocaleString("fr-FR")}
-                    {o.customer_name && ` · ${o.customer_name}`}
-                    {o.customer_phone && ` · ${o.customer_phone}`}
-                  </p>
-                </div>
-                <strong className="text-xl text-gold">{fmt(Number(o.total))}</strong>
-              </div>
-
-              <ul className="text-sm space-y-1 mb-3">
-                {o.items.map((it, i) => (
-                  <li key={i} className="flex justify-between">
-                    <span>{it.qty}× {it.name}</span>
-                    <span className="text-muted-foreground">{fmt(it.price * it.qty)}</span>
-                  </li>
-                ))}
-              </ul>
-
-              {o.notes && (
-                <p className="text-xs italic text-muted-foreground p-3 rounded-lg bg-white/[0.02] border border-white/5 mb-3">
-                  📝 {o.notes}
-                </p>
-              )}
-
-              <div className="flex flex-wrap gap-2">
-                {next && (
-                  <button
-                    onClick={() => setStatus(o, next)}
-                    className="px-4 py-2 rounded-lg bg-gradient-gold text-[#0a0a0f] font-bold text-xs"
-                  >
-                    → {STATUS_LABEL[next]}
-                  </button>
-                )}
-                <button
-                  onClick={() => sendToWhatsApp(o)}
-                  className="px-4 py-2 rounded-lg bg-[#25D366] text-white font-bold text-xs"
-                >
-                  💬 Envoyer WhatsApp{o.whatsapp_sent_at ? " ✓" : ""}
-                </button>
-                {o.status !== "cancelled" && o.status !== "paid" && (
-                  <button
-                    onClick={() => setStatus(o, "cancelled")}
-                    className="px-4 py-2 rounded-lg border border-red-500/30 text-red-400 font-bold text-xs hover:bg-red-500/10"
-                  >
-                    Annuler
-                  </button>
-                )}
-              </div>
-            </article>
-          );
-        })}
       </div>
+
+      {/* Filtres */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-5">
+        <div className="flex flex-wrap gap-2 flex-1">
+          {(["all", ...Object.keys(ORDER_STATUS_LABEL)] as Array<OrderStatus | "all">).map((s) => (
+            <button
+              key={s}
+              onClick={() => setFilter(s)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
+                filter === s ? "bg-gold/20 border-gold/40 text-gold" : "border-white/10 text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {s === "all" ? "Toutes" : ORDER_STATUS_LABEL[s as OrderStatus]} · {counts[s] ?? 0}
+            </button>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          {(["all", "today", "week"] as const).map((d) => (
+            <button
+              key={d}
+              onClick={() => setDateFilter(d)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
+                dateFilter === d ? "bg-blue-500/20 border-blue-500/40 text-blue-400" : "border-white/10 text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {d === "all" ? "Tout" : d === "today" ? "Aujourd'hui" : "7 jours"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Tri et résultats */}
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-xs text-muted-foreground">
+          {filtered.length} commande{filtered.length > 1 ? "s" : ""}
+          {debouncedSearch && ` pour "${debouncedSearch}"`}
+          {paginatedOrders.length < filtered.length && ` (affichage ${paginatedOrders.length})`}
+        </p>
+        <div className="flex gap-1">
+          {(["date", "total", "status"] as SortField[]).map((field) => (
+            <button
+              key={field}
+              onClick={() => toggleSort(field)}
+              className={`flex items-center gap-1 px-2 py-1 rounded text-[10px] font-semibold transition-colors ${
+                sortField === field ? "text-gold bg-gold/10" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <ArrowUpDown className="w-3 h-3" />
+              {field === "date" ? "Date" : field === "total" ? "Montant" : "Statut"}
+              {sortField === field && (sortDir === "asc" ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Liste des commandes */}
+      <div className="space-y-3">
+        {loading ? (
+          <>
+            {[1, 2, 3].map((i) => <OrderCardSkeleton key={i} />)}
+          </>
+        ) : paginatedOrders.length === 0 ? (
+          <div className="p-10 text-center rounded-2xl border border-dashed border-white/10 text-muted-foreground">
+            {debouncedSearch ? "Aucune commande trouvée pour cette recherche." : "Aucune commande pour le moment."}
+          </div>
+        ) : (
+          paginatedOrders.map((o) => {
+            const next = ORDER_NEXT_STATUS[o.status];
+            const isExpanded = expandedId === o.id;
+
+            return (
+              <article
+                key={o.id}
+                className="p-5 rounded-2xl border border-white/8 bg-dark-card transition-all hover:border-white/15"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <strong className="text-base">
+                        {o.table_number ? `🪑 Table ${o.table_number}` : "🛍️ À emporter"}
+                      </strong>
+                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider border ${ORDER_STATUS_COLOR[o.status]}`}>
+                        {ORDER_STATUS_LABEL[o.status]}
+                      </span>
+                      <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                        {o.source}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {formatDate(o.created_at)}
+                      {o.customer_name && ` · ${o.customer_name}`}
+                      {o.customer_phone && ` · ${o.customer_phone}`}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <strong className="text-xl text-gold">{formatCurrency(Number(o.total))}</strong>
+                    <button
+                      onClick={() => setExpandedId(isExpanded ? null : o.id)}
+                      className="p-1 rounded-lg text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Articles (toujours visibles) */}
+                <ul className="text-sm space-y-1 mb-3">
+                  {o.items.slice(0, isExpanded ? undefined : 3).map((it, i) => (
+                    <li key={i} className="flex justify-between">
+                      <span>{it.qty}× {it.name}</span>
+                      <span className="text-muted-foreground">{formatCurrency(it.price * it.qty)}</span>
+                    </li>
+                  ))}
+                  {!isExpanded && o.items.length > 3 && (
+                    <li className="text-xs text-muted-foreground">
+                      +{o.items.length - 3} article{o.items.length - 3 > 1 ? "s" : ""}...
+                    </li>
+                  )}
+                </ul>
+
+                {o.notes && (
+                  <p className="text-xs italic text-muted-foreground p-3 rounded-lg bg-white/[0.02] border border-white/5 mb-3">
+                    📝 {o.notes}
+                  </p>
+                )}
+
+                <div className="flex flex-wrap gap-2">
+                  {next && (
+                    <button
+                      onClick={() => setStatus(o, next)}
+                      className="px-4 py-2 rounded-lg bg-gradient-gold text-[#0a0a0f] font-bold text-xs"
+                    >
+                      → {ORDER_STATUS_LABEL[next]}
+                    </button>
+                  )}
+                  {o.status === "new" && (
+                    <button
+                      onClick={() => setStatus(o, "in_kitchen")}
+                      className="px-4 py-2 rounded-lg bg-blue-500/20 text-blue-300 font-bold text-xs hover:bg-blue-500/30"
+                    >
+                      ✓ Valider
+                    </button>
+                  )}
+                  {o.status === "ready" && (
+                    <button
+                      onClick={() => setStatus(o, "served")}
+                      className="px-4 py-2 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold text-xs hover:bg-emerald-500/30"
+                    >
+                      ✓ Marquer servi
+                    </button>
+                  )}
+                  {o.status !== "cancelled" && o.status !== "paid" && (
+                    <button
+                      onClick={() => setStatus(o, "cancelled")}
+                      className="px-4 py-2 rounded-lg border border-red-500/30 text-red-400 font-bold text-xs hover:bg-red-500/10"
+                    >
+                      Annuler
+                    </button>
+                  )}
+                </div>
+              </article>
+            );
+          })
+        )}
+      </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-6">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-3 py-1.5 rounded-lg border border-white/10 text-xs font-semibold disabled:opacity-30 hover:bg-white/5 transition-colors"
+          >
+            ← Précédent
+          </button>
+          <span className="text-xs text-muted-foreground">
+            Page {page} / {totalPages}
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page >= totalPages}
+            className="px-3 py-1.5 rounded-lg border border-white/10 text-xs font-semibold disabled:opacity-30 hover:bg-white/5 transition-colors"
+          >
+            Suivant →
+          </button>
+        </div>
+      )}
     </div>
   );
 }

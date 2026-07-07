@@ -19,6 +19,7 @@ export type PublicRestaurant = {
   email: string;
   plan: string;
   template: string | null;
+  logo_url: string | null;
 };
 
 export type PublicMenuItem = {
@@ -412,6 +413,127 @@ export function ReviewForm({ restaurantId, theme }: { restaurantId: string; them
         {busy ? "Envoi..." : "Laisser mon avis"}
       </button>
     </form>
+  );
+}
+
+
+/* ---------- Advanced Reservation Form ---------- */
+
+export function AdvancedReservationForm({
+  restaurantId,
+  restaurantName,
+  theme,
+  waLink,
+}: {
+  restaurantId: string;
+  restaurantName: string;
+  theme: Theme;
+  waLink: string | null;
+}) {
+  const [form, setForm] = useState({ name: "", phone: "", date: "", occ: "", msg: "" });
+  const [time, setTime] = useState("");
+  const [guests, setGuests] = useState("");
+  const [done, setDone] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  const times = ["12h00", "12h30", "13h00", "13h30", "19h00", "19h30", "20h00", "20h30", "21h00", "21h30"];
+  const guestList = ["1", "2", "3", "4", "5", "6", "7", "8+"];
+  const occasions = ["", "Anniversaire", "Dîner d’affaires", "Rendez-vous galant", "Fête", "Autre"];
+
+  const submit = async () => {
+    if (!form.name.trim() || !form.phone.trim()) return toast.error("Nom et téléphone requis");
+    if (!form.date) return toast.error("Choisissez une date");
+    if (!time) return toast.error("Choisissez une heure");
+    if (!guests) return toast.error("Indiquez le nombre de personnes");
+    setBusy(true);
+    const partySize = Number(guests.replace("+", "")) || 8;
+    const t24 = time.replace("h", ":");
+    const { error } = await supabase.from("reservations").insert({
+      restaurant_id: restaurantId,
+      customer_name: form.name,
+      customer_phone: form.phone,
+      party_size: partySize,
+      reservation_date: form.date,
+      reservation_time: t24,
+      notes: [form.occ && `Occasion: ${form.occ}`, form.msg].filter(Boolean).join(" — "),
+    });
+    setBusy(false);
+    if (error) return toast.error(error.message);
+    if (waLink) {
+      let wa = `📅 *Réservation — ${restaurantName}*
+
+👤 ${form.name}
+📞 ${form.phone}
+📅 ${form.date} à ${time}
+👥 ${guests} personne(s)`;
+      if (form.occ) wa += `
+🎉 ${form.occ}`;
+      if (form.msg) wa += `
+💬 ${form.msg}`;
+      window.open(`${waLink}?text=${encodeURIComponent(wa)}`, "_blank");
+    }
+    setDone(true);
+  };
+
+  const reset = () => {
+    setForm({ name: "", phone: "", date: "", occ: "", msg: "" });
+    setTime("");
+    setGuests("");
+    setDone(false);
+  };
+
+  const inputStyle = themedInput(theme);
+  const cls = "w-full px-4 py-3 text-sm focus:outline-none";
+
+  return (
+    <>
+      {done ? (
+        <div style={{ background: theme.surface, borderRadius: theme.radius, padding: 32, textAlign: "center" }}>
+          <p style={{ fontSize: 40, marginBottom: 12 }}>🎉</p>
+          <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, color: theme.accent, marginBottom: 8 }}>Réservation envoyée !</h3>
+          <p style={{ color: theme.textMuted, marginBottom: 20 }}>Le restaurant vous confirmera rapidement.</p>
+          <button onClick={reset} style={{ background: theme.accent, color: theme.accentInk, padding: "10px 24px", borderRadius: theme.radius, border: "none", fontWeight: 700, cursor: "pointer" }}>Nouvelle réservation</button>
+        </div>
+      ) : (
+        <form onSubmit={(e) => { e.preventDefault(); submit(); }} className="space-y-4" style={{ background: theme.surface, borderRadius: theme.radius, padding: 28 }}>
+          <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.35em", color: theme.accent, marginBottom: 4 }}>👤 Vos coordonnées</p>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <input required placeholder="Nom *" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={cls} style={inputStyle} />
+            <input required type="tel" placeholder="Téléphone *" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={cls} style={inputStyle} />
+          </div>
+          <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.35em", color: theme.accent, marginTop: 12, marginBottom: 4 }}>📅 Date & heure</p>
+          <input required type="date" min={new Date().toISOString().split("T")[0]} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} className={cls} style={inputStyle} />
+          <div className="flex flex-wrap gap-2">
+            {times.map((t) => (
+              <button type="button" key={t} onClick={() => setTime(t)} style={{ padding: "8px 14px", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer", border: `1px solid ${time === t ? theme.accent : theme.border}`, background: time === t ? theme.accent : "transparent", color: time === t ? theme.accentInk : theme.text }}>
+                {t}
+              </button>
+            ))}
+          </div>
+          <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.35em", color: theme.accent, marginTop: 12, marginBottom: 4 }}>👥 Nombre de personnes</p>
+          <div className="flex flex-wrap gap-2">
+            {guestList.map((g) => (
+              <button type="button" key={g} onClick={() => setGuests(g)} style={{ padding: "10px 18px", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer", border: `1px solid ${guests === g ? theme.accent : theme.border}`, background: guests === g ? theme.accent : "transparent", color: guests === g ? theme.accentInk : theme.text }}>
+                {g} pers.
+              </button>
+            ))}
+          </div>
+          <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.35em", color: theme.accent, marginTop: 12, marginBottom: 4 }}>🎉 Occasion (optionnel)</p>
+          <div className="flex flex-wrap gap-2">
+            {occasions.filter(Boolean).map((o) => (
+              <button type="button" key={o} onClick={() => setForm({ ...form, occ: form.occ === o ? "" : o })} style={{ padding: "8px 16px", borderRadius: 20, fontSize: 12, fontWeight: 600, cursor: "pointer", border: `1px solid ${form.occ === o ? theme.accent : theme.border}`, background: form.occ === o ? theme.accent : "transparent", color: form.occ === o ? theme.accentInk : theme.text }}>
+                {o}
+              </button>
+            ))}
+          </div>
+          <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.35em", color: theme.accent, marginTop: 12, marginBottom: 4 }}>💬 Message (optionnel)</p>
+          <textarea placeholder="Un message pour le restaurant..." value={form.msg} onChange={(e) => setForm({ ...form, msg: e.target.value })} rows={3} className={cls} style={inputStyle} />
+          <button type="submit" disabled={busy} style={{ width: "100%", padding: "14px 0", background: theme.accent, color: theme.accentInk, border: "none", borderRadius: theme.radius, fontWeight: 800, fontSize: 14, cursor: busy ? "wait" : "pointer", opacity: busy ? 0.6 : 1 }}>
+            {busy ? "Envoi..." : "📅 Confirmer la réservation"}
+          </button>
+        </form>
+      )}
+    </>
   );
 }
 

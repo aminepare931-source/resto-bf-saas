@@ -10,28 +10,49 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SuperAdminRouteImport } from './routes/super-admin'
+import { Route as OfflineRouteImport } from './routes/offline'
+import { Route as DebugUserRouteImport } from './routes/debug-user'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RSlugRouteImport } from './routes/r.$slug'
+import { Route as AuthStaffLoginRouteImport } from './routes/auth/staff-login'
 import { Route as AuthInscriptionRouteImport } from './routes/auth/inscription'
 import { Route as AuthConnexionRouteImport } from './routes/auth/connexion'
 import { Route as AuthChoisirTemplateRouteImport } from './routes/auth/choisir-template'
+import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
+import { Route as AuthenticatedDashboardTemplatesRouteImport } from './routes/_authenticated/dashboard.templates'
 import { Route as AuthenticatedDashboardTablesRouteImport } from './routes/_authenticated/dashboard.tables'
+import { Route as AuthenticatedDashboardStocksRouteImport } from './routes/_authenticated/dashboard.stocks'
+import { Route as AuthenticatedDashboardStatistiquesRouteImport } from './routes/_authenticated/dashboard.statistiques'
+import { Route as AuthenticatedDashboardStaffRouteImport } from './routes/_authenticated/dashboard.staff'
 import { Route as AuthenticatedDashboardReservationsRouteImport } from './routes/_authenticated/dashboard.reservations'
 import { Route as AuthenticatedDashboardQrCodeRouteImport } from './routes/_authenticated/dashboard.qr-code'
 import { Route as AuthenticatedDashboardParametresRouteImport } from './routes/_authenticated/dashboard.parametres'
+import { Route as AuthenticatedDashboardMessagingRouteImport } from './routes/_authenticated/dashboard.messaging'
 import { Route as AuthenticatedDashboardMenuRouteImport } from './routes/_authenticated/dashboard.menu'
 import { Route as AuthenticatedDashboardGalerieRouteImport } from './routes/_authenticated/dashboard.galerie'
 import { Route as AuthenticatedDashboardFacturationRouteImport } from './routes/_authenticated/dashboard.facturation'
+import { Route as AuthenticatedDashboardCuisineRouteImport } from './routes/_authenticated/dashboard.cuisine'
 import { Route as AuthenticatedDashboardContenuRouteImport } from './routes/_authenticated/dashboard.contenu'
 import { Route as AuthenticatedDashboardCommandesRouteImport } from './routes/_authenticated/dashboard.commandes'
+import { Route as AuthenticatedDashboardChatRouteImport } from './routes/_authenticated/dashboard.chat'
 import { Route as AuthenticatedDashboardAvisRouteImport } from './routes/_authenticated/dashboard.avis'
 
 const SuperAdminRoute = SuperAdminRouteImport.update({
   id: '/super-admin',
   path: '/super-admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OfflineRoute = OfflineRouteImport.update({
+  id: '/offline',
+  path: '/offline',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DebugUserRoute = DebugUserRouteImport.update({
+  id: '/debug-user',
+  path: '/debug-user',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -46,6 +67,11 @@ const IndexRoute = IndexRouteImport.update({
 const RSlugRoute = RSlugRouteImport.update({
   id: '/r/$slug',
   path: '/r/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthStaffLoginRoute = AuthStaffLoginRouteImport.update({
+  id: '/auth/staff-login',
+  path: '/auth/staff-login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthInscriptionRoute = AuthInscriptionRouteImport.update({
@@ -63,6 +89,11 @@ const AuthChoisirTemplateRoute = AuthChoisirTemplateRouteImport.update({
   path: '/auth/choisir-template',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -74,10 +105,34 @@ const AuthenticatedDashboardIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardTemplatesRoute =
+  AuthenticatedDashboardTemplatesRouteImport.update({
+    id: '/templates',
+    path: '/templates',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardTablesRoute =
   AuthenticatedDashboardTablesRouteImport.update({
     id: '/tables',
     path: '/tables',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardStocksRoute =
+  AuthenticatedDashboardStocksRouteImport.update({
+    id: '/stocks',
+    path: '/stocks',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardStatistiquesRoute =
+  AuthenticatedDashboardStatistiquesRouteImport.update({
+    id: '/statistiques',
+    path: '/statistiques',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardStaffRoute =
+  AuthenticatedDashboardStaffRouteImport.update({
+    id: '/staff',
+    path: '/staff',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
 const AuthenticatedDashboardReservationsRoute =
@@ -98,6 +153,12 @@ const AuthenticatedDashboardParametresRoute =
     path: '/parametres',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardMessagingRoute =
+  AuthenticatedDashboardMessagingRouteImport.update({
+    id: '/messaging',
+    path: '/messaging',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardMenuRoute =
   AuthenticatedDashboardMenuRouteImport.update({
     id: '/menu',
@@ -116,6 +177,12 @@ const AuthenticatedDashboardFacturationRoute =
     path: '/facturation',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardCuisineRoute =
+  AuthenticatedDashboardCuisineRouteImport.update({
+    id: '/cuisine',
+    path: '/cuisine',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardContenuRoute =
   AuthenticatedDashboardContenuRouteImport.update({
     id: '/contenu',
@@ -128,6 +195,12 @@ const AuthenticatedDashboardCommandesRoute =
     path: '/commandes',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardChatRoute =
+  AuthenticatedDashboardChatRouteImport.update({
+    id: '/chat',
+    path: '/chat',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardAvisRoute =
   AuthenticatedDashboardAvisRouteImport.update({
     id: '/avis',
@@ -137,135 +210,205 @@ const AuthenticatedDashboardAvisRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/debug-user': typeof DebugUserRoute
+  '/offline': typeof OfflineRoute
   '/super-admin': typeof SuperAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/auth/callback': typeof AuthCallbackRoute
   '/auth/choisir-template': typeof AuthChoisirTemplateRoute
   '/auth/connexion': typeof AuthConnexionRoute
   '/auth/inscription': typeof AuthInscriptionRoute
+  '/auth/staff-login': typeof AuthStaffLoginRoute
   '/r/$slug': typeof RSlugRoute
   '/dashboard/avis': typeof AuthenticatedDashboardAvisRoute
+  '/dashboard/chat': typeof AuthenticatedDashboardChatRoute
   '/dashboard/commandes': typeof AuthenticatedDashboardCommandesRoute
   '/dashboard/contenu': typeof AuthenticatedDashboardContenuRoute
+  '/dashboard/cuisine': typeof AuthenticatedDashboardCuisineRoute
   '/dashboard/facturation': typeof AuthenticatedDashboardFacturationRoute
   '/dashboard/galerie': typeof AuthenticatedDashboardGalerieRoute
   '/dashboard/menu': typeof AuthenticatedDashboardMenuRoute
+  '/dashboard/messaging': typeof AuthenticatedDashboardMessagingRoute
   '/dashboard/parametres': typeof AuthenticatedDashboardParametresRoute
   '/dashboard/qr-code': typeof AuthenticatedDashboardQrCodeRoute
   '/dashboard/reservations': typeof AuthenticatedDashboardReservationsRoute
+  '/dashboard/staff': typeof AuthenticatedDashboardStaffRoute
+  '/dashboard/statistiques': typeof AuthenticatedDashboardStatistiquesRoute
+  '/dashboard/stocks': typeof AuthenticatedDashboardStocksRoute
   '/dashboard/tables': typeof AuthenticatedDashboardTablesRoute
+  '/dashboard/templates': typeof AuthenticatedDashboardTemplatesRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/debug-user': typeof DebugUserRoute
+  '/offline': typeof OfflineRoute
   '/super-admin': typeof SuperAdminRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/auth/choisir-template': typeof AuthChoisirTemplateRoute
   '/auth/connexion': typeof AuthConnexionRoute
   '/auth/inscription': typeof AuthInscriptionRoute
+  '/auth/staff-login': typeof AuthStaffLoginRoute
   '/r/$slug': typeof RSlugRoute
   '/dashboard/avis': typeof AuthenticatedDashboardAvisRoute
+  '/dashboard/chat': typeof AuthenticatedDashboardChatRoute
   '/dashboard/commandes': typeof AuthenticatedDashboardCommandesRoute
   '/dashboard/contenu': typeof AuthenticatedDashboardContenuRoute
+  '/dashboard/cuisine': typeof AuthenticatedDashboardCuisineRoute
   '/dashboard/facturation': typeof AuthenticatedDashboardFacturationRoute
   '/dashboard/galerie': typeof AuthenticatedDashboardGalerieRoute
   '/dashboard/menu': typeof AuthenticatedDashboardMenuRoute
+  '/dashboard/messaging': typeof AuthenticatedDashboardMessagingRoute
   '/dashboard/parametres': typeof AuthenticatedDashboardParametresRoute
   '/dashboard/qr-code': typeof AuthenticatedDashboardQrCodeRoute
   '/dashboard/reservations': typeof AuthenticatedDashboardReservationsRoute
+  '/dashboard/staff': typeof AuthenticatedDashboardStaffRoute
+  '/dashboard/statistiques': typeof AuthenticatedDashboardStatistiquesRoute
+  '/dashboard/stocks': typeof AuthenticatedDashboardStocksRoute
   '/dashboard/tables': typeof AuthenticatedDashboardTablesRoute
+  '/dashboard/templates': typeof AuthenticatedDashboardTemplatesRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/debug-user': typeof DebugUserRoute
+  '/offline': typeof OfflineRoute
   '/super-admin': typeof SuperAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/auth/callback': typeof AuthCallbackRoute
   '/auth/choisir-template': typeof AuthChoisirTemplateRoute
   '/auth/connexion': typeof AuthConnexionRoute
   '/auth/inscription': typeof AuthInscriptionRoute
+  '/auth/staff-login': typeof AuthStaffLoginRoute
   '/r/$slug': typeof RSlugRoute
   '/_authenticated/dashboard/avis': typeof AuthenticatedDashboardAvisRoute
+  '/_authenticated/dashboard/chat': typeof AuthenticatedDashboardChatRoute
   '/_authenticated/dashboard/commandes': typeof AuthenticatedDashboardCommandesRoute
   '/_authenticated/dashboard/contenu': typeof AuthenticatedDashboardContenuRoute
+  '/_authenticated/dashboard/cuisine': typeof AuthenticatedDashboardCuisineRoute
   '/_authenticated/dashboard/facturation': typeof AuthenticatedDashboardFacturationRoute
   '/_authenticated/dashboard/galerie': typeof AuthenticatedDashboardGalerieRoute
   '/_authenticated/dashboard/menu': typeof AuthenticatedDashboardMenuRoute
+  '/_authenticated/dashboard/messaging': typeof AuthenticatedDashboardMessagingRoute
   '/_authenticated/dashboard/parametres': typeof AuthenticatedDashboardParametresRoute
   '/_authenticated/dashboard/qr-code': typeof AuthenticatedDashboardQrCodeRoute
   '/_authenticated/dashboard/reservations': typeof AuthenticatedDashboardReservationsRoute
+  '/_authenticated/dashboard/staff': typeof AuthenticatedDashboardStaffRoute
+  '/_authenticated/dashboard/statistiques': typeof AuthenticatedDashboardStatistiquesRoute
+  '/_authenticated/dashboard/stocks': typeof AuthenticatedDashboardStocksRoute
   '/_authenticated/dashboard/tables': typeof AuthenticatedDashboardTablesRoute
+  '/_authenticated/dashboard/templates': typeof AuthenticatedDashboardTemplatesRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/debug-user'
+    | '/offline'
     | '/super-admin'
     | '/dashboard'
+    | '/auth/callback'
     | '/auth/choisir-template'
     | '/auth/connexion'
     | '/auth/inscription'
+    | '/auth/staff-login'
     | '/r/$slug'
     | '/dashboard/avis'
+    | '/dashboard/chat'
     | '/dashboard/commandes'
     | '/dashboard/contenu'
+    | '/dashboard/cuisine'
     | '/dashboard/facturation'
     | '/dashboard/galerie'
     | '/dashboard/menu'
+    | '/dashboard/messaging'
     | '/dashboard/parametres'
     | '/dashboard/qr-code'
     | '/dashboard/reservations'
+    | '/dashboard/staff'
+    | '/dashboard/statistiques'
+    | '/dashboard/stocks'
     | '/dashboard/tables'
+    | '/dashboard/templates'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/debug-user'
+    | '/offline'
     | '/super-admin'
+    | '/auth/callback'
     | '/auth/choisir-template'
     | '/auth/connexion'
     | '/auth/inscription'
+    | '/auth/staff-login'
     | '/r/$slug'
     | '/dashboard/avis'
+    | '/dashboard/chat'
     | '/dashboard/commandes'
     | '/dashboard/contenu'
+    | '/dashboard/cuisine'
     | '/dashboard/facturation'
     | '/dashboard/galerie'
     | '/dashboard/menu'
+    | '/dashboard/messaging'
     | '/dashboard/parametres'
     | '/dashboard/qr-code'
     | '/dashboard/reservations'
+    | '/dashboard/staff'
+    | '/dashboard/statistiques'
+    | '/dashboard/stocks'
     | '/dashboard/tables'
+    | '/dashboard/templates'
     | '/dashboard'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/debug-user'
+    | '/offline'
     | '/super-admin'
     | '/_authenticated/dashboard'
+    | '/auth/callback'
     | '/auth/choisir-template'
     | '/auth/connexion'
     | '/auth/inscription'
+    | '/auth/staff-login'
     | '/r/$slug'
     | '/_authenticated/dashboard/avis'
+    | '/_authenticated/dashboard/chat'
     | '/_authenticated/dashboard/commandes'
     | '/_authenticated/dashboard/contenu'
+    | '/_authenticated/dashboard/cuisine'
     | '/_authenticated/dashboard/facturation'
     | '/_authenticated/dashboard/galerie'
     | '/_authenticated/dashboard/menu'
+    | '/_authenticated/dashboard/messaging'
     | '/_authenticated/dashboard/parametres'
     | '/_authenticated/dashboard/qr-code'
     | '/_authenticated/dashboard/reservations'
+    | '/_authenticated/dashboard/staff'
+    | '/_authenticated/dashboard/statistiques'
+    | '/_authenticated/dashboard/stocks'
     | '/_authenticated/dashboard/tables'
+    | '/_authenticated/dashboard/templates'
     | '/_authenticated/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  DebugUserRoute: typeof DebugUserRoute
+  OfflineRoute: typeof OfflineRoute
   SuperAdminRoute: typeof SuperAdminRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
   AuthChoisirTemplateRoute: typeof AuthChoisirTemplateRoute
   AuthConnexionRoute: typeof AuthConnexionRoute
   AuthInscriptionRoute: typeof AuthInscriptionRoute
+  AuthStaffLoginRoute: typeof AuthStaffLoginRoute
   RSlugRoute: typeof RSlugRoute
 }
 
@@ -276,6 +419,20 @@ declare module '@tanstack/react-router' {
       path: '/super-admin'
       fullPath: '/super-admin'
       preLoaderRoute: typeof SuperAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/offline': {
+      id: '/offline'
+      path: '/offline'
+      fullPath: '/offline'
+      preLoaderRoute: typeof OfflineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/debug-user': {
+      id: '/debug-user'
+      path: '/debug-user'
+      fullPath: '/debug-user'
+      preLoaderRoute: typeof DebugUserRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -299,6 +456,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/staff-login': {
+      id: '/auth/staff-login'
+      path: '/auth/staff-login'
+      fullPath: '/auth/staff-login'
+      preLoaderRoute: typeof AuthStaffLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/inscription': {
       id: '/auth/inscription'
       path: '/auth/inscription'
@@ -320,6 +484,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthChoisirTemplateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -334,11 +505,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/templates': {
+      id: '/_authenticated/dashboard/templates'
+      path: '/templates'
+      fullPath: '/dashboard/templates'
+      preLoaderRoute: typeof AuthenticatedDashboardTemplatesRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/tables': {
       id: '/_authenticated/dashboard/tables'
       path: '/tables'
       fullPath: '/dashboard/tables'
       preLoaderRoute: typeof AuthenticatedDashboardTablesRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/stocks': {
+      id: '/_authenticated/dashboard/stocks'
+      path: '/stocks'
+      fullPath: '/dashboard/stocks'
+      preLoaderRoute: typeof AuthenticatedDashboardStocksRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/statistiques': {
+      id: '/_authenticated/dashboard/statistiques'
+      path: '/statistiques'
+      fullPath: '/dashboard/statistiques'
+      preLoaderRoute: typeof AuthenticatedDashboardStatistiquesRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/staff': {
+      id: '/_authenticated/dashboard/staff'
+      path: '/staff'
+      fullPath: '/dashboard/staff'
+      preLoaderRoute: typeof AuthenticatedDashboardStaffRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
     '/_authenticated/dashboard/reservations': {
@@ -362,6 +561,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardParametresRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/messaging': {
+      id: '/_authenticated/dashboard/messaging'
+      path: '/messaging'
+      fullPath: '/dashboard/messaging'
+      preLoaderRoute: typeof AuthenticatedDashboardMessagingRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/menu': {
       id: '/_authenticated/dashboard/menu'
       path: '/menu'
@@ -383,6 +589,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardFacturationRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/cuisine': {
+      id: '/_authenticated/dashboard/cuisine'
+      path: '/cuisine'
+      fullPath: '/dashboard/cuisine'
+      preLoaderRoute: typeof AuthenticatedDashboardCuisineRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/contenu': {
       id: '/_authenticated/dashboard/contenu'
       path: '/contenu'
@@ -397,6 +610,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardCommandesRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/chat': {
+      id: '/_authenticated/dashboard/chat'
+      path: '/chat'
+      fullPath: '/dashboard/chat'
+      preLoaderRoute: typeof AuthenticatedDashboardChatRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/avis': {
       id: '/_authenticated/dashboard/avis'
       path: '/avis'
@@ -409,33 +629,48 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardAvisRoute: typeof AuthenticatedDashboardAvisRoute
+  AuthenticatedDashboardChatRoute: typeof AuthenticatedDashboardChatRoute
   AuthenticatedDashboardCommandesRoute: typeof AuthenticatedDashboardCommandesRoute
   AuthenticatedDashboardContenuRoute: typeof AuthenticatedDashboardContenuRoute
+  AuthenticatedDashboardCuisineRoute: typeof AuthenticatedDashboardCuisineRoute
   AuthenticatedDashboardFacturationRoute: typeof AuthenticatedDashboardFacturationRoute
   AuthenticatedDashboardGalerieRoute: typeof AuthenticatedDashboardGalerieRoute
   AuthenticatedDashboardMenuRoute: typeof AuthenticatedDashboardMenuRoute
+  AuthenticatedDashboardMessagingRoute: typeof AuthenticatedDashboardMessagingRoute
   AuthenticatedDashboardParametresRoute: typeof AuthenticatedDashboardParametresRoute
   AuthenticatedDashboardQrCodeRoute: typeof AuthenticatedDashboardQrCodeRoute
   AuthenticatedDashboardReservationsRoute: typeof AuthenticatedDashboardReservationsRoute
+  AuthenticatedDashboardStaffRoute: typeof AuthenticatedDashboardStaffRoute
+  AuthenticatedDashboardStatistiquesRoute: typeof AuthenticatedDashboardStatistiquesRoute
+  AuthenticatedDashboardStocksRoute: typeof AuthenticatedDashboardStocksRoute
   AuthenticatedDashboardTablesRoute: typeof AuthenticatedDashboardTablesRoute
+  AuthenticatedDashboardTemplatesRoute: typeof AuthenticatedDashboardTemplatesRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
 }
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
     AuthenticatedDashboardAvisRoute: AuthenticatedDashboardAvisRoute,
+    AuthenticatedDashboardChatRoute: AuthenticatedDashboardChatRoute,
     AuthenticatedDashboardCommandesRoute: AuthenticatedDashboardCommandesRoute,
     AuthenticatedDashboardContenuRoute: AuthenticatedDashboardContenuRoute,
+    AuthenticatedDashboardCuisineRoute: AuthenticatedDashboardCuisineRoute,
     AuthenticatedDashboardFacturationRoute:
       AuthenticatedDashboardFacturationRoute,
     AuthenticatedDashboardGalerieRoute: AuthenticatedDashboardGalerieRoute,
     AuthenticatedDashboardMenuRoute: AuthenticatedDashboardMenuRoute,
+    AuthenticatedDashboardMessagingRoute: AuthenticatedDashboardMessagingRoute,
     AuthenticatedDashboardParametresRoute:
       AuthenticatedDashboardParametresRoute,
     AuthenticatedDashboardQrCodeRoute: AuthenticatedDashboardQrCodeRoute,
     AuthenticatedDashboardReservationsRoute:
       AuthenticatedDashboardReservationsRoute,
+    AuthenticatedDashboardStaffRoute: AuthenticatedDashboardStaffRoute,
+    AuthenticatedDashboardStatistiquesRoute:
+      AuthenticatedDashboardStatistiquesRoute,
+    AuthenticatedDashboardStocksRoute: AuthenticatedDashboardStocksRoute,
     AuthenticatedDashboardTablesRoute: AuthenticatedDashboardTablesRoute,
+    AuthenticatedDashboardTemplatesRoute: AuthenticatedDashboardTemplatesRoute,
     AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   }
 
@@ -458,10 +693,14 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  DebugUserRoute: DebugUserRoute,
+  OfflineRoute: OfflineRoute,
   SuperAdminRoute: SuperAdminRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
   AuthChoisirTemplateRoute: AuthChoisirTemplateRoute,
   AuthConnexionRoute: AuthConnexionRoute,
   AuthInscriptionRoute: AuthInscriptionRoute,
+  AuthStaffLoginRoute: AuthStaffLoginRoute,
   RSlugRoute: RSlugRoute,
 }
 export const routeTree = rootRouteImport

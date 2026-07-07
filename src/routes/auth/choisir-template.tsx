@@ -6,10 +6,10 @@ import { AuthShell } from "@/components/auth/AuthShell";
 import { renderTemplate } from "@/components/public/templates";
 import { demoData } from "@/components/public/demo-data";
 
-const PREMIUM_FEU_BG = "/__l5e/assets-v1/87344d52-8ccc-40d3-8dca-70ff3430fb7d/premium-feu-bg.png";
-const PREMIUM_GRILL_BG = "/__l5e/assets-v1/2d9697e6-8ffe-42e1-a69e-cba1bcff93cd/premium-grill-bg.png";
-const PREMIUM_ORANGE_BG = "/__l5e/assets-v1/2d8b1063-8221-4293-be87-017c3e752c93/premium-orange-bg.png";
-const PREMIUM_PASTA_BG = "/__l5e/assets-v1/5196f02c-fbb0-4ccd-83cc-bfa2d2bf7072/premium-pasta-bg.png";
+const PREMIUM_FEU_BG = "/premium-bgs/premium-feu-bg.png";
+const PREMIUM_GRILL_BG = "/premium-bgs/premium-grill-bg.png";
+const PREMIUM_ORANGE_BG = "/premium-bgs/premium-orange-bg.png";
+const PREMIUM_PASTA_BG = "/premium-bgs/premium-pasta-bg.png";
 
 export const Route = createFileRoute("/auth/choisir-template")({
   ssr: false,
@@ -101,6 +101,15 @@ function ChooseTemplate() {
     <>
       <AuthShell title="Choisissez votre template" subtitle={`Votre forfait : ${planLabel} · Clique sur un design pour le prévisualiser en grand`} maxWidth="max-w-5xl">
         <div className="space-y-8">
+          <div className="rounded-2xl border px-5 py-4 flex flex-wrap items-center gap-3">
+            <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">Forfait actif</span>
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold bg-gradient-gold text-[#0a0a0f]">
+              {userPlan === "premium" ? "⭐ Premium" : userPlan === "standard" ? "📣 Standard" : "🎁 Gratuit / Essai"}
+            </span>
+            {userPlan !== "premium" && (
+              <span className="text-xs text-muted-foreground">Passez Premium pour débloquer les 4 templates animés exclusifs.</span>
+            )}
+          </div>
           {(["gratuit", "standard", "premium"] as const).map((plan) => (
             <div key={plan}>
               <h3 className="text-sm font-black uppercase tracking-widest text-gold mb-3">
