@@ -1,4 +1,4 @@
- n'eimport * as React from "react";
+import * as React from "react";
 import type { TemplateProps, PublicMenuItem, PublicGalleryImage, Theme } from "./shared";
 import {
   MenuGrid,
@@ -2429,3 +2429,4 @@ export function renderTemplate(template: string | null, props: TemplateProps) {
       return <TplClassique {...props} />;
   }
 }
+
