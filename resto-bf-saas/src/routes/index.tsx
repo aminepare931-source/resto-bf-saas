@@ -216,44 +216,73 @@ function LandingPage() {
               </Reveal>
             </div>
 
-            {/* Mockup */}
+            {/* Dashboard aperçu */}
             <Reveal delay={2} className="lg:justify-self-end w-full max-w-sm sm:max-w-md mx-auto lg:mx-0">
               <div className="relative">
                 <span className="absolute -top-3 -right-3 z-10 px-2 sm:px-3 py-1 rounded-lg bg-gradient-gold text-[#0a0a0f] text-[8px] sm:text-[10px] font-black uppercase tracking-wider shadow-gold">
-                  Plan Premium
+                  🚀 En direct
                 </span>
                 <div className="rounded-2xl sm:rounded-3xl border border-white/10 bg-dark-card overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
-                  <div className="flex gap-1.5 p-3 sm:p-4 border-b border-white/5">
-                    <span className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-red-500/60" />
-                    <span className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-yellow-500/60" />
-                    <span className="w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full bg-green-500/60" />
-                  </div>
-                  <div className="p-3 sm:p-5">
-                    <div className="flex items-center gap-3 mb-4 sm:mb-5">
-                      <span className="w-8 sm:w-10 h-8 sm:h-10 rounded-xl bg-gradient-gold flex items-center justify-center font-black text-[#0a0a0f] text-sm sm:text-base">
-                        R
-                      </span>
-                      <strong className="text-sm sm:text-base">Maquis Le Karité</strong>
+                  {/* Header */}
+                  <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                      <span className="text-[10px] sm:text-xs font-semibold text-muted-foreground">Tableau de bord</span>
                     </div>
+                    <span className="text-[9px] sm:text-[10px] text-gold font-bold">Maquis Le Karité</span>
+                  </div>
+                  
+                  {/* Stats rapides */}
+                  <div className="grid grid-cols-3 gap-2 p-3 sm:p-4 border-b border-white/5">
                     {[
-                      { name: "Poulet braisé royal", price: "3 000 FCFA", emoji: "🍗" },
-                      { name: "Poisson grillé Airfryer", price: "4 500 FCFA", emoji: "🐟" },
-                      { name: "Brochettes de bœuf & frites", price: "3 500 FCFA", emoji: "🥩" },
-                    ].map((d) => (
-                      <div key={d.name} className="flex items-center gap-2 sm:gap-3 py-2 sm:py-3 border-t border-white/5 first:border-t-0">
-                        <div className="w-10 sm:w-14 h-10 sm:h-14 rounded-xl bg-gradient-to-br from-gold/20 to-gold/5 flex items-center justify-center text-lg sm:text-2xl shrink-0">
-                          {d.emoji}
+                      { label: "Commandes", value: "12", change: "+3", up: true },
+                      { label: "Chiffre", value: "45 500", change: "+18%", up: true },
+                      { label: "Clients", value: "8", change: "-2", up: false },
+                    ].map((stat) => (
+                      <div key={stat.label} className="text-center">
+                        <div className="text-xs sm:text-sm font-black text-foreground">{stat.value}</div>
+                        <div className="text-[8px] sm:text-[9px] text-muted-foreground">{stat.label}</div>
+                        <span className={`text-[8px] font-bold ${stat.up ? "text-green-500" : "text-red-400"}`}>
+                          {stat.change}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Dernières commandes */}
+                  <div className="p-3 sm:p-4 space-y-2">
+                    <div className="text-[9px] sm:text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Dernières commandes</div>
+                    {[
+                      { plat: "Poulet braisé royal", qte: "x2", time: "18:42", statut: "Prêt" },
+                      { plat: "Poisson grillé Airfryer", qte: "x1", time: "18:38", statut: "En cours" },
+                      { plat: "Brochettes bœuf & frites", qte: "x3", time: "18:30", statut: "Livré" },
+                    ].map((cmd) => (
+                      <div key={cmd.plat} className="flex items-center justify-between py-1.5 border-t border-white/5 first:border-t-0">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="text-[10px] sm:text-xs truncate">{cmd.plat}</span>
+                          <span className="text-[8px] text-muted-foreground shrink-0">{cmd.qte}</span>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <strong className="block text-xs sm:text-sm truncate">{d.name}</strong>
-                          <span className="text-[11px] sm:text-xs text-gold font-bold">{d.price}</span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-[8px] text-muted-foreground">{cmd.time}</span>
+                          <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full ${
+                            cmd.statut === "Prêt" ? "bg-green-500/20 text-green-400" :
+                            cmd.statut === "En cours" ? "bg-gold/20 text-gold" :
+                            "bg-white/10 text-muted-foreground"
+                          }`}>
+                            {cmd.statut}
+                          </span>
                         </div>
                       </div>
                     ))}
-                    <button className="mt-3 sm:mt-4 w-full py-2.5 sm:py-3 rounded-xl bg-[#25D366] text-white font-bold text-xs sm:text-sm hover:opacity-90 transition-opacity">
-                      📱 Commander sur WhatsApp
-                    </button>
                   </div>
+
+                  {/* Bouton CTA */}
+                  <Link
+                    to="/auth/inscription"
+                    className="block w-full py-2.5 sm:py-3 text-center bg-gradient-gold text-[#0a0a0f] font-bold text-[11px] sm:text-xs hover:opacity-90 transition-opacity"
+                  >
+                    ✨ Créer mon tableau de bord gratuit →
+                  </Link>
                 </div>
               </div>
             </Reveal>
