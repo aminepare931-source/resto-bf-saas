@@ -4,6 +4,8 @@ import { Footer } from "@/components/landing/Footer";
 import { Particles } from "@/components/landing/Particles";
 import { Reveal } from "@/components/landing/Reveal";
 import { Counter } from "@/components/landing/Counter";
+import { useState } from "react";
+import { X } from "lucide-react";
 
 
 export const Route = createFileRoute("/")({
@@ -138,6 +140,8 @@ const faqs = [
 ];
 
 function LandingPage() {
+  const [selectedPlan, setSelectedPlan] = useState<typeof plans[0] | null>(null);
+
   return (
     <div className="relative min-h-screen text-foreground overflow-x-hidden" style={{ isolation: "isolate" }}>
       <div className="tpl-bg" aria-hidden>
@@ -368,57 +372,170 @@ function LandingPage() {
         </section>
 
         {/* PRICING */}
-        <section id="tarifs" className="py-16 sm:py-28 px-4 sm:px-6">
+        <section id="tarifs" className="py-12 sm:py-28 px-4 sm:px-6">
           <SectionHeader
             eyebrow="Prix transparents"
             title={<>Nos <span className="text-gradient-gold">abonnements</span></>}
             desc="Pas de frais cachés. Pas de commission sur vos ventes. Annulation à tout moment."
           />
-          <div className="max-w-7xl mx-auto mt-10 sm:mt-14 grid gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {plans.map((p, i) => (
-              <Reveal key={p.name} delay={((i % 4) + 1) as 1 | 2 | 3 | 4}>
-                <div
-                  className={`relative h-full p-6 sm:p-8 rounded-2xl sm:rounded-3xl border transition-all hover:-translate-y-1 ${
-                    p.popular
-                      ? "border-gold bg-gradient-to-b from-gold/10 to-transparent shadow-gold scale-[1.02]"
-                      : "border-white/10 bg-dark-card hover:border-gold/30"
-                  }`}
-                  style={p.popular ? { boxShadow: "0 0 40px rgba(212,168,83,0.15)" } : {}}
-                >
-                  {p.popular && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-2 sm:px-3 py-1 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-wider bg-gradient-gold text-[#0a0a0f] shadow-gold whitespace-nowrap">
-                      Populaire
-                    </span>
-                  )}
-                  <h3 className="text-lg sm:text-xl font-bold">{p.name}</h3>
-                  <div className="mt-3 sm:mt-4 flex items-baseline gap-1">
-                    <span className="text-3xl sm:text-5xl font-black text-gradient-gold">{p.price}</span>
-                    <small className="text-xs sm:text-sm text-muted-foreground font-semibold">{p.unit}</small>
+          
+          {/* Navigation mobile par onglets */}
+          <div className="max-w-7xl mx-auto mt-8 sm:mt-14">
+            {/* Desktop: grille 3 colonnes */}
+            <div className="hidden md:grid gap-5 lg:gap-6 grid-cols-3">
+              {plans.map((p, i) => (
+                <Reveal key={p.name} delay={((i % 4) + 1) as 1 | 2 | 3 | 4}>
+                  <div
+                    className={`relative h-full p-6 sm:p-8 rounded-2xl sm:rounded-3xl border transition-all hover:-translate-y-1 ${
+                      p.popular
+                        ? "border-gold bg-gradient-to-b from-gold/10 to-transparent shadow-gold scale-[1.02]"
+                        : "border-white/10 bg-dark-card hover:border-gold/30"
+                    }`}
+                    style={p.popular ? { boxShadow: "0 0 40px rgba(212,168,83,0.15)" } : {}}
+                  >
+                    {p.popular && (
+                      <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-2 sm:px-3 py-1 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-wider bg-gradient-gold text-[#0a0a0f] shadow-gold whitespace-nowrap">
+                        Populaire
+                      </span>
+                    )}
+                    <h3 className="text-lg sm:text-xl font-bold">{p.name}</h3>
+                    <div className="mt-3 sm:mt-4 flex items-baseline gap-1">
+                      <span className="text-3xl sm:text-5xl font-black text-gradient-gold">{p.price}</span>
+                      <small className="text-xs sm:text-sm text-muted-foreground font-semibold">{p.unit}</small>
+                    </div>
+                    <p className="text-[11px] sm:text-xs text-muted-foreground mt-1">{p.period}</p>
+                    <ul className="mt-4 sm:mt-6 space-y-2 sm:space-y-3 text-xs sm:text-sm">
+                      {p.features.map((f) => (
+                        <li key={f} className="flex items-start gap-2">
+                          <span className="text-gold mt-0.5 shrink-0">✓</span>
+                          <span className="text-foreground/85">{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Link
+                      to={p.href}
+                      search={{ plan: p.plan }}
+                      className={`mt-6 sm:mt-8 inline-flex w-full items-center justify-center px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm transition-all ${
+                        p.popular
+                          ? "bg-gradient-gold text-[#0a0a0f] hover:shadow-gold"
+                          : "border border-white/10 hover:border-gold/40 hover:bg-white/[0.03]"
+                      }`}
+                    >
+                      {p.cta}
+                    </Link>
                   </div>
-                  <p className="text-[11px] sm:text-xs text-muted-foreground mt-1">{p.period}</p>
-                  <ul className="mt-4 sm:mt-6 space-y-2 sm:space-y-3 text-xs sm:text-sm">
-                    {p.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2">
+                </Reveal>
+              ))}
+            </div>
+
+            {/* Mobile: cartes empilées cliquables */}
+            <div className="md:hidden space-y-4">
+              {plans.map((p, i) => (
+                <Reveal key={p.name} delay={((i % 4) + 1) as 1 | 2 | 3 | 4}>
+                  <button
+                    onClick={() => setSelectedPlan(p)}
+                    className={`w-full text-left relative p-5 rounded-2xl border transition-all cursor-pointer ${
+                      p.popular
+                        ? "border-gold bg-gradient-to-b from-gold/10 to-transparent shadow-gold"
+                        : "border-white/10 bg-dark-card hover:border-gold/30"
+                    }`}
+                    style={p.popular ? { boxShadow: "0 0 30px rgba(212,168,83,0.15)" } : {}}
+                  >
+                    {p.popular && (
+                      <span className="absolute -top-2 left-4 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-gradient-gold text-[#0a0a0f] shadow-gold whitespace-nowrap">
+                        ⭐ Populaire
+                      </span>
+                    )}
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1">
+                        <h3 className="text-base font-bold">{p.name}</h3>
+                        <div className="mt-2 flex items-baseline gap-1.5">
+                          <span className="text-2xl font-black text-gradient-gold">{p.price}</span>
+                          <small className="text-[10px] text-muted-foreground font-semibold">{p.unit}</small>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{p.period}</p>
+                      </div>
+                      <span className={`shrink-0 px-3 py-1.5 rounded-lg font-bold text-[11px] ${
+                        p.popular
+                          ? "bg-gradient-gold text-[#0a0a0f]"
+                          : "border border-white/10"
+                      }`}>
+                        {p.cta}
+                      </span>
+                    </div>
+                    <ul className="mt-3 space-y-1.5 text-[11px]">
+                      {p.features.slice(0, 4).map((f) => (
+                        <li key={f} className="flex items-start gap-1.5">
+                          <span className="text-gold mt-0.5 shrink-0 text-[10px]">✓</span>
+                          <span className="text-foreground/85">{f}</span>
+                        </li>
+                      ))}
+                      {p.features.length > 4 && (
+                        <li className="text-[10px] text-muted-foreground pl-3">
+                          +{p.features.length - 4} autres avantages
+                        </li>
+                      )}
+                    </ul>
+                  </button>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+
+          {/* MODAL PLAN */}
+          {selectedPlan && (
+            <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setSelectedPlan(null)}>
+              <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+              <div
+                className="relative w-full sm:max-w-lg max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-3xl border border-white/10 bg-dark-card p-6 sm:p-8 shadow-2xl animate-slide-up"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  onClick={() => setSelectedPlan(null)}
+                  className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+
+                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-4 ${
+                  selectedPlan.popular ? "bg-gradient-gold text-[#0a0a0f]" : "border border-gold/30 text-gold"
+                }`}>
+                  {selectedPlan.popular ? "⭐ Populaire" : selectedPlan.name}
+                </div>
+
+                <h3 className="text-2xl font-black">{selectedPlan.name}</h3>
+                <div className="mt-3 flex items-baseline gap-1.5">
+                  <span className="text-4xl font-black text-gradient-gold">{selectedPlan.price}</span>
+                  <small className="text-sm text-muted-foreground font-semibold">{selectedPlan.unit}</small>
+                  <span className="text-xs text-muted-foreground ml-1">{selectedPlan.period}</span>
+                </div>
+
+                <div className="mt-6 space-y-3">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Ce qui est inclus :</p>
+                  <ul className="space-y-2.5">
+                    {selectedPlan.features.map((f) => (
+                      <li key={f} className="flex items-start gap-2.5 text-sm">
                         <span className="text-gold mt-0.5 shrink-0">✓</span>
                         <span className="text-foreground/85">{f}</span>
                       </li>
                     ))}
                   </ul>
-                  <Link
-                    to={p.href}
-                    search={{ plan: p.plan }}
-                    className={`mt-6 sm:mt-8 inline-flex w-full items-center justify-center px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm transition-all ${
-                      p.popular
-                        ? "bg-gradient-gold text-[#0a0a0f] hover:shadow-gold"
-                        : "border border-white/10 hover:border-gold/40 hover:bg-white/[0.03]"
-                    }`}
-                  >
-                    {p.cta}
-                  </Link>
                 </div>
-              </Reveal>
-            ))}
-          </div>
+
+                <Link
+                  to={selectedPlan.href}
+                  search={{ plan: selectedPlan.plan }}
+                  className={`mt-6 inline-flex w-full items-center justify-center px-5 py-3 rounded-xl font-bold text-sm transition-all ${
+                    selectedPlan.popular
+                      ? "bg-gradient-gold text-[#0a0a0f] hover:shadow-gold"
+                      : "border border-white/10 hover:border-gold/40"
+                  }`}
+                >
+                  {selectedPlan.cta}
+                </Link>
+              </div>
+            </div>
+          )}
 
           {/* SUR MESURE */}
           <Reveal>
