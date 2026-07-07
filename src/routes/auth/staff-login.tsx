@@ -54,16 +54,26 @@ function StaffLoginPage() {
         return;
       }
 
-      // Find staff by name (case insensitive)
-      const { data: staff, error } = await supabase
+      // Find staff by name (case insensitive, partial match)
+      const { data: staff, error } = await (supabase as any)
         .from("staff_members")
-        .select("id, name, role")
+        .select("id, name, role, is_active")
         .ilike("name", `%${name}%`)
-        .eq("is_active", true)
         .maybeSingle();
 
-      if (error || !staff) {
-        toast.error("Nom non trouvé. Vérifiez auprès de l'administrateur.");
+      if (error) {
+        console.error("Erreur lors de la recherche:", error);
+        toast.error(`Erreur: ${error.message}`);
+        return;
+      }
+
+      if (!staff) {
+        toast.error(`Nom "${name}" non trouvé. Vérifiez l'orthographe ou demandez à l'administrateur de vous ajouter.`);
+        return;
+      }
+
+      if (!staff.is_active) {
+        toast.error("Votre compte est désactivé. Contactez l'administrateur.");
         return;
       }
 
@@ -71,7 +81,8 @@ function StaffLoginPage() {
       setStaffName(staff.name);
       setStep("pin");
     } catch (error: any) {
-      toast.error(error.message || "Erreur");
+      console.error("Erreur:", error);
+      toast.error(error.message || "Erreur lors de la connexion");
     } finally {
       setLoading(false);
     }
@@ -85,7 +96,7 @@ function StaffLoginPage() {
 
     try {
       // Verify PIN
-      const { data: staff, error } = await supabase
+      const { data: staff, error } = await (supabase as any)
         .from("staff_members")
         .select("id, name, role")
         .eq("id", staffId)
