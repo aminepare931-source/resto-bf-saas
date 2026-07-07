@@ -764,7 +764,7 @@ export function TplSoleil(props: TemplateProps) {
           {gallery.length > 0 && (
             <section className="py-16 px-5">
               <div className="max-w-6xl mx-auto">
-                <SectionHead kicker="Galerie", title="L'ambiance chez nous" theme={theme} align="center" />
+                <SectionHead kicker="Galerie" title="L'ambiance chez nous" theme={theme} align="center" />
                 <GalleryGrid gallery={gallery} theme={theme} />
               </div>
             </section>
