@@ -14,6 +14,7 @@ import { Route as OfflineRouteImport } from './routes/offline'
 import { Route as DebugUserRouteImport } from './routes/debug-user'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthIndexRouteImport } from './routes/auth/index'
 import { Route as RSlugRouteImport } from './routes/r.$slug'
 import { Route as AuthStaffLoginRouteImport } from './routes/auth/staff-login'
 import { Route as AuthInscriptionRouteImport } from './routes/auth/inscription'
@@ -62,6 +63,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthIndexRoute = AuthIndexRouteImport.update({
+  id: '/auth/',
+  path: '/auth/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RSlugRoute = RSlugRouteImport.update({
@@ -220,6 +226,7 @@ export interface FileRoutesByFullPath {
   '/auth/inscription': typeof AuthInscriptionRoute
   '/auth/staff-login': typeof AuthStaffLoginRoute
   '/r/$slug': typeof RSlugRoute
+  '/auth/': typeof AuthIndexRoute
   '/dashboard/avis': typeof AuthenticatedDashboardAvisRoute
   '/dashboard/chat': typeof AuthenticatedDashboardChatRoute
   '/dashboard/commandes': typeof AuthenticatedDashboardCommandesRoute
@@ -250,6 +257,7 @@ export interface FileRoutesByTo {
   '/auth/inscription': typeof AuthInscriptionRoute
   '/auth/staff-login': typeof AuthStaffLoginRoute
   '/r/$slug': typeof RSlugRoute
+  '/auth': typeof AuthIndexRoute
   '/dashboard/avis': typeof AuthenticatedDashboardAvisRoute
   '/dashboard/chat': typeof AuthenticatedDashboardChatRoute
   '/dashboard/commandes': typeof AuthenticatedDashboardCommandesRoute
@@ -283,6 +291,7 @@ export interface FileRoutesById {
   '/auth/inscription': typeof AuthInscriptionRoute
   '/auth/staff-login': typeof AuthStaffLoginRoute
   '/r/$slug': typeof RSlugRoute
+  '/auth/': typeof AuthIndexRoute
   '/_authenticated/dashboard/avis': typeof AuthenticatedDashboardAvisRoute
   '/_authenticated/dashboard/chat': typeof AuthenticatedDashboardChatRoute
   '/_authenticated/dashboard/commandes': typeof AuthenticatedDashboardCommandesRoute
@@ -316,6 +325,7 @@ export interface FileRouteTypes {
     | '/auth/inscription'
     | '/auth/staff-login'
     | '/r/$slug'
+    | '/auth/'
     | '/dashboard/avis'
     | '/dashboard/chat'
     | '/dashboard/commandes'
@@ -346,6 +356,7 @@ export interface FileRouteTypes {
     | '/auth/inscription'
     | '/auth/staff-login'
     | '/r/$slug'
+    | '/auth'
     | '/dashboard/avis'
     | '/dashboard/chat'
     | '/dashboard/commandes'
@@ -378,6 +389,7 @@ export interface FileRouteTypes {
     | '/auth/inscription'
     | '/auth/staff-login'
     | '/r/$slug'
+    | '/auth/'
     | '/_authenticated/dashboard/avis'
     | '/_authenticated/dashboard/chat'
     | '/_authenticated/dashboard/commandes'
@@ -410,6 +422,7 @@ export interface RootRouteChildren {
   AuthInscriptionRoute: typeof AuthInscriptionRoute
   AuthStaffLoginRoute: typeof AuthStaffLoginRoute
   RSlugRoute: typeof RSlugRoute
+  AuthIndexRoute: typeof AuthIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -447,6 +460,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/': {
+      id: '/auth/'
+      path: '/auth'
+      fullPath: '/auth/'
+      preLoaderRoute: typeof AuthIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/r/$slug': {
@@ -702,6 +722,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthInscriptionRoute: AuthInscriptionRoute,
   AuthStaffLoginRoute: AuthStaffLoginRoute,
   RSlugRoute: RSlugRoute,
+  AuthIndexRoute: AuthIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
