@@ -32,10 +32,10 @@ export function Footer() {
           <h4 className="text-sm font-bold text-gold uppercase tracking-wider mb-2">
             Espace restaurant
           </h4>
-          <Link to="/auth/connexion" className="text-sm text-muted-foreground hover:text-gold transition-colors">
+          <Link to="/auth" className="text-sm text-muted-foreground hover:text-gold transition-colors">
             Connexion
           </Link>
-          <Link to="/auth/inscription" className="text-sm text-muted-foreground hover:text-gold transition-colors">
+          <Link to="/auth" className="text-sm text-muted-foreground hover:text-gold transition-colors">
             Créer mon restaurant
           </Link>
           <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-gold transition-colors">

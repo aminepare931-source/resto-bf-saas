@@ -64,13 +64,13 @@ export function Topbar() {
 
         <div className="flex items-center gap-2">
           <Link
-            to="/auth/connexion"
+            to="/auth"
             className="hidden sm:inline-flex px-4 py-2 text-sm font-semibold text-muted-foreground hover:text-gold transition-colors"
           >
             Connexion
           </Link>
           <Link
-            to="/auth/inscription"
+            to="/auth"
             className="inline-flex items-center px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-bold rounded-xl bg-gradient-gold text-[#0a0a0f] hover:shadow-gold hover:-translate-y-0.5 transition-all whitespace-nowrap"
           >
             Créer mon restaurant

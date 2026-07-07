@@ -115,7 +115,7 @@ function LoginPage() {
 
       <p className="text-center mt-6 text-sm text-muted-foreground">
         Pas encore inscrit ?{" "}
-        <Link to="/auth/inscription" className="text-gold font-bold hover:text-gold-light">
+        <Link to="/auth" className="text-gold font-bold hover:text-gold-light">
           Créer mon restaurant
         </Link>
       </p>

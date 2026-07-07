@@ -190,7 +190,7 @@ function LandingPage() {
               <Reveal delay={3}>
                 <div className="mt-6 sm:mt-8 flex flex-wrap gap-3">
                   <Link
-                    to="/auth/inscription"
+                    to="/auth"
                     className="inline-flex items-center px-5 sm:px-7 py-3 sm:py-4 rounded-2xl bg-gradient-gold text-[#0a0a0f] font-bold shadow-gold hover:-translate-y-0.5 transition-transform text-sm sm:text-base"
                   >
                     ✨ Créer ma page gratuite
