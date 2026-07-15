@@ -9,6 +9,7 @@ export const Route = createFileRoute("/r/$slug")({
   ssr: false,
   validateSearch: (s: Record<string, unknown>) => ({
     table: typeof s.table === "string" ? s.table.slice(0, 10) : undefined,
+    view: typeof s.view === "string" ? s.view.slice(0, 20) : undefined,
   }),
   head: ({ params }) => ({
     meta: [
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/r/$slug")({
 
 function PublicRestaurantPage() {
   const { slug } = Route.useParams();
-  const { table } = Route.useSearch();
+  const { table, view } = Route.useSearch();
   const [restaurant, setRestaurant] = useState<PublicRestaurant | null>(null);
   const [menu, setMenu] = useState<PublicMenuItem[]>([]);
   const [reviews, setReviews] = useState<PublicReview[]>([]);
@@ -94,7 +95,7 @@ function PublicRestaurantPage() {
 
   return (
     <>
-      {renderTemplate(restaurant.template, { restaurant, menu, reviews, gallery })}
+      {renderTemplate(restaurant.template, { restaurant, menu, reviews, gallery, view })}
       <OrderCartFab restaurant={restaurant} menu={menu} tableNumber={table ?? null} />
     </>
   );

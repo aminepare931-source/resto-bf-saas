@@ -21,6 +21,7 @@ import { Route as AuthInscriptionRouteImport } from './routes/auth/inscription'
 import { Route as AuthConnexionRouteImport } from './routes/auth/connexion'
 import { Route as AuthChoisirTemplateRouteImport } from './routes/auth/choisir-template'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
+import { Route as AuthAbonnementRouteImport } from './routes/auth/abonnement'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as AuthenticatedDashboardTemplatesRouteImport } from './routes/_authenticated/dashboard.templates'
@@ -31,6 +32,7 @@ import { Route as AuthenticatedDashboardStaffRouteImport } from './routes/_authe
 import { Route as AuthenticatedDashboardReservationsRouteImport } from './routes/_authenticated/dashboard.reservations'
 import { Route as AuthenticatedDashboardQrCodeRouteImport } from './routes/_authenticated/dashboard.qr-code'
 import { Route as AuthenticatedDashboardParametresRouteImport } from './routes/_authenticated/dashboard.parametres'
+import { Route as AuthenticatedDashboardPaiementsRouteImport } from './routes/_authenticated/dashboard.paiements'
 import { Route as AuthenticatedDashboardMessagingRouteImport } from './routes/_authenticated/dashboard.messaging'
 import { Route as AuthenticatedDashboardMenuRouteImport } from './routes/_authenticated/dashboard.menu'
 import { Route as AuthenticatedDashboardGalerieRouteImport } from './routes/_authenticated/dashboard.galerie'
@@ -100,6 +102,11 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
   path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthAbonnementRoute = AuthAbonnementRouteImport.update({
+  id: '/auth/abonnement',
+  path: '/auth/abonnement',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -157,6 +164,12 @@ const AuthenticatedDashboardParametresRoute =
   AuthenticatedDashboardParametresRouteImport.update({
     id: '/parametres',
     path: '/parametres',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardPaiementsRoute =
+  AuthenticatedDashboardPaiementsRouteImport.update({
+    id: '/paiements',
+    path: '/paiements',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
 const AuthenticatedDashboardMessagingRoute =
@@ -220,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/offline': typeof OfflineRoute
   '/super-admin': typeof SuperAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/auth/abonnement': typeof AuthAbonnementRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/choisir-template': typeof AuthChoisirTemplateRoute
   '/auth/connexion': typeof AuthConnexionRoute
@@ -236,6 +250,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/galerie': typeof AuthenticatedDashboardGalerieRoute
   '/dashboard/menu': typeof AuthenticatedDashboardMenuRoute
   '/dashboard/messaging': typeof AuthenticatedDashboardMessagingRoute
+  '/dashboard/paiements': typeof AuthenticatedDashboardPaiementsRoute
   '/dashboard/parametres': typeof AuthenticatedDashboardParametresRoute
   '/dashboard/qr-code': typeof AuthenticatedDashboardQrCodeRoute
   '/dashboard/reservations': typeof AuthenticatedDashboardReservationsRoute
@@ -251,6 +266,7 @@ export interface FileRoutesByTo {
   '/debug-user': typeof DebugUserRoute
   '/offline': typeof OfflineRoute
   '/super-admin': typeof SuperAdminRoute
+  '/auth/abonnement': typeof AuthAbonnementRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/choisir-template': typeof AuthChoisirTemplateRoute
   '/auth/connexion': typeof AuthConnexionRoute
@@ -267,6 +283,7 @@ export interface FileRoutesByTo {
   '/dashboard/galerie': typeof AuthenticatedDashboardGalerieRoute
   '/dashboard/menu': typeof AuthenticatedDashboardMenuRoute
   '/dashboard/messaging': typeof AuthenticatedDashboardMessagingRoute
+  '/dashboard/paiements': typeof AuthenticatedDashboardPaiementsRoute
   '/dashboard/parametres': typeof AuthenticatedDashboardParametresRoute
   '/dashboard/qr-code': typeof AuthenticatedDashboardQrCodeRoute
   '/dashboard/reservations': typeof AuthenticatedDashboardReservationsRoute
@@ -285,6 +302,7 @@ export interface FileRoutesById {
   '/offline': typeof OfflineRoute
   '/super-admin': typeof SuperAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/auth/abonnement': typeof AuthAbonnementRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/choisir-template': typeof AuthChoisirTemplateRoute
   '/auth/connexion': typeof AuthConnexionRoute
@@ -301,6 +319,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/galerie': typeof AuthenticatedDashboardGalerieRoute
   '/_authenticated/dashboard/menu': typeof AuthenticatedDashboardMenuRoute
   '/_authenticated/dashboard/messaging': typeof AuthenticatedDashboardMessagingRoute
+  '/_authenticated/dashboard/paiements': typeof AuthenticatedDashboardPaiementsRoute
   '/_authenticated/dashboard/parametres': typeof AuthenticatedDashboardParametresRoute
   '/_authenticated/dashboard/qr-code': typeof AuthenticatedDashboardQrCodeRoute
   '/_authenticated/dashboard/reservations': typeof AuthenticatedDashboardReservationsRoute
@@ -319,6 +338,7 @@ export interface FileRouteTypes {
     | '/offline'
     | '/super-admin'
     | '/dashboard'
+    | '/auth/abonnement'
     | '/auth/callback'
     | '/auth/choisir-template'
     | '/auth/connexion'
@@ -335,6 +355,7 @@ export interface FileRouteTypes {
     | '/dashboard/galerie'
     | '/dashboard/menu'
     | '/dashboard/messaging'
+    | '/dashboard/paiements'
     | '/dashboard/parametres'
     | '/dashboard/qr-code'
     | '/dashboard/reservations'
@@ -350,6 +371,7 @@ export interface FileRouteTypes {
     | '/debug-user'
     | '/offline'
     | '/super-admin'
+    | '/auth/abonnement'
     | '/auth/callback'
     | '/auth/choisir-template'
     | '/auth/connexion'
@@ -366,6 +388,7 @@ export interface FileRouteTypes {
     | '/dashboard/galerie'
     | '/dashboard/menu'
     | '/dashboard/messaging'
+    | '/dashboard/paiements'
     | '/dashboard/parametres'
     | '/dashboard/qr-code'
     | '/dashboard/reservations'
@@ -383,6 +406,7 @@ export interface FileRouteTypes {
     | '/offline'
     | '/super-admin'
     | '/_authenticated/dashboard'
+    | '/auth/abonnement'
     | '/auth/callback'
     | '/auth/choisir-template'
     | '/auth/connexion'
@@ -399,6 +423,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/galerie'
     | '/_authenticated/dashboard/menu'
     | '/_authenticated/dashboard/messaging'
+    | '/_authenticated/dashboard/paiements'
     | '/_authenticated/dashboard/parametres'
     | '/_authenticated/dashboard/qr-code'
     | '/_authenticated/dashboard/reservations'
@@ -416,6 +441,7 @@ export interface RootRouteChildren {
   DebugUserRoute: typeof DebugUserRoute
   OfflineRoute: typeof OfflineRoute
   SuperAdminRoute: typeof SuperAdminRoute
+  AuthAbonnementRoute: typeof AuthAbonnementRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthChoisirTemplateRoute: typeof AuthChoisirTemplateRoute
   AuthConnexionRoute: typeof AuthConnexionRoute
@@ -511,6 +537,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/abonnement': {
+      id: '/auth/abonnement'
+      path: '/auth/abonnement'
+      fullPath: '/auth/abonnement'
+      preLoaderRoute: typeof AuthAbonnementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -579,6 +612,13 @@ declare module '@tanstack/react-router' {
       path: '/parametres'
       fullPath: '/dashboard/parametres'
       preLoaderRoute: typeof AuthenticatedDashboardParametresRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/paiements': {
+      id: '/_authenticated/dashboard/paiements'
+      path: '/paiements'
+      fullPath: '/dashboard/paiements'
+      preLoaderRoute: typeof AuthenticatedDashboardPaiementsRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
     '/_authenticated/dashboard/messaging': {
@@ -657,6 +697,7 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardGalerieRoute: typeof AuthenticatedDashboardGalerieRoute
   AuthenticatedDashboardMenuRoute: typeof AuthenticatedDashboardMenuRoute
   AuthenticatedDashboardMessagingRoute: typeof AuthenticatedDashboardMessagingRoute
+  AuthenticatedDashboardPaiementsRoute: typeof AuthenticatedDashboardPaiementsRoute
   AuthenticatedDashboardParametresRoute: typeof AuthenticatedDashboardParametresRoute
   AuthenticatedDashboardQrCodeRoute: typeof AuthenticatedDashboardQrCodeRoute
   AuthenticatedDashboardReservationsRoute: typeof AuthenticatedDashboardReservationsRoute
@@ -680,6 +721,7 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
     AuthenticatedDashboardGalerieRoute: AuthenticatedDashboardGalerieRoute,
     AuthenticatedDashboardMenuRoute: AuthenticatedDashboardMenuRoute,
     AuthenticatedDashboardMessagingRoute: AuthenticatedDashboardMessagingRoute,
+    AuthenticatedDashboardPaiementsRoute: AuthenticatedDashboardPaiementsRoute,
     AuthenticatedDashboardParametresRoute:
       AuthenticatedDashboardParametresRoute,
     AuthenticatedDashboardQrCodeRoute: AuthenticatedDashboardQrCodeRoute,
@@ -716,6 +758,7 @@ const rootRouteChildren: RootRouteChildren = {
   DebugUserRoute: DebugUserRoute,
   OfflineRoute: OfflineRoute,
   SuperAdminRoute: SuperAdminRoute,
+  AuthAbonnementRoute: AuthAbonnementRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthChoisirTemplateRoute: AuthChoisirTemplateRoute,
   AuthConnexionRoute: AuthConnexionRoute,

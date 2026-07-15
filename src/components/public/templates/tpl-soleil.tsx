@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { TemplateProps, PublicMenuItem, PublicGalleryImage, Theme } from "../shared";
-import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, buildWhatsAppLink, avgRating, fmtPrice } from "../shared";
+import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
 import { StorageImage } from "@/components/StorageImage";
 import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
 
@@ -107,16 +107,25 @@ function PoweredFooter({ restaurant, wa, theme }: { restaurant: TemplateProps["r
 }
 
 export function TplSoleil(props: TemplateProps) {
-  const { restaurant, menu, reviews, gallery } = props;
+  const { restaurant, menu, reviews, gallery, view } = props;
   const wa = buildWhatsAppLink(restaurant.whatsapp, restaurant.name);
   const cover = pickCover(gallery, menu);
   const rating = avgRating(reviews);
   const cats = Array.from(new Set(menu.filter((m) => m.available).map((m) => m.category))).slice(0, 6);
   const [activeTab, setActiveTab] = React.useState<string | null>(null);
   const popular = (activeTab ? menu.filter((m) => m.available && m.category === activeTab) : menu.filter((m) => m.available)).slice(0, 8);
-  
-  const [currentView, setCurrentView] = React.useState<"home" | "menu" | "about" | "reserve">("home");
   const [mobOpen, setMobOpen] = React.useState(false);
+  const activeView =
+    view === "home" || view === "menu" || view === "about" || view === "reserve"
+      ? view
+      : "home";
+
+  React.useEffect(() => {
+    setMobOpen(false);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [activeView]);
 
   const theme: Theme = {
     bg: "#fbf3e6",
@@ -132,10 +141,7 @@ export function TplSoleil(props: TemplateProps) {
 
   const heroOverlay = "linear-gradient(135deg, rgba(251,243,230,0.92) 0%, rgba(251,243,230,0.88) 50%, rgba(251,243,230,0.82) 100%)";
 
-  const goTo = (view: typeof currentView) => {
-    setCurrentView(view);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  // Navigation is handled by the view query param via href links.
 
   return (
     <div className="tpl-page min-h-screen" style={{ background: theme.bg, color: theme.text, fontFamily: "'Inter', sans-serif", isolation: "isolate" }}>
@@ -179,16 +185,16 @@ export function TplSoleil(props: TemplateProps) {
           </div>
           <div className="flex items-center gap-2 sm:gap-5">
             <nav className="hidden md:flex gap-5 text-sm font-medium" style={{ color: theme.text }}>
-              <button onClick={() => goTo("home")} className={`hover:text-[#c7522a] transition ${currentView === "home" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}>Accueil</button>
-              <button onClick={() => goTo("menu")} className={`hover:text-[#c7522a] transition ${currentView === "menu" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}>Menu</button>
-              <button onClick={() => goTo("about")} className={`hover:text-[#c7522a] transition ${currentView === "about" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}>À propos</button>
+                  <a href={buildViewHref("home")} className={`hover:text-[#c7522a] transition ${activeView === "home" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}>Accueil</a>
+                  <a href={buildViewHref("menu")} className={`hover:text-[#c7522a] transition ${activeView === "menu" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}>Menu</a>
+                  <a href={buildViewHref("about")} className={`hover:text-[#c7522a] transition ${activeView === "about" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}>À propos</a>
             </nav>
             {restaurant.plan !== "gratuit" && (
-              <button onClick={() => goTo("reserve")} className="hidden md:block px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition border-2 border-white" style={{ color: "#ffffff" }}>
+              <a href={buildViewHref("reserve")} className="hidden md:inline-flex px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition border-2 border-white" style={{ color: "#ffffff" }}>
                 Réserver
-              </button>
+              </a>
             )}
-            <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="hidden md:flex w-10 h-10 rounded-full grid place-items-center text-base hover:scale-105 transition" style={{ background: theme.accent, color: theme.accentInk }} aria-label="Commander">
+            <a href={wa ?? buildViewHref("menu")} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="hidden md:flex w-10 h-10 rounded-full grid place-items-center text-base hover:scale-105 transition" style={{ background: theme.accent, color: theme.accentInk }} aria-label="Commander">
               🛒
             </a>
             <button onClick={() => setMobOpen((v) => !v)} className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-black/5 transition-colors" aria-label="Menu">
@@ -198,23 +204,23 @@ export function TplSoleil(props: TemplateProps) {
             </button>
           </div>
         </div>
-        {mobOpen && (
+            {mobOpen && (
           <nav className="md:hidden border-t border-black/10 bg-white/95 backdrop-blur-xl">
             <div className="flex flex-col px-4 py-4 gap-1">
-              <button onClick={() => goTo("home")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">Accueil</button>
-              <button onClick={() => goTo("menu")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">Menu</button>
-              <button onClick={() => goTo("about")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">À propos</button>
+              <a href={buildViewHref("home")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">Accueil</a>
+              <a href={buildViewHref("menu")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">Menu</a>
+              <a href={buildViewHref("about")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">À propos</a>
               {restaurant.plan !== "gratuit" && (
-                <button onClick={() => goTo("reserve")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">Réserver</button>
+                <a href={buildViewHref("reserve")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">Réserver</a>
               )}
-              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors">🛒 Commander</a>
+              <a href={wa ?? buildViewHref("menu")} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors">🛒 Commander</a>
             </div>
           </nav>
         )}
       </header>
 
       {/* HOME VIEW */}
-      {currentView === "home" && (
+      {activeView === "home" && (
         <>
           {/* HERO card */}
           <section id="home" className="px-4 sm:px-5 pt-6 sm:pt-8 pb-10 sm:pb-12">
@@ -228,13 +234,13 @@ export function TplSoleil(props: TemplateProps) {
                     {restaurant.description ?? `Une cuisine d'excellence préparée avec passion à ${restaurant.city}, ingrédients frais et locaux.`}
                   </p>
                   <div className="mt-7 flex gap-3 flex-wrap">
-                    <a href={wa ?? "#menu"} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="px-7 py-3.5 rounded-full font-bold text-sm hover:opacity-90 transition shadow-lg" style={{ background: theme.accent, color: theme.accentInk }}>
+                    <a href={wa ?? buildViewHref("menu")} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="px-7 py-3.5 rounded-full font-bold text-sm hover:opacity-90 transition shadow-lg" style={{ background: theme.accent, color: theme.accentInk }}>
                       Commander
                     </a>
                     {restaurant.plan !== "gratuit" && (
-                      <button onClick={() => goTo("reserve")} className="px-7 py-3.5 rounded-full font-bold text-sm border-2 border-white hover:bg-white hover:text-[#1e1308] transition shadow-md" style={{ color: "#ffffff" }}>
+                      <a href={buildViewHref("reserve")} className="px-7 py-3.5 rounded-full font-bold text-sm border-2 border-white hover:bg-white hover:text-[#1e1308] transition shadow-md" style={{ color: "#ffffff" }}>
                         Réserver une table
-                      </button>
+                      </a>
                     )}
                   </div>
                 </div>
@@ -265,12 +271,12 @@ export function TplSoleil(props: TemplateProps) {
                 </h2>
                 <div className="flex flex-wrap justify-center gap-6 sm:gap-10">
                   {cats.map((c) => (
-                    <button key={c} onClick={() => { setActiveTab(c); goTo("menu"); }} className="group flex flex-col items-center gap-3">
+                    <a key={c} href={buildViewHref("menu")} onClick={() => setActiveTab(c)} className="group flex flex-col items-center gap-3">
                       <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full grid place-items-center text-4xl sm:text-5xl group-hover:scale-110 transition" style={{ background: "rgba(255,255,255,0.95)", boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}>
                         <CategoryIcon name={c} />
                       </div>
                       <span className="text-sm font-medium" style={{ color: "#ffffff", textShadow: "0 1px 6px rgba(0,0,0,0.4)" }}>{c}</span>
-                    </button>
+                    </a>
                   ))}
                 </div>
               </div>
@@ -322,7 +328,7 @@ export function TplSoleil(props: TemplateProps) {
       )}
 
       {/* MENU VIEW */}
-      {currentView === "menu" && (
+      {activeView === "menu" && (
         <section id="menu" className="py-16 px-5" style={{ background: theme.surface }}>
           <div className="max-w-6xl mx-auto">
             <SectionHead kicker="La carte" title="Notre menu complet" theme={theme} align="center" />
@@ -332,7 +338,7 @@ export function TplSoleil(props: TemplateProps) {
       )}
 
       {/* ABOUT VIEW */}
-      {currentView === "about" && (
+      {activeView === "about" && (
         <section id="about" className="py-16 px-5" style={{ background: theme.surfaceAlt }}>
           <div className="max-w-6xl mx-auto">
             <SectionHead kicker="Notre histoire" title="À propos de nous" theme={theme} align="center" />
@@ -358,7 +364,7 @@ export function TplSoleil(props: TemplateProps) {
       )}
 
       {/* RESERVATION VIEW */}
-      {currentView === "reserve" && restaurant.plan !== "gratuit" && (
+      {activeView === "reserve" && restaurant.plan !== "gratuit" && (
         <section id="reserver" className="py-16 px-5 bg-white">
           <div className="max-w-3xl mx-auto">
             <SectionHead kicker="Réservation" title="Réservez votre table" theme={theme} align="center" />
@@ -395,11 +401,11 @@ export function TplSoleil(props: TemplateProps) {
       </section>
 
       {/* CTA BAND */}
-      {currentView === "home" && (
+      {activeView === "home" && (
         <div className="px-5 py-7" style={{ background: "#8b3a1c" }}>
           <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-6">
             <strong className="text-white text-xl sm:text-2xl" style={{ fontFamily: "'Playfair Display', serif" }}>Savourez le meilleur, commandez maintenant</strong>
-            <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="px-7 py-3 rounded-full bg-white font-bold text-sm hover:bg-[#fbf3e6] transition" style={{ color: "#8b3a1c" }}>
+            <a href={wa ?? buildViewHref("menu")} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="px-7 py-3 rounded-full bg-white font-bold text-sm hover:bg-[#fbf3e6] transition" style={{ color: "#8b3a1c" }}>
               Commander en ligne
             </a>
           </div>
@@ -428,7 +434,7 @@ export function TplSoleil(props: TemplateProps) {
       </section>
 
       {/* GALERIE & AVIS - Intégrés dans l'accueil */}
-      {currentView === "home" && (
+      {activeView === "home" && (
         <>
           {gallery.length > 0 && (
             <section className="py-16 px-5">

@@ -32,9 +32,18 @@ export function Reveal({
   }, []);
 
   const delayClass = delay ? `reveal-delay-${delay}` : "";
-  const Comp = Tag as any;
+  const Comp = Tag as React.ElementType;
   return (
-    <Comp ref={ref as any} className={`reveal ${delayClass} ${className}`.trim()}>
+    <Comp
+      ref={ref as React.Ref<HTMLElement>}
+      className={`reveal ${delayClass} ${className}`.trim()}
+      style={{
+        willChange: "transform, opacity",
+        backfaceVisibility: "hidden",
+        WebkitBackfaceVisibility: "hidden",
+        transform: "translateZ(0)",
+      }}
+    >
       {children}
     </Comp>
   );

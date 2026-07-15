@@ -51,6 +51,7 @@ export type TemplateProps = {
   menu: PublicMenuItem[];
   reviews: PublicReview[];
   gallery: PublicGalleryImage[];
+  view?: string | null;
 };
 
 /** Thème passé à tous les composants partagés — fini les hacks d'override. */
@@ -87,6 +88,13 @@ export function groupByCategory(menu: PublicMenuItem[]) {
 
 export function fmtPrice(n: number) {
   return new Intl.NumberFormat("fr-FR").format(n) + " F";
+}
+
+export function buildViewHref(target: string) {
+  if (typeof window === "undefined") return "#";
+  const params = new URLSearchParams(window.location.search);
+  params.set("view", target);
+  return `${window.location.pathname}?${params.toString()}`;
 }
 
 export function avgRating(reviews: PublicReview[]) {

@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { TemplateProps, PublicMenuItem, PublicGalleryImage, Theme } from "../shared";
-import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, buildWhatsAppLink, avgRating, fmtPrice } from "../shared";
+import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
 import { StorageImage } from "@/components/StorageImage";
 import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
 
@@ -92,7 +92,7 @@ function PoweredFooter({ restaurant, wa, theme }: { restaurant: TemplateProps["r
 }
 
 export function TplModerne(props: TemplateProps) {
-  const { restaurant, menu, reviews, gallery } = props;
+  const { restaurant, menu, reviews, gallery, view } = props;
   const wa = buildWhatsAppLink(restaurant.whatsapp, restaurant.name);
   const cover = pickCover(gallery, menu);
   const signatures = signatureDishes(menu, 3);
@@ -110,14 +110,18 @@ export function TplModerne(props: TemplateProps) {
     radius: "4px",
   };
 
-  const [currentView, setCurrentView] = React.useState<"home" | "menu" | "about" | "reserve">("home");
   const [mobOpen, setMobOpen] = React.useState(false);
+  const activeView =
+    view === "home" || view === "menu" || view === "about" || view === "reserve"
+      ? view
+      : "home";
 
-  const goTo = (view: typeof currentView) => {
-    setCurrentView(view);
+  React.useEffect(() => {
     setMobOpen(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [activeView]);
 
   return (
     <div className="tpl-page min-h-screen" style={{ background: theme.bg, color: theme.text, fontFamily: "'Inter', sans-serif", isolation: "isolate" }}>
@@ -151,14 +155,14 @@ export function TplModerne(props: TemplateProps) {
           </div>
           <div className="flex items-center gap-2 sm:gap-6">
             <nav className="hidden md:flex gap-6 text-[12px] uppercase font-medium" style={{ letterSpacing: "0.15em", color: theme.textMuted }}>
-              <button onClick={() => goTo("home")} className={`hover:text-[#c9a35a] ${currentView === "home" ? "text-[#c9a35a]" : ""}`}>Accueil</button>
-              <button onClick={() => goTo("about")} className={`hover:text-[#c9a35a] ${currentView === "about" ? "text-[#c9a35a]" : ""}`}>À propos</button>
-              <button onClick={() => goTo("menu")} className={`hover:text-[#c9a35a] ${currentView === "menu" ? "text-[#c9a35a]" : ""}`}>Menu</button>
+              <a href={buildViewHref("home")} className={`hover:text-[#c9a35a] ${activeView === "home" ? "text-[#c9a35a]" : ""}`}>Accueil</a>
+              <a href={buildViewHref("about")} className={`hover:text-[#c9a35a] ${activeView === "about" ? "text-[#c9a35a]" : ""}`}>À propos</a>
+              <a href={buildViewHref("menu")} className={`hover:text-[#c9a35a] ${activeView === "menu" ? "text-[#c9a35a]" : ""}`}>Menu</a>
             </nav>
             {restaurant.plan !== "gratuit" && (
-              <button onClick={() => goTo("reserve")} className="hidden md:block px-5 py-2.5 border text-xs font-semibold hover:bg-[#c9a35a] hover:text-[#0e0e10] transition rounded-full" style={{ borderColor: theme.accent, color: theme.accent }}>
+              <a href={buildViewHref("reserve")} className="hidden md:inline-flex px-5 py-2.5 border text-xs font-semibold hover:bg-[#c9a35a] hover:text-[#0e0e10] transition rounded-full" style={{ borderColor: theme.accent, color: theme.accent }}>
                 Réserver une table →
-              </button>
+              </a>
             )}
             <button onClick={() => setMobOpen((v) => !v)} className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-white/10 transition-colors" aria-label="Menu">
               <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
@@ -170,7 +174,7 @@ export function TplModerne(props: TemplateProps) {
       </header>
 
       {/* HOME VIEW */}
-      {currentView === "home" && (
+      {activeView === "home" && (
         <section id="home" className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
           {cover ? <StorageImage path={cover} alt={restaurant.name} className="absolute inset-0 w-full h-full object-cover" /> : null}
           <div className="relative text-center px-5 pt-32 pb-20 max-w-3xl">
@@ -180,15 +184,15 @@ export function TplModerne(props: TemplateProps) {
             <p className="mt-5 max-w-xl mx-auto" style={{ color: theme.textMuted }}>
               {restaurant.description ?? `Une expérience culinaire d'exception au cœur de ${restaurant.city}.`}
             </p>
-            <button onClick={() => goTo("menu")} className="mt-8 inline-block px-7 py-3 border font-medium text-sm hover:bg-[#c9a35a] hover:text-[#0e0e10] transition" style={{ borderColor: theme.accent, color: theme.accent }}>
+            <a href={buildViewHref("menu")} className="mt-8 inline-block px-7 py-3 border font-medium text-sm hover:bg-[#c9a35a] hover:text-[#0e0e10] transition" style={{ borderColor: theme.accent, color: theme.accent }}>
               Découvrir →
-            </button>
+            </a>
           </div>
         </section>
       )}
 
       {/* ABOUT VIEW */}
-      {currentView === "about" && (
+      {activeView === "about" && (
         <section id="about" className="relative py-24 px-5" style={{ background: theme.surface }}>
           <div className="relative max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
             <div className="relative">
@@ -228,16 +232,16 @@ export function TplModerne(props: TemplateProps) {
                   </li>
                 ))}
               </ul>
-              <button onClick={() => goTo("menu")} className="inline-block px-7 py-3 border text-sm hover:bg-[#c9a35a] hover:text-[#0e0e10] transition" style={{ borderColor: theme.accent, color: theme.accent }}>
+              <a href={buildViewHref("menu")} className="inline-block px-7 py-3 border text-sm hover:bg-[#c9a35a] hover:text-[#0e0e10] transition" style={{ borderColor: theme.accent, color: theme.accent }}>
                 En savoir plus →
-              </button>
+              </a>
             </div>
           </div>
         </section>
       )}
 
       {/* MENU VIEW */}
-      {currentView === "menu" && (
+      {activeView === "menu" && (
         <section id="menu" className="py-20 px-5" style={{ background: theme.surface, borderTop: `1px solid ${theme.border}` }}>
           <div className="max-w-6xl mx-auto">
             <SectionHead kicker="La carte" title="Notre menu" theme={theme} align="center" serif />
@@ -247,7 +251,7 @@ export function TplModerne(props: TemplateProps) {
       )}
 
       {/* RESERVATION VIEW */}
-      {currentView === "reserve" && restaurant.plan !== "gratuit" && (
+      {activeView === "reserve" && restaurant.plan !== "gratuit" && (
         <section id="reserver" className="py-20 px-5" style={{ background: theme.surface, borderTop: `1px solid ${theme.border}` }}>
           <div className="max-w-3xl mx-auto">
             <SectionHead kicker="Réservation" title="Réservez votre table" theme={theme} align="center" serif />

@@ -10,6 +10,7 @@ import {
   SectionHead,
   FloatingWhatsApp,
   buildWhatsAppLink,
+  buildViewHref,
   avgRating,
   fmtPrice,
 } from "./shared";
@@ -231,8 +232,7 @@ function CategoryIcon({ name }: { name: string }) {
 /*  4. MARCHE — Indian-inspired dark green + orange/gold              */
 /* ================================================================== */
 
-export function TplMarche(props: TemplateProps) {
-  const { restaurant, menu, reviews, gallery } = props;
+export function TplMarche({ restaurant, menu, reviews, gallery, view }: TemplateProps) {
   const wa = buildWhatsAppLink(restaurant.whatsapp, restaurant.name);
   const cover = pickCover(gallery, menu);
   const rating = avgRating(reviews);
@@ -249,16 +249,19 @@ export function TplMarche(props: TemplateProps) {
     radius: "10px",
   };
 
-  const [currentView, setCurrentView] = React.useState<"home" | "menu" | "about" | "reserve">(
-    "home",
-  );
   const [mobOpen, setMobOpen] = React.useState(false);
 
-  const goTo = (view: typeof currentView) => {
-    setCurrentView(view);
+  const activeView =
+    view === "home" || view === "menu" || view === "about" || view === "reserve"
+      ? view
+      : "home";
+
+  React.useEffect(() => {
     setMobOpen(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [activeView]);
 
   return (
     <div
@@ -306,40 +309,40 @@ export function TplMarche(props: TemplateProps) {
               className="hidden md:flex gap-5 text-[12px] uppercase font-medium"
               style={{ letterSpacing: "0.15em", color: theme.textMuted }}
             >
-              <button
-                onClick={() => goTo("home")}
-                className={`hover:text-[#ed8023] ${currentView === "home" ? "text-[#ed8023] border-b border-[#ed8023]" : ""}`}
+              <a
+                href={buildViewHref("home")}
+                className={`hover:text-[#ed8023] ${activeView === "home" ? "text-[#ed8023] border-b border-[#ed8023]" : ""}`}
               >
                 Accueil
-              </button>
-              <button
-                onClick={() => goTo("about")}
-                className={`hover:text-[#ed8023] ${currentView === "about" ? "text-[#ed8023] border-b border-[#ed8023]" : ""}`}
+              </a>
+              <a
+                href={buildViewHref("about")}
+                className={`hover:text-[#ed8023] ${activeView === "about" ? "text-[#ed8023] border-b border-[#ed8023]" : ""}`}
               >
                 À propos
-              </button>
-              <button
-                onClick={() => goTo("menu")}
-                className={`hover:text-[#ed8023] ${currentView === "menu" ? "text-[#ed8023] border-b border-[#ed8023]" : ""}`}
+              </a>
+              <a
+                href={buildViewHref("menu")}
+                className={`hover:text-[#ed8023] ${activeView === "menu" ? "text-[#ed8023] border-b border-[#ed8023]" : ""}`}
               >
                 Menu
-              </button>
+              </a>
             </nav>
             {restaurant.plan !== "gratuit" && (
-              <button
-                onClick={() => goTo("reserve")}
+              <a
+                href={buildViewHref("reserve")}
                 className="px-5 py-2 rounded-full border text-xs font-semibold hover:bg-[#ed8023] hover:text-[#0d2818] transition"
                 style={{ borderColor: theme.accent, color: theme.accent }}
               >
                 Réserver
-              </button>
+              </a>
             )}
           </div>
         </div>
       </header>
 
       {/* HOME VIEW */}
-      {currentView === "home" && (
+      {activeView === "home" && (
         <section id="home" className="relative overflow-hidden">
           <div
             className="absolute inset-0 pointer-events-none"
@@ -366,17 +369,17 @@ export function TplMarche(props: TemplateProps) {
                   `Plongez dans une expérience culinaire authentique à ${restaurant.city}. Épices, saveurs et tradition à chaque bouchée.`}
               </p>
               <div className="mt-8 flex gap-3 flex-wrap">
-                <button
-                  onClick={() => goTo("menu")}
+                <a
+                  href={buildViewHref("menu")}
                   className="px-7 py-3 rounded-full font-bold text-sm hover:opacity-90 transition"
                   style={{ background: theme.accent, color: theme.accentInk }}
                 >
                   Voir le menu
-                </button>
+                </a>
                 <a
-                  href={wa ?? "#menu"}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={wa ?? buildViewHref("menu")}
+                  target={wa ? "_blank" : undefined}
+                  rel={wa ? "noopener noreferrer" : undefined}
                   className="px-7 py-3 rounded-full font-bold text-sm border hover:bg-white/5 transition"
                   style={{ borderColor: theme.accent, color: theme.accent }}
                 >
@@ -405,7 +408,7 @@ export function TplMarche(props: TemplateProps) {
       )}
 
       {/* MENU VIEW */}
-      {currentView === "menu" && (
+      {activeView === "menu" && (
         <section id="menu" className="py-20 px-5" style={{ background: theme.surfaceAlt }}>
           <div className="max-w-6xl mx-auto">
             <SectionHead kicker="La carte" title="Notre menu" theme={theme} align="center" serif />
@@ -415,7 +418,7 @@ export function TplMarche(props: TemplateProps) {
       )}
 
       {/* ABOUT VIEW */}
-      {currentView === "about" && (
+      {activeView === "about" && (
         <section id="about" className="py-20 px-5" style={{ background: theme.surfaceAlt }}>
           <div className="max-w-6xl mx-auto">
             <p
@@ -476,8 +479,8 @@ export function TplMarche(props: TemplateProps) {
       )}
 
       {/* RESERVATION VIEW */}
-      {currentView === "reserve" && restaurant.plan !== "gratuit" && (
-        <section className="py-20 px-5" style={{ background: theme.surfaceAlt }}>
+      {activeView === "reserve" && restaurant.plan !== "gratuit" && (
+        <section id="reserver" className="py-20 px-5" style={{ background: theme.surface, borderTop: `1px solid ${theme.border}` }}>
           <div className="max-w-3xl mx-auto">
             <SectionHead
               kicker="Réservation"
@@ -497,7 +500,7 @@ export function TplMarche(props: TemplateProps) {
       )}
 
       {/* GALERIE & AVIS - Intégrés dans l'accueil */}
-      {currentView === "home" && (
+      {activeView === "home" && (
         <>
           {gallery.length > 0 && (
             <section id="galerie" className="py-20 px-5">
@@ -554,7 +557,7 @@ import { toast } from "sonner";
 
 type CartLine = { name: string; price: number; qty: number };
 
-function ClassiqueGratuit({ restaurant, menu, reviews: initialReviews, gallery }: TemplateProps) {
+function ClassiqueGratuit({ restaurant, menu, reviews: initialReviews, gallery, view }: TemplateProps) {
   const [reviews, setReviews] = useState(initialReviews);
   const wa = (restaurant.whatsapp || "").replace(/\D/g, "");
   const waLink = (text: string) =>
@@ -567,6 +570,10 @@ function ClassiqueGratuit({ restaurant, menu, reviews: initialReviews, gallery }
 
   const [mobOpen, setMobOpen] = useState(false);
   const [active, setActive] = useState<"home" | "menu" | "order" | "reserve" | "reviews">("home");
+  const activeView =
+    view === "home" || view === "menu" || view === "order" || view === "reserve" || view === "reviews"
+      ? view
+      : active;
   const [prefill, setPrefill] = useState<{ name: string; price: number } | null>(null);
 
   const go = (id: typeof active) => {
@@ -588,7 +595,7 @@ function ClassiqueGratuit({ restaurant, menu, reviews: initialReviews, gallery }
       <style>{CL_CSS}</style>
 
       <nav className="cl-nav">
-        <button className="cl-brand" onClick={() => go("home")}>
+        <a className="cl-brand" href={buildViewHref("home")}>
           {restaurant.logo_url ? (
             <img
               src={restaurant.logo_url}
@@ -598,21 +605,21 @@ function ClassiqueGratuit({ restaurant, menu, reviews: initialReviews, gallery }
           ) : (
             restaurant.name
           )}
-        </button>
+        </a>
         <div className="cl-nav-links">
           {navLinks.map((l) => (
-            <button
+            <a
               key={l.id}
-              className={`cl-nav-link ${active === l.id ? "active" : ""}`}
-              onClick={() => go(l.id)}
+              className={`cl-nav-link ${activeView === l.id ? "active" : ""}`}
+              href={buildViewHref(l.id as any)}
             >
               {l.label}
-            </button>
+            </a>
           ))}
         </div>
-        <button className="cl-nav-cta" onClick={() => go("reserve")}>
+        <a className="cl-nav-cta" href={buildViewHref("reserve")}>
           📅 Réserver
-        </button>
+        </a>
         <button className="cl-hamburger" onClick={() => setMobOpen((v) => !v)}>
           ☰
         </button>
@@ -621,25 +628,24 @@ function ClassiqueGratuit({ restaurant, menu, reviews: initialReviews, gallery }
       {mobOpen && (
         <div className="cl-mob-menu">
           {navLinks.map((l) => (
-            <button key={l.id} onClick={() => go(l.id)}>
+            <a key={l.id} href={buildViewHref(l.id as any)} onClick={() => setMobOpen(false)}>
               {l.icon} {l.label}
-            </button>
+            </a>
           ))}
         </div>
       )}
 
       <div className="cl-page-wrap">
-        {active === "home" && (
+        {activeView === "home" && (
           <HomeView
             restaurant={restaurant}
             menu={available}
             reviews={reviews}
             ratingAvg={ratingAvg}
             waLink={waLink}
-            onGo={go}
           />
         )}
-        {active === "menu" && (
+        {activeView === "menu" && (
           <MenuView
             restaurant={restaurant}
             menu={available}
@@ -659,7 +665,7 @@ function ClassiqueGratuit({ restaurant, menu, reviews: initialReviews, gallery }
             clearPrefill={() => setPrefill(null)}
           />
         )}
-        {active === "reserve" && (
+        {activeView === "reserve" && (
           <ReservationForm
             restaurantId={restaurant.id}
             theme={{
@@ -675,7 +681,7 @@ function ClassiqueGratuit({ restaurant, menu, reviews: initialReviews, gallery }
             }}
           />
         )}
-        {active === "reviews" && (
+        {activeView === "reviews" && (
           <ReviewsView
             restaurant={restaurant}
             reviews={reviews}
@@ -724,14 +730,12 @@ function HomeView({
   reviews,
   ratingAvg,
   waLink,
-  onGo,
 }: {
   restaurant: TemplateProps["restaurant"];
   menu: PublicMenuItem[];
   reviews: TemplateProps["reviews"];
   ratingAvg: string | null;
   waLink: (t: string) => string;
-  onGo: (id: any) => void;
 }) {
   const preview = menu.slice(0, 4);
   const revPreview = reviews.slice(0, 3);
@@ -750,12 +754,8 @@ function HomeView({
               {restaurant.description || "Cuisine authentique servie avec le sourire."}
             </p>
             <div className="cl-hero-btns">
-              <button className="cl-btn cl-btn-wa" onClick={() => onGo("menu")}>
-                🍲 Voir le menu
-              </button>
-              <button className="cl-btn cl-btn-outline-light" onClick={() => onGo("reserve")}>
-                📅 Réserver
-              </button>
+              <a className="cl-btn cl-btn-wa" href={buildViewHref("menu")}>🍲 Voir le menu</a>
+              <a className="cl-btn cl-btn-outline-light" href={buildViewHref("reserve")}>📅 Réserver</a>
             </div>
           </div>
           <div className="cl-hero-img" aria-hidden />
@@ -834,21 +834,19 @@ function HomeView({
               <div className="cl-sec-label">Notre carte</div>
               <h2 className="cl-sec-title">Quelques spécialités</h2>
             </div>
-            <button className="cl-btn cl-btn-outline cl-btn-sm" onClick={() => onGo("menu")}>
-              Voir tout →
-            </button>
+            <a className="cl-btn cl-btn-outline cl-btn-sm" href={buildViewHref("menu")}>Voir tout →</a>
           </div>
           <div className="cl-menu-preview">
             {preview.length ? (
               preview.map((d) => (
-                <button key={d.id} className="cl-card cl-dish-mini" onClick={() => onGo("menu")}>
+                <a key={d.id} className="cl-card cl-dish-mini" href={buildViewHref("menu") }>
                   <div className="cl-dish-mini-icon">🍽️</div>
                   <div style={{ textAlign: "left", flex: 1 }}>
                     <div className="cl-dish-mini-cat">{d.category}</div>
                     <div className="cl-dish-mini-name">{d.name}</div>
                   </div>
                   <div className="cl-dish-mini-price">{d.price.toLocaleString("fr-FR")} F</div>
-                </button>
+                </a>
               ))
             ) : (
               <p style={{ color: "var(--cl-muted)" }}>Aucun plat encore.</p>
@@ -866,9 +864,7 @@ function HomeView({
               <div className="cl-sec-label">Ce qu'ils disent</div>
               <h2 className="cl-sec-title">Avis de nos clients</h2>
             </div>
-            <button className="cl-btn cl-btn-outline cl-btn-sm" onClick={() => onGo("reviews")}>
-              Tous les avis →
-            </button>
+            <a className="cl-btn cl-btn-outline cl-btn-sm" href={buildViewHref("reviews")}>Tous les avis →</a>
           </div>
           <div className="cl-reviews-row">
             {revPreview.length ? (
@@ -899,9 +895,7 @@ function HomeView({
             Places limitées. Réservez maintenant.
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <button className="cl-btn cl-btn-green" onClick={() => onGo("reserve")}>
-              📅 Réserver maintenant
-            </button>
+            <a className="cl-btn cl-btn-green" href={buildViewHref("reserve")}>📅 Réserver maintenant</a>
             <a
               className="cl-btn cl-btn-wa"
               href={waLink(`Bonjour ${restaurant.name} !`)}

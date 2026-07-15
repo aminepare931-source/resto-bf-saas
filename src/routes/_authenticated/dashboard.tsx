@@ -47,6 +47,7 @@ const adminNav: NavItem[] = [
   { to: "/dashboard/stocks", label: "Stocks", icon: "📦" },
   { to: "/dashboard/contenu", label: "Contenu & branding", icon: "🖌️" },
   { to: "/dashboard/facturation", label: "Facturation", icon: "🧾", badge: "Premium" },
+  { to: "/dashboard/paiements", label: "Paiements", icon: "💳" },
   { to: "/dashboard/parametres", label: "Paramètres", icon: "⚙️" },
 ];
 

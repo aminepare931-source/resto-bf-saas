@@ -8,6 +8,7 @@ import { Search, Filter, Clock, ArrowUpDown, ChevronDown, ChevronUp } from "luci
 import { OrderCardSkeleton } from "@/components/ui/skeleton";
 import type { Order, OrderStatus } from "@/types";
 import { ORDER_STATUS_LABEL, ORDER_STATUS_COLOR, ORDER_NEXT_STATUS, formatCurrency, formatDate } from "@/types";
+import { PaymentCodeModal } from "@/components/admin/PaymentCodeModal";
 
 export const Route = createFileRoute("/_authenticated/dashboard/commandes")({
   component: OrdersPage,
@@ -29,6 +30,7 @@ function OrdersPage() {
   const [page, setPage] = useState(1);
   const PER_PAGE = 20;
   const lastSeenCount = useRef(0);
+  const [paymentModalOrder, setPaymentModalOrder] = useState(null);
 
   // Debounce la recherche
   const debouncedSearch = useDebounce(search, 300);
@@ -369,6 +371,11 @@ function OrdersPage() {
                       ✓ Marquer servi
                     </button>
                   )}
+                  {o.status === "served" && o.payment_status !== "completed" && (
+                    <button onClick={() => setPaymentModalOrder(o)} className="px-4 py-2 rounded-lg bg-green-500/20 text-green-300 font-bold text-xs hover:bg-green-500/30">
+                      💳 Générer code paiement
+                    </button>
+                  )}
                   {o.status !== "cancelled" && o.status !== "paid" && (
                     <button
                       onClick={() => setStatus(o, "cancelled")}
@@ -383,6 +390,10 @@ function OrdersPage() {
           })
         )}
       </div>
+
+      {paymentModalOrder && (
+        <PaymentCodeModal order={paymentModalOrder} onClose={() => setPaymentModalOrder(null)} />
+      )}
 
       {/* Pagination */}
       {totalPages > 1 && (

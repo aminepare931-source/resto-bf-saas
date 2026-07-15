@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { TemplateProps, PublicMenuItem, PublicGalleryImage, Theme } from "../shared";
-import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, buildWhatsAppLink, avgRating, fmtPrice } from "../shared";
+import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
 import { StorageImage } from "@/components/StorageImage";
 import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
 
@@ -107,7 +107,7 @@ function PoweredFooter({ restaurant, wa, theme }: { restaurant: TemplateProps["r
 }
 
 export function TplSavane(props: TemplateProps) {
-  const { restaurant, menu, reviews, gallery } = props;
+  const { restaurant, menu, reviews, gallery, view } = props;
   const wa = buildWhatsAppLink(restaurant.whatsapp, restaurant.name);
   const cover = pickCover(gallery, menu);
   const signatures = signatureDishes(menu, 3);
@@ -128,14 +128,18 @@ export function TplSavane(props: TemplateProps) {
   const RED = "#c8281e";
   const heroOverlay = "linear-gradient(135deg, rgba(200,40,30,0.92) 0%, rgba(200,40,30,0.85) 50%, rgba(200,40,30,0.78) 100%)";
 
-  const [currentView, setCurrentView] = React.useState<"home" | "menu" | "about" | "reserve">("home");
   const [mobOpen, setMobOpen] = React.useState(false);
+  const activeView =
+    view === "home" || view === "menu" || view === "about" || view === "reserve"
+      ? view
+      : "home";
 
-  const goTo = (view: typeof currentView) => {
-    setCurrentView(view);
+  React.useEffect(() => {
     setMobOpen(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [activeView]);
 
   return (
     <div className="tpl-page min-h-screen" style={{ background: theme.bg, color: theme.text, fontFamily: "'Inter', sans-serif", isolation: "isolate" }}>
@@ -172,15 +176,15 @@ export function TplSavane(props: TemplateProps) {
             </div>
             <div className="flex items-center gap-2 sm:gap-5">
               <nav className="hidden md:flex gap-5 text-[12px] uppercase font-bold text-white/90" style={{ letterSpacing: "0.18em" }}>
-                <button onClick={() => goTo("home")} className={`hover:text-white ${currentView === "home" ? "text-white" : ""}`}>Accueil</button>
-                <button onClick={() => goTo("menu")} className={`hover:text-white ${currentView === "menu" ? "text-white" : ""}`}>Menu</button>
+                <a href={buildViewHref("home")} className={`hover:text-white ${activeView === "home" ? "text-white" : ""}`}>Accueil</a>
+                <a href={buildViewHref("menu")} className={`hover:text-white ${activeView === "menu" ? "text-white" : ""}`}>Menu</a>
               </nav>
               {restaurant.plan !== "gratuit" && (
-                <button onClick={() => goTo("reserve")} className="hidden md:block px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition border-2 border-white" style={{ color: "#ffffff" }}>
+                <a href={buildViewHref("reserve")} className="hidden md:inline-flex px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition border-2 border-white" style={{ color: "#ffffff" }}>
                   Réserver
-                </button>
+                </a>
               )}
-              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="hidden md:inline-flex px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition" style={{ background: theme.accent, color: theme.accentInk }}>
+              <a href={wa ?? buildViewHref("menu")} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="hidden md:inline-flex px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition" style={{ background: theme.accent, color: theme.accentInk }}>
                 Commander
               </a>
               <button onClick={() => setMobOpen((v) => !v)} className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-white/10 transition-colors" aria-label="Menu">
@@ -194,18 +198,18 @@ export function TplSavane(props: TemplateProps) {
         {mobOpen && (
           <nav className="md:hidden border-t border-white/10 bg-[#0e0e10]/95 backdrop-blur-xl">
             <div className="flex flex-col px-4 py-4 gap-1">
-              <button onClick={() => goTo("home")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">Accueil</button>
-              <button onClick={() => goTo("about")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">À propos</button>
-              <button onClick={() => goTo("menu")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">Menu</button>
+              <a href={buildViewHref("home")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">Accueil</a>
+              <a href={buildViewHref("about")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">À propos</a>
+              <a href={buildViewHref("menu")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">Menu</a>
               {restaurant.plan !== "gratuit" && (
-                <button onClick={() => goTo("reserve")} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">Réserver</button>
+                <a href={buildViewHref("reserve")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">Réserver</a>
               )}
             </div>
           </nav>
         )}
 
         {/* HOME VIEW */}
-        {currentView === "home" && (
+        {activeView === "home" && (
           <div className="relative max-w-7xl mx-auto px-5 pt-8 pb-28 grid lg:grid-cols-2 gap-8 items-center">
             <div>
               <p className="text-sm font-bold uppercase mb-3 tracking-widest" style={{ color: theme.accent, textShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>★ Le goût qui claque</p>
@@ -216,10 +220,10 @@ export function TplSavane(props: TemplateProps) {
                 {restaurant.description ?? `Les meilleurs burgers, brochettes et fast-food de ${restaurant.city}, livrés chauds.`}
               </p>
               <div className="mt-7 flex gap-3 flex-wrap">
-                <button onClick={() => goTo("menu")} className="inline-block px-8 py-4 rounded-full font-black text-sm hover:scale-105 transition shadow-xl" style={{ background: theme.accent, color: theme.accentInk }}>
+                <a href={buildViewHref("menu")} className="inline-block px-8 py-4 rounded-full font-black text-sm hover:scale-105 transition shadow-xl" style={{ background: theme.accent, color: theme.accentInk }}>
                   VOIR LE MENU →
-                </button>
-                <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="inline-block px-8 py-4 rounded-full font-black text-sm border-2 border-white hover:bg-white hover:text-red-600 transition shadow-lg">
+                </a>
+                <a href={wa ?? buildViewHref("menu")} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="inline-block px-8 py-4 rounded-full font-black text-sm border-2 border-white hover:bg-white hover:text-red-600 transition shadow-lg">
                   COMMANDER
                 </a>
               </div>
@@ -237,7 +241,7 @@ export function TplSavane(props: TemplateProps) {
         )}
 
         {/* MENU VIEW */}
-        {currentView === "menu" && (
+        {activeView === "menu" && (
           <div className="max-w-6xl mx-auto px-5 py-12">
             <div className="text-center">
               <h2 className="font-black mb-6" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(2rem, 5vw, 3rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
@@ -249,7 +253,7 @@ export function TplSavane(props: TemplateProps) {
         )}
 
         {/* ABOUT VIEW */}
-        {currentView === "about" && (
+        {activeView === "about" && (
           <div className="max-w-6xl mx-auto px-5 py-12">
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="font-black mb-6" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(2rem, 5vw, 3rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
@@ -275,7 +279,7 @@ export function TplSavane(props: TemplateProps) {
         )}
 
         {/* RESERVATION VIEW */}
-        {currentView === "reserve" && restaurant.plan !== "gratuit" && (
+        {activeView === "reserve" && restaurant.plan !== "gratuit" && (
           <div className="max-w-3xl mx-auto px-5 py-12">
             <div className="text-center mb-8">
               <h2 className="font-black" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(2rem, 5vw, 3rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
@@ -287,7 +291,7 @@ export function TplSavane(props: TemplateProps) {
         )}
 
         {/* COMBO PILL - only on home */}
-        {currentView === "home" && (
+        {activeView === "home" && (
           <div className="relative max-w-5xl mx-auto px-5 -mb-14 translate-y-14">
             <div className="bg-white rounded-full shadow-2xl px-6 py-4 grid grid-cols-2 sm:grid-cols-[1fr_1fr_auto] gap-4 items-center">
               <div className="flex items-center gap-3">
@@ -304,7 +308,7 @@ export function TplSavane(props: TemplateProps) {
                   <span className="text-xs" style={{ color: theme.textMuted }}>Économise jusqu'à 20%</span>
                 </div>
               </div>
-              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="hidden sm:inline-block px-6 py-2.5 rounded-full font-bold text-sm whitespace-nowrap" style={{ background: theme.accent, color: theme.accentInk }}>
+              <a href={wa ?? buildViewHref("menu")} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="hidden sm:inline-block px-6 py-2.5 rounded-full font-bold text-sm whitespace-nowrap" style={{ background: theme.accent, color: theme.accentInk }}>
                 COMMANDER
               </a>
             </div>
@@ -313,7 +317,7 @@ export function TplSavane(props: TemplateProps) {
       </section>
 
       {/* SECONDARY RED CARD - only on home */}
-      {currentView === "home" && (
+      {activeView === "home" && (
         <section className="px-5 pt-28 pb-12">
           <div className="max-w-6xl mx-auto rounded-[28px] overflow-hidden grid lg:grid-cols-[1fr_auto] gap-6 p-8 sm:p-10 items-center" style={{ background: RED }}>
             <div className="text-white">
@@ -321,7 +325,7 @@ export function TplSavane(props: TemplateProps) {
                 Commande en quelques minutes
               </h2>
               <p className="mt-3 text-white/85 max-w-md">Choisis, paie, et déguste — c'est aussi simple que ça.</p>
-              <a href={wa ?? "#menu"} target="_blank" rel="noopener noreferrer" className="mt-5 inline-block px-7 py-3 rounded-full font-bold text-sm" style={{ background: theme.accent, color: theme.accentInk }}>
+              <a href={wa ?? buildViewHref("menu")} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="mt-5 inline-block px-7 py-3 rounded-full font-bold text-sm" style={{ background: theme.accent, color: theme.accentInk }}>
                 COMMANDER MAINTENANT
               </a>
             </div>
@@ -331,7 +335,7 @@ export function TplSavane(props: TemplateProps) {
       )}
 
       {/* SIGNATURES 3-card - only on home */}
-      {currentView === "home" && signatures.length > 0 && (
+      {activeView === "home" && signatures.length > 0 && (
         <section id="menu" className="py-12 px-5">
           <div className="max-w-6xl mx-auto text-center">
             <p className="text-xs font-black uppercase tracking-[0.4em] mb-2" style={{ color: RED }}>★ Best Sellers</p>
@@ -349,7 +353,7 @@ export function TplSavane(props: TemplateProps) {
                     {d.description && <p className="text-sm mt-1 opacity-85 line-clamp-2">{d.description}</p>}
                     <div className="mt-4 flex items-center justify-between">
                       <span className="font-black text-lg">{fmtPrice(d.price)}</span>
-                      <a href={wa ?? "#"} target="_blank" rel="noopener noreferrer" className="px-4 py-1.5 rounded-full font-bold text-xs bg-white" style={{ color: RED }}>COMMANDER</a>
+                      <a href={wa ?? buildViewHref("menu")} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="px-4 py-1.5 rounded-full font-bold text-xs bg-white" style={{ color: RED }}>COMMANDER</a>
                     </div>
                   </div>
                 </article>
@@ -360,7 +364,7 @@ export function TplSavane(props: TemplateProps) {
       )}
 
       {/* FULL MENU - only on menu view */}
-      {currentView === "menu" && (
+      {activeView === "menu" && (
         <section id="menu" className="py-16 px-5" style={{ background: theme.surface }}>
           <div className="max-w-6xl mx-auto">
             <SectionHead kicker="La carte complète" title="Tous nos plats" theme={theme} align="center" />
@@ -370,7 +374,7 @@ export function TplSavane(props: TemplateProps) {
       )}
 
       {/* ABOUT SECTION - only on about view */}
-      {currentView === "about" && (
+      {activeView === "about" && (
         <section id="about" className="py-16 px-5" style={{ background: theme.surfaceAlt }}>
           <div className="max-w-6xl mx-auto">
             <SectionHead kicker="Notre histoire" title="À propos de nous" theme={theme} align="center" />
@@ -396,7 +400,7 @@ export function TplSavane(props: TemplateProps) {
       )}
 
       {/* RESERVATION SECTION */}
-      {currentView === "reserve" && restaurant.plan !== "gratuit" && (
+      {activeView === "reserve" && restaurant.plan !== "gratuit" && (
         <section className="py-16 px-5" style={{ background: RED, color: "#fff" }}>
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-8">
@@ -409,7 +413,7 @@ export function TplSavane(props: TemplateProps) {
       )}
 
       {/* GALERIE & AVIS - Intégrés dans l'accueil */}
-      {currentView === "home" && (
+      {activeView === "home" && (
         <>
           {gallery.length > 0 && (
             <section className="py-16 px-5">

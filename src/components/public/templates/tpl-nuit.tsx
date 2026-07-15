@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { TemplateProps, PublicMenuItem, PublicGalleryImage, Theme } from "../shared";
-import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, buildWhatsAppLink, avgRating, fmtPrice } from "../shared";
+import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
 import { StorageImage } from "@/components/StorageImage";
 import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
 
@@ -101,13 +101,24 @@ function PoweredFooter({ restaurant, wa, theme }: { restaurant: TemplateProps["r
 }
 
 export function TplNuit(props: TemplateProps) {
-  const { restaurant, menu, reviews, gallery } = props;
+  const { restaurant, menu, reviews, gallery, view } = props;
   const features = useRestaurantFeatures(restaurant.id, restaurant.plan);
   const wa = buildWhatsAppLink(restaurant.whatsapp, restaurant.name);
   const cover = pickCover(gallery, menu);
   const signatures = signatureDishes(menu, 3);
   const rating = avgRating(reviews);
   const [mobOpen, setMobOpen] = React.useState(false);
+  const activeView =
+    view === "home" || view === "menu" || view === "about" || view === "reserve"
+      ? view
+      : "home";
+
+  React.useEffect(() => {
+    setMobOpen(false);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [activeView]);
 
   const theme: Theme = {
     bg: "#0a0907",
@@ -133,10 +144,10 @@ export function TplNuit(props: TemplateProps) {
             <span className="text-xs sm:text-sm uppercase truncate" style={{ fontFamily: "'Cormorant Garamond', serif", letterSpacing: "0.45em", color: theme.text }}>{restaurant.name}</span>
           </div>
           <nav className="hidden md:flex gap-8 text-[11px] uppercase" style={{ letterSpacing: "0.3em", color: theme.textMuted }}>
-            <a href="#histoire" className="hover:text-[#c9a35a] transition-colors">Histoire</a>
-            <a href="#carte" className="hover:text-[#c9a35a] transition-colors">Carte</a>
-            <a href="#galerie" className="hover:text-[#c9a35a] transition-colors">Galerie</a>
-            <a href="#reserver" className="hover:text-[#c9a35a] transition-colors">Réserver</a>
+            <a href={buildViewHref("about")} className="hover:text-[#c9a35a] transition-colors">Histoire</a>
+            <a href={buildViewHref("menu")} className="hover:text-[#c9a35a] transition-colors">Carte</a>
+            <a href={buildViewHref("home")} className="hover:text-[#c9a35a] transition-colors">Galerie</a>
+            <a href={buildViewHref("reserve")} className="hover:text-[#c9a35a] transition-colors">Réserver</a>
           </nav>
           <button onClick={() => setMobOpen((v) => !v)} className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-white/5 transition-colors" aria-label="Menu">
             <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
@@ -147,16 +158,17 @@ export function TplNuit(props: TemplateProps) {
         {mobOpen && (
           <nav className="md:hidden border-t border-white/10 bg-[#0a0907]/95 backdrop-blur-xl">
             <div className="flex flex-col px-4 py-4 gap-1">
-              <a href="#histoire" onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Histoire</a>
-              <a href="#carte" onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Carte</a>
-              <a href="#galerie" onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Galerie</a>
-              <a href="#reserver" onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Réserver</a>
+              <a href={buildViewHref("about")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Histoire</a>
+              <a href={buildViewHref("menu")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Carte</a>
+              <a href={buildViewHref("home")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Galerie</a>
+              <a href={buildViewHref("reserve")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm hover:bg-white/5 transition-colors">Réserver</a>
             </div>
           </nav>
         )}
       </header>
 
       {/* HERO */}
+      {activeView === "home" && (
       <section className="relative min-h-screen flex items-end overflow-hidden">
         {cover ? <StorageImage path={cover} alt={restaurant.name} className="absolute inset-0 w-full h-full object-cover" /> : null}
         <div className="relative max-w-7xl mx-auto w-full px-5 sm:px-8 pb-20 pt-40">
@@ -167,14 +179,15 @@ export function TplNuit(props: TemplateProps) {
               {restaurant.description ?? `Une expérience culinaire d'exception au cœur de ${restaurant.city}. Produits du terroir, savoir-faire artisanal, ambiance feutrée.`}
             </p>
             <div className="lg:col-span-5 flex flex-col gap-3">
-              <a href="#carte" className="px-8 py-4 text-center border text-xs uppercase transition hover:bg-[#c9a35a] hover:text-[#0a0907]" style={{ borderColor: theme.accent, color: theme.accent, letterSpacing: "0.35em" }}>Découvrir la carte</a>
+              <a href={buildViewHref("menu")} className="px-8 py-4 text-center border text-xs uppercase transition hover:bg-[#c9a35a] hover:text-[#0a0907]" style={{ borderColor: theme.accent, color: theme.accent, letterSpacing: "0.35em" }}>Découvrir la carte</a>
               {features.can_reserve && (
-                <a href="#reserver" className="px-8 py-4 text-center text-xs uppercase hover:opacity-90 transition" style={{ background: theme.accent, color: theme.accentInk, letterSpacing: "0.35em" }}>Réserver une table</a>
+                <a href={buildViewHref("reserve")} className="px-8 py-4 text-center text-xs uppercase hover:opacity-90 transition" style={{ background: theme.accent, color: theme.accentInk, letterSpacing: "0.35em" }}>Réserver une table</a>
               )}
             </div>
           </div>
         </div>
       </section>
+      )}
 
       {/* META */}
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
@@ -189,6 +202,7 @@ export function TplNuit(props: TemplateProps) {
       </div>
 
       {/* HISTOIRE */}
+      {activeView === "about" && (
       <section id="histoire" className="py-14 sm:py-24 px-4 sm:px-8">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-8 sm:gap-12 items-start">
           <div className="lg:col-span-7">
@@ -209,6 +223,7 @@ export function TplNuit(props: TemplateProps) {
           </aside>
         </div>
       </section>
+      )}
 
       {/* SIGNATURES */}
       {signatures.length > 0 && (
@@ -234,12 +249,14 @@ export function TplNuit(props: TemplateProps) {
       )}
 
       {/* CARTE */}
+      {activeView === "menu" && (
       <section id="carte" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
         <div className="max-w-7xl mx-auto">
           <SectionHead kicker="— La carte —" title="Notre menu" theme={theme} serif />
           <MenuGrid menu={menu} theme={theme} />
         </div>
       </section>
+      )}
 
       {/* SECTION PREMIUM - Menu Dégustation */}
       <section className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}`, background: theme.surfaceAlt }}>
@@ -263,7 +280,7 @@ export function TplNuit(props: TemplateProps) {
       </section>
 
       {/* GALERIE */}
-      {gallery.length > 0 && (
+      {activeView === "home" && gallery.length > 0 && (
         <section id="galerie" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}` }}>
           <div className="max-w-7xl mx-auto">
             <SectionHead kicker="— Galerie —" title="L'ambiance" theme={theme} serif />
@@ -273,7 +290,7 @@ export function TplNuit(props: TemplateProps) {
       )}
 
       {/* RESERVATION */}
-      {features.can_reserve && (
+      {activeView === "reserve" && features.can_reserve && (
         <section id="reserver" className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}`, background: theme.surfaceAlt }}>
           <div className="max-w-3xl mx-auto">
             <SectionHead kicker="— Réservation —" title="Réserver votre table" theme={theme} serif />

@@ -124,7 +124,7 @@ export function TplPremiumLuxe(props: TemplateProps) {
   return <PremiumRestaurantTemplate {...props} config={PREMIUM_CONFIGS.luxe} />;
 }
 
-function PremiumRestaurantTemplate({ restaurant, menu, reviews, gallery, config }: TemplateProps & { config: PremiumConfig }) {
+function PremiumRestaurantTemplate({ restaurant, menu, reviews, gallery, config, view }: TemplateProps & { config: PremiumConfig }) {
   const [category, setCategory] = useState("Tout");
   const [qr, setQr] = useState("");
   const [mobOpen, setMobOpen] = useState(false);
@@ -146,6 +146,138 @@ function PremiumRestaurantTemplate({ restaurant, menu, reviews, gallery, config 
     accentInk: config.ink,
     border: config.border,
     radius: config.kind === "royal" ? "6px" : config.kind === "feu" ? "4px" : "10px",
+  };
+  const activeView = (view ?? "accueil") as "accueil" | "menu" | "experience" | "galerie" | "avis" | "reservation";
+
+  const buildViewHref = (target: typeof activeView) => {
+    if (typeof window === "undefined") return "#";
+    const params = new URLSearchParams(window.location.search);
+    params.set("view", target);
+    return `${window.location.pathname}?${params.toString()}`;
+  };
+
+  const renderDedicatedView = () => {
+    switch (activeView) {
+      case "menu":
+        return (
+          <section className="premium-section">
+            <PremiumHeading
+              eyebrow="Carte curatée"
+              title="Notre menu premium"
+              subtitle={`${restaurant.cuisine ?? "Cuisine signature"} · ${restaurant.city}`}
+            />
+            <div className="premium-actions">
+              <a href={buildViewHref("accueil")}>Retour à l'accueil</a>
+              <a href={buildViewHref("reservation")}>Réserver</a>
+            </div>
+            <div className="premium-menu-grid">
+              {filtered.map((dish) => (
+                <article key={dish.id}>
+                  <div>
+                    <small>{dish.category}</small>
+                    <h3>{dish.name}</h3>
+                    {dish.description && <p>{dish.description}</p>}
+                  </div>
+                  <footer>
+                    <strong>{fmtPrice(dish.price)}</strong>
+                    {waHref && (
+                      <a href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(`Bonjour ${restaurant.name}, je veux commander : ${dish.name} (${fmtPrice(dish.price)}).`)}`} target="_blank" rel="noopener noreferrer">
+                        Commander
+                      </a>
+                    )}
+                  </footer>
+                </article>
+              ))}
+            </div>
+          </section>
+        );
+      case "experience":
+        return (
+          <section className="premium-section premium-experience">
+            <div>
+              <PremiumHeading eyebrow="Expérience complète" title={config.title} subtitle={config.subtitle} />
+              <div className="premium-experience-list">
+                {groups.map(([cat, items]) => (
+                  <article key={cat}>
+                    <span>{cat}</span>
+                    <strong>{items.slice(0, 3).map((item) => item.name).join(" · ")}</strong>
+                  </article>
+                ))}
+                <article><span>Adresse</span><strong>{restaurant.address ?? restaurant.city}</strong></article>
+                <article><span>Horaires</span><strong>{restaurant.hours ?? "Tous les jours · 11h — 23h"}</strong></article>
+                <article><span>Contact</span><strong>{restaurant.phone}</strong></article>
+              </div>
+            </div>
+            <div className="premium-chef-card">
+              <div className="premium-chef-image">
+                {gallery[0]?.image_url ? <StorageImage path={gallery[0].image_url} alt={gallery[0].caption ?? restaurant.name} className="w-full h-full object-cover" /> : <img src={config.background} alt="Ambiance du restaurant" />}
+              </div>
+              <h3>Table d'honneur</h3>
+              <p>Service de réservation avancé, demandes spéciales, anniversaires, business lunch, soirées privées et accueil VIP.</p>
+            </div>
+          </section>
+        );
+      case "galerie":
+        return (
+          <section className="premium-section">
+            <PremiumHeading eyebrow="Galerie photos" title="Ambiance, plats et moments" subtitle="Les photos donnent envie avant même l'arrivée au restaurant." />
+            <div className="premium-actions">
+              <a href={buildViewHref("accueil")}>Retour à l'accueil</a>
+              <a href={buildViewHref("reservation")}>Réserver</a>
+            </div>
+            <div className="premium-gallery">
+              {(gallery.length ? gallery.slice(0, 8) : [{ id: "bg", image_url: config.background, caption: restaurant.name }]).map((photo) => (
+                <figure key={photo.id}>
+                  {photo.image_url.startsWith("/") ? <img src={photo.image_url} alt={photo.caption ?? restaurant.name} /> : <StorageImage path={photo.image_url} alt={photo.caption ?? restaurant.name} className="w-full h-full object-cover" />}
+                  {photo.caption && <figcaption>{photo.caption}</figcaption>}
+                </figure>
+              ))}
+            </div>
+          </section>
+        );
+      case "avis":
+        return (
+          <section className="premium-section">
+            <PremiumHeading eyebrow="Témoignages" title="Ce que disent vos clients" subtitle="Les avis rassurent les nouveaux visiteurs." />
+            <div className="premium-actions">
+              <a href={buildViewHref("accueil")}>Retour à l'accueil</a>
+              <a href={buildViewHref("menu")}>Voir le menu</a>
+            </div>
+            <ReviewList reviews={reviews} theme={theme} />
+            <div className="premium-review-form">
+              <ReviewForm restaurantId={restaurant.id} theme={theme} />
+            </div>
+          </section>
+        );
+      case "reservation":
+        return (
+          <section className="premium-reservation">
+            <div className="premium-reservation-inner">
+              <PremiumHeading eyebrow="Réservation premium" title="Réservez votre expérience" subtitle="Une demande complète pour préparer la table parfaite." />
+              <div className="premium-actions">
+                <a href={buildViewHref("accueil")}>Retour à l'accueil</a>
+                <a href={buildViewHref("menu")}>Voir le menu</a>
+              </div>
+              <div className="premium-reservation-layout">
+                <PremiumReservationForm restaurantId={restaurant.id} config={config} />
+                <aside className="premium-qr-card">
+                  <h3>QR code de la page</h3>
+                  <p>À imprimer sur les tables, cartes de visite, affiches ou réseaux sociaux.</p>
+                  {qr ? <img src={qr} alt={`QR code ${restaurant.name}`} /> : <div className="premium-qr-placeholder">QR</div>}
+                  <div className="premium-contact-mini">
+                    <span>{restaurant.phone}</span>
+                    <span>{restaurant.email}</span>
+                    <span>{restaurant.address ?? restaurant.city}</span>
+                  </div>
+                </aside>
+              </div>
+            </div>
+          </section>
+        );
+      case "accueil":
+      default:
+        return null;
+    }
   };
 
   useEffect(() => {
@@ -182,7 +314,7 @@ function PremiumRestaurantTemplate({ restaurant, menu, reviews, gallery, config 
       </div>
 
       <header className="premium-nav">
-        <a href="#accueil" className="premium-brand">
+        <a href={buildViewHref("accueil")} className="premium-brand">
           {restaurant.logo_url ? (
             <img src={restaurant.logo_url} alt={restaurant.name} style={{ maxHeight: "50px", objectFit: "contain" }} />
           ) : (
@@ -193,13 +325,13 @@ function PremiumRestaurantTemplate({ restaurant, menu, reviews, gallery, config 
           )}
         </a>
         <nav>
-          <a href="#menu">Menu</a>
-          <a href="#experience">Expérience</a>
-          <a href="#galerie">Galerie</a>
-          <a href="#avis">Avis</a>
-          <a href="#reservation">Réserver</a>
+          <a href={buildViewHref("menu")}>Menu</a>
+          <a href={buildViewHref("experience")}>Expérience</a>
+          <a href={buildViewHref("galerie")}>Galerie</a>
+          <a href={buildViewHref("avis")}>Avis</a>
+          <a href={buildViewHref("reservation")}>Réserver</a>
         </nav>
-        <a className="premium-book" href="#reservation">Table</a>
+        <a className="premium-book" href={buildViewHref("reservation")}>Table</a>
         <button
           onClick={() => setMobOpen((v) => !v)}
           className="premium-hamburger"
@@ -212,152 +344,158 @@ function PremiumRestaurantTemplate({ restaurant, menu, reviews, gallery, config 
       </header>
       {mobOpen && (
         <nav className="premium-mob-menu">
-          <a href="#menu" onClick={() => setMobOpen(false)}>Menu</a>
-          <a href="#experience" onClick={() => setMobOpen(false)}>Expérience</a>
-          <a href="#galerie" onClick={() => setMobOpen(false)}>Galerie</a>
-          <a href="#avis" onClick={() => setMobOpen(false)}>Avis</a>
-          <a href="#reservation" onClick={() => setMobOpen(false)}>Réserver</a>
+          <a href={buildViewHref("menu")} onClick={() => setMobOpen(false)}>Menu</a>
+          <a href={buildViewHref("experience")} onClick={() => setMobOpen(false)}>Expérience</a>
+          <a href={buildViewHref("galerie")} onClick={() => setMobOpen(false)}>Galerie</a>
+          <a href={buildViewHref("avis")} onClick={() => setMobOpen(false)}>Avis</a>
+          <a href={buildViewHref("reservation")} onClick={() => setMobOpen(false)}>Réserver</a>
         </nav>
       )}
 
       <main>
-        <section id="accueil" className="premium-hero">
-          <div className="premium-hero-copy">
-            <p className="premium-kicker">{restaurant.cuisine ?? config.capsule}</p>
-            <h1>{restaurant.name}</h1>
-            <p className="premium-lead">{restaurant.description ?? config.subtitle}</p>
-            <div className="premium-actions">
-              <a href="#reservation">Réserver votre table</a>
-              <a href="#menu">Voir le menu</a>
-              {waHref && <a href={waHref} target="_blank" rel="noopener noreferrer">WhatsApp</a>}
-            </div>
-          </div>
-          <aside className="premium-hero-panel">
-            <div>
-              <span>{available.length}</span>
-              <small>Plats disponibles</small>
-            </div>
-            <div>
-              <span>{rating ? rating.toFixed(1) : "5.0"}</span>
-              <small>Note client</small>
-            </div>
-            <div>
-              <span>QR</span>
-              <small>Page partageable</small>
-            </div>
-          </aside>
-        </section>
-
-        <section className="premium-strip" aria-label="Fonctionnalités premium">
-          {[
-            ["📲", "QR code", "Lien de la page prêt à partager"],
-            ["📅", "Réservation", "Formulaire large avec détails"],
-            ["🛒", "Commandes", "Envoi rapide sur WhatsApp"],
-            ["⭐", "Avis", "Preuve sociale et modération"],
-            ["🖼️", "Galerie", "Photos de salle et plats"],
-            ["🥂", "Événements", "Privatisation, cave et VIP"],
-          ].map(([icon, title, text]) => (
-            <article key={title}>
-              <b>{icon}</b>
-              <strong>{title}</strong>
-              <span>{text}</span>
-            </article>
-          ))}
-        </section>
-
-        <section id="menu" className="premium-section">
-          <PremiumHeading eyebrow="Carte curatée" title={config.title} subtitle={`${restaurant.cuisine ?? "Cuisine signature"} · ${restaurant.city}`} />
-          {signatures.length > 0 && (
-            <div className="premium-signatures">
-              {signatures.map((dish) => <SignatureCard key={dish.id} dish={dish} config={config} />)}
-            </div>
-          )}
-          <div className="premium-tabs">
-            {categories.map((cat) => (
-              <button key={cat} className={cat === category ? "active" : ""} onClick={() => setCategory(cat)}>{cat}</button>
-            ))}
-          </div>
-          <div className="premium-menu-grid">
-            {filtered.map((dish) => (
-              <article key={dish.id}>
-                <div>
-                  <small>{dish.category}</small>
-                  <h3>{dish.name}</h3>
-                  {dish.description && <p>{dish.description}</p>}
+        {activeView !== "accueil" ? (
+          renderDedicatedView()
+        ) : (
+          <>
+            <section id="accueil" className="premium-hero">
+              <div className="premium-hero-copy">
+                <p className="premium-kicker">{restaurant.cuisine ?? config.capsule}</p>
+                <h1>{restaurant.name}</h1>
+                <p className="premium-lead">{restaurant.description ?? config.subtitle}</p>
+                <div className="premium-actions">
+                  <a href={buildViewHref("reservation")}>Réserver votre table</a>
+                  <a href={buildViewHref("menu")}>Voir le menu</a>
+                  {waHref && <a href={waHref} target="_blank" rel="noopener noreferrer">WhatsApp</a>}
                 </div>
-                <footer>
-                  <strong>{fmtPrice(dish.price)}</strong>
-                  {waHref && (
-                    <a href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(`Bonjour ${restaurant.name}, je veux commander : ${dish.name} (${fmtPrice(dish.price)}).`)}`} target="_blank" rel="noopener noreferrer">Commander</a>
-                  )}
-                </footer>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section id="experience" className="premium-section premium-experience">
-          <div>
-            <PremiumHeading eyebrow="Expérience complète" title={config.title} subtitle={config.subtitle} />
-            <div className="premium-experience-list">
-              {groups.map(([cat, items]) => (
-                <article key={cat}>
-                  <span>{cat}</span>
-                  <strong>{items.slice(0, 3).map((item) => item.name).join(" · ")}</strong>
-                </article>
-              ))}
-              <article><span>Adresse</span><strong>{restaurant.address ?? restaurant.city}</strong></article>
-              <article><span>Horaires</span><strong>{restaurant.hours ?? "Tous les jours · 11h — 23h"}</strong></article>
-              <article><span>Contact</span><strong>{restaurant.phone}</strong></article>
-            </div>
-          </div>
-          <div className="premium-chef-card">
-            <div className="premium-chef-image">
-              {gallery[0]?.image_url ? <StorageImage path={gallery[0].image_url} alt={gallery[0].caption ?? restaurant.name} className="w-full h-full object-cover" /> : <img src={config.background} alt="Ambiance du restaurant" />}
-            </div>
-            <h3>Table d'honneur</h3>
-            <p>Service de réservation avancé, demandes spéciales, anniversaires, business lunch, soirées privées et accueil VIP.</p>
-          </div>
-        </section>
-
-        <section id="galerie" className="premium-section">
-          <PremiumHeading eyebrow="Galerie photos" title="Ambiance, plats et moments" subtitle="Les photos donnent envie avant même l'arrivée au restaurant." />
-          <div className="premium-gallery">
-            {(gallery.length ? gallery.slice(0, 8) : [{ id: "bg", image_url: config.background, caption: restaurant.name }]).map((photo) => (
-              <figure key={photo.id}>
-                {photo.image_url.startsWith("/") ? <img src={photo.image_url} alt={photo.caption ?? restaurant.name} /> : <StorageImage path={photo.image_url} alt={photo.caption ?? restaurant.name} className="w-full h-full object-cover" />}
-                {photo.caption && <figcaption>{photo.caption}</figcaption>}
-              </figure>
-            ))}
-          </div>
-        </section>
-
-        <section id="reservation" className="premium-reservation">
-          <div className="premium-reservation-inner">
-            <PremiumHeading eyebrow="Réservation premium" title="Réservez votre expérience" subtitle="Une demande complète pour préparer la table parfaite." />
-            <div className="premium-reservation-layout">
-              <PremiumReservationForm restaurantId={restaurant.id} config={config} />
-              <aside className="premium-qr-card">
-                <h3>QR code de la page</h3>
-                <p>À imprimer sur les tables, cartes de visite, affiches ou réseaux sociaux.</p>
-                {qr ? <img src={qr} alt={`QR code ${restaurant.name}`} /> : <div className="premium-qr-placeholder">QR</div>}
-                <div className="premium-contact-mini">
-                  <span>{restaurant.phone}</span>
-                  <span>{restaurant.email}</span>
-                  <span>{restaurant.address ?? restaurant.city}</span>
+              </div>
+              <aside className="premium-hero-panel">
+                <div>
+                  <span>{available.length}</span>
+                  <small>Plats disponibles</small>
+                </div>
+                <div>
+                  <span>{rating ? rating.toFixed(1) : "5.0"}</span>
+                  <small>Note client</small>
+                </div>
+                <div>
+                  <span>QR</span>
+                  <small>Page partageable</small>
                 </div>
               </aside>
-            </div>
-          </div>
-        </section>
+            </section>
 
-        <section id="avis" className="premium-section">
-          <PremiumHeading eyebrow="Témoignages" title="Ce que disent vos clients" subtitle="Les avis rassurent les nouveaux visiteurs." />
-          <ReviewList reviews={reviews} theme={theme} />
-          <div className="premium-review-form">
-            <ReviewForm restaurantId={restaurant.id} theme={theme} />
-          </div>
-        </section>
+            <section className="premium-strip" aria-label="Fonctionnalités premium">
+              {[
+                ["📲", "QR code", "Lien de la page prêt à partager"],
+                ["📅", "Réservation", "Formulaire large avec détails"],
+                ["🛒", "Commandes", "Envoi rapide sur WhatsApp"],
+                ["⭐", "Avis", "Preuve sociale et modération"],
+                ["🖼️", "Galerie", "Photos de salle et plats"],
+                ["🥂", "Événements", "Privatisation, cave et VIP"],
+              ].map(([icon, title, text]) => (
+                <article key={title}>
+                  <b>{icon}</b>
+                  <strong>{title}</strong>
+                  <span>{text}</span>
+                </article>
+              ))}
+            </section>
+
+            <section id="menu" className="premium-section">
+              <PremiumHeading eyebrow="Carte curatée" title={config.title} subtitle={`${restaurant.cuisine ?? "Cuisine signature"} · ${restaurant.city}`} />
+              {signatures.length > 0 && (
+                <div className="premium-signatures">
+                  {signatures.map((dish) => <SignatureCard key={dish.id} dish={dish} config={config} />)}
+                </div>
+              )}
+              <div className="premium-tabs">
+                {categories.map((cat) => (
+                  <button key={cat} className={cat === category ? "active" : ""} onClick={() => setCategory(cat)}>{cat}</button>
+                ))}
+              </div>
+              <div className="premium-menu-grid">
+                {filtered.map((dish) => (
+                  <article key={dish.id}>
+                    <div>
+                      <small>{dish.category}</small>
+                      <h3>{dish.name}</h3>
+                      {dish.description && <p>{dish.description}</p>}
+                    </div>
+                    <footer>
+                      <strong>{fmtPrice(dish.price)}</strong>
+                      {waHref && (
+                        <a href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(`Bonjour ${restaurant.name}, je veux commander : ${dish.name} (${fmtPrice(dish.price)}).`)}`} target="_blank" rel="noopener noreferrer">Commander</a>
+                      )}
+                    </footer>
+                  </article>
+                ))}
+              </div>
+            </section>
+
+            <section id="experience" className="premium-section premium-experience">
+              <div>
+                <PremiumHeading eyebrow="Expérience complète" title={config.title} subtitle={config.subtitle} />
+                <div className="premium-experience-list">
+                  {groups.map(([cat, items]) => (
+                    <article key={cat}>
+                      <span>{cat}</span>
+                      <strong>{items.slice(0, 3).map((item) => item.name).join(" · ")}</strong>
+                    </article>
+                  ))}
+                  <article><span>Adresse</span><strong>{restaurant.address ?? restaurant.city}</strong></article>
+                  <article><span>Horaires</span><strong>{restaurant.hours ?? "Tous les jours · 11h — 23h"}</strong></article>
+                  <article><span>Contact</span><strong>{restaurant.phone}</strong></article>
+                </div>
+              </div>
+              <div className="premium-chef-card">
+                <div className="premium-chef-image">
+                  {gallery[0]?.image_url ? <StorageImage path={gallery[0].image_url} alt={gallery[0].caption ?? restaurant.name} className="w-full h-full object-cover" /> : <img src={config.background} alt="Ambiance du restaurant" />}
+                </div>
+                <h3>Table d'honneur</h3>
+                <p>Service de réservation avancé, demandes spéciales, anniversaires, business lunch, soirées privées et accueil VIP.</p>
+              </div>
+            </section>
+
+            <section id="galerie" className="premium-section">
+              <PremiumHeading eyebrow="Galerie photos" title="Ambiance, plats et moments" subtitle="Les photos donnent envie avant même l'arrivée au restaurant." />
+              <div className="premium-gallery">
+                {(gallery.length ? gallery.slice(0, 8) : [{ id: "bg", image_url: config.background, caption: restaurant.name }]).map((photo) => (
+                  <figure key={photo.id}>
+                    {photo.image_url.startsWith("/") ? <img src={photo.image_url} alt={photo.caption ?? restaurant.name} /> : <StorageImage path={photo.image_url} alt={photo.caption ?? restaurant.name} className="w-full h-full object-cover" />}
+                    {photo.caption && <figcaption>{photo.caption}</figcaption>}
+                  </figure>
+                ))}
+              </div>
+            </section>
+
+            <section id="reservation" className="premium-reservation">
+              <div className="premium-reservation-inner">
+                <PremiumHeading eyebrow="Réservation premium" title="Réservez votre expérience" subtitle="Une demande complète pour préparer la table parfaite." />
+                <div className="premium-reservation-layout">
+                  <PremiumReservationForm restaurantId={restaurant.id} config={config} />
+                  <aside className="premium-qr-card">
+                    <h3>QR code de la page</h3>
+                    <p>À imprimer sur les tables, cartes de visite, affiches ou réseaux sociaux.</p>
+                    {qr ? <img src={qr} alt={`QR code ${restaurant.name}`} /> : <div className="premium-qr-placeholder">QR</div>}
+                    <div className="premium-contact-mini">
+                      <span>{restaurant.phone}</span>
+                      <span>{restaurant.email}</span>
+                      <span>{restaurant.address ?? restaurant.city}</span>
+                    </div>
+                  </aside>
+                </div>
+              </div>
+            </section>
+
+            <section id="avis" className="premium-section">
+              <PremiumHeading eyebrow="Témoignages" title="Ce que disent vos clients" subtitle="Les avis rassurent les nouveaux visiteurs." />
+              <ReviewList reviews={reviews} theme={theme} />
+              <div className="premium-review-form">
+                <ReviewForm restaurantId={restaurant.id} theme={theme} />
+              </div>
+            </section>
+          </>
+        )}
       </main>
 
       <footer className="premium-footer">

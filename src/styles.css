@@ -1,4 +1,4 @@
-@import "tailwindcss" source(none);
+@import "tailwindcss";
 @source "../src";
 @import "tw-animate-css";
 @import "theme.css";
@@ -106,17 +106,26 @@
 
 @layer base {
   * { border-color: var(--color-border); }
-  html { scroll-behavior: smooth; }
+  html { 
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-display);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     background-image: url("/bg-saas.jpg");
     background-repeat: repeat;
     background-size: 360px;
     background-attachment: fixed;
     background-blend-mode: overlay;
+    /* Safe areas pour iPhone */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
   body::before {
     content: "";
@@ -127,6 +136,18 @@
     z-index: -1;
   }
   ::selection { background: rgba(212,168,83,0.3); color: #fff; }
+  
+  /* Améliorations tactiles pour mobile */
+  button, a, input, textarea, select {
+    touch-action: manipulation;
+  }
+  
+  /* Empêcher le zoom sur les inputs iOS */
+  @media screen and (max-width: 768px) {
+    input, textarea, select {
+      font-size: 16px !important;
+    }
+  }
 }
 
 /* ===== UTILITIES ===== */
@@ -212,3 +233,96 @@
 @keyframes slide-up{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
 .animate-slide-up{animation:slide-up .35s cubic-bezier(.16,1,.3,1) forwards}
 @media(prefers-reduced-motion:reduce){.animate-slide-up{animation:none}}
+
+/* ══════ Mobile & iPhone Optimizations ══════ */
+@media (max-width: 768px) {
+  /* Optimisations tactiles iPhone */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+  
+  /* Améliorer le rendu des animations sur iOS */
+  .reveal {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+  
+  /* Optimiser les cartes pour mobile */
+  .glass-card, [class*="bg-dark-card"] {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  
+  /* Améliorer la lisibilité du texte sur mobile */
+  body {
+    text-rendering: optimizeLegibility;
+    -webkit-text-size-adjust: 100%;
+  }
+  
+  /* Optimiser les boutons pour le tactile */
+  button, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Améliorer les inputs sur iOS */
+  input, textarea, select {
+    border-radius: 12px;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  
+  /* Optimiser le scroll */
+  html {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
+  }
+  
+  /* Améliorer les liens et boutons */
+  a, button {
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+/* iPhone spécifique - notch et safe areas */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .fixed.top-0 {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Optimisations pour écrans petits (iPhone SE, etc.) */
+@media (max-width: 375px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .text-4xl {
+    font-size: 1.75rem;
+  }
+  
+  .text-5xl {
+    font-size: 2rem;
+  }
+}
+
+/* Améliorer les performances sur mobile */
+@media (max-width: 768px) {
+  .tpl-bg img {
+    animation: none;
+    transform: scale(1.05);
+  }
+  
+  .grid-bg {
+    animation: none;
+  }
+  
+  .particle {
+    display: none;
+  }
+}
