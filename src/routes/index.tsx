@@ -186,17 +186,15 @@ function LandingPage() {
   const [selectedPlan, setSelectedPlan] = useState<(typeof plans)[0] | null>(null);
 
   return (
-    <div className="relative min-h-screen bg-background text-foreground">
-      <div
-        className="fixed inset-0 -z-10 opacity-60 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 900px 700px at 15% 0%, rgba(212,168,83,0.16) 0%, transparent 60%), radial-gradient(ellipse 800px 600px at 100% 30%, rgba(212,168,83,0.10) 0%, transparent 60%), radial-gradient(ellipse 700px 700px at 20% 100%, rgba(212,168,83,0.09) 0%, transparent 60%)",
-        }}
-        aria-hidden="true"
-      />
-      <div className="fixed inset-0 -z-10 grid-bg opacity-30 pointer-events-none" aria-hidden="true" />
-      <Particles count={7} />
+    <div className="relative min-h-screen text-foreground">
+      {/* Fond animé aurora — orbes qui dérivent lentement */}
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div className="aurora-blob" style={{ top: "-10%", left: "-8%", width: 560, height: 560, background: "radial-gradient(circle, rgba(212,168,83,0.30) 0%, transparent 70%)", animationDuration: "26s" }} />
+        <div className="aurora-blob" style={{ top: "20%", right: "-10%", width: 620, height: 620, background: "radial-gradient(circle, rgba(212,168,83,0.20) 0%, transparent 70%)", animationDuration: "32s", animationDelay: "-8s" }} />
+        <div className="aurora-blob" style={{ bottom: "-15%", left: "20%", width: 700, height: 700, background: "radial-gradient(circle, rgba(212,168,83,0.16) 0%, transparent 70%)", animationDuration: "38s", animationDelay: "-16s" }} />
+        <div className="absolute inset-0 grid-bg opacity-40" />
+      </div>
+      <Particles count={9} />
 
       <Topbar />
 
@@ -204,7 +202,7 @@ function LandingPage() {
         {/* HERO */}
         <section className="pt-28 pb-16 px-4 sm:px-6">
           <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-            <div>
+            <Reveal>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-muted text-xs text-muted-foreground mb-4">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                 Pour les restaurants, maquis & fast-foods
@@ -222,7 +220,7 @@ function LandingPage() {
               <div className="mt-6 flex flex-col xs:flex-row gap-3">
                 <Link
                   to="/auth"
-                  className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity"
+                  className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 hover:shadow-gold transition-all hover:-translate-y-0.5"
                 >
                   Créer ma page gratuite
                 </Link>
@@ -239,11 +237,11 @@ function LandingPage() {
                 <span>⚡ Installation en 5 minutes</span>
                 <span>🇧🇫 Conçu pour le Burkina</span>
               </div>
-            </div>
+            </Reveal>
 
             {/* Dashboard aperçu */}
-            <div className="w-full max-w-sm mx-auto lg:mx-0">
-              <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
+            <Reveal delay={2} className="w-full max-w-sm mx-auto lg:mx-0">
+              <div className="rounded-xl border border-border bg-card overflow-hidden shadow-lg hover:shadow-gold/20 transition-shadow duration-500">
                 <div className="flex items-center justify-between p-3 border-b border-border">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-green-500" />
@@ -319,18 +317,18 @@ function LandingPage() {
                   Créer mon tableau de bord gratuit →
                 </Link>
               </div>
-            </div>
+            </Reveal>
           </div>
         </section>
 
         {/* STATS */}
         <section className="py-12 px-4 sm:px-6 border-y border-border bg-muted/30">
           <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-6">
-            {stats.map((s) => (
-              <div key={s.label} className="text-center">
+            {stats.map((s, i) => (
+              <Reveal key={s.label} delay={(Math.min(i, 4)) as 0 | 1 | 2 | 3 | 4} className="text-center">
                 <div className="text-2xl sm:text-3xl font-bold text-foreground">{s.n}</div>
                 <div className="text-xs text-muted-foreground mt-1">{s.label}</div>
-              </div>
+              </Reveal>
             ))}
           </div>
         </section>
@@ -347,17 +345,18 @@ function LandingPage() {
             desc="Des designs modernes et adaptés au Burkina Faso. Personnalisez couleurs, logo et photos en un clic."
           />
           <div className="max-w-6xl mx-auto mt-8 grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
-            {templates.map((t) => (
-              <div
+            {templates.map((t, i) => (
+              <Reveal
                 key={t.name}
-                className="p-4 rounded-xl border border-border bg-card text-center hover:border-primary/30 transition-colors"
+                delay={(Math.min(i, 4)) as 0 | 1 | 2 | 3 | 4}
+                className="p-4 rounded-xl border border-border bg-card text-center hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-300"
               >
                 <div className="w-14 h-14 mx-auto rounded-lg bg-muted flex items-center justify-center text-2xl mb-3">
                   {t.emoji}
                 </div>
                 <h3 className="text-sm font-semibold">{t.name}</h3>
                 <p className="text-xs text-muted-foreground mt-1">{t.desc}</p>
-              </div>
+              </Reveal>
             ))}
           </div>
         </section>
@@ -378,17 +377,18 @@ function LandingPage() {
             desc="Menu digital, commandes en temps réel, gestion de cuisine, stocks, facturation, statistiques. Tout est inclus."
           />
           <div className="max-w-6xl mx-auto mt-8 grid gap-4 grid-cols-2 lg:grid-cols-3">
-            {features.map((f) => (
-              <div
+            {features.map((f, i) => (
+              <Reveal
                 key={f.title}
-                className="p-4 sm:p-6 rounded-xl border border-border bg-card hover:border-primary/30 transition-colors"
+                delay={(Math.min(i % 6, 4)) as 0 | 1 | 2 | 3 | 4}
+                className="p-4 sm:p-6 rounded-xl border border-border bg-card hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-300"
               >
                 <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-lg mb-3">
                   {f.icon}
                 </div>
                 <h3 className="text-sm font-semibold mb-1">{f.title}</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">{f.desc}</p>
-              </div>
+              </Reveal>
             ))}
           </div>
         </section>
@@ -447,15 +447,16 @@ function LandingPage() {
                 title: "Support prioritaire",
                 desc: "Une équipe dédiée sur WhatsApp 7j/7 pour vous accompagner.",
               },
-            ].map((item) => (
-              <div
+            ].map((item, i) => (
+              <Reveal
                 key={item.title}
-                className="p-4 sm:p-5 rounded-xl border border-border bg-card hover:border-primary/30 transition-colors"
+                delay={(Math.min(i % 6, 4)) as 0 | 1 | 2 | 3 | 4}
+                className="p-4 sm:p-5 rounded-xl border border-border bg-card hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-300"
               >
                 <div className="text-2xl mb-2">{item.icon}</div>
                 <h3 className="text-sm font-semibold mb-1">{item.title}</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
-              </div>
+              </Reveal>
             ))}
           </div>
         </section>
@@ -473,8 +474,8 @@ function LandingPage() {
             desc="Découvrez ce que disent les restaurateurs qui utilisent déjà Resto BF au quotidien."
           />
           <div className="max-w-6xl mx-auto mt-8 grid gap-4 grid-cols-2 lg:grid-cols-3">
-            {testimonials.map((t) => (
-              <div key={t.name} className="p-4 sm:p-6 rounded-xl border border-border bg-card">
+            {testimonials.map((t, i) => (
+              <Reveal key={t.name} delay={(Math.min(i, 4)) as 0 | 1 | 2 | 3 | 4} className="p-4 sm:p-6 rounded-xl border border-border bg-card hover:border-primary/30 hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
                 <div className="flex items-center gap-1 mb-2">
                   <div className="text-primary text-sm">★★★★★</div>
                   <span className="text-[10px] text-muted-foreground">Avis vérifié</span>
@@ -491,7 +492,7 @@ function LandingPage() {
                     </span>
                   </div>
                 </div>
-              </div>
+              </Reveal>
             ))}
           </div>
         </section>
@@ -511,10 +512,11 @@ function LandingPage() {
           <div className="max-w-7xl mx-auto mt-8">
             {/* Desktop: grille 3 colonnes */}
             <div className="hidden md:grid gap-5 lg:gap-6 grid-cols-3">
-              {plans.map((p) => (
-                <div
+              {plans.map((p, i) => (
+                <Reveal
                   key={p.name}
-                  className={`relative p-6 rounded-xl border transition-colors ${
+                  delay={i as 0 | 1 | 2}
+                  className={`relative p-6 rounded-xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
                     p.popular
                       ? "border-primary bg-primary/5"
                       : "border-border bg-card hover:border-primary/30"
@@ -550,7 +552,7 @@ function LandingPage() {
                   >
                     {p.cta}
                   </Link>
-                </div>
+                </Reveal>
               ))}
             </div>
 
@@ -669,7 +671,7 @@ function LandingPage() {
           )}
 
           {/* SUR MESURE */}
-          <div className="max-w-7xl mx-auto mt-8 p-6 sm:p-8 rounded-xl border-2 border-primary/30 bg-primary/5 grid lg:grid-cols-[1fr_auto] gap-4 sm:gap-6 items-center">
+          <Reveal as="div" className="max-w-7xl mx-auto mt-8 p-6 sm:p-8 rounded-xl border-2 border-primary/30 bg-primary/5 grid lg:grid-cols-[1fr_auto] gap-4 sm:gap-6 items-center">
             <div>
               <p className="text-xs uppercase tracking-wider text-primary font-semibold mb-1">
                 Offre Sur Mesure
@@ -690,7 +692,7 @@ function LandingPage() {
             >
               Demander une offre sur mesure →
             </a>
-          </div>
+          </Reveal>
         </section>
 
         {/* FAQ */}
@@ -706,26 +708,27 @@ function LandingPage() {
           />
           <div className="max-w-3xl mx-auto mt-8 space-y-3">
             {faqs.map((f, i) => (
-              <details
-                key={f.q}
-                className="group rounded-xl border border-border bg-card open:border-primary/30 transition-colors"
-                open={i === 0}
-              >
-                <summary className="cursor-pointer list-none p-4 flex items-center justify-between gap-4 text-sm font-medium">
-                  {f.q}
-                  <span className="text-primary transition-transform group-open:rotate-45 shrink-0">
-                    +
-                  </span>
-                </summary>
-                <p className="px-4 pb-4 text-sm text-muted-foreground leading-relaxed">{f.a}</p>
-              </details>
+              <Reveal key={f.q} delay={(Math.min(i, 4)) as 0 | 1 | 2 | 3 | 4}>
+                <details
+                  className="group rounded-xl border border-border bg-card open:border-primary/30 transition-colors"
+                  open={i === 0}
+                >
+                  <summary className="cursor-pointer list-none p-4 flex items-center justify-between gap-4 text-sm font-medium">
+                    {f.q}
+                    <span className="text-primary transition-transform group-open:rotate-45 shrink-0">
+                      +
+                    </span>
+                  </summary>
+                  <p className="px-4 pb-4 text-sm text-muted-foreground leading-relaxed">{f.a}</p>
+                </details>
+              </Reveal>
             ))}
           </div>
         </section>
 
         {/* CTA */}
         <section id="contact" className="py-16 px-4 sm:px-6">
-          <div className="max-w-3xl mx-auto text-center">
+          <Reveal as="div" className="max-w-3xl mx-auto text-center">
             <p className="text-xs uppercase tracking-wider text-primary font-semibold mb-2">
               On discute ?
             </p>
@@ -740,7 +743,7 @@ function LandingPage() {
                 href="https://wa.me/22655300868"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity text-sm"
+                className="inline-flex items-center px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 hover:-translate-y-0.5 transition-all text-sm"
               >
                 Nous écrire sur WhatsApp
               </a>
@@ -751,7 +754,7 @@ function LandingPage() {
                 +226 55 30 08 68
               </a>
             </div>
-          </div>
+          </Reveal>
         </section>
       </main>
 
@@ -770,10 +773,10 @@ function SectionHeader({
   desc: string;
 }) {
   return (
-    <div className="text-center max-w-3xl mx-auto">
+    <Reveal className="text-center max-w-3xl mx-auto" as="div">
       <p className="text-xs uppercase tracking-wider text-primary font-semibold mb-2">{eyebrow}</p>
       <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">{title}</h2>
       <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
-    </div>
+    </Reveal>
   );
 }
