@@ -190,7 +190,7 @@ export function TplSoleil(props: TemplateProps) {
                   <a href={buildViewHref("about")} className={`hover:text-[#c7522a] transition ${activeView === "about" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}>À propos</a>
             </nav>
             {restaurant.plan !== "gratuit" && (
-              <a href={buildViewHref("reserve")} className="hidden md:inline-flex px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition border-2 border-white" style={{ color: "#ffffff" }}>
+              <a href={buildViewHref("reserve")} className="hidden md:inline-flex px-5 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition-transform border-2" style={{ color: theme.accent, borderColor: theme.accent }}>
                 Réserver
               </a>
             )}

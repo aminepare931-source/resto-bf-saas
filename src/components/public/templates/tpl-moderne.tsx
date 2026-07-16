@@ -142,19 +142,20 @@ export function TplModerne(props: TemplateProps) {
 
       {/* NAV */}
       <header className="absolute top-0 inset-x-0 z-30">
-        <div className="max-w-7xl mx-auto px-5 py-5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
+        <div className="absolute inset-x-0 top-0 h-32 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(14,14,16,0.65) 0%, rgba(14,14,16,0) 100%)" }} />
+        <div className="relative max-w-7xl mx-auto px-5 py-5 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
           <div className="flex items-center gap-2 min-w-0">
             {restaurant.logo_url ? (
               <img src={restaurant.logo_url} alt={restaurant.name} className="h-8 w-auto object-contain rounded" />
             ) : (
               <span className="text-2xl shrink-0">🌿</span>
             )}
-            <strong className="text-xl sm:text-2xl truncate" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <strong className="text-xl sm:text-2xl truncate" style={{ fontFamily: "'Playfair Display', serif", textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
               {restaurant.name}
             </strong>
           </div>
           <div className="flex items-center gap-2 sm:gap-6">
-            <nav className="hidden md:flex gap-6 text-[12px] uppercase font-medium" style={{ letterSpacing: "0.15em", color: theme.textMuted }}>
+            <nav className="hidden md:flex gap-6 text-[12px] uppercase font-medium" style={{ letterSpacing: "0.15em", color: theme.textMuted, textShadow: "0 1px 6px rgba(0,0,0,0.5)" }}>
               <a href={buildViewHref("home")} className={`hover:text-[#c9a35a] ${activeView === "home" ? "text-[#c9a35a]" : ""}`}>Accueil</a>
               <a href={buildViewHref("about")} className={`hover:text-[#c9a35a] ${activeView === "about" ? "text-[#c9a35a]" : ""}`}>À propos</a>
               <a href={buildViewHref("menu")} className={`hover:text-[#c9a35a] ${activeView === "menu" ? "text-[#c9a35a]" : ""}`}>Menu</a>
