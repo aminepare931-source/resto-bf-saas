@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Topbar } from "@/components/landing/Topbar";
 import { Footer } from "@/components/landing/Footer";
 import { Reveal } from "@/components/landing/Reveal";
+import { Particles } from "@/components/landing/Particles";
 import { useState } from "react";
 import { X } from "lucide-react";
 
@@ -185,7 +186,18 @@ function LandingPage() {
   const [selectedPlan, setSelectedPlan] = useState<(typeof plans)[0] | null>(null);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="relative min-h-screen bg-background text-foreground">
+      <div
+        className="fixed inset-0 -z-10 opacity-60 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 900px 700px at 15% 0%, rgba(212,168,83,0.16) 0%, transparent 60%), radial-gradient(ellipse 800px 600px at 100% 30%, rgba(212,168,83,0.10) 0%, transparent 60%), radial-gradient(ellipse 700px 700px at 20% 100%, rgba(212,168,83,0.09) 0%, transparent 60%)",
+        }}
+        aria-hidden="true"
+      />
+      <div className="fixed inset-0 -z-10 grid-bg opacity-30 pointer-events-none" aria-hidden="true" />
+      <Particles count={7} />
+
       <Topbar />
 
       <main>
