@@ -120,7 +120,6 @@
     background-repeat: repeat;
     background-size: 360px;
     background-attachment: fixed;
-    background-blend-mode: overlay;
     /* Safe areas pour iPhone */
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
@@ -131,7 +130,7 @@
     content: "";
     position: fixed;
     inset: 0;
-    background: rgba(10, 10, 15, 0.94);
+    background: rgba(10, 10, 15, 0.55);
     pointer-events: none;
     z-index: -1;
   }
