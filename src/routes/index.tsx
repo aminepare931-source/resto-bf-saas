@@ -227,19 +227,100 @@ const faqs = [
   },
 ];
 
+function ScrollProgressBar() {
+  const barRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const h = document.documentElement;
+        const max = h.scrollHeight - h.clientHeight;
+        const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+        if (barRef.current) barRef.current.style.width = `${pct}%`;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+  return (
+    <div className="fixed top-0 left-0 right-0 h-[3px] z-[100] bg-transparent pointer-events-none">
+      <div
+        ref={barRef}
+        className="h-full"
+        style={{ width: "0%", background: "linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light))", transition: "width 0.1s linear" }}
+      />
+    </div>
+  );
+}
+
+function ParallaxAurora() {
+  const refs = useRef<(HTMLDivElement | null)[]>([]);
+  useEffect(() => {
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const y = window.scrollY;
+        const speeds = [0.18, -0.12, 0.09, -0.22];
+        refs.current.forEach((el, i) => {
+          if (el) el.style.transform = `translateY(${y * speeds[i % speeds.length]}px)`;
+        });
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  const blobs = [
+    { top: "-15%", left: "-10%", width: 640, height: 640, color: "rgba(212,168,83,0.42)", duration: "22s", delay: "0s" },
+    { top: "15%", right: "-15%", width: 700, height: 700, color: "rgba(212,168,83,0.30)", duration: "28s", delay: "-8s" },
+    { bottom: "-20%", left: "25%", width: 780, height: 780, color: "rgba(212,168,83,0.24)", duration: "34s", delay: "-16s" },
+    { top: "45%", left: "40%", width: 520, height: 520, color: "rgba(240,212,138,0.20)", duration: "24s", delay: "-4s" },
+  ];
+
+  return (
+    <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none" aria-hidden="true">
+      {blobs.map((b, i) => (
+        <div
+          key={i}
+          ref={(el) => {
+            refs.current[i] = el;
+          }}
+          className="aurora-blob"
+          style={{
+            top: b.top,
+            left: "left" in b ? b.left : undefined,
+            right: "right" in b ? b.right : undefined,
+            bottom: "bottom" in b ? b.bottom : undefined,
+            width: b.width,
+            height: b.height,
+            background: `radial-gradient(circle, ${b.color} 0%, transparent 70%)`,
+            animationDuration: b.duration,
+            animationDelay: b.delay,
+          }}
+        />
+      ))}
+      <div className="absolute inset-0 grid-bg opacity-40" />
+    </div>
+  );
+}
+
 function LandingPage() {
   const [selectedPlan, setSelectedPlan] = useState<(typeof plans)[0] | null>(null);
 
   return (
     <div className="relative min-h-screen text-foreground">
-      {/* Fond animé aurora — orbes qui dérivent lentement */}
-      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div className="aurora-blob" style={{ top: "-15%", left: "-10%", width: 640, height: 640, background: "radial-gradient(circle, rgba(212,168,83,0.42) 0%, transparent 70%)", animationDuration: "22s" }} />
-        <div className="aurora-blob" style={{ top: "15%", right: "-15%", width: 700, height: 700, background: "radial-gradient(circle, rgba(212,168,83,0.30) 0%, transparent 70%)", animationDuration: "28s", animationDelay: "-8s" }} />
-        <div className="aurora-blob" style={{ bottom: "-20%", left: "25%", width: 780, height: 780, background: "radial-gradient(circle, rgba(212,168,83,0.24) 0%, transparent 70%)", animationDuration: "34s", animationDelay: "-16s" }} />
-        <div className="aurora-blob" style={{ top: "45%", left: "40%", width: 520, height: 520, background: "radial-gradient(circle, rgba(240,212,138,0.20) 0%, transparent 70%)", animationDuration: "24s", animationDelay: "-4s" }} />
-        <div className="absolute inset-0 grid-bg opacity-40" />
-      </div>
+      <ScrollProgressBar />
+      <ParallaxAurora />
       <Particles count={9} />
 
       <Topbar />
