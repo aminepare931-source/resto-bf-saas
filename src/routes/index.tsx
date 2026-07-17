@@ -3,7 +3,6 @@ import { Topbar } from "@/components/landing/Topbar";
 import { Footer } from "@/components/landing/Footer";
 import { Reveal } from "@/components/landing/Reveal";
 import { Particles } from "@/components/landing/Particles";
-import { Hero3D } from "@/components/landing/Hero3D";
 import { useState, useEffect, useRef } from "react";
 import { X } from "lucide-react";
 
@@ -267,13 +266,13 @@ function LandingPage() {
               <div className="hero-in mt-6 flex flex-col xs:flex-row gap-3" style={{ animationDelay: "0.3s" }}>
                 <Link
                   to="/auth"
-                  className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 hover:shadow-gold transition-all hover:-translate-y-0.5"
+                  className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 hover:shadow-gold transition-all hover:-translate-y-0.5 active:scale-95 active:translate-y-0"
                 >
                   Créer ma page gratuite
                 </Link>
                 <a
                   href="#tarifs"
-                  className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-border text-foreground font-medium hover:bg-muted transition-colors"
+                  className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-border text-foreground font-medium hover:bg-muted active:scale-95 transition-all"
                 >
                   Voir les tarifs →
                 </a>
@@ -286,11 +285,16 @@ function LandingPage() {
               </div>
             </div>
 
-            {/* Dashboard aperçu + halo 3D */}
+            {/* Dashboard aperçu + halo lumineux */}
             <div className="hero-in relative w-full max-w-sm mx-auto lg:mx-0" style={{ animationDelay: "0.25s" }}>
-              <div className="absolute -inset-16 -z-[1] pointer-events-none opacity-90">
-                <Hero3D />
-              </div>
+              <div
+                className="absolute -inset-10 -z-[1] rounded-full pointer-events-none animate-glow-pulse"
+                style={{
+                  background:
+                    "radial-gradient(circle, rgba(212,168,83,0.5) 0%, rgba(212,168,83,0.18) 45%, transparent 72%)",
+                  filter: "blur(28px)",
+                }}
+              />
               <div className="relative rounded-xl border border-border bg-card overflow-hidden shadow-lg hover:shadow-gold/20 transition-shadow duration-500 animate-float-soft">
                 <div className="flex items-center justify-between p-3 border-b border-border">
                   <div className="flex items-center gap-2">
@@ -362,7 +366,7 @@ function LandingPage() {
 
                 <Link
                   to="/auth/inscription"
-                  className="block w-full py-2.5 text-center bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 transition-opacity"
+                  className="block w-full py-2.5 text-center bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 active:scale-[0.97] transition-all"
                 >
                   Créer mon tableau de bord gratuit →
                 </Link>
@@ -399,7 +403,7 @@ function LandingPage() {
               <Reveal
                 key={t.name}
                 delay={(Math.min(i, 4)) as 0 | 1 | 2 | 3 | 4}
-                className="p-4 rounded-xl border border-border bg-card text-center hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-300"
+                className="p-4 rounded-xl border border-border bg-card text-center hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg active:scale-[0.98] active:translate-y-0 transition-all duration-300"
               >
                 <div className="w-14 h-14 mx-auto rounded-lg bg-muted flex items-center justify-center text-2xl mb-3">
                   {t.emoji}
@@ -431,7 +435,7 @@ function LandingPage() {
               <Reveal
                 key={f.title}
                 delay={(Math.min(i % 6, 4)) as 0 | 1 | 2 | 3 | 4}
-                className="p-4 sm:p-6 rounded-xl border border-border bg-card hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-300"
+                className="p-4 sm:p-6 rounded-xl border border-border bg-card hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg active:scale-[0.98] active:translate-y-0 transition-all duration-300"
               >
                 <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-lg mb-3">
                   {f.icon}
@@ -501,7 +505,7 @@ function LandingPage() {
               <Reveal
                 key={item.title}
                 delay={(Math.min(i % 6, 4)) as 0 | 1 | 2 | 3 | 4}
-                className="p-4 sm:p-5 rounded-xl border border-border bg-card hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-300"
+                className="p-4 sm:p-5 rounded-xl border border-border bg-card hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg active:scale-[0.98] active:translate-y-0 transition-all duration-300"
               >
                 <div className="text-2xl mb-2">{item.icon}</div>
                 <h3 className="text-sm font-semibold mb-1">{item.title}</h3>
@@ -525,7 +529,7 @@ function LandingPage() {
           />
           <div className="max-w-6xl mx-auto mt-8 grid gap-4 grid-cols-2 lg:grid-cols-3">
             {testimonials.map((t, i) => (
-              <Reveal key={t.name} delay={(Math.min(i, 4)) as 0 | 1 | 2 | 3 | 4} className="p-4 sm:p-6 rounded-xl border border-border bg-card hover:border-primary/30 hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
+              <Reveal key={t.name} delay={(Math.min(i, 4)) as 0 | 1 | 2 | 3 | 4} className="p-4 sm:p-6 rounded-xl border border-border bg-card hover:border-primary/30 hover:-translate-y-1 hover:shadow-lg active:scale-[0.98] active:translate-y-0 transition-all duration-300">
                 <div className="flex items-center gap-1 mb-2">
                   <div className="text-primary text-sm">★★★★★</div>
                   <span className="text-[10px] text-muted-foreground">Avis vérifié</span>
@@ -594,7 +598,7 @@ function LandingPage() {
                   <Link
                     to={p.href}
                     search={{ plan: p.plan }}
-                    className={`mt-6 inline-flex w-full items-center justify-center px-5 py-2.5 rounded-lg font-medium text-sm transition-colors ${
+                    className={`mt-6 inline-flex w-full items-center justify-center px-5 py-2.5 rounded-lg font-medium text-sm transition-all active:scale-95 ${
                       p.popular
                         ? "bg-primary text-primary-foreground hover:opacity-90"
                         : "border border-border hover:bg-muted"
@@ -708,7 +712,7 @@ function LandingPage() {
                 <Link
                   to={selectedPlan.href}
                   search={{ plan: selectedPlan.plan }}
-                  className={`mt-6 inline-flex w-full items-center justify-center px-5 py-3 rounded-lg font-medium text-sm transition-colors ${
+                  className={`mt-6 inline-flex w-full items-center justify-center px-5 py-3 rounded-lg font-medium text-sm transition-all active:scale-95 ${
                     selectedPlan.popular
                       ? "bg-primary text-primary-foreground hover:opacity-90"
                       : "border border-border hover:bg-muted"
@@ -738,7 +742,7 @@ function LandingPage() {
               href="https://wa.me/22655300868?text=Bonjour%2C%20je%20souhaite%20une%20offre%20sur%20mesure%20Resto%20BF"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity whitespace-nowrap text-sm"
+              className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 active:scale-95 transition-all whitespace-nowrap text-sm"
             >
               Demander une offre sur mesure →
             </a>
@@ -793,13 +797,13 @@ function LandingPage() {
                 href="https://wa.me/22655300868"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 hover:-translate-y-0.5 transition-all text-sm"
+                className="inline-flex items-center px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 hover:-translate-y-0.5 active:scale-95 active:translate-y-0 transition-all text-sm"
               >
                 Nous écrire sur WhatsApp
               </a>
               <a
                 href="tel:+22655300868"
-                className="inline-flex items-center px-6 py-3 rounded-lg border border-border text-foreground font-medium hover:bg-muted transition-colors text-sm"
+                className="inline-flex items-center px-6 py-3 rounded-lg border border-border text-foreground font-medium hover:bg-muted active:scale-95 transition-all text-sm"
               >
                 +226 55 30 08 68
               </a>

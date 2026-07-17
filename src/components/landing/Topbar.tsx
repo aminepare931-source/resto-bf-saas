@@ -69,7 +69,7 @@ export function Topbar() {
           </Link>
           <Link
             to="/auth"
-            className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-opacity whitespace-nowrap"
+            className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg bg-primary text-primary-foreground hover:opacity-90 active:scale-95 transition-all whitespace-nowrap"
           >
             Créer mon restaurant
           </Link>

@@ -1,6 +1,23 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { Component, lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 
 const Hero3DScene = lazy(() => import("./Hero3DScene"));
+
+/** Empêche un crash de la scène 3D de faire tomber toute la page. */
+class Hero3DErrorBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode; fallback: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: unknown) {
+    console.warn("Hero3D a échoué, repli sur le fond statique.", error);
+  }
+  render() {
+    return this.state.hasError ? this.props.fallback : this.props.children;
+  }
+}
 
 function canRun3D(): boolean {
   if (typeof window === "undefined") return false;
@@ -57,8 +74,10 @@ export function Hero3D() {
   if (!enabled) return <StaticFallback />;
 
   return (
-    <Suspense fallback={<StaticFallback />}>
-      <Hero3DScene />
-    </Suspense>
+    <Hero3DErrorBoundary fallback={<StaticFallback />}>
+      <Suspense fallback={<StaticFallback />}>
+        <Hero3DScene />
+      </Suspense>
+    </Hero3DErrorBoundary>
   );
 }
