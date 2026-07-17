@@ -195,6 +195,43 @@
 .reveal-delay-4 { transition-delay: 0.4s; }
 .reveal-delay-5 { transition-delay: 0.5s; }
 
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.animate-float-soft {
+  animation: float-soft 5s ease-in-out infinite;
+  animation-delay: 1s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-soft { animation: none; }
+}
+
+@keyframes hero-in {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero-in {
+  opacity: 0;
+  animation: hero-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes gold-shimmer-text {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.text-shimmer {
+  background: linear-gradient(110deg, var(--gold) 20%, var(--gold-light) 40%, var(--gold) 60%, var(--gold-light) 80%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gold-shimmer-text 6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-in { animation: none; opacity: 1; }
+  .text-shimmer { animation: none; }
+}
+
 @keyframes aurora-drift {
   0%   { transform: translate(0, 0) scale(1); }
   33%  { transform: translate(4%, 6%) scale(1.12); }

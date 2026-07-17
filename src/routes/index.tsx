@@ -3,8 +3,53 @@ import { Topbar } from "@/components/landing/Topbar";
 import { Footer } from "@/components/landing/Footer";
 import { Reveal } from "@/components/landing/Reveal";
 import { Particles } from "@/components/landing/Particles";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { X } from "lucide-react";
+
+function AnimatedStat({ value }: { value: string }) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [display, setDisplay] = useState(() => value.replace(/[0-9.]+/, (m) => (m.includes(".") ? "0.0" : "0")));
+
+  useEffect(() => {
+    const match = value.match(/[0-9]+(\.[0-9]+)?/);
+    const el = ref.current;
+    if (!match || !el) return;
+    const target = parseFloat(match[0]);
+    const decimals = match[0].includes(".") ? match[0].split(".")[1].length : 0;
+    const prefix = value.slice(0, match.index);
+    const suffix = value.slice((match.index ?? 0) + match[0].length);
+    let done = false;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting && !done) {
+            done = true;
+            const start = performance.now();
+            const duration = 1300;
+            const tick = (now: number) => {
+              const p = Math.min(1, (now - start) / duration);
+              const eased = 1 - Math.pow(1 - p, 3);
+              const current = (target * eased).toFixed(decimals);
+              setDisplay(`${prefix}${current}${suffix}`);
+              if (p < 1) requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+            io.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.4 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [value]);
+
+  return (
+    <div ref={ref} className="text-2xl sm:text-3xl font-bold text-foreground">
+      {display}
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -189,9 +234,10 @@ function LandingPage() {
     <div className="relative min-h-screen text-foreground">
       {/* Fond animé aurora — orbes qui dérivent lentement */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div className="aurora-blob" style={{ top: "-10%", left: "-8%", width: 560, height: 560, background: "radial-gradient(circle, rgba(212,168,83,0.30) 0%, transparent 70%)", animationDuration: "26s" }} />
-        <div className="aurora-blob" style={{ top: "20%", right: "-10%", width: 620, height: 620, background: "radial-gradient(circle, rgba(212,168,83,0.20) 0%, transparent 70%)", animationDuration: "32s", animationDelay: "-8s" }} />
-        <div className="aurora-blob" style={{ bottom: "-15%", left: "20%", width: 700, height: 700, background: "radial-gradient(circle, rgba(212,168,83,0.16) 0%, transparent 70%)", animationDuration: "38s", animationDelay: "-16s" }} />
+        <div className="aurora-blob" style={{ top: "-15%", left: "-10%", width: 640, height: 640, background: "radial-gradient(circle, rgba(212,168,83,0.42) 0%, transparent 70%)", animationDuration: "22s" }} />
+        <div className="aurora-blob" style={{ top: "15%", right: "-15%", width: 700, height: 700, background: "radial-gradient(circle, rgba(212,168,83,0.30) 0%, transparent 70%)", animationDuration: "28s", animationDelay: "-8s" }} />
+        <div className="aurora-blob" style={{ bottom: "-20%", left: "25%", width: 780, height: 780, background: "radial-gradient(circle, rgba(212,168,83,0.24) 0%, transparent 70%)", animationDuration: "34s", animationDelay: "-16s" }} />
+        <div className="aurora-blob" style={{ top: "45%", left: "40%", width: 520, height: 520, background: "radial-gradient(circle, rgba(240,212,138,0.20) 0%, transparent 70%)", animationDuration: "24s", animationDelay: "-4s" }} />
         <div className="absolute inset-0 grid-bg opacity-40" />
       </div>
       <Particles count={9} />
@@ -202,22 +248,22 @@ function LandingPage() {
         {/* HERO */}
         <section className="pt-28 pb-16 px-4 sm:px-6">
           <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-            <Reveal>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-muted text-xs text-muted-foreground mb-4">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+            <div>
+              <div className="hero-in inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-muted text-xs text-muted-foreground mb-4">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                 Pour les restaurants, maquis & fast-foods
               </div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+              <h1 className="hero-in text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight" style={{ animationDelay: "0.1s" }}>
                 Votre restaurant
                 <br />
-                <span className="text-primary">en ligne en 5 minutes</span>
+                <span className="text-shimmer">en ligne en 5 minutes</span>
               </h1>
-              <p className="mt-4 text-sm sm:text-base text-muted-foreground max-w-xl leading-relaxed">
+              <p className="hero-in mt-4 text-sm sm:text-base text-muted-foreground max-w-xl leading-relaxed" style={{ animationDelay: "0.2s" }}>
                 L'application web complète pour gérer votre restaurant : menu digital, commandes en
                 temps réel, gestion de cuisine, stocks, facturation et statistiques.{" "}
                 <strong>Tout-en-un, simple et puissant.</strong>
               </p>
-              <div className="mt-6 flex flex-col xs:flex-row gap-3">
+              <div className="hero-in mt-6 flex flex-col xs:flex-row gap-3" style={{ animationDelay: "0.3s" }}>
                 <Link
                   to="/auth"
                   className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 hover:shadow-gold transition-all hover:-translate-y-0.5"
@@ -231,17 +277,17 @@ function LandingPage() {
                   Voir les tarifs →
                 </a>
               </div>
-              <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
+              <div className="hero-in mt-6 flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground" style={{ animationDelay: "0.4s" }}>
                 <span>🔒 Sans carte bancaire</span>
                 <span>🚫 Annulation à tout moment</span>
                 <span>⚡ Installation en 5 minutes</span>
                 <span>🇧🇫 Conçu pour le Burkina</span>
               </div>
-            </Reveal>
+            </div>
 
             {/* Dashboard aperçu */}
-            <Reveal delay={2} className="w-full max-w-sm mx-auto lg:mx-0">
-              <div className="rounded-xl border border-border bg-card overflow-hidden shadow-lg hover:shadow-gold/20 transition-shadow duration-500">
+            <div className="hero-in w-full max-w-sm mx-auto lg:mx-0" style={{ animationDelay: "0.25s" }}>
+              <div className="rounded-xl border border-border bg-card overflow-hidden shadow-lg hover:shadow-gold/20 transition-shadow duration-500 animate-float-soft">
                 <div className="flex items-center justify-between p-3 border-b border-border">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-green-500" />
@@ -317,7 +363,7 @@ function LandingPage() {
                   Créer mon tableau de bord gratuit →
                 </Link>
               </div>
-            </Reveal>
+            </div>
           </div>
         </section>
 
@@ -326,7 +372,7 @@ function LandingPage() {
           <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-6">
             {stats.map((s, i) => (
               <Reveal key={s.label} delay={(Math.min(i, 4)) as 0 | 1 | 2 | 3 | 4} className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-foreground">{s.n}</div>
+                <AnimatedStat value={s.n} />
                 <div className="text-xs text-muted-foreground mt-1">{s.label}</div>
               </Reveal>
             ))}
