@@ -3,6 +3,7 @@ import { Topbar } from "@/components/landing/Topbar";
 import { Footer } from "@/components/landing/Footer";
 import { Reveal } from "@/components/landing/Reveal";
 import { Particles } from "@/components/landing/Particles";
+import { Hero3D } from "@/components/landing/Hero3D";
 import { useState, useEffect, useRef } from "react";
 import { X } from "lucide-react";
 
@@ -285,9 +286,12 @@ function LandingPage() {
               </div>
             </div>
 
-            {/* Dashboard aperçu */}
-            <div className="hero-in w-full max-w-sm mx-auto lg:mx-0" style={{ animationDelay: "0.25s" }}>
-              <div className="rounded-xl border border-border bg-card overflow-hidden shadow-lg hover:shadow-gold/20 transition-shadow duration-500 animate-float-soft">
+            {/* Dashboard aperçu + halo 3D */}
+            <div className="hero-in relative w-full max-w-sm mx-auto lg:mx-0" style={{ animationDelay: "0.25s" }}>
+              <div className="absolute -inset-16 -z-[1] pointer-events-none opacity-90">
+                <Hero3D />
+              </div>
+              <div className="relative rounded-xl border border-border bg-card overflow-hidden shadow-lg hover:shadow-gold/20 transition-shadow duration-500 animate-float-soft">
                 <div className="flex items-center justify-between p-3 border-b border-border">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-green-500" />
