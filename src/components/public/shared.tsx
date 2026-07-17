@@ -547,6 +547,67 @@ export function AdvancedReservationForm({
 
 /* ---------- Floating WhatsApp CTA ---------- */
 
+/**
+ * Fallback élégant quand le restaurant n'a encore aucune photo (couverture, plat, galerie).
+ * Illustration filaire discrète + texture, plutôt qu'un emoji géant qui fait "vide".
+ */
+export function CoverPlaceholder({
+  background,
+  stroke = "rgba(255,255,255,0.85)",
+  rounded = "20px",
+  label,
+}: {
+  background: string;
+  stroke?: string;
+  rounded?: string;
+  label?: string;
+}) {
+  return (
+    <div
+      className="w-full h-full grid place-items-center relative overflow-hidden"
+      style={{ background, borderRadius: rounded }}
+    >
+      <svg
+        className="absolute inset-0 w-full h-full opacity-[0.08]"
+        aria-hidden="true"
+        style={{ mixBlendMode: "overlay" }}
+      >
+        <pattern id="cp-dots" width="18" height="18" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="2" r="1.4" fill={stroke} />
+        </pattern>
+        <rect width="100%" height="100%" fill="url(#cp-dots)" />
+      </svg>
+      <svg
+        width="34%"
+        height="34%"
+        viewBox="0 0 100 100"
+        fill="none"
+        stroke={stroke}
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{ opacity: 0.9 }}
+      >
+        <circle cx="50" cy="50" r="32" strokeWidth="1.4" opacity="0.4" />
+        <circle cx="50" cy="50" r="22" />
+        {/* fourchette */}
+        <path d="M31 22 V40 M35 22 V40 M39 22 V40 M35 22 V78 M31 40 Q31 46 35 46 Q39 46 39 40" />
+        {/* couteau */}
+        <path d="M67 22 Q75 22 75 34 Q75 44 67 46 V78" />
+      </svg>
+      {label && (
+        <span
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[11px] font-medium tracking-wide"
+          style={{ color: stroke, opacity: 0.75 }}
+        >
+          {label}
+        </span>
+      )}
+    </div>
+  );
+}
+
+
 export function FloatingWhatsApp({ href, accent, ink }: { href: string | null; accent: string; ink: string }) {
   if (!href) return null;
   return (

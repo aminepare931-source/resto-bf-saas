@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { TemplateProps, PublicMenuItem, PublicGalleryImage, Theme } from "../shared";
-import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
+import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, CoverPlaceholder, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
 import { StorageImage } from "@/components/StorageImage";
 import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
 
@@ -248,7 +248,9 @@ export function TplSoleil(props: TemplateProps) {
                   {cover ? (
                     <StorageImage path={cover} alt={restaurant.name} className="w-full aspect-[4/3] object-cover rounded-[20px]" />
                   ) : (
-                    <div className="w-full aspect-[4/3] rounded-[20px] grid place-items-center text-8xl" style={{ background: "linear-gradient(135deg,#e5c89a,#c7522a)" }}>👨‍🍳</div>
+                    <div className="w-full aspect-[4/3] rounded-[20px]" style={{ background: "linear-gradient(135deg,#e5c89a,#c7522a)" }}>
+                      <CoverPlaceholder background="transparent" stroke="rgba(255,255,255,0.9)" rounded="20px" />
+                    </div>
                   )}
                   {rating !== null && (
                     <div className="absolute bottom-4 left-4 bg-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 text-sm">

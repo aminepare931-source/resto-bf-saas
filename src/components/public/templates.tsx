@@ -9,6 +9,7 @@ import {
   ReviewForm,
   SectionHead,
   FloatingWhatsApp,
+  CoverPlaceholder,
   buildWhatsAppLink,
   buildViewHref,
   avgRating,
@@ -396,10 +397,10 @@ export function TplMarche({ restaurant, menu, reviews, gallery, view }: Template
                 />
               ) : (
                 <div
-                  className="w-full aspect-square rounded-full grid place-items-center text-9xl"
+                  className="w-full aspect-square rounded-full"
                   style={{ background: "radial-gradient(circle,#ed8023,#7a3a0e)" }}
                 >
-                  🍛
+                  <CoverPlaceholder background="transparent" stroke="rgba(255,255,255,0.92)" rounded="9999px" />
                 </div>
               )}
             </div>

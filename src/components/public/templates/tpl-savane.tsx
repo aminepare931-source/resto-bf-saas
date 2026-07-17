@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { TemplateProps, PublicMenuItem, PublicGalleryImage, Theme } from "../shared";
-import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
+import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, CoverPlaceholder, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
 import { StorageImage } from "@/components/StorageImage";
 import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
 
@@ -232,7 +232,9 @@ export function TplSavane(props: TemplateProps) {
               {cover ? (
                 <StorageImage path={cover} alt={restaurant.name} className="w-full aspect-square object-cover rounded-full shadow-2xl border-8 border-white/20" />
               ) : (
-                <div className="w-full aspect-square rounded-full grid place-items-center text-9xl" style={{ background: "radial-gradient(circle,#f5b921,#c8281e)" }}>🍔</div>
+                <div className="w-full aspect-square rounded-full" style={{ background: "radial-gradient(circle,#f5b921,#c8281e)" }}>
+                  <CoverPlaceholder background="transparent" stroke="rgba(255,255,255,0.92)" rounded="9999px" />
+                </div>
               )}
               <span className="absolute -top-2 -right-2 text-5xl rotate-12">✨</span>
               <span className="absolute bottom-4 -left-4 text-4xl">⚡</span>

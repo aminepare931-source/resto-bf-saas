@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { TemplateProps, PublicMenuItem, PublicGalleryImage, Theme } from "../shared";
-import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
+import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, CoverPlaceholder, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
 import { StorageImage } from "@/components/StorageImage";
 import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
 
@@ -200,7 +200,9 @@ export function TplModerne(props: TemplateProps) {
               {cover ? (
                 <StorageImage path={cover} alt={restaurant.name} className="w-full aspect-square object-cover" />
               ) : (
-                <div className="w-full aspect-square grid place-items-center text-9xl" style={{ background: theme.surfaceAlt }}>🥗</div>
+                <div className="w-full aspect-square" style={{ background: theme.surfaceAlt }}>
+                  <CoverPlaceholder background="transparent" stroke={theme.accent} rounded="0px" />
+                </div>
               )}
               <div className="absolute -bottom-6 -right-6 w-32 h-32 hidden lg:block" style={{ background: `radial-gradient(circle, ${theme.accent} 1px, transparent 1px)`, backgroundSize: "10px 10px" }} />
             </div>
