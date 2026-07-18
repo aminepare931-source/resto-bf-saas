@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { TemplateProps, PublicMenuItem, PublicGalleryImage, Theme } from "../shared";
-import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, CoverPlaceholder, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
+import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, CoverPlaceholder, Icon, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
 import { StorageImage } from "@/components/StorageImage";
 import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
 
@@ -194,8 +194,8 @@ export function TplSoleil(props: TemplateProps) {
                 Réserver
               </a>
             )}
-            <a href={wa ?? buildViewHref("menu")} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="hidden md:flex w-10 h-10 rounded-full grid place-items-center text-base hover:scale-105 transition" style={{ background: theme.accent, color: theme.accentInk }} aria-label="Commander">
-              🛒
+            <a href={wa ?? buildViewHref("menu")} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="hidden md:flex w-10 h-10 rounded-full grid place-items-center hover:scale-105 transition" style={{ background: theme.accent, color: theme.accentInk }} aria-label="Commander">
+              <Icon name="cart" size={17} />
             </a>
             <button onClick={() => setMobOpen((v) => !v)} className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-black/5 transition-colors" aria-label="Menu">
               <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
@@ -213,7 +213,7 @@ export function TplSoleil(props: TemplateProps) {
               {restaurant.plan !== "gratuit" && (
                 <a href={buildViewHref("reserve")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors text-left">Réserver</a>
               )}
-              <a href={wa ?? buildViewHref("menu")} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors">🛒 Commander</a>
+              <a href={wa ?? buildViewHref("menu")} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-black/5 transition-colors flex items-center gap-2"><Icon name="cart" size={16} /> Commander</a>
             </div>
           </nav>
         )}
@@ -350,11 +350,11 @@ export function TplSoleil(props: TemplateProps) {
               </p>
               {restaurant.address && (
                 <div className="mt-6 p-6 rounded-2xl" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
-                  <p className="text-sm font-bold uppercase tracking-wider mb-2" style={{ color: theme.accent }}>📍 Adresse</p>
+                  <p className="text-sm font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5" style={{ color: theme.accent }}><Icon name="pin" size={14} /> Adresse</p>
                   <p style={{ color: theme.text }}>{restaurant.address}</p>
                   {restaurant.hours && (
                     <>
-                      <p className="text-sm font-bold uppercase tracking-wider mt-4 mb-2" style={{ color: theme.accent }}>🕐 Horaires</p>
+                      <p className="text-sm font-bold uppercase tracking-wider mt-4 mb-2 flex items-center gap-1.5" style={{ color: theme.accent }}><Icon name="clock" size={14} /> Horaires</p>
                       <p style={{ color: theme.text }} className="whitespace-pre-line">{restaurant.hours}</p>
                     </>
                   )}
@@ -375,25 +375,26 @@ export function TplSoleil(props: TemplateProps) {
         </section>
       )}
 
-      {/* SECTION PREMIUM - Événements privés */}
+      {/* SECTION PREMIUM - Événements privés (accueil uniquement) */}
+      {activeView === "home" && (
       <section className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}`, background: theme.surfaceAlt }}>
         <div className="max-w-5xl mx-auto">
           <SectionHead kicker="— Moments spéciaux —" title="Événements Privés" theme={theme} serif />
           <div className="grid md:grid-cols-3 gap-6 mt-10">
             <div className="p-6 rounded-2xl text-center" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
-              <div className="text-4xl mb-3">🎂</div>
+              <Icon name="cake" size={30} className="mx-auto mb-3" style={{ color: theme.accent }} />
               <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Anniversaires</h3>
               <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Menu spécial et décoration personnalisée</p>
               <p className="text-lg font-black" style={{ color: theme.accent }}>À partir de 15 000 F/pers</p>
             </div>
             <div className="p-6 rounded-2xl text-center" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
-              <div className="text-4xl mb-3">💼</div>
+              <Icon name="briefcase" size={30} className="mx-auto mb-3" style={{ color: theme.accent }} />
               <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Repas d'affaires</h3>
               <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Espace privé et service dédié</p>
               <p className="text-lg font-black" style={{ color: theme.accent }}>Sur demande</p>
             </div>
             <div className="p-6 rounded-2xl text-center" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
-              <div className="text-4xl mb-3">🥂</div>
+              <Icon name="champagne" size={30} className="mx-auto mb-3" style={{ color: theme.accent }} />
               <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Dîners romantiques</h3>
               <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Ambiance intimiste et menu duo</p>
               <p className="text-lg font-black" style={{ color: theme.accent }}>À partir de 20 000 F</p>
@@ -401,6 +402,7 @@ export function TplSoleil(props: TemplateProps) {
           </div>
         </div>
       </section>
+      )}
 
       {/* CTA BAND */}
       {activeView === "home" && (
@@ -414,19 +416,20 @@ export function TplSoleil(props: TemplateProps) {
         </div>
       )}
 
-      {/* SECTION PREMIUM - Chef's Table */}
+      {/* SECTION PREMIUM - Chef's Table (accueil uniquement) */}
+      {activeView === "home" && (
       <section className="py-10 sm:py-20 px-4 sm:px-8" style={{ borderTop: `1px solid ${theme.border}`, background: theme.surfaceAlt }}>
         <div className="max-w-5xl mx-auto">
           <SectionHead kicker="— Expérience exclusive —" title="Chef's Table" theme={theme} serif />
           <div className="grid md:grid-cols-2 gap-6 mt-10">
             <div className="p-8 rounded-2xl" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
-              <div className="text-4xl mb-3">👨‍🍳</div>
+              <Icon name="chefHat" size={32} className="mb-3" style={{ color: theme.accent }} />
               <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>Table du Chef</h3>
               <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Dînez en cuisine et observez le chef à l'œuvre</p>
               <p className="text-lg font-black" style={{ color: theme.accent }}>Sur réservation uniquement</p>
             </div>
             <div className="p-8 rounded-2xl" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
-              <div className="text-4xl mb-3">🍷</div>
+              <Icon name="wine" size={32} className="mb-3" style={{ color: theme.accent }} />
               <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>Dégustation Privée</h3>
               <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Menu personnalisé avec accord mets-vins</p>
               <p className="text-lg font-black" style={{ color: theme.accent }}>À partir de 40 000 F/pers</p>
@@ -434,6 +437,7 @@ export function TplSoleil(props: TemplateProps) {
           </div>
         </div>
       </section>
+      )}
 
       {/* GALERIE & AVIS - Intégrés dans l'accueil */}
       {activeView === "home" && (

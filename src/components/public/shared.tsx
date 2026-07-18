@@ -547,6 +547,45 @@ export function AdvancedReservationForm({
 
 /* ---------- Floating WhatsApp CTA ---------- */
 
+const ICON_PATHS: Record<string, string> = {
+  cake: "M4 21h16v-6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6ZM4 15l2.5-3 2.5 3M9 15l2.5-3 2.5 3M14 15l2.5-3 2.5 3M12 9V5m0 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z",
+  briefcase: "M4 8h16v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8Zm4 0V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M4 13h16",
+  champagne: "M9 3h6l-1 6a2 2 0 0 1-4 0L9 3ZM12 12v9M8 21h8",
+  chefHat: "M7 12v7h10v-7M6.5 12a3.5 3.5 0 1 1 1.3-6.75 3 3 0 0 1 5.4 0A3.5 3.5 0 1 1 17.5 12h-11Z",
+  wine: "M8 3h8l-.6 8a3.4 3.4 0 0 1-6.8 0L8 3ZM12 14v7M8 21h8",
+  cart: "M4 5h2l1.2 9.6a2 2 0 0 0 2 1.7h6.6a2 2 0 0 0 2-1.6L19 8H6M9 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm7 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z",
+  pin: "M12 21s7-6.2 7-11.4A7 7 0 0 0 5 9.6C5 14.8 12 21 12 21Zm0-9a2.4 2.4 0 1 0 0-4.8A2.4 2.4 0 0 0 12 12Z",
+  clock: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0-14v5l3.5 2",
+  spark: "M12 3l1.8 5.6L19 10l-5.2 1.4L12 17l-1.8-5.6L5 10l5.2-1.4L12 3Z",
+  calendar: "M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Zm2 7h3m-3 4h7",
+  phone: "M6.5 3h3l1.5 4-2 1.5a12 12 0 0 0 5.5 5.5l1.5-2 4 1.5v3a2 2 0 0 1-2 2C11.5 20 4 12.5 4 5a2 2 0 0 1 2.5-2Z",
+  chat: "M4 5h16v11H8l-4 4V5Z",
+  car: "M4 16V11l2-5h12l2 5v5M4 16a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0Zm13 0a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0ZM4 16h13M6 11h12",
+  fire: "M12 21a6 6 0 0 0 6-6c0-3-2-4.5-3-7-.5 2-1.5 3-2.5 2 .5-2.5-.5-4.5-2.5-6 0 3-1.5 4.5-3 6.5C5.5 12 5 13 5 15a6 6 0 0 0 6 6a4 4 0 0 1-2-3.5c0-1.5 1-2.5 2-3.5 0 1.5.8 2 1.5 2.7A3.3 3.3 0 0 1 13.5 19c0 .7-.3 1.3-1.5 2Z",
+  home: "M4 11.5 12 4l8 7.5M6 10v9h5v-5h2v5h5v-9",
+  building: "M6 21V5a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v16M6 21h12M6 21H4m14 0h2M9 8h1m4 0h1M9 12h1m4 0h1M9 16h1m4 0h1",
+};
+
+export function Icon({ name, size = 24, className = "", style }: { name: keyof typeof ICON_PATHS; size?: number; className?: string; style?: CSSProperties }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      style={style}
+      aria-hidden="true"
+    >
+      <path d={ICON_PATHS[name]} />
+    </svg>
+  );
+}
+
 /**
  * Fallback élégant quand le restaurant n'a encore aucune photo (couverture, plat, galerie).
  * Illustration filaire discrète + texture, plutôt qu'un emoji géant qui fait "vide".

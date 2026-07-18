@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { TemplateProps, PublicMenuItem, PublicGalleryImage, Theme } from "../shared";
-import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, CoverPlaceholder, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
+import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, CoverPlaceholder, Icon, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
 import { StorageImage } from "@/components/StorageImage";
 import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
 
@@ -266,11 +266,11 @@ export function TplSavane(props: TemplateProps) {
               </p>
               {restaurant.address && (
                 <div className="mt-6 p-6 rounded-2xl bg-white/10 backdrop-blur border border-white/20">
-                  <p className="text-sm font-bold uppercase tracking-wider mb-2" style={{ color: theme.accent }}>📍 Adresse</p>
+                  <p className="text-sm font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5" style={{ color: theme.accent }}><Icon name="pin" size={14} /> Adresse</p>
                   <p style={{ color: "#ffffff" }}>{restaurant.address}</p>
                   {restaurant.hours && (
                     <>
-                      <p className="text-sm font-bold uppercase tracking-wider mt-4 mb-2" style={{ color: theme.accent }}>🕐 Horaires</p>
+                      <p className="text-sm font-bold uppercase tracking-wider mt-4 mb-2 flex items-center gap-1.5" style={{ color: theme.accent }}><Icon name="clock" size={14} /> Horaires</p>
                       <p style={{ color: "#ffffff" }} className="whitespace-pre-line">{restaurant.hours}</p>
                     </>
                   )}
@@ -297,7 +297,7 @@ export function TplSavane(props: TemplateProps) {
           <div className="relative max-w-5xl mx-auto px-5 -mb-14 translate-y-14">
             <div className="bg-white rounded-full shadow-2xl px-6 py-4 grid grid-cols-2 sm:grid-cols-[1fr_1fr_auto] gap-4 items-center">
               <div className="flex items-center gap-3">
-                <span className="text-3xl">🚗</span>
+                <Icon name="car" size={28} style={{ color: theme.accent }} />
                 <div>
                   <strong className="text-sm block">Livraison rapide</strong>
                   <span className="text-xs" style={{ color: theme.textMuted }}>Sous 30 min en ville</span>
@@ -386,11 +386,11 @@ export function TplSavane(props: TemplateProps) {
               </p>
               {restaurant.address && (
                 <div className="mt-6 p-6 rounded-2xl" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
-                  <p className="text-sm font-bold uppercase tracking-wider mb-2" style={{ color: RED }}>📍 Adresse</p>
+                  <p className="text-sm font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5" style={{ color: RED }}><Icon name="pin" size={14} /> Adresse</p>
                   <p style={{ color: theme.text }}>{restaurant.address}</p>
                   {restaurant.hours && (
                     <>
-                      <p className="text-sm font-bold uppercase tracking-wider mt-4 mb-2" style={{ color: RED }}>🕐 Horaires</p>
+                      <p className="text-sm font-bold uppercase tracking-wider mt-4 mb-2 flex items-center gap-1.5" style={{ color: RED }}><Icon name="clock" size={14} /> Horaires</p>
                       <p style={{ color: theme.text }} className="whitespace-pre-line">{restaurant.hours}</p>
                     </>
                   )}
