@@ -16,7 +16,7 @@ function FontImport() {
   return (
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
     />
   );
 }
@@ -66,7 +66,7 @@ function SectionHead({ kicker, title, theme, serif, align }: { kicker: string; t
   return (
     <div className={`mb-10 ${isCenter ? "text-center" : ""}`}>
       <p className="text-[10px] font-bold uppercase mb-3" style={{ color: theme.accent, letterSpacing: "0.4em" }}>{kicker}</p>
-      <h2 className="leading-[1.05]" style={{ fontFamily: serif ? "'Cormorant Garamond', serif" : "inherit", color: theme.text, fontSize: "clamp(2rem, 4.5vw, 3.5rem)", fontWeight: 600 }}>
+      <h2 className="leading-[1.05]" style={{ fontFamily: "'Baloo 2', sans-serif", color: theme.text, fontSize: "clamp(2rem, 4.5vw, 3.25rem)", fontWeight: 700 }}>
         {title}
       </h2>
     </div>
@@ -139,8 +139,6 @@ export function TplSoleil(props: TemplateProps) {
     radius: "14px",
   };
 
-  const heroOverlay = "linear-gradient(135deg, rgba(251,243,230,0.92) 0%, rgba(251,243,230,0.88) 50%, rgba(251,243,230,0.82) 100%)";
-
   // Navigation is handled by the view query param via href links.
 
   return (
@@ -148,16 +146,14 @@ export function TplSoleil(props: TemplateProps) {
       <FontImport />
       <style>{`
         .tpl-page{position:relative;min-height:100vh;overflow:hidden;isolation:isolate;}
-        .tpl-bg{position:fixed;inset:0;z-index:-2;overflow:hidden;background:transparent;}
-        .tpl-bg img{width:100%;height:100%;object-fit:cover;filter:saturate(1.08) contrast(1.1);transform:scale(1.08);animation:tpl-bg-drift 22s ease-in-out infinite alternate;}
-        .tpl-bg span{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.78),rgba(0,0,0,.40),rgba(0,0,0,.80));}
-        @keyframes tpl-bg-drift{0%{transform:scale(1.08) translate3d(-1.5%,0,0)}100%{transform:scale(1.18) translate3d(1.5%,-1.5%,0)}}
+        .tpl-bg{position:fixed;inset:0;z-index:-2;overflow:hidden;background:${theme.bg};}
+        .tpl-bg img{width:100%;height:100%;object-fit:cover;object-position:top;opacity:0.16;mix-blend-mode:multiply;transform:scale(1.08);animation:tpl-bg-drift 30s ease-in-out infinite alternate;}
+        @keyframes tpl-bg-drift{0%{transform:scale(1.08) translate3d(-1%,0,0)}100%{transform:scale(1.14) translate3d(1%,-1%,0)}}
         @media(prefers-reduced-motion:reduce){.tpl-bg img{animation:none;transition:none}}
       `}</style>
 
       <div className="tpl-bg" aria-hidden>
         <img src="/bg-soleil.webp" alt="" />
-        <span />
       </div>
 
       {/* TOP STRIP */}
@@ -179,8 +175,7 @@ export function TplSoleil(props: TemplateProps) {
               <img src={restaurant.logo_url} alt={restaurant.name} className="h-10 w-auto object-contain rounded" />
             ) : null}
             <div>
-              <strong className="block text-2xl sm:text-3xl tracking-[0.25em] truncate" style={{ fontFamily: "'Playfair Display', serif", color: theme.text }}>{restaurant.name.toUpperCase()}</strong>
-              <span className="block text-[10px] tracking-[0.5em] mt-0.5" style={{ color: theme.accent }}>~ KITCHEN ~</span>
+              <strong className="block text-xl sm:text-2xl truncate" style={{ fontFamily: "'Baloo 2', sans-serif", fontWeight: 700, color: theme.text }}>{restaurant.name}</strong>
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-5">
@@ -222,62 +217,71 @@ export function TplSoleil(props: TemplateProps) {
       {/* HOME VIEW */}
       {activeView === "home" && (
         <>
-          {/* HERO card */}
-          <section id="home" className="px-4 sm:px-5 pt-6 sm:pt-8 pb-10 sm:pb-12">
-            <div className="max-w-6xl mx-auto rounded-[28px] overflow-hidden relative" style={{ background: heroOverlay }}>
-              <div className="relative grid lg:grid-cols-2 gap-4 sm:gap-6 p-6 sm:p-12 items-center">
-                <div>
-                  <h1 className="font-black leading-[0.95]" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(2.5rem, 6vw, 4.5rem)", color: "#ffffff", textShadow: "0 2px 20px rgba(0,0,0,0.5)" }}>
-                    Délicieux instants<br/>pour <em style={{ color: theme.accent, fontStyle: "italic" }}>chaque goût</em>
-                  </h1>
-                  <p className="mt-5 max-w-md leading-relaxed" style={{ color: "#ffffff", fontWeight: 500, textShadow: "0 1px 10px rgba(0,0,0,0.5)" }}>
-                    {restaurant.description ?? `Une cuisine d'excellence préparée avec passion à ${restaurant.city}, ingrédients frais et locaux.`}
-                  </p>
-                  <div className="mt-7 flex gap-3 flex-wrap">
-                    <a href={wa ?? buildViewHref("menu")} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="px-7 py-3.5 rounded-full font-bold text-sm hover:opacity-90 transition shadow-lg" style={{ background: theme.accent, color: theme.accentInk }}>
-                      Commander
-                    </a>
-                    {restaurant.plan !== "gratuit" && (
-                      <a href={buildViewHref("reserve")} className="px-7 py-3.5 rounded-full font-bold text-sm border-2 border-white hover:bg-white hover:text-[#1e1308] transition shadow-md" style={{ color: "#ffffff" }}>
-                        Réserver une table
-                      </a>
-                    )}
-                  </div>
+          {/* HERO — plein cadre */}
+          <section id="home" className="relative">
+            <div className="relative w-full h-[86vh] min-h-[560px] max-h-[820px] overflow-hidden">
+              {cover ? (
+                <StorageImage path={cover} alt={restaurant.name} className="absolute inset-0 w-full h-full object-cover" />
+              ) : (
+                <div className="absolute inset-0" style={{ background: "linear-gradient(135deg,#e5c89a,#c7522a)" }}>
+                  <CoverPlaceholder background="transparent" stroke="rgba(255,255,255,0.9)" rounded="0px" />
                 </div>
-                <div className="relative">
-                  {cover ? (
-                    <StorageImage path={cover} alt={restaurant.name} className="w-full aspect-[4/3] object-cover rounded-[20px]" />
-                  ) : (
-                    <div className="w-full aspect-[4/3] rounded-[20px]" style={{ background: "linear-gradient(135deg,#e5c89a,#c7522a)" }}>
-                      <CoverPlaceholder background="transparent" stroke="rgba(255,255,255,0.9)" rounded="20px" />
-                    </div>
-                  )}
-                  {rating !== null && (
-                    <div className="absolute bottom-4 left-4 bg-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 text-sm">
-                      <span style={{ color: theme.accent }}>★</span>
-                      <strong>{rating.toFixed(1)}</strong>
-                      <span style={{ color: theme.textMuted }}>· {reviews.length} avis</span>
-                    </div>
+              )}
+              <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(20,12,4,0.15) 0%, rgba(20,12,4,0.35) 55%, rgba(20,12,4,0.85) 100%)" }} />
+
+              <div className="absolute inset-0 flex flex-col items-center justify-end text-center px-5 pb-16 sm:pb-20">
+                <h1
+                  className="leading-[1.02] max-w-3xl"
+                  style={{ fontFamily: "'Baloo 2', sans-serif", fontWeight: 700, fontSize: "clamp(2.4rem, 6.5vw, 4.75rem)", color: "#ffffff", textShadow: "0 4px 30px rgba(0,0,0,0.35)" }}
+                >
+                  Une destination.<br />Des saveurs <span style={{ color: "#ffd166" }}>infinies</span>
+                </h1>
+                <p className="mt-5 max-w-lg leading-relaxed text-white/90 text-sm sm:text-base">
+                  {restaurant.description ?? `Une cuisine d'excellence préparée avec passion à ${restaurant.city}, ingrédients frais et locaux.`}
+                </p>
+                <div className="mt-8 flex gap-3 flex-wrap justify-center">
+                  <a href={wa ?? buildViewHref("menu")} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="px-8 py-4 rounded-full font-bold text-sm hover:opacity-90 hover:-translate-y-0.5 transition shadow-xl" style={{ background: theme.accent, color: theme.accentInk, fontFamily: "'Baloo 2', sans-serif" }}>
+                    Voir le menu
+                  </a>
+                  {restaurant.plan !== "gratuit" && (
+                    <a href={buildViewHref("reserve")} className="px-8 py-4 rounded-full font-bold text-sm border-2 border-white/70 hover:bg-white hover:text-[#1e1308] transition backdrop-blur-sm" style={{ color: "#ffffff", fontFamily: "'Baloo 2', sans-serif" }}>
+                      Réserver une table
+                    </a>
                   )}
                 </div>
               </div>
+
+              {rating !== null && (
+                <div className="absolute top-6 right-6 bg-white/95 backdrop-blur px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 text-sm">
+                  <span style={{ color: theme.accent }}>★</span>
+                  <strong>{rating.toFixed(1)}</strong>
+                  <span style={{ color: theme.textMuted }}>· {reviews.length} avis</span>
+                </div>
+              )}
             </div>
           </section>
+
+          {/* Vague de transition */}
+          <div className="relative -mt-1" style={{ height: "48px" }} aria-hidden="true">
+            <svg viewBox="0 0 500 48" preserveAspectRatio="none" className="w-full h-full" style={{ display: "block" }}>
+              <path d="M0,48 C150,0 350,0 500,48 L500,48 L0,48 Z" fill={theme.bg} />
+            </svg>
+          </div>
 
           {/* CATEGORIES circular */}
           {cats.length > 0 && (
             <section className="px-5 py-12">
               <div className="max-w-6xl mx-auto text-center">
-                <h2 className="font-black mb-10" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(1.75rem, 4vw, 2.5rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
+                <h2 className="mb-10" style={{ fontFamily: "'Baloo 2', sans-serif", fontWeight: 700, fontSize: "clamp(1.75rem, 4vw, 2.5rem)", color: theme.text }}>
                   Parcourir par catégorie
                 </h2>
                 <div className="flex flex-wrap justify-center gap-6 sm:gap-10">
                   {cats.map((c) => (
                     <a key={c} href={buildViewHref("menu")} onClick={() => setActiveTab(c)} className="group flex flex-col items-center gap-3">
-                      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full grid place-items-center text-4xl sm:text-5xl group-hover:scale-110 transition" style={{ background: "rgba(255,255,255,0.95)", boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}>
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full grid place-items-center text-4xl sm:text-5xl group-hover:scale-110 transition" style={{ background: theme.surface, boxShadow: "0 4px 20px rgba(30,19,8,0.08)" }}>
                         <CategoryIcon name={c} />
                       </div>
-                      <span className="text-sm font-medium" style={{ color: "#ffffff", textShadow: "0 1px 6px rgba(0,0,0,0.4)" }}>{c}</span>
+                      <span className="text-sm font-medium" style={{ color: theme.text }}>{c}</span>
                     </a>
                   ))}
                 </div>
@@ -288,13 +292,13 @@ export function TplSoleil(props: TemplateProps) {
           {/* POPULAR DISHES with tabs */}
           <section id="menu" className="px-5 py-12">
             <div className="max-w-6xl mx-auto text-center">
-              <h2 className="font-black mb-6" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(1.75rem, 4vw, 2.5rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
+              <h2 className="mb-6" style={{ fontFamily: "'Baloo 2', sans-serif", fontWeight: 700, fontSize: "clamp(1.75rem, 4vw, 2.5rem)", color: theme.text }}>
                 Plats populaires
               </h2>
               <div className="flex flex-wrap justify-center gap-2 mb-10">
-                <button onClick={() => setActiveTab(null)} className="px-4 py-1 text-sm font-medium" style={{ color: activeTab === null ? "#ffffff" : "rgba(255,255,255,0.7)", borderBottom: activeTab === null ? `2px solid #ffffff` : "2px solid transparent", textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>[Tous]</button>
+                <button onClick={() => setActiveTab(null)} className="px-4 py-1 text-sm font-medium" style={{ color: activeTab === null ? theme.accent : theme.textMuted, borderBottom: activeTab === null ? `2px solid ${theme.accent}` : "2px solid transparent" }}>Tous</button>
                 {cats.map((c) => (
-                  <button key={c} onClick={() => setActiveTab(c)} className="px-4 py-1 text-sm font-medium" style={{ color: activeTab === c ? "#ffffff" : "rgba(255,255,255,0.7)", borderBottom: activeTab === c ? `2px solid #ffffff` : "2px solid transparent", textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>[{c}]</button>
+                  <button key={c} onClick={() => setActiveTab(c)} className="px-4 py-1 text-sm font-medium" style={{ color: activeTab === c ? theme.accent : theme.textMuted, borderBottom: activeTab === c ? `2px solid ${theme.accent}` : "2px solid transparent" }}>{c}</button>
                 ))}
               </div>
               {popular.length === 0 ? (
@@ -383,19 +387,19 @@ export function TplSoleil(props: TemplateProps) {
           <div className="grid md:grid-cols-3 gap-6 mt-10">
             <div className="p-6 rounded-2xl text-center" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
               <Icon name="cake" size={30} className="mx-auto mb-3" style={{ color: theme.accent }} />
-              <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Anniversaires</h3>
+              <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "'Baloo 2', sans-serif" }}>Anniversaires</h3>
               <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Menu spécial et décoration personnalisée</p>
               <p className="text-lg font-black" style={{ color: theme.accent }}>À partir de 15 000 F/pers</p>
             </div>
             <div className="p-6 rounded-2xl text-center" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
               <Icon name="briefcase" size={30} className="mx-auto mb-3" style={{ color: theme.accent }} />
-              <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Repas d'affaires</h3>
+              <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "'Baloo 2', sans-serif" }}>Repas d'affaires</h3>
               <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Espace privé et service dédié</p>
               <p className="text-lg font-black" style={{ color: theme.accent }}>Sur demande</p>
             </div>
             <div className="p-6 rounded-2xl text-center" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
               <Icon name="champagne" size={30} className="mx-auto mb-3" style={{ color: theme.accent }} />
-              <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Dîners romantiques</h3>
+              <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "'Baloo 2', sans-serif" }}>Dîners romantiques</h3>
               <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Ambiance intimiste et menu duo</p>
               <p className="text-lg font-black" style={{ color: theme.accent }}>À partir de 20 000 F</p>
             </div>
@@ -408,7 +412,7 @@ export function TplSoleil(props: TemplateProps) {
       {activeView === "home" && (
         <div className="px-5 py-7" style={{ background: "#8b3a1c" }}>
           <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-6">
-            <strong className="text-white text-xl sm:text-2xl" style={{ fontFamily: "'Playfair Display', serif" }}>Savourez le meilleur, commandez maintenant</strong>
+            <strong className="text-white text-xl sm:text-2xl" style={{ fontFamily: "'Baloo 2', sans-serif" }}>Savourez le meilleur, commandez maintenant</strong>
             <a href={wa ?? buildViewHref("menu")} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="px-7 py-3 rounded-full bg-white font-bold text-sm hover:bg-[#fbf3e6] transition" style={{ color: "#8b3a1c" }}>
               Commander en ligne
             </a>
@@ -424,13 +428,13 @@ export function TplSoleil(props: TemplateProps) {
           <div className="grid md:grid-cols-2 gap-6 mt-10">
             <div className="p-8 rounded-2xl" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
               <Icon name="chefHat" size={32} className="mb-3" style={{ color: theme.accent }} />
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>Table du Chef</h3>
+              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Baloo 2', sans-serif" }}>Table du Chef</h3>
               <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Dînez en cuisine et observez le chef à l'œuvre</p>
               <p className="text-lg font-black" style={{ color: theme.accent }}>Sur réservation uniquement</p>
             </div>
             <div className="p-8 rounded-2xl" style={{ background: theme.surface, border: `1px solid ${theme.border}` }}>
               <Icon name="wine" size={32} className="mb-3" style={{ color: theme.accent }} />
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>Dégustation Privée</h3>
+              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Baloo 2', sans-serif" }}>Dégustation Privée</h3>
               <p className="text-sm mb-4" style={{ color: theme.textMuted }}>Menu personnalisé avec accord mets-vins</p>
               <p className="text-lg font-black" style={{ color: theme.accent }}>À partir de 40 000 F/pers</p>
             </div>
@@ -456,7 +460,7 @@ export function TplSoleil(props: TemplateProps) {
               <SectionHead kicker="Témoignages" title="Ils ont aimé" theme={theme} align="center" />
               <ReviewList reviews={reviews} theme={theme} />
               <div className="mt-12 max-w-xl mx-auto p-6 bg-white rounded-2xl">
-                <h3 className="font-bold mb-4 text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>Laissez votre avis</h3>
+                <h3 className="font-bold mb-4 text-lg" style={{ fontFamily: "'Baloo 2', sans-serif" }}>Laissez votre avis</h3>
                 <ReviewForm restaurantId={restaurant.id} theme={{ ...theme, surface: theme.bg }} />
               </div>
             </div>
