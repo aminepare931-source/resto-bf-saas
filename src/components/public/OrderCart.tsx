@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import type { PublicMenuItem, PublicRestaurant } from "./shared";
 import { orderSchema, firstZodError, type OrderItem } from "@/lib/validation";
 import { fmtPrice } from "./shared";
+import { useCart } from "./CartContext";
 
 const STATUS_LABELS: Record<string, string> = {
   new: "🆕 Nouvelle",
@@ -22,8 +23,19 @@ export function OrderCartFab({
   menu: PublicMenuItem[];
   tableNumber: string | null;
 }) {
-  const [open, setOpen] = useState(false);
-  const [items, setItems] = useState<Record<string, number>>({});
+  const cart = useCart();
+  const [localOpen, setLocalOpen] = useState(false);
+  const [localItems, setLocalItems] = useState<Record<string, number>>({});
+  // Utilise le panier partagé (CartProvider) s'il est présent, sinon un état local de secours.
+  const open = cart ? cart.isOpen : localOpen;
+  const setOpen = cart ? cart.setIsOpen : setLocalOpen;
+  const items = cart ? cart.items : localItems;
+  const setQty = cart ? cart.setQty : (id: string, q: number) => setLocalItems((prev) => {
+    const next = { ...prev };
+    if (q <= 0) delete next[id];
+    else next[id] = Math.min(q, 50);
+    return next;
+  });
   const [customer, setCustomer] = useState({ name: "", phone: "", notes: "" });
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
@@ -45,14 +57,6 @@ export function OrderCartFab({
     [available, items],
   );
   const total = lines.reduce((s, l) => s + l.price * l.qty, 0);
-
-  const setQty = (id: string, q: number) =>
-    setItems((prev) => {
-      const next = { ...prev };
-      if (q <= 0) delete next[id];
-      else next[id] = Math.min(q, 50);
-      return next;
-    });
 
   const submit = async () => {
     const payload = {

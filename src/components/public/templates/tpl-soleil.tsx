@@ -339,7 +339,7 @@ export function TplSoleil(props: TemplateProps) {
         <section id="menu" className="py-16 px-5" style={{ background: theme.surface }}>
           <div className="max-w-6xl mx-auto">
             <SectionHead kicker="La carte" title="Notre menu complet" theme={theme} align="center" />
-            <MenuGrid menu={menu} theme={theme} waLink={wa} />
+            <MenuGrid menu={menu} theme={theme} />
           </div>
         </section>
       )}
@@ -471,7 +471,7 @@ export function TplSoleil(props: TemplateProps) {
 
       <PoweredFooter restaurant={restaurant} wa={wa} theme={{ ...theme, surfaceAlt: "#1e1308", text: "#fbf3e6", textMuted: "rgba(251,243,230,0.65)", accent: "#f0a878", border: "rgba(255,255,255,0.1)" }} />
       <FloatingWhatsApp href={wa} accent={theme.accent} ink={theme.accentInk} />
-      {openDish && <DishModal dish={openDish} theme={theme} onClose={() => setOpenDish(null)} waLink={wa} />}
+      {openDish && <DishModal dish={openDish} theme={theme} onClose={() => setOpenDish(null)} />}
     </div>
   );
 }

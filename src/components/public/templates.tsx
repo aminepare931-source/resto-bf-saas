@@ -413,7 +413,7 @@ export function TplMarche({ restaurant, menu, reviews, gallery, view }: Template
         <section id="menu" className="py-20 px-5" style={{ background: theme.surfaceAlt }}>
           <div className="max-w-6xl mx-auto">
             <SectionHead kicker="La carte" title="Notre menu" theme={theme} align="center" serif />
-            <MenuGrid menu={menu} theme={theme} waLink={wa} />
+            <MenuGrid menu={menu} theme={theme} />
           </div>
         </section>
       )}
@@ -556,7 +556,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-type CartLine = { name: string; price: number; qty: number };
+type CartLine = { id: string; name: string; price: number; qty: number };
 
 function ClassiqueGratuit({ restaurant, menu, reviews: initialReviews, gallery, view }: TemplateProps) {
   const [reviews, setReviews] = useState(initialReviews);
@@ -575,7 +575,7 @@ function ClassiqueGratuit({ restaurant, menu, reviews: initialReviews, gallery, 
     view === "home" || view === "menu" || view === "order" || view === "reserve" || view === "reviews"
       ? view
       : active;
-  const [prefill, setPrefill] = useState<{ name: string; price: number } | null>(null);
+  const [prefill, setPrefill] = useState<{ id: string; name: string; price: number } | null>(null);
 
   const go = (id: typeof active) => {
     setActive(id);
@@ -652,8 +652,8 @@ function ClassiqueGratuit({ restaurant, menu, reviews: initialReviews, gallery, 
             restaurant={restaurant}
             menu={available}
             waLink={waLink}
-            onOrder={(n, p) => {
-              setPrefill({ name: n, price: p });
+            onOrder={(id, n, p) => {
+              setPrefill({ id, name: n, price: p });
               go("order");
             }}
           />
@@ -808,7 +808,7 @@ function HomeView({
               {
                 i: "🛒",
                 t: "Commande en ligne",
-                d: "Commandez directement via WhatsApp sans vous déplacer.",
+                d: "Commandez en ligne et suivez la préparation en direct.",
               },
               {
                 i: "📅",
@@ -922,7 +922,7 @@ function MenuView({
   restaurant: TemplateProps["restaurant"];
   menu: PublicMenuItem[];
   waLink: (t: string) => string;
-  onOrder: (name: string, price: number) => void;
+  onOrder: (id: string, name: string, price: number) => void;
 }) {
   const cats = useMemo(() => ["Tout", ...Array.from(new Set(menu.map((d) => d.category)))], [menu]);
   const [active, setActive] = useState("Tout");
@@ -1019,24 +1019,14 @@ function MenuView({
               <div className="cl-dm-price">{open.price.toLocaleString("fr-FR")} FCFA</div>
               <div className="cl-dm-actions">
                 <button
-                  className="cl-btn cl-btn-green"
+                  className="cl-btn cl-btn-green cl-btn-block"
                   onClick={() => {
-                    onOrder(open.name, open.price);
+                    onOrder(open.id, open.name, open.price);
                     setOpen(null);
                   }}
                 >
-                  🛒 Commander
+                  🛒 Commander maintenant
                 </button>
-                <a
-                  className="cl-btn cl-btn-wa"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={waLink(
-                    `Bonjour ! Je voudrais *${open.name}* (${open.price.toLocaleString("fr-FR")} FCFA).`,
-                  )}
-                >
-                  💬 WhatsApp
-                </a>
                 <button className="cl-btn cl-btn-outline cl-btn-sm" onClick={() => setOpen(null)}>
                   Fermer
                 </button>
@@ -1059,7 +1049,7 @@ function OrderView({
   restaurant: TemplateProps["restaurant"];
   menu: PublicMenuItem[];
   waLink: (t: string) => string;
-  prefill: { name: string; price: number } | null;
+  prefill: { id: string; name: string; price: number } | null;
   clearPrefill: () => void;
 }) {
   const cats = useMemo(() => ["Tout", ...Array.from(new Set(menu.map((d) => d.category)))], [menu]);
@@ -1067,27 +1057,32 @@ function OrderView({
   const [cart, setCart] = useState<CartLine[]>([]);
   const [delMode, setDelMode] = useState<"place" | "livraison">("place");
   const [form, setForm] = useState({ name: "", phone: "", addr: "", note: "" });
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState(false);
+  const [lastOrderId, setLastOrderId] = useState<string | null>(null);
+  const [orderStatus, setOrderStatus] = useState<string>("new");
+  const [statusHistory, setStatusHistory] = useState<Array<{ status: string; time: Date }>>([]);
 
   const didPrefill = useRef(false);
   useEffect(() => {
     if (prefill && !didPrefill.current) {
       didPrefill.current = true;
-      addItem(prefill.name, prefill.price);
+      addItem(prefill.id, prefill.name, prefill.price);
       clearPrefill();
     }
   }, [prefill, clearPrefill]);
 
-  const addItem = (name: string, price: number) => {
+  const addItem = (id: string, name: string, price: number) => {
     setCart((c) => {
-      const ex = c.find((x) => x.name === name);
-      if (ex) return c.map((x) => (x.name === name ? { ...x, qty: x.qty + 1 } : x));
-      return [...c, { name, price, qty: 1 }];
+      const ex = c.find((x) => x.id === id);
+      if (ex) return c.map((x) => (x.id === id ? { ...x, qty: x.qty + 1 } : x));
+      return [...c, { id, name, price, qty: 1 }];
     });
   };
-  const changeQty = (name: string, d: number) => {
+  const changeQty = (id: string, d: number) => {
     setCart((c) =>
       c.flatMap((x) =>
-        x.name === name ? (x.qty + d <= 0 ? [] : [{ ...x, qty: x.qty + d }]) : [x],
+        x.id === id ? (x.qty + d <= 0 ? [] : [{ ...x, qty: x.qty + d }]) : [x],
       ),
     );
   };
@@ -1096,21 +1091,117 @@ function OrderView({
   const total = cart.reduce((s, c) => s + c.qty * c.price, 0);
   const count = cart.reduce((s, c) => s + c.qty, 0);
 
-  const submit = () => {
+  const submit = async () => {
     if (!cart.length) return toast.error("Panier vide");
     if (!form.name.trim() || !form.phone.trim()) return toast.error("Nom et téléphone requis");
-    const items = cart
-      .map((c) => `• ${c.name} x${c.qty} = ${(c.qty * c.price).toLocaleString("fr-FR")} FCFA`)
-      .join("\n");
-    let msg = `🛒 *Commande — ${restaurant.name}*\n\n👤 ${form.name}\n📞 ${form.phone}\n🚀 ${delMode === "livraison" ? "Livraison" : "Sur place"}`;
-    if (form.addr) msg += `\n📍 ${form.addr}`;
-    msg += `\n\n${items}\n\n💰 *Total: ${total.toLocaleString("fr-FR")} FCFA*`;
-    if (form.note) msg += `\n💬 ${form.note}`;
-    window.open(waLink(msg), "_blank");
+    setBusy(true);
+    const items = cart.map((c) => ({ menu_item_id: c.id, name: c.name, price: c.price, qty: c.qty }));
+    const notes = [delMode === "livraison" && form.addr ? `Livraison : ${form.addr}` : null, form.note || null]
+      .filter(Boolean)
+      .join(" — ");
+    const { data, error } = await supabase
+      .from("orders" as never)
+      .insert({
+        restaurant_id: restaurant.id,
+        customer_name: form.name.trim(),
+        customer_phone: form.phone.trim(),
+        notes: notes || null,
+        items,
+        subtotal: total,
+        total,
+        status: "new",
+        source: delMode === "livraison" ? "web-livraison" : "web-place",
+      } as never)
+      .select("id")
+      .single();
+    setBusy(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    const orderId = (data as { id?: string } | null)?.id;
+    if (orderId) {
+      setLastOrderId(orderId);
+      setOrderStatus("new");
+      setStatusHistory([{ status: "new", time: new Date() }]);
+    }
+    setDone(true);
+    toast.success("Commande envoyée à la cuisine ✓");
+  };
+
+  // Suivi en temps réel du statut de la commande
+  useEffect(() => {
+    if (!lastOrderId) return;
+    const channel = supabase
+      .channel(`cl-order-${lastOrderId}`)
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "orders", filter: `id=eq.${lastOrderId}` },
+        (payload) => {
+          const newStatus = (payload.new as { status: string }).status;
+          setOrderStatus(newStatus);
+          setStatusHistory((prev) => [...prev, { status: newStatus, time: new Date() }]);
+          if (newStatus === "preparing") toast.info("👨‍🍳 La cuisine prépare votre commande");
+          else if (newStatus === "ready") toast.success("✅ Votre commande est prête !");
+          else if (newStatus === "delivered") toast.success("🎉 Bon appétit !");
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [lastOrderId]);
+
+  const resetOrder = () => {
     setCart([]);
     setForm({ name: "", phone: "", addr: "", note: "" });
-    toast.success("Commande envoyée 🎉");
+    setDone(false);
+    setLastOrderId(null);
+    setStatusHistory([]);
   };
+
+  const STATUS_LABELS: Record<string, string> = {
+    new: "🆕 Commande reçue",
+    preparing: "👨‍🍳 En préparation",
+    ready: "✅ Prête",
+    delivered: "🎉 Servie / Livrée",
+    cancelled: "❌ Annulée",
+  };
+
+  if (done) {
+    return (
+      <>
+        <div className="cl-page-hero">
+          <h1>Commande envoyée !</h1>
+          <p>La cuisine a bien reçu votre commande.</p>
+        </div>
+        <div className="cl-order-wrap" style={{ gridTemplateColumns: "1fr", maxWidth: 480, margin: "0 auto" }}>
+          <div className="cl-card" style={{ padding: 26, textAlign: "center" }}>
+            <div style={{ fontSize: 44 }}>✅</div>
+            <p style={{ color: "var(--cl-muted)", margin: "8px 0 20px" }}>
+              Vous serez notifié à chaque étape.
+            </p>
+            <div style={{ textAlign: "left", background: "var(--cl-bg2)", borderRadius: 14, padding: 16 }}>
+              <p style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--cl-accent)", marginBottom: 10 }}>
+                📡 Suivi en direct
+              </p>
+              {statusHistory.map((h, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, padding: "4px 0" }}>
+                  <span style={{ flex: 1 }}>{STATUS_LABELS[h.status] ?? h.status}</span>
+                  <span style={{ fontSize: 11, color: "var(--cl-muted)" }}>
+                    {h.time.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <button className="cl-btn cl-btn-outline cl-btn-block" style={{ marginTop: 20 }} onClick={resetOrder}>
+              Passer une nouvelle commande
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -1138,7 +1229,7 @@ function OrderView({
                 <div
                   key={d.id}
                   className="cl-card cl-cat-item"
-                  onClick={() => addItem(d.name, d.price)}
+                  onClick={() => addItem(d.id, d.name, d.price)}
                 >
                   <div className="cl-cat-item-img">
                     {d.image_url ? (
@@ -1159,7 +1250,7 @@ function OrderView({
                         className="cl-cat-item-add"
                         onClick={(e) => {
                           e.stopPropagation();
-                          addItem(d.name, d.price);
+                          addItem(d.id, d.name, d.price);
                         }}
                       >
                         +
@@ -1186,10 +1277,10 @@ function OrderView({
               <div className="cl-cart-body">
                 {cart.length ? (
                   cart.map((c) => (
-                    <div key={c.name} className="cl-cart-row">
+                    <div key={c.id} className="cl-cart-row">
                       <div className="cl-cart-row-name">{c.name}</div>
                       <div className="cl-cart-qty">
-                        <button className="cl-qty-btn" onClick={() => changeQty(c.name, -1)}>
+                        <button className="cl-qty-btn" onClick={() => changeQty(c.id, -1)}>
                           −
                         </button>
                         <span
@@ -1202,7 +1293,7 @@ function OrderView({
                         >
                           {c.qty}
                         </span>
-                        <button className="cl-qty-btn" onClick={() => changeQty(c.name, 1)}>
+                        <button className="cl-qty-btn" onClick={() => changeQty(c.id, 1)}>
                           +
                         </button>
                       </div>
@@ -1270,8 +1361,8 @@ function OrderView({
                     placeholder="Pas trop épicé..."
                   />
                 </div>
-                <button className="cl-btn cl-btn-green cl-btn-block" onClick={submit}>
-                  💬 Envoyer via WhatsApp
+                <button className="cl-btn cl-btn-green cl-btn-block" onClick={submit} disabled={busy}>
+                  {busy ? "Envoi..." : "✅ Envoyer la commande"}
                 </button>
               </div>
             </div>

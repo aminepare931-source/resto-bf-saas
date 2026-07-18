@@ -249,7 +249,7 @@ export function TplModerne(props: TemplateProps) {
         <section id="menu" className="py-20 px-5" style={{ background: theme.surface, borderTop: `1px solid ${theme.border}` }}>
           <div className="max-w-6xl mx-auto">
             <SectionHead kicker="La carte" title="Notre menu" theme={theme} align="center" serif />
-            <MenuGrid menu={menu} theme={theme} waLink={wa} />
+            <MenuGrid menu={menu} theme={theme} />
           </div>
         </section>
       )}
@@ -311,7 +311,7 @@ export function TplModerne(props: TemplateProps) {
 
       <PoweredFooter restaurant={restaurant} wa={wa} theme={theme} />
       <FloatingWhatsApp href={wa} accent={theme.accent} ink={theme.accentInk} />
-      {openDish && <DishModal dish={openDish} theme={theme} onClose={() => setOpenDish(null)} waLink={wa} />}
+      {openDish && <DishModal dish={openDish} theme={theme} onClose={() => setOpenDish(null)} />}
     </div>
   );
 }

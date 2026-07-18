@@ -250,7 +250,7 @@ export function TplSavane(props: TemplateProps) {
               <h2 className="font-black mb-6" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(2rem, 5vw, 3rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
                 Notre Menu
               </h2>
-              <MenuGrid menu={menu} theme={theme} waLink={wa} />
+              <MenuGrid menu={menu} theme={theme} />
             </div>
           </div>
         )}
@@ -371,7 +371,7 @@ export function TplSavane(props: TemplateProps) {
         <section id="menu" className="py-16 px-5" style={{ background: theme.surface }}>
           <div className="max-w-6xl mx-auto">
             <SectionHead kicker="La carte complète" title="Tous nos plats" theme={theme} align="center" />
-            <MenuGrid menu={menu} theme={theme} waLink={wa} />
+            <MenuGrid menu={menu} theme={theme} />
           </div>
         </section>
       )}
@@ -442,7 +442,7 @@ export function TplSavane(props: TemplateProps) {
 
       <PoweredFooter restaurant={restaurant} wa={wa} theme={{ ...theme, surfaceAlt: "#1a0d05", text: "#fff8e7", textMuted: "rgba(255,248,231,0.65)", accent: theme.accent, border: "rgba(255,255,255,0.1)" }} />
       <FloatingWhatsApp href={wa} accent={theme.accent} ink={theme.accentInk} />
-      {openDish && <DishModal dish={openDish} theme={theme} onClose={() => setOpenDish(null)} waLink={wa} />}
+      {openDish && <DishModal dish={openDish} theme={theme} onClose={() => setOpenDish(null)} />}
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { StorageImage } from "@/components/StorageImage";
+import { useCart } from "./CartContext";
 
 /* ---------- Types ---------- */
 
@@ -139,7 +140,8 @@ export function SectionHead({
 
 /* ---------- Menu (themed) ---------- */
 
-export function DishModal({ dish, theme, onClose, waLink }: { dish: PublicMenuItem; theme: Theme; onClose: () => void; waLink?: string | null }) {
+export function DishModal({ dish, theme, onClose }: { dish: PublicMenuItem; theme: Theme; onClose: () => void }) {
+  const cart = useCart();
   return (
     <div
       className="fixed inset-0 z-[300] flex items-center justify-center p-5"
@@ -170,16 +172,17 @@ export function DishModal({ dish, theme, onClose, waLink }: { dish: PublicMenuIt
           {dish.description && <p className="text-sm mb-4 leading-relaxed" style={{ color: theme.textMuted }}>{dish.description}</p>}
           <p className="text-2xl font-black mb-5" style={{ color: theme.accent }}>{fmtPrice(dish.price)}</p>
           <div className="flex gap-3">
-            {waLink && (
-              <a
-                href={waLink}
-                target="_blank"
-                rel="noopener noreferrer"
+            {cart && (
+              <button
+                onClick={() => {
+                  cart.addItem(dish.id);
+                  onClose();
+                }}
                 className="flex-1 text-center py-3 rounded-full font-bold text-sm hover:opacity-90 transition"
                 style={{ background: theme.accent, color: theme.accentInk }}
               >
-                Commander
-              </a>
+                Commander maintenant
+              </button>
             )}
             <button
               onClick={onClose}
@@ -195,7 +198,7 @@ export function DishModal({ dish, theme, onClose, waLink }: { dish: PublicMenuIt
   );
 }
 
-export function MenuGrid({ menu, theme, waLink }: { menu: PublicMenuItem[]; theme: Theme; waLink?: string | null }) {
+export function MenuGrid({ menu, theme }: { menu: PublicMenuItem[]; theme: Theme }) {
   const [open, setOpen] = useState<PublicMenuItem | null>(null);
   const groups = groupByCategory(menu);
   if (!groups.length) {
@@ -268,7 +271,7 @@ export function MenuGrid({ menu, theme, waLink }: { menu: PublicMenuItem[]; them
           </div>
         </div>
       ))}
-      {open && <DishModal dish={open} theme={theme} onClose={() => setOpen(null)} waLink={waLink} />}
+      {open && <DishModal dish={open} theme={theme} onClose={() => setOpen(null)} />}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { StorageImage } from "@/components/StorageImage";
 import type { TemplateProps, PublicMenuItem, Theme } from "./shared";
 import { FloatingWhatsApp, ReviewForm, ReviewList, avgRating, fmtPrice, groupByCategory } from "./shared";
+import { useCart } from "./CartContext";
 
 const PREMIUM_FEU_BG = "/premium-bgs/premium-feu-bg.png";
 const PREMIUM_GRILL_BG = "/premium-bgs/premium-grill-bg.png";
@@ -129,6 +130,7 @@ function PremiumRestaurantTemplate({ restaurant, menu, reviews, gallery, config,
   const [qr, setQr] = useState("");
   const [mobOpen, setMobOpen] = useState(false);
   const [openDish, setOpenDish] = useState<PublicMenuItem | null>(null);
+  const cart = useCart();
   const available = useMemo(() => menu.filter((item) => item.available), [menu]);
   const categories = useMemo(() => ["Tout", ...Array.from(new Set(available.map((item) => item.category)))], [available]);
   const filtered = category === "Tout" ? available : available.filter((item) => item.category === category);
@@ -181,10 +183,10 @@ function PremiumRestaurantTemplate({ restaurant, menu, reviews, gallery, config,
                   </div>
                   <footer>
                     <strong>{fmtPrice(dish.price)}</strong>
-                    {waHref && (
-                      <a href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(`Bonjour ${restaurant.name}, je veux commander : ${dish.name} (${fmtPrice(dish.price)}).`)}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+                    {cart && (
+                      <button onClick={(e) => { e.stopPropagation(); cart.addItem(dish.id); }} style={{ cursor: "pointer" }}>
                         Commander
-                      </a>
+                      </button>
                     )}
                   </footer>
                 </article>
@@ -425,9 +427,7 @@ function PremiumRestaurantTemplate({ restaurant, menu, reviews, gallery, config,
                     </div>
                     <footer>
                       <strong>{fmtPrice(dish.price)}</strong>
-                      {waHref && (
-                        <a href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(`Bonjour ${restaurant.name}, je veux commander : ${dish.name} (${fmtPrice(dish.price)}).`)}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>Commander</a>
-                      )}
+                      {cart && <button onClick={(e) => { e.stopPropagation(); cart.addItem(dish.id); }} style={{ cursor: "pointer" }}>Commander</button>}
                     </footer>
                   </article>
                 ))}
@@ -515,9 +515,6 @@ function PremiumRestaurantTemplate({ restaurant, menu, reviews, gallery, config,
         <PremiumDishModal
           dish={openDish}
           onClose={() => setOpenDish(null)}
-          waHref={waHref}
-          whatsapp={whatsapp}
-          restaurantName={restaurant.name}
         />
       )}
     </div>
@@ -549,10 +546,8 @@ function SignatureCard({ dish, config, onClick }: { dish: PublicMenuItem; config
   );
 }
 
-function PremiumDishModal({ dish, onClose, waHref, whatsapp, restaurantName }: { dish: PublicMenuItem; onClose: () => void; waHref: string | null; whatsapp: string; restaurantName: string }) {
-  const orderHref = whatsapp
-    ? `https://wa.me/${whatsapp}?text=${encodeURIComponent(`Bonjour ${restaurantName}, je veux commander : ${dish.name} (${fmtPrice(dish.price)}).`)}`
-    : waHref;
+function PremiumDishModal({ dish, onClose }: { dish: PublicMenuItem; onClose: () => void }) {
+  const cart = useCart();
   return (
     <div
       style={{ position: "fixed", inset: 0, zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", padding: 20, background: "rgba(0,0,0,.7)", backdropFilter: "blur(4px)" }}
@@ -579,10 +574,13 @@ function PremiumDishModal({ dish, onClose, waHref, whatsapp, restaurantName }: {
           {dish.description && <p style={{ color: "var(--pr-muted)", lineHeight: 1.6, margin: 0 }}>{dish.description}</p>}
           <strong style={{ display: "block", color: "var(--pr-accent)", fontSize: 26, margin: "18px 0" }}>{fmtPrice(dish.price)}</strong>
           <div style={{ display: "flex", gap: 10 }}>
-            {orderHref && (
-              <a href={orderHref} target="_blank" rel="noopener noreferrer" style={{ flex: 1, textAlign: "center", background: "var(--pr-accent)", color: "var(--pr-ink)", padding: "14px", borderRadius: 999, fontWeight: 900, textDecoration: "none" }}>
-                Commander
-              </a>
+            {cart && (
+              <button
+                onClick={() => { cart.addItem(dish.id); onClose(); }}
+                style={{ flex: 1, textAlign: "center", background: "var(--pr-accent)", color: "var(--pr-ink)", padding: "14px", borderRadius: 999, fontWeight: 900, border: "none", cursor: "pointer" }}
+              >
+                Commander maintenant
+              </button>
             )}
             <button onClick={onClose} style={{ padding: "14px 20px", border: "1px solid var(--pr-border)", borderRadius: 999, background: "transparent", color: "var(--pr-text)", fontWeight: 800, cursor: "pointer" }}>
               Fermer

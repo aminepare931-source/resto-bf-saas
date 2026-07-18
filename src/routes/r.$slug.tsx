@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { renderTemplate } from "@/components/public/templates";
 import type { PublicRestaurant, PublicMenuItem, PublicReview, PublicGalleryImage } from "@/components/public/shared";
 import { OrderCartFab } from "@/components/public/OrderCart";
+import { CartProvider } from "@/components/public/CartContext";
 
 export const Route = createFileRoute("/r/$slug")({
   ssr: false,
@@ -94,9 +95,9 @@ function PublicRestaurantPage() {
   }
 
   return (
-    <>
+    <CartProvider>
       {renderTemplate(restaurant.template, { restaurant, menu, reviews, gallery, view })}
       <OrderCartFab restaurant={restaurant} menu={menu} tableNumber={table ?? null} />
-    </>
+    </CartProvider>
   );
 }
