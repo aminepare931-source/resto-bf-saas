@@ -413,7 +413,7 @@ export function TplMarche({ restaurant, menu, reviews, gallery, view }: Template
         <section id="menu" className="py-20 px-5" style={{ background: theme.surfaceAlt }}>
           <div className="max-w-6xl mx-auto">
             <SectionHead kicker="La carte" title="Notre menu" theme={theme} align="center" serif />
-            <MenuGrid menu={menu} theme={theme} />
+            <MenuGrid menu={menu} theme={theme} waLink={wa} />
           </div>
         </section>
       )}

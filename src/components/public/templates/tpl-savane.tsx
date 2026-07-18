@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { TemplateProps, PublicMenuItem, PublicGalleryImage, Theme } from "../shared";
-import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, CoverPlaceholder, Icon, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
+import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, CoverPlaceholder, DishModal, Icon, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
 import { StorageImage } from "@/components/StorageImage";
 import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
 
@@ -129,6 +129,7 @@ export function TplSavane(props: TemplateProps) {
   const heroOverlay = "linear-gradient(135deg, rgba(200,40,30,0.92) 0%, rgba(200,40,30,0.85) 50%, rgba(200,40,30,0.78) 100%)";
 
   const [mobOpen, setMobOpen] = React.useState(false);
+  const [openDish, setOpenDish] = React.useState<PublicMenuItem | null>(null);
   const activeView =
     view === "home" || view === "menu" || view === "about" || view === "reserve"
       ? view
@@ -249,7 +250,7 @@ export function TplSavane(props: TemplateProps) {
               <h2 className="font-black mb-6" style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: "clamp(2rem, 5vw, 3rem)", color: "#ffffff", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
                 Notre Menu
               </h2>
-              <MenuGrid menu={menu} theme={theme} />
+              <MenuGrid menu={menu} theme={theme} waLink={wa} />
             </div>
           </div>
         )}
@@ -346,7 +347,7 @@ export function TplSavane(props: TemplateProps) {
             </h2>
             <div className="grid sm:grid-cols-3 gap-5">
               {signatures.map((d, i) => (
-                <article key={d.id} className="rounded-3xl overflow-hidden text-left shadow-md hover:shadow-2xl hover:-translate-y-1 transition" style={{ background: i % 2 === 0 ? RED : theme.accent, color: i % 2 === 0 ? "#fff" : theme.accentInk }}>
+                <div key={d.id} role="button" tabIndex={0} onClick={() => setOpenDish(d)} onKeyDown={(e) => { if (e.key === "Enter") setOpenDish(d); }} className="rounded-3xl overflow-hidden text-left shadow-md hover:shadow-2xl hover:-translate-y-1 transition cursor-pointer" style={{ background: i % 2 === 0 ? RED : theme.accent, color: i % 2 === 0 ? "#fff" : theme.accentInk }}>
                   <div className="aspect-[4/3] overflow-hidden">
                     <StorageImage path={d.image_url} alt={d.name} className="w-full h-full object-cover" />
                   </div>
@@ -355,10 +356,10 @@ export function TplSavane(props: TemplateProps) {
                     {d.description && <p className="text-sm mt-1 opacity-85 line-clamp-2">{d.description}</p>}
                     <div className="mt-4 flex items-center justify-between">
                       <span className="font-black text-lg">{fmtPrice(d.price)}</span>
-                      <a href={wa ?? buildViewHref("menu")} target={wa ? "_blank" : undefined} rel="noopener noreferrer" className="px-4 py-1.5 rounded-full font-bold text-xs bg-white" style={{ color: RED }}>COMMANDER</a>
+                      <a href={wa ?? buildViewHref("menu")} target={wa ? "_blank" : undefined} rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="px-4 py-1.5 rounded-full font-bold text-xs bg-white" style={{ color: RED }}>COMMANDER</a>
                     </div>
                   </div>
-                </article>
+                </div>
               ))}
             </div>
           </div>
@@ -370,7 +371,7 @@ export function TplSavane(props: TemplateProps) {
         <section id="menu" className="py-16 px-5" style={{ background: theme.surface }}>
           <div className="max-w-6xl mx-auto">
             <SectionHead kicker="La carte complète" title="Tous nos plats" theme={theme} align="center" />
-            <MenuGrid menu={menu} theme={theme} />
+            <MenuGrid menu={menu} theme={theme} waLink={wa} />
           </div>
         </section>
       )}
@@ -441,6 +442,7 @@ export function TplSavane(props: TemplateProps) {
 
       <PoweredFooter restaurant={restaurant} wa={wa} theme={{ ...theme, surfaceAlt: "#1a0d05", text: "#fff8e7", textMuted: "rgba(255,248,231,0.65)", accent: theme.accent, border: "rgba(255,255,255,0.1)" }} />
       <FloatingWhatsApp href={wa} accent={theme.accent} ink={theme.accentInk} />
+      {openDish && <DishModal dish={openDish} theme={theme} onClose={() => setOpenDish(null)} waLink={wa} />}
     </div>
   );
 }

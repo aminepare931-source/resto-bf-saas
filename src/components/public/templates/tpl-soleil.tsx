@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { TemplateProps, PublicMenuItem, PublicGalleryImage, Theme } from "../shared";
-import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, CoverPlaceholder, Icon, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
+import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, CoverPlaceholder, DishModal, Icon, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
 import { StorageImage } from "@/components/StorageImage";
 import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
 
@@ -113,6 +113,7 @@ export function TplSoleil(props: TemplateProps) {
   const rating = avgRating(reviews);
   const cats = Array.from(new Set(menu.filter((m) => m.available).map((m) => m.category))).slice(0, 6);
   const [activeTab, setActiveTab] = React.useState<string | null>(null);
+  const [openDish, setOpenDish] = React.useState<PublicMenuItem | null>(null);
   const popular = (activeTab ? menu.filter((m) => m.available && m.category === activeTab) : menu.filter((m) => m.available)).slice(0, 8);
   const [mobOpen, setMobOpen] = React.useState(false);
   const activeView =
@@ -306,7 +307,7 @@ export function TplSoleil(props: TemplateProps) {
               ) : (
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 text-left">
                   {popular.map((d, i) => (
-                    <article key={d.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition group">
+                    <button key={d.id} onClick={() => setOpenDish(d)} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition group text-left w-full">
                       <div className="aspect-[4/3] overflow-hidden relative" style={{ background: theme.surfaceAlt }}>
                         {d.image_url ? (
                           <StorageImage path={d.image_url} alt={d.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
@@ -324,7 +325,7 @@ export function TplSoleil(props: TemplateProps) {
                           <span className="text-xs flex items-center gap-1"><span style={{ color: "#e8b400" }}>★</span> 4.8</span>
                         </div>
                       </div>
-                    </article>
+                    </button>
                   ))}
                 </div>
               )}
@@ -338,7 +339,7 @@ export function TplSoleil(props: TemplateProps) {
         <section id="menu" className="py-16 px-5" style={{ background: theme.surface }}>
           <div className="max-w-6xl mx-auto">
             <SectionHead kicker="La carte" title="Notre menu complet" theme={theme} align="center" />
-            <MenuGrid menu={menu} theme={theme} />
+            <MenuGrid menu={menu} theme={theme} waLink={wa} />
           </div>
         </section>
       )}
@@ -470,6 +471,7 @@ export function TplSoleil(props: TemplateProps) {
 
       <PoweredFooter restaurant={restaurant} wa={wa} theme={{ ...theme, surfaceAlt: "#1e1308", text: "#fbf3e6", textMuted: "rgba(251,243,230,0.65)", accent: "#f0a878", border: "rgba(255,255,255,0.1)" }} />
       <FloatingWhatsApp href={wa} accent={theme.accent} ink={theme.accentInk} />
+      {openDish && <DishModal dish={openDish} theme={theme} onClose={() => setOpenDish(null)} waLink={wa} />}
     </div>
   );
 }

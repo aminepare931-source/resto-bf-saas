@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { TemplateProps, PublicMenuItem, PublicGalleryImage, Theme } from "../shared";
-import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, CoverPlaceholder, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
+import { MenuGrid, GalleryGrid, ReviewList, AdvancedReservationForm, ReviewForm, SectionHead, FloatingWhatsApp, CoverPlaceholder, DishModal, buildWhatsAppLink, buildViewHref, avgRating, fmtPrice } from "../shared";
 import { StorageImage } from "@/components/StorageImage";
 import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
 
@@ -111,6 +111,7 @@ export function TplModerne(props: TemplateProps) {
   };
 
   const [mobOpen, setMobOpen] = React.useState(false);
+  const [openDish, setOpenDish] = React.useState<PublicMenuItem | null>(null);
   const activeView =
     view === "home" || view === "menu" || view === "about" || view === "reserve"
       ? view
@@ -248,7 +249,7 @@ export function TplModerne(props: TemplateProps) {
         <section id="menu" className="py-20 px-5" style={{ background: theme.surface, borderTop: `1px solid ${theme.border}` }}>
           <div className="max-w-6xl mx-auto">
             <SectionHead kicker="La carte" title="Notre menu" theme={theme} align="center" serif />
-            <MenuGrid menu={menu} theme={theme} />
+            <MenuGrid menu={menu} theme={theme} waLink={wa} />
           </div>
         </section>
       )}
@@ -270,7 +271,7 @@ export function TplModerne(props: TemplateProps) {
             <SectionHead kicker="— Signatures —" title="Les incontournables" theme={theme} serif />
             <div className="grid md:grid-cols-3 gap-4 sm:gap-6">
               {signatures.map((d) => (
-                <article key={d.id} className="group">
+                <button key={d.id} onClick={() => setOpenDish(d)} className="group text-left w-full">
                   <div className="aspect-[3/4] sm:aspect-[4/5] overflow-hidden" style={{ background: theme.surface }}>
                     <StorageImage path={d.image_url} alt={d.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
                   </div>
@@ -279,7 +280,7 @@ export function TplModerne(props: TemplateProps) {
                     <span className="font-medium whitespace-nowrap" style={{ color: theme.accent }}>{fmtPrice(d.price)}</span>
                   </div>
                   {d.description && <p className="text-sm mt-2 leading-relaxed" style={{ color: theme.textMuted }}>{d.description}</p>}
-                </article>
+                </button>
               ))}
             </div>
           </div>
@@ -310,6 +311,7 @@ export function TplModerne(props: TemplateProps) {
 
       <PoweredFooter restaurant={restaurant} wa={wa} theme={theme} />
       <FloatingWhatsApp href={wa} accent={theme.accent} ink={theme.accentInk} />
+      {openDish && <DishModal dish={openDish} theme={theme} onClose={() => setOpenDish(null)} waLink={wa} />}
     </div>
   );
 }

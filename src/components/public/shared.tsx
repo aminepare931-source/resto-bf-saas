@@ -139,7 +139,64 @@ export function SectionHead({
 
 /* ---------- Menu (themed) ---------- */
 
-export function MenuGrid({ menu, theme }: { menu: PublicMenuItem[]; theme: Theme }) {
+export function DishModal({ dish, theme, onClose, waLink }: { dish: PublicMenuItem; theme: Theme; onClose: () => void; waLink?: string | null }) {
+  return (
+    <div
+      className="fixed inset-0 z-[300] flex items-center justify-center p-5"
+      style={{ background: "rgba(10,10,12,0.6)", backdropFilter: "blur(2px)" }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="w-full max-w-md rounded-[20px] overflow-hidden max-h-[90vh] overflow-y-auto" style={{ background: theme.surface }}>
+        <div className="relative h-52 sm:h-60" style={{ background: theme.surfaceAlt }}>
+          {dish.image_url ? (
+            <StorageImage path={dish.image_url} alt={dish.name} className="w-full h-full object-cover" />
+          ) : (
+            <CoverPlaceholder background="transparent" stroke={theme.accent} rounded="0px" />
+          )}
+          <button
+            onClick={onClose}
+            aria-label="Fermer"
+            className="absolute top-3 right-3 w-8 h-8 rounded-full grid place-items-center text-sm"
+            style={{ background: "rgba(255,255,255,0.92)", color: theme.text }}
+          >
+            ✕
+          </button>
+        </div>
+        <div className="p-6">
+          <p className="text-xs font-bold uppercase mb-1.5" style={{ color: theme.accent, letterSpacing: "0.15em" }}>{dish.category}</p>
+          <h3 className="text-2xl font-bold mb-2" style={{ color: theme.text }}>{dish.name}</h3>
+          {dish.description && <p className="text-sm mb-4 leading-relaxed" style={{ color: theme.textMuted }}>{dish.description}</p>}
+          <p className="text-2xl font-black mb-5" style={{ color: theme.accent }}>{fmtPrice(dish.price)}</p>
+          <div className="flex gap-3">
+            {waLink && (
+              <a
+                href={waLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 text-center py-3 rounded-full font-bold text-sm hover:opacity-90 transition"
+                style={{ background: theme.accent, color: theme.accentInk }}
+              >
+                Commander
+              </a>
+            )}
+            <button
+              onClick={onClose}
+              className="px-5 py-3 rounded-full font-bold text-sm border transition hover:bg-black/5"
+              style={{ borderColor: theme.border, color: theme.text }}
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function MenuGrid({ menu, theme, waLink }: { menu: PublicMenuItem[]; theme: Theme; waLink?: string | null }) {
+  const [open, setOpen] = useState<PublicMenuItem | null>(null);
   const groups = groupByCategory(menu);
   if (!groups.length) {
     return (
@@ -170,9 +227,10 @@ export function MenuGrid({ menu, theme }: { menu: PublicMenuItem[]; theme: Theme
           </div>
           <div className="grid sm:grid-cols-2 gap-x-8 gap-y-6">
             {items.map((it) => (
-              <article
+              <button
                 key={it.id}
-                className="group flex gap-4 pb-6"
+                onClick={() => setOpen(it)}
+                className="group flex gap-4 pb-6 text-left w-full hover:opacity-80 transition"
                 style={{ borderBottom: `1px solid ${theme.border}` }}
               >
                 {it.image_url && (
@@ -205,11 +263,12 @@ export function MenuGrid({ menu, theme }: { menu: PublicMenuItem[]; theme: Theme
                     </p>
                   )}
                 </div>
-              </article>
+              </button>
             ))}
           </div>
         </div>
       ))}
+      {open && <DishModal dish={open} theme={theme} onClose={() => setOpen(null)} waLink={waLink} />}
     </div>
   );
 }
