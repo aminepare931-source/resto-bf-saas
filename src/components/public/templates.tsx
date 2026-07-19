@@ -1094,9 +1094,10 @@ function OrderView({
   const submit = async () => {
     if (!cart.length) return toast.error("Panier vide");
     if (!form.name.trim() || !form.phone.trim()) return toast.error("Nom et téléphone requis");
+    if (delMode === "livraison" && !form.addr.trim()) return toast.error("Adresse de livraison requise");
     setBusy(true);
     const items = cart.map((c) => ({ menu_item_id: c.id, name: c.name, price: c.price, qty: c.qty }));
-    const notes = [delMode === "livraison" && form.addr ? `Livraison : ${form.addr}` : null, form.note || null]
+    const notes = [delMode === "livraison" && form.addr ? `Livraison : ${form.addr}` : "Sur place", form.note || null]
       .filter(Boolean)
       .join(" — ");
     const { data, error } = await supabase
@@ -1110,7 +1111,7 @@ function OrderView({
         subtotal: total,
         total,
         status: "new",
-        source: delMode === "livraison" ? "web-livraison" : "web-place",
+        source: "qr",
       } as never)
       .select("id")
       .single();
@@ -1124,10 +1125,46 @@ function OrderView({
       setLastOrderId(orderId);
       setOrderStatus("new");
       setStatusHistory([{ status: "new", time: new Date() }]);
+      localStorage.setItem(`resto-order-tracking:${restaurant.id}`, JSON.stringify({ orderId, savedAt: Date.now() }));
     }
     setDone(true);
     toast.success("Commande envoyée à la cuisine ✓");
   };
+
+  // Reprendre le suivi d'une commande en cours si la page est rafraîchie
+  // (mais pas si le client vient d'ouvrir cette vue pour ajouter un nouveau plat)
+  useEffect(() => {
+    if (prefill) return;
+    const key = `resto-order-tracking:${restaurant.id}`;
+    const raw = localStorage.getItem(key);
+    if (!raw) return;
+    try {
+      const saved = JSON.parse(raw) as { orderId: string; savedAt: number };
+      if (Date.now() - saved.savedAt > 1000 * 60 * 60 * 8) {
+        localStorage.removeItem(key);
+        return;
+      }
+      supabase
+        .from("orders" as never)
+        .select("id, status")
+        .eq("id", saved.orderId)
+        .single()
+        .then(({ data }) => {
+          const row = data as { id: string; status: string } | null;
+          if (!row || ["served", "paid", "cancelled"].includes(row.status)) {
+            localStorage.removeItem(key);
+            return;
+          }
+          setLastOrderId(row.id);
+          setOrderStatus(row.status);
+          setStatusHistory([{ status: row.status, time: new Date() }]);
+          setDone(true);
+        });
+    } catch {
+      localStorage.removeItem(key);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [restaurant.id]);
 
   // Suivi en temps réel du statut de la commande
   useEffect(() => {
@@ -1141,16 +1178,19 @@ function OrderView({
           const newStatus = (payload.new as { status: string }).status;
           setOrderStatus(newStatus);
           setStatusHistory((prev) => [...prev, { status: newStatus, time: new Date() }]);
-          if (newStatus === "preparing") toast.info("👨‍🍳 La cuisine prépare votre commande");
+          if (["served", "paid", "cancelled"].includes(newStatus)) {
+            localStorage.removeItem(`resto-order-tracking:${restaurant.id}`);
+          }
+          if (newStatus === "in_kitchen") toast.info("👨‍🍳 La cuisine prépare votre commande");
           else if (newStatus === "ready") toast.success("✅ Votre commande est prête !");
-          else if (newStatus === "delivered") toast.success("🎉 Bon appétit !");
+          else if (newStatus === "served") toast.success("🎉 Bon appétit !");
         },
       )
       .subscribe();
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [lastOrderId]);
+  }, [lastOrderId, restaurant.id]);
 
   const resetOrder = () => {
     setCart([]);
@@ -1158,13 +1198,15 @@ function OrderView({
     setDone(false);
     setLastOrderId(null);
     setStatusHistory([]);
+    localStorage.removeItem(`resto-order-tracking:${restaurant.id}`);
   };
 
   const STATUS_LABELS: Record<string, string> = {
     new: "🆕 Commande reçue",
-    preparing: "👨‍🍳 En préparation",
+    in_kitchen: "👨‍🍳 En préparation",
     ready: "✅ Prête",
-    delivered: "🎉 Servie / Livrée",
+    served: "🎉 Servie / Livrée",
+    paid: "💳 Payée",
     cancelled: "❌ Annulée",
   };
 

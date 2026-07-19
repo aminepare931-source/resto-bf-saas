@@ -7,12 +7,19 @@ import { fmtPrice } from "./shared";
 import { useCart } from "./CartContext";
 
 const STATUS_LABELS: Record<string, string> = {
-  new: "🆕 Nouvelle",
-  preparing: "👨‍🍳 En préparation",
+  new: "🆕 Reçue",
+  in_kitchen: "👨‍🍳 En préparation",
   ready: "✅ Prête",
-  delivered: "🎉 Livrée",
+  served: "🎉 Servie / Livrée",
+  paid: "💳 Payée",
   cancelled: "❌ Annulée",
 };
+
+const TERMINAL_STATUSES = new Set(["served", "paid", "cancelled"]);
+
+function trackingKey(restaurantId: string) {
+  return `resto-order-tracking:${restaurantId}`;
+}
 
 export function OrderCartFab({
   restaurant,
@@ -36,12 +43,49 @@ export function OrderCartFab({
     else next[id] = Math.min(q, 50);
     return next;
   });
-  const [customer, setCustomer] = useState({ name: "", phone: "", notes: "" });
+  const [customer, setCustomer] = useState({ name: "", phone: "", notes: "", address: "" });
+  const [mode, setMode] = useState<"sur_place" | "livraison">(tableNumber ? "sur_place" : "livraison");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [lastOrderId, setLastOrderId] = useState<string | null>(null);
   const [orderStatus, setOrderStatus] = useState<string>("new");
   const [statusHistory, setStatusHistory] = useState<Array<{ status: string; time: Date }>>([]);
+
+  // Reprendre le suivi d'une commande en cours si la page est rafraîchie
+  useEffect(() => {
+    const raw = localStorage.getItem(trackingKey(restaurant.id));
+    if (!raw) return;
+    try {
+      const saved = JSON.parse(raw) as { orderId: string; savedAt: number };
+      if (Date.now() - saved.savedAt > 1000 * 60 * 60 * 8) {
+        localStorage.removeItem(trackingKey(restaurant.id));
+        return;
+      }
+      supabase
+        .from("orders" as never)
+        .select("id, status")
+        .eq("id", saved.orderId)
+        .single()
+        .then(({ data }) => {
+          const row = data as { id: string; status: string } | null;
+          if (!row) {
+            localStorage.removeItem(trackingKey(restaurant.id));
+            return;
+          }
+          if (TERMINAL_STATUSES.has(row.status)) {
+            localStorage.removeItem(trackingKey(restaurant.id));
+            return;
+          }
+          setLastOrderId(row.id);
+          setOrderStatus(row.status);
+          setStatusHistory([{ status: row.status, time: new Date() }]);
+          setDone(true);
+        });
+    } catch {
+      localStorage.removeItem(trackingKey(restaurant.id));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [restaurant.id]);
 
   const available = useMemo(() => menu.filter((m) => m.available), [menu]);
   const lines: OrderItem[] = useMemo(
@@ -59,12 +103,26 @@ export function OrderCartFab({
   const total = lines.reduce((s, l) => s + l.price * l.qty, 0);
 
   const submit = async () => {
+    if (!customer.phone.trim()) {
+      toast.error("Un numéro de téléphone est requis pour vous contacter");
+      return;
+    }
+    if (!tableNumber && mode === "livraison" && !customer.address.trim()) {
+      toast.error("Merci d'indiquer votre adresse de livraison");
+      return;
+    }
+    const locationNote = tableNumber
+      ? null
+      : mode === "livraison"
+        ? `🛵 Livraison — ${customer.address.trim()}`
+        : "🍽️ À consommer sur place (pas de table scannée)";
+    const notes = [locationNote, customer.notes.trim() || null].filter(Boolean).join(" — ");
     const payload = {
       restaurant_id: restaurant.id,
       table_number: tableNumber,
       customer_name: customer.name.trim() || null,
       customer_phone: customer.phone.trim() || null,
-      notes: customer.notes.trim() || null,
+      notes: notes || null,
       items: lines,
     };
     const parsed = orderSchema.safeParse(payload);
@@ -80,7 +138,7 @@ export function OrderCartFab({
         table_number: tableNumber,
         customer_name: customer.name.trim() || null,
         customer_phone: customer.phone.trim() || null,
-        notes: customer.notes.trim() || null,
+        notes: notes || null,
         items: lines,
         subtotal: total,
         total,
@@ -101,6 +159,7 @@ export function OrderCartFab({
       setLastOrderId(orderId);
       setOrderStatus("new");
       setStatusHistory([{ status: "new", time: new Date() }]);
+      localStorage.setItem(trackingKey(restaurant.id), JSON.stringify({ orderId, savedAt: Date.now() }));
     }
     toast.success("Commande envoyée à la cuisine ✓");
     setDone(true);
@@ -124,14 +183,17 @@ export function OrderCartFab({
           const newStatus = payload.new.status as string;
           setOrderStatus(newStatus);
           setStatusHistory((prev) => [...prev, { status: newStatus, time: new Date() }]);
+          if (TERMINAL_STATUSES.has(newStatus)) {
+            localStorage.removeItem(trackingKey(restaurant.id));
+          }
 
           // Notification selon le statut
-          if (newStatus === "preparing") {
+          if (newStatus === "in_kitchen") {
             toast.info("👨‍🍳 La cuisine prépare votre commande");
           } else if (newStatus === "ready") {
             toast.success("✅ Votre commande est prête !");
-          } else if (newStatus === "delivered") {
-            toast.success("🎉 Commandé livré ! Bon appétit");
+          } else if (newStatus === "served") {
+            toast.success("🎉 Bon appétit !");
           }
         },
       )
@@ -150,8 +212,12 @@ export function OrderCartFab({
         onClick={() => setOpen(true)}
         className="fixed bottom-5 left-5 z-50 px-5 py-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold text-sm shadow-2xl hover:scale-105 transition"
       >
-        🛒 Commander{count > 0 ? ` · ${count}` : ""}
-        {tableNumber && (
+        {done && lastOrderId ? (
+          <>📦 Ma commande · {STATUS_LABELS[orderStatus]?.split(" ")[0] ?? "🆕"}</>
+        ) : (
+          <>🛒 Commander{count > 0 ? ` · ${count}` : ""}</>
+        )}
+        {tableNumber && !done && (
           <span className="ml-2 px-2 py-0.5 rounded-full bg-black/20 text-[10px]">
             Table {tableNumber}
           </span>
@@ -267,6 +333,24 @@ export function OrderCartFab({
 
                 {lines.length > 0 && (
                   <div className="p-5 border-t border-white/5 space-y-3 bg-black/50">
+                    {!tableNumber && (
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setMode("sur_place")}
+                          className={`py-2.5 rounded-xl text-sm font-bold border ${mode === "sur_place" ? "bg-amber-500 text-black border-amber-500" : "bg-white/5 border-white/10 text-white/70"}`}
+                        >
+                          🍽️ Sur place
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setMode("livraison")}
+                          className={`py-2.5 rounded-xl text-sm font-bold border ${mode === "livraison" ? "bg-amber-500 text-black border-amber-500" : "bg-white/5 border-white/10 text-white/70"}`}
+                        >
+                          🛵 Livraison
+                        </button>
+                      </div>
+                    )}
                     <input
                       value={customer.name}
                       onChange={(e) =>
@@ -280,9 +364,21 @@ export function OrderCartFab({
                       onChange={(e) =>
                         setCustomer({ ...customer, phone: e.target.value.slice(0, 20) })
                       }
-                      placeholder="Téléphone (optionnel)"
+                      placeholder="Téléphone * (pour vous contacter)"
+                      required
                       className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm"
                     />
+                    {!tableNumber && mode === "livraison" && (
+                      <input
+                        value={customer.address}
+                        onChange={(e) =>
+                          setCustomer({ ...customer, address: e.target.value.slice(0, 200) })
+                        }
+                        placeholder="Adresse de livraison *"
+                        required
+                        className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm"
+                      />
+                    )}
                     <textarea
                       value={customer.notes}
                       onChange={(e) =>
