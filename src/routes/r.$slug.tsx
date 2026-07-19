@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { renderTemplate } from "@/components/public/templates";
@@ -24,6 +24,7 @@ export const Route = createFileRoute("/r/$slug")({
 function PublicRestaurantPage() {
   const { slug } = Route.useParams();
   const { table, view } = Route.useSearch();
+  const navigate = useNavigate();
   const [restaurant, setRestaurant] = useState<PublicRestaurant | null>(null);
   const [menu, setMenu] = useState<PublicMenuItem[]>([]);
   const [reviews, setReviews] = useState<PublicReview[]>([]);
@@ -35,7 +36,7 @@ function PublicRestaurantPage() {
     (async () => {
       const { data: rRaw } = await supabase
         .from("public_restaurants" as never)
-        .select("id, name, city, cuisine, description, address, hours, phone, whatsapp, logo_url, template, subscription_status")
+        .select("id, name, city, cuisine, description, address, hours, phone, whatsapp, logo_url, template, subscription_status, offers_delivery")
         .eq("slug", slug)
         .maybeSingle();
 
@@ -96,8 +97,32 @@ function PublicRestaurantPage() {
 
   return (
     <CartProvider>
-      {renderTemplate(restaurant.template, { restaurant, menu, reviews, gallery, view })}
-      <OrderCartFab restaurant={restaurant} menu={menu} tableNumber={table ?? null} />
+      <div
+        onClick={(e) => {
+          const anchor = (e.target as HTMLElement).closest("a[href]") as HTMLAnchorElement | null;
+          if (!anchor) return;
+          const href = anchor.getAttribute("href");
+          if (!href || anchor.target === "_blank") return;
+          let url: URL;
+          try {
+            url = new URL(href, window.location.origin);
+          } catch {
+            return;
+          }
+          // N'intercepte que les liens internes qui changent juste la vue affichée sur CETTE page
+          // (Accueil/Menu/À propos/Réserver...) — évite un rechargement complet de la page,
+          // qui provoquait un flash/clignotement de l'accueil du SaaS avant que la vraie page ne se recharge.
+          if (url.pathname === window.location.pathname && url.searchParams.has("view")) {
+            e.preventDefault();
+            const newView = url.searchParams.get("view") ?? undefined;
+            navigate({ to: ".", from: Route.fullPath, search: (prev) => ({ ...prev, view: newView }), replace: false });
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }
+        }}
+      >
+        {renderTemplate(restaurant.template, { restaurant, menu, reviews, gallery, view })}
+        <OrderCartFab restaurant={restaurant} menu={menu} tableNumber={table ?? null} />
+      </div>
     </CartProvider>
   );
 }

@@ -20,6 +20,7 @@ function SettingsPage() {
     address: "",
     hours: "",
     description: "",
+    offers_delivery: false,
     notification_orders_channel: "both",
     notification_reservations_channel: "both",
   });
@@ -30,7 +31,7 @@ function SettingsPage() {
       if (!u.user) return;
       const { data } = await supabase
         .from("restaurants")
-        .select("name, city, cuisine, owner_name, phone, whatsapp, address, hours, description, notification_orders_channel, notification_reservations_channel")
+        .select("name, city, cuisine, owner_name, phone, whatsapp, address, hours, description, offers_delivery, notification_orders_channel, notification_reservations_channel")
         .eq("user_id", u.user.id)
         .maybeSingle();
       if (data) setForm((f) => ({ 
@@ -41,6 +42,7 @@ function SettingsPage() {
         address: data.address ?? "", 
         hours: data.hours ?? "", 
         description: data.description ?? "",
+        offers_delivery: data.offers_delivery ?? false,
         notification_orders_channel: data.notification_orders_channel ?? "both",
         notification_reservations_channel: data.notification_reservations_channel ?? "both",
       }));
@@ -88,6 +90,21 @@ function SettingsPage() {
         </div>
         <Field label="Adresse" value={form.address} onChange={(v) => set("address", v)} placeholder="Avenue Kwamé Nkrumah, Ouagadougou" />
         <Field label="Horaires" value={form.hours} onChange={(v) => set("hours", v)} placeholder="Lun-Dim · 11h - 23h30" />
+
+        <label className="flex items-center justify-between gap-4 p-4 rounded-xl border border-white/8 bg-white/[0.02] cursor-pointer">
+          <span>
+            <span className="block text-sm font-bold">🛵 Je propose la livraison</span>
+            <span className="block text-[11px] text-muted-foreground mt-0.5">
+              Si désactivé, vos clients ne verront jamais l'option "Livraison" — seulement "Sur place".
+            </span>
+          </span>
+          <input
+            type="checkbox"
+            checked={form.offers_delivery}
+            onChange={(e) => setForm((f) => ({ ...f, offers_delivery: e.target.checked }))}
+            className="w-5 h-5 accent-[var(--color-gold)] shrink-0"
+          />
+        </label>
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Description</label>
           <textarea

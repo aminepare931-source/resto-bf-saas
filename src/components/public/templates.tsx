@@ -1094,10 +1094,11 @@ function OrderView({
   const submit = async () => {
     if (!cart.length) return toast.error("Panier vide");
     if (!form.name.trim() || !form.phone.trim()) return toast.error("Nom et téléphone requis");
-    if (delMode === "livraison" && !form.addr.trim()) return toast.error("Adresse de livraison requise");
+    const effectiveDelMode = restaurant.offers_delivery ? delMode : "place";
+    if (effectiveDelMode === "livraison" && !form.addr.trim()) return toast.error("Adresse de livraison requise");
     setBusy(true);
     const items = cart.map((c) => ({ menu_item_id: c.id, name: c.name, price: c.price, qty: c.qty }));
-    const notes = [delMode === "livraison" && form.addr ? `Livraison : ${form.addr}` : "Sur place", form.note || null]
+    const notes = [effectiveDelMode === "livraison" && form.addr ? `Livraison : ${form.addr}` : "Sur place", form.note || null]
       .filter(Boolean)
       .join(" — ");
     const { data, error } = await supabase
@@ -1354,20 +1355,24 @@ function OrderView({
               </div>
               <div className="cl-cart-form">
                 <div className="cl-lbl">Mode de récupération</div>
-                <div className="cl-del-toggle">
-                  <div
-                    className={`cl-del-opt ${delMode === "place" ? "active" : ""}`}
-                    onClick={() => setDelMode("place")}
-                  >
-                    🏠 Sur place
+                {restaurant.offers_delivery ? (
+                  <div className="cl-del-toggle">
+                    <div
+                      className={`cl-del-opt ${delMode === "place" ? "active" : ""}`}
+                      onClick={() => setDelMode("place")}
+                    >
+                      🏠 Sur place
+                    </div>
+                    <div
+                      className={`cl-del-opt ${delMode === "livraison" ? "active" : ""}`}
+                      onClick={() => setDelMode("livraison")}
+                    >
+                      🛵 Livraison
+                    </div>
                   </div>
-                  <div
-                    className={`cl-del-opt ${delMode === "livraison" ? "active" : ""}`}
-                    onClick={() => setDelMode("livraison")}
-                  >
-                    🛵 Livraison
-                  </div>
-                </div>
+                ) : (
+                  <p style={{ fontSize: 13, color: "var(--cl-muted)", marginBottom: 14 }}>🏠 À consommer sur place</p>
+                )}
                 <div className="cl-form-group">
                   <label>Nom *</label>
                   <input
@@ -1385,7 +1390,7 @@ function OrderView({
                     placeholder="+226 70 00 00 00"
                   />
                 </div>
-                {delMode === "livraison" && (
+                {restaurant.offers_delivery && delMode === "livraison" && (
                   <div className="cl-form-group">
                     <label>Adresse</label>
                     <input

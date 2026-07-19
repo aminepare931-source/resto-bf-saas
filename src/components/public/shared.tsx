@@ -21,6 +21,7 @@ export type PublicRestaurant = {
   plan: string;
   template: string | null;
   logo_url: string | null;
+  offers_delivery?: boolean;
 };
 
 export type PublicMenuItem = {

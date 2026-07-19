@@ -434,6 +434,7 @@ export type Database = {
           name: string
           notification_orders_channel: string | null
           notification_reservations_channel: string | null
+          offers_delivery: boolean
           owner_name: string
           phone: string
           plan: string
@@ -469,6 +470,7 @@ export type Database = {
           name: string
           notification_orders_channel?: string | null
           notification_reservations_channel?: string | null
+          offers_delivery?: boolean
           owner_name: string
           phone: string
           plan?: string
@@ -504,6 +506,7 @@ export type Database = {
           name?: string
           notification_orders_channel?: string | null
           notification_reservations_channel?: string | null
+          offers_delivery?: boolean
           owner_name?: string
           phone?: string
           plan?: string
@@ -604,6 +607,7 @@ export type Database = {
           id: string | null
           logo_url: string | null
           name: string | null
+          offers_delivery: boolean | null
           phone: string | null
           primary_color: string | null
           sections: Json | null
@@ -625,6 +629,7 @@ export type Database = {
           id?: string | null
           logo_url?: string | null
           name?: string | null
+          offers_delivery?: boolean | null
           phone?: string | null
           primary_color?: string | null
           sections?: Json | null
@@ -646,6 +651,7 @@ export type Database = {
           id?: string | null
           logo_url?: string | null
           name?: string | null
+          offers_delivery?: boolean | null
           phone?: string | null
           primary_color?: string | null
           sections?: Json | null

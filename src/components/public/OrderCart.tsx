@@ -44,7 +44,8 @@ export function OrderCartFab({
     return next;
   });
   const [customer, setCustomer] = useState({ name: "", phone: "", notes: "", address: "" });
-  const [mode, setMode] = useState<"sur_place" | "livraison">(tableNumber ? "sur_place" : "livraison");
+  const [mode, setMode] = useState<"sur_place" | "livraison">("sur_place");
+  const canDeliver = restaurant.offers_delivery === true;
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [lastOrderId, setLastOrderId] = useState<string | null>(null);
@@ -107,13 +108,14 @@ export function OrderCartFab({
       toast.error("Un numéro de téléphone est requis pour vous contacter");
       return;
     }
-    if (!tableNumber && mode === "livraison" && !customer.address.trim()) {
+    if (!tableNumber && mode === "livraison" && canDeliver && !customer.address.trim()) {
       toast.error("Merci d'indiquer votre adresse de livraison");
       return;
     }
+    const effectiveMode = canDeliver ? mode : "sur_place";
     const locationNote = tableNumber
       ? null
-      : mode === "livraison"
+      : effectiveMode === "livraison"
         ? `🛵 Livraison — ${customer.address.trim()}`
         : "🍽️ À consommer sur place (pas de table scannée)";
     const notes = [locationNote, customer.notes.trim() || null].filter(Boolean).join(" — ");
@@ -333,7 +335,7 @@ export function OrderCartFab({
 
                 {lines.length > 0 && (
                   <div className="p-5 border-t border-white/5 space-y-3 bg-black/50">
-                    {!tableNumber && (
+                    {!tableNumber && canDeliver && (
                       <div className="grid grid-cols-2 gap-2">
                         <button
                           type="button"
@@ -368,7 +370,7 @@ export function OrderCartFab({
                       required
                       className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm"
                     />
-                    {!tableNumber && mode === "livraison" && (
+                    {!tableNumber && canDeliver && mode === "livraison" && (
                       <input
                         value={customer.address}
                         onChange={(e) =>
