@@ -34,11 +34,23 @@ function PublicRestaurantPage() {
 
   useEffect(() => {
     (async () => {
-      const { data: rRaw } = await supabase
+      let { data: rRaw, error: rErr } = await supabase
         .from("public_restaurants" as never)
         .select("id, name, city, cuisine, description, address, hours, phone, whatsapp, logo_url, template, subscription_status, offers_delivery")
         .eq("slug", slug)
         .maybeSingle();
+
+      // Repli si la colonne offers_delivery n'existe pas encore en base
+      // (migration pas encore appliquée côté Supabase) — évite de casser
+      // toute la page publique en attendant.
+      if (rErr) {
+        const retry = await supabase
+          .from("public_restaurants" as never)
+          .select("id, name, city, cuisine, description, address, hours, phone, whatsapp, logo_url, template, subscription_status")
+          .eq("slug", slug)
+          .maybeSingle();
+        rRaw = retry.data;
+      }
 
       const r = rRaw as null | {
         id: string; name: string; city: string; cuisine: string | null;

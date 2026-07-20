@@ -13,15 +13,22 @@ const STATIC_ASSETS = [
   "/",
   "/offline",
   "/manifest.webmanifest",
-  "/favicon.ico",
 ];
 
 // ─── Installation : pré-cache des assets statiques ───
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
-    })
+      // On ajoute chaque ressource individuellement : si l'une d'elles
+      // échoue (404, offline pendant le build, etc.), les autres sont
+      // quand même mises en cache au lieu de tout faire échouer
+      // (cache.addAll rejette en bloc à la moindre erreur).
+      return Promise.allSettled(
+        STATIC_ASSETS.map((url) =>
+          cache.add(url).catch((err) => console.warn("SW précache échoué pour", url, err)),
+        ),
+      );
+    }),
   );
   self.skipWaiting();
 });
