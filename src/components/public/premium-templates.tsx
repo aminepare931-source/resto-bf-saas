@@ -676,7 +676,43 @@ const PREMIUM_CSS = `
 .premium-luxe .premium-hero h1{background:linear-gradient(115deg,var(--pr-text) 20%,var(--pr-accent) 42%,var(--pr-text) 58%,var(--pr-accent) 80%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:premium-luxe-shine 9s ease-in-out infinite}.premium-luxe .premium-book,.premium-luxe .premium-actions a:first-child{background:linear-gradient(115deg,var(--pr-accent),color-mix(in oklab,var(--pr-accent) 60%,#fff8e8),var(--pr-accent))}
 @keyframes premium-luxe-shine{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 @keyframes premium-bg-drift{0%{transform:scale(1.08) translate3d(-1.5%,0,0)}100%{transform:scale(1.18) translate3d(1.5%,-1.5%,0)}}
-@media(max-width:980px){.premium-nav nav{display:none}.premium-hamburger{display:flex}.premium-hero,.premium-experience,.premium-reservation-layout{grid-template-columns:1fr}.premium-strip{grid-template-columns:repeat(2,1fr)}.premium-signatures,.premium-gallery{grid-template-columns:repeat(2,1fr)}.premium-menu-grid{grid-template-columns:1fr}.premium-hero{min-height:auto;padding-top:86px}.premium-hero-panel{grid-template-columns:repeat(3,1fr)}.premium-mob-menu.open{display:flex}}
-@media(max-width:620px){.premium-nav{padding:13px 14px}.premium-book{display:none}.premium-strip{grid-template-columns:1fr}.premium-signatures,.premium-gallery,.premium-experience-list,.premium-form-row{grid-template-columns:1fr}.premium-time-grid{grid-template-columns:repeat(2,1fr)}.premium-hero-panel{grid-template-columns:1fr}.premium-section,.premium-reservation{padding-inline:16px}.premium-gallery figure,.premium-gallery figure:nth-child(3n+1){height:230px}}
+@media(max-width:980px){.premium-nav nav{display:none}.premium-hamburger{display:flex}.premium-hero,.premium-experience,.premium-reservation-layout{grid-template-columns:1fr}.premium-strip{grid-template-columns:repeat(3,1fr)}.premium-signatures,.premium-gallery{grid-template-columns:repeat(2,1fr)}.premium-menu-grid{grid-template-columns:1fr}.premium-hero{min-height:auto;padding-top:86px}.premium-hero-panel{grid-template-columns:repeat(3,1fr)}.premium-mob-menu.open{display:flex}}
+@media(max-width:620px){
+  .premium-nav{padding:12px 14px}
+  .premium-book{display:none}
+  .premium-hero{padding:78px 16px 32px;gap:22px}
+  .premium-hero h1{font-size:clamp(38px,11vw,54px);line-height:.98}
+  .premium-lead{font-size:15px;margin-top:16px}
+  .premium-actions{margin-top:20px;gap:8px}
+  .premium-actions a{padding:11px 16px;font-size:12px}
+  .premium-hero-panel{grid-template-columns:repeat(3,1fr);gap:6px}
+  .premium-hero-panel div{padding:10px 6px;text-align:center}
+  .premium-hero-panel span{font-size:20px}
+  .premium-hero-panel small{font-size:8px;letter-spacing:.08em}
+  .premium-strip{grid-template-columns:repeat(2,1fr)}
+  .premium-strip article{padding:14px 12px;border-right:1px solid var(--pr-border)}
+  .premium-strip article:nth-child(2n){border-right:none}
+  .premium-strip b{font-size:19px}
+  .premium-strip strong{font-size:12.5px}
+  .premium-strip span{font-size:11px;line-height:1.35}
+  .premium-section{padding:44px 16px}
+  .premium-heading{margin-bottom:22px}
+  .premium-heading h2{font-size:clamp(26px,8vw,38px)}
+  .premium-heading span{font-size:13.5px;margin-top:8px}
+  .premium-signatures{grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:20px}
+  .premium-signature-card{min-height:180px}
+  .premium-signature-card strong{font-size:13px;margin:3px 0}
+  .premium-signature-card footer{padding:11px}
+  .premium-experience-list,.premium-form-row{grid-template-columns:repeat(2,1fr)}
+  .premium-time-grid{grid-template-columns:repeat(3,1fr)}
+  .premium-gallery{grid-template-columns:repeat(2,1fr);gap:8px}
+  .premium-gallery figure,.premium-gallery figure:nth-child(3n+1){height:150px}
+  .premium-reservation{padding:44px 16px}
+  .premium-form{padding:18px}
+  .premium-chef-image{height:220px}
+  .premium-chef-card h3{font-size:24px}
+  .premium-footer{padding:26px 16px;gap:16px}
+}
+
 @media(prefers-reduced-motion:reduce){.premium-bg img,.premium-signature-card img,.premium-gallery img{animation:none;transition:none}}
 `;

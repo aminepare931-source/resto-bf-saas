@@ -1,7 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { OfflineBanner } from "@/components/OfflineBanner";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -199,9 +198,6 @@ function DashboardLayout() {
               🎨 Changer de template
             </Link>
           )}
-          <div className="flex items-center gap-2 px-4 py-2">
-            <ThemeToggle />
-          </div>
           <button
             onClick={signOut}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
