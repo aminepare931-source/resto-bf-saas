@@ -332,15 +332,33 @@ export function TplMarche({ restaurant, menu, reviews, gallery, view }: Template
             {restaurant.plan !== "gratuit" && (
               <a
                 href={buildViewHref("reserve")}
-                className="px-5 py-2 rounded-full border text-xs font-semibold hover:bg-[#ed8023] hover:text-[#0d2818] transition"
+                className="hidden md:inline-flex px-5 py-2 rounded-full border text-xs font-semibold hover:bg-[#ed8023] hover:text-[#0d2818] transition"
                 style={{ borderColor: theme.accent, color: theme.accent }}
               >
                 Réserver
               </a>
             )}
+            <button onClick={() => setMobOpen((v) => !v)} className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-white/10 transition-colors" aria-label="Menu" style={{ color: theme.accent }}>
+              <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "rotate-45 translate-y-2" : ""}`} />
+              <span className={`block w-6 h-0.5 bg-current transition-opacity ${mobOpen ? "opacity-0" : ""}`} />
+              <span className={`block w-6 h-0.5 bg-current transition-transform ${mobOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+            </button>
           </div>
         </div>
       </header>
+
+      {mobOpen && (
+        <nav className="md:hidden border-t" style={{ background: "rgba(13,40,24,0.97)", borderColor: theme.border }}>
+          <div className="flex flex-col px-4 py-4 gap-1">
+            <a href={buildViewHref("home")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-lg text-sm font-medium text-white hover:bg-white/10 transition-colors text-left">Accueil</a>
+            <a href={buildViewHref("about")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-lg text-sm font-medium text-white hover:bg-white/10 transition-colors text-left">À propos</a>
+            <a href={buildViewHref("menu")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-lg text-sm font-medium text-white hover:bg-white/10 transition-colors text-left">Menu</a>
+            {restaurant.plan !== "gratuit" && (
+              <a href={buildViewHref("reserve")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-lg text-sm font-medium text-left" style={{ color: theme.accent }}>Réserver →</a>
+            )}
+          </div>
+        </nav>
+      )}
 
       {/* HOME VIEW */}
       {activeView === "home" && (

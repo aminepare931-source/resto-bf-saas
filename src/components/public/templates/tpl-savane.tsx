@@ -199,11 +199,11 @@ export function TplSavane(props: TemplateProps) {
         {mobOpen && (
           <nav className="md:hidden border-t border-white/10 bg-[#0e0e10]/95 backdrop-blur-xl">
             <div className="flex flex-col px-4 py-4 gap-1">
-              <a href={buildViewHref("home")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">Accueil</a>
-              <a href={buildViewHref("about")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">À propos</a>
-              <a href={buildViewHref("menu")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">Menu</a>
+              <a href={buildViewHref("home")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium text-white hover:bg-white/10 transition-colors text-left">Accueil</a>
+              <a href={buildViewHref("about")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium text-white hover:bg-white/10 transition-colors text-left">À propos</a>
+              <a href={buildViewHref("menu")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium text-white hover:bg-white/10 transition-colors text-left">Menu</a>
               {restaurant.plan !== "gratuit" && (
-                <a href={buildViewHref("reserve")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors text-left">Réserver</a>
+                <a href={buildViewHref("reserve")} onClick={() => setMobOpen(false)} className="px-4 py-3 rounded-xl text-sm font-medium text-white hover:bg-white/10 transition-colors text-left">Réserver</a>
               )}
             </div>
           </nav>

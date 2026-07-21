@@ -109,8 +109,10 @@
   html { 
     scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
   }
   body {
+    overflow-x: hidden;
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-display);
@@ -260,6 +262,10 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .aurora-blob { animation: none; }
+}
+
+@media (max-width: 640px) {
+  .aurora-blob { width: 260px !important; height: 260px !important; }
 }
 
 /* Particles */
