@@ -4,11 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useMyRestaurant } from "@/hooks/use-my-restaurant";
 import { useDebounce } from "@/hooks/use-debounce";
 import { toast } from "sonner";
-import { Search, Filter, Clock, ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
+import { Search, Filter, Clock, ArrowUpDown, ChevronDown, ChevronUp, Volume2, VolumeX } from "lucide-react";
 import { OrderCardSkeleton } from "@/components/ui/skeleton";
 import type { Order, OrderStatus } from "@/types";
 import { ORDER_STATUS_LABEL, ORDER_STATUS_COLOR, ORDER_NEXT_STATUS, formatCurrency, formatDate } from "@/types";
 import { PaymentCodeModal } from "@/components/admin/PaymentCodeModal";
+import { announceNewOrder, isVoiceMuted, setVoiceMuted } from "@/lib/voice";
 
 export const Route = createFileRoute("/_authenticated/dashboard/commandes")({
   component: OrdersPage,
@@ -31,6 +32,7 @@ function OrdersPage() {
   const PER_PAGE = 20;
   const lastSeenCount = useRef(0);
   const [paymentModalOrder, setPaymentModalOrder] = useState(null);
+  const [voiceMutedState, setVoiceMutedState] = useState(() => isVoiceMuted());
 
   // Debounce la recherche
   const debouncedSearch = useDebounce(search, 300);
@@ -62,12 +64,14 @@ function OrdersPage() {
         { event: "*", schema: "public", table: "orders", filter: `restaurant_id=eq.${r.id}` },
         (payload) => {
           if (payload.eventType === "INSERT") {
-            setOrders((prev) => [payload.new as unknown as Order, ...prev]);
-            toast.success(`🛎️ Nouvelle commande${(payload.new as Order).table_number ? ` · Table ${(payload.new as Order).table_number}` : ""}`);
+            const newOrder = payload.new as unknown as Order;
+            setOrders((prev) => [newOrder, ...prev]);
+            toast.success(`🛎️ Nouvelle commande${newOrder.table_number ? ` · Table ${newOrder.table_number}` : ""}`);
             try {
               const audio = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ==");
               audio.play().catch(() => {});
             } catch {}
+            announceNewOrder({ tableNumber: newOrder.table_number, items: newOrder.items ?? [], total: newOrder.total });
           } else if (payload.eventType === "UPDATE") {
             setOrders((prev) => prev.map((o) => (o.id === (payload.new as Order).id ? (payload.new as unknown as Order) : o)));
           } else if (payload.eventType === "DELETE") {
@@ -193,12 +197,22 @@ function OrdersPage() {
 
   return (
     <div className="max-w-6xl">
-      <div className="mb-6">
-        <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Commandes</p>
-        <h1 className="text-3xl font-black">Commandes en direct</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Les commandes des clients (QR code, WhatsApp, manuel) arrivent ici en temps réel.
-        </p>
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Commandes</p>
+          <h1 className="text-3xl font-black">Commandes en direct</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Les commandes des clients (QR code, WhatsApp, manuel) arrivent ici en temps réel.
+          </p>
+        </div>
+        <button
+          onClick={() => setVoiceMutedState((v) => { setVoiceMuted(!v); return !v; })}
+          className="shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs font-semibold text-muted-foreground hover:text-gold hover:border-gold/30 transition-colors"
+          title={voiceMutedState ? "Activer l'annonce vocale des commandes" : "Couper l'annonce vocale des commandes"}
+        >
+          {voiceMutedState ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          <span className="hidden sm:inline">{voiceMutedState ? "Voix coupée" : "Voix activée"}</span>
+        </button>
       </div>
 
       {/* Barre de recherche */}

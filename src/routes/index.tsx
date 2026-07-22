@@ -157,12 +157,12 @@ const plans = [
       "QR Code restaurant",
       "Réservations basiques",
       "Statistiques essentielles",
-      "Puis 5 000 FCFA/mois",
+      "Puis 2 500 FCFA/mois",
     ],
   },
   {
     name: "Standard",
-    price: "10 000",
+    price: "5 000",
     unit: "FCFA",
     period: "/ mois",
     popular: true,
@@ -181,7 +181,7 @@ const plans = [
   },
   {
     name: "Premium",
-    price: "15 000",
+    price: "7 500",
     unit: "FCFA",
     period: "/ mois",
     popular: false,
@@ -214,8 +214,8 @@ const faqs = [
     a: "Oui, ajoutez votre équipe avec des rôles spécifiques : serveur, cuisinier, manager. Chacun accède aux fonctionnalités adaptées à son poste. Chat interne inclus pour la communication.",
   },
   {
-    q: "Comment fonctionnent les commandes WhatsApp ?",
-    a: "Chaque plat a un bouton Commander. Le client clique, un message WhatsApp s'ouvre avec le nom du plat, le prix et vos coordonnées. Vous recevez la commande et pouvez la valider depuis votre tableau de bord.",
+    q: "Comment fonctionnent les commandes en ligne ?",
+    a: "Chaque plat a un bouton Commander. Le client remplit un petit formulaire et sa commande part directement en cuisine, avec un suivi en temps réel jusqu'à la table. Aucun passage par WhatsApp n'est nécessaire côté client.",
   },
   {
     q: "Est-ce que je peux gérer mes stocks ?",

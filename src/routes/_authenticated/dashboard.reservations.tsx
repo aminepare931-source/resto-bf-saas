@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useMyRestaurant } from "@/hooks/use-my-restaurant";
+import { announceNewReservation } from "@/lib/voice";
 
 export const Route = createFileRoute("/_authenticated/dashboard/reservations")({
   component: ReservationsPage,
@@ -42,6 +43,27 @@ function ReservationsPage() {
   };
 
   useEffect(() => { load(); }, [restaurant?.id]);
+
+  // Nouvelles réservations en temps réel + annonce vocale
+  useEffect(() => {
+    if (!restaurant) return;
+    const channel = supabase
+      .channel(`reservations-${restaurant.id}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "reservations", filter: `restaurant_id=eq.${restaurant.id}` },
+        (payload) => {
+          const resa = payload.new as unknown as Resa;
+          setList((prev) => [resa, ...prev]);
+          toast.success(`📅 Nouvelle réservation · ${resa.party_size} pers. · ${resa.reservation_time}`);
+          announceNewReservation({ customerName: resa.customer_name, guests: resa.party_size, time: resa.reservation_time });
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [restaurant?.id]);
 
   const setStatus = async (id: string, status: string) => {
     await supabase.from("reservations").update({ status }).eq("id", id);

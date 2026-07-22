@@ -7,7 +7,7 @@ export const Route = createFileRoute("/auth/abonnement")({
       {
         name: "description",
         content:
-          "Découvrez l'abonnement basique de Resto BF. Menu digital, commande WhatsApp, QR Code. Simple et abordable.",
+          "Découvrez l'abonnement basique de Resto BF. Menu digital, commandes en ligne, QR Code. Simple et abordable.",
       },
     ],
   }),
@@ -36,7 +36,7 @@ function AbonnementBasiquePage() {
               </h1>
               <p className="text-base sm:text-lg text-emerald-100/80 leading-relaxed mb-8 max-w-xl">
                 Parfait pour les petits restaurants qui veulent se lancer. Menu digital, commandes
-                WhatsApp et QR Code inclus.
+                commandes en ligne et QR Code inclus.
                 <strong className="text-white"> 30 jours d'essai gratuit.</strong>
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
@@ -77,7 +77,7 @@ function AbonnementBasiquePage() {
             <div className="flex items-baseline justify-center gap-2 mb-2">
               <span className="text-5xl sm:text-6xl font-bold">0 FCFA</span>
             </div>
-            <p className="text-emerald-300 mb-8">30 jours d'essai gratuit, puis 5 000 FCFA/mois</p>
+            <p className="text-emerald-300 mb-8">30 jours d'essai gratuit, puis 2 500 FCFA/mois</p>
 
             <ul className="max-w-md mx-auto space-y-3 text-left mb-8">
               <li className="flex items-start gap-3">
@@ -90,7 +90,7 @@ function AbonnementBasiquePage() {
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-emerald-400 mt-0.5">✓</span>
-                <span>Commande WhatsApp automatique</span>
+                <span>Commandes en ligne avec suivi en direct</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-emerald-400 mt-0.5">✓</span>
@@ -131,8 +131,8 @@ function AbonnementBasiquePage() {
               },
               {
                 icon: "💬",
-                title: "Commandes WhatsApp",
-                desc: "Chaque plat a un bouton Commander. Le message se pré-remplit automatiquement.",
+                title: "Commandes en ligne",
+                desc: "Chaque plat a un bouton Commander. La commande part directement en cuisine avec suivi en temps réel.",
               },
               {
                 icon: "📲",
