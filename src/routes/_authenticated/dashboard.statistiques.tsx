@@ -66,7 +66,6 @@ const CHART_COLORS = ["#f59e0b", "#10b981", "#3b82f6", "#8b5cf6", "#ef4444", "#e
 
 function StatisticsPage() {
   const { restaurant: r, loading: loadingResto } = useMyRestaurant();
-  const isPremium = r?.plan === "premium" || r?.plan === "sur_mesure";
   const [period, setPeriod] = useState<"week" | "month" | "year">("week");
 
   const [stats, setStats] = useState<{
@@ -85,10 +84,10 @@ function StatisticsPage() {
   const [activeChart, setActiveChart] = useState<"revenue" | "orders" | "comparison">("revenue");
 
   useEffect(() => {
-    if (isPremium && r) {
+    if (r) {
       loadStatistics();
     }
-  }, [isPremium, r?.id, period]);
+  }, [r?.id, period]);
 
   const loadStatistics = async () => {
     if (!r) return;
@@ -103,14 +102,28 @@ function StatisticsPage() {
       const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
       const yearAgo = new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000);
 
-      const { data: invoices, error } = await supabase
-        .from("invoices")
+      // Basé sur les commandes réelles (servies ou payées), disponibles pour
+      // TOUS les plans — les factures restent optionnelles/premium et ne
+      // reflètent pas forcément toutes les ventes.
+      const { data: rawOrders, error } = await supabase
+        .from("orders" as never)
         .select("*")
         .eq("restaurant_id", r.id)
-        .eq("status", "paid")
-        .order("issued_at", { ascending: false });
+        .in("status", ["served", "paid"])
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
+
+      type OrderRow = { created_at: string; total: number; items: { name: string; qty: number; price: number }[] };
+      const invoices = ((rawOrders ?? []) as unknown as OrderRow[]).map((o) => ({
+        issued_at: o.created_at,
+        total: Number(o.total) || 0,
+        items: (o.items ?? []).map((it) => ({
+          description: it.name,
+          quantity: it.qty,
+          unit_price: it.price,
+        })),
+      }));
 
       const todayRevenue = invoices
         .filter((inv) => new Date(inv.issued_at) >= today)
@@ -279,18 +292,6 @@ function StatisticsPage() {
   };
 
   if (loadingResto) return <p className="text-muted-foreground">Chargement...</p>;
-  if (!isPremium) {
-    return (
-      <div className="max-w-2xl p-8 rounded-3xl border border-gold/30 bg-gradient-to-br from-gold/10 to-transparent text-center">
-        <p className="text-[10px] uppercase tracking-[0.3em] text-gold font-bold">Premium uniquement</p>
-        <h2 className="mt-2 text-3xl font-black">Statistiques avancées</h2>
-        <p className="mt-3 text-sm text-muted-foreground">
-          Analysez vos ventes, découvrez vos plats les plus populaires et optimisez votre service.
-          Réservé à l'abonnement Premium.
-        </p>
-      </div>
-    );
-  }
 
   const todayChange = stats.yesterday > 0
     ? ((stats.today - stats.yesterday) / stats.yesterday) * 100

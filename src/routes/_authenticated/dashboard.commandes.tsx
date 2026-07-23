@@ -9,6 +9,7 @@ import { OrderCardSkeleton } from "@/components/ui/skeleton";
 import type { Order, OrderStatus } from "@/types";
 import { ORDER_STATUS_LABEL, ORDER_STATUS_COLOR, ORDER_NEXT_STATUS, formatCurrency, formatDate } from "@/types";
 import { PaymentCodeModal } from "@/components/admin/PaymentCodeModal";
+import { KitchenTicket } from "@/components/admin/KitchenTicket";
 import { announceNewOrder, isVoiceMuted, setVoiceMuted } from "@/lib/voice";
 
 export const Route = createFileRoute("/_authenticated/dashboard/commandes")({
@@ -33,6 +34,23 @@ function OrdersPage() {
   const lastSeenCount = useRef(0);
   const [paymentModalOrder, setPaymentModalOrder] = useState(null);
   const [voiceMutedState, setVoiceMutedState] = useState(() => isVoiceMuted());
+  const [ticketOrder, setTicketOrder] = useState<Order | null>(null);
+
+  const printOrder = (o: Order) => {
+    setTicketOrder(o);
+    // Laisse le temps au ticket de se monter dans le DOM avant d'ouvrir l'impression
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        window.print();
+      });
+    });
+  };
+
+  useEffect(() => {
+    const onPrinted = () => setTicketOrder(null);
+    window.addEventListener("kitchen-ticket-printed", onPrinted);
+    return () => window.removeEventListener("kitchen-ticket-printed", onPrinted);
+  }, []);
 
   // Debounce la recherche
   const debouncedSearch = useDebounce(search, 300);
@@ -398,12 +416,20 @@ function OrdersPage() {
                       Annuler
                     </button>
                   )}
+                  <button
+                    onClick={() => printOrder(o)}
+                    className="px-4 py-2 rounded-lg border border-white/10 text-muted-foreground font-bold text-xs hover:text-gold hover:border-gold/30 transition-colors flex items-center gap-1.5"
+                  >
+                    🖨️ Imprimer le ticket
+                  </button>
                 </div>
               </article>
             );
           })
         )}
       </div>
+
+      {ticketOrder && <KitchenTicket order={ticketOrder} restaurantName={r?.name ?? ""} />}
 
       {paymentModalOrder && (
         <PaymentCodeModal order={paymentModalOrder} onClose={() => setPaymentModalOrder(null)} />
