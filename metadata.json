@@ -1,0 +1,6 @@
+{
+  "name": "Resto BF",
+  "description": "Plateforme SaaS de gestion pour restaurants Resto BF",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

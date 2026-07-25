@@ -1,0 +1,1 @@
+CREATE TABLE payment_codes (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), order_id UUID NOT NULL REFERENCES orders(id), code TEXT NOT NULL, method TEXT NOT NULL, amount DECIMAL(10,2), used BOOLEAN DEFAULT false, created_at TIMESTAMPTZ DEFAULT NOW()); 

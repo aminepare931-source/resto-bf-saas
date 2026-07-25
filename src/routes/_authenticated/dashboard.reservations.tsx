@@ -1,0 +1,210 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useMyRestaurant } from "@/hooks/use-my-restaurant";
+import { announceNewReservation } from "@/lib/voice";
+
+export const Route = createFileRoute("/_authenticated/dashboard/reservations")({
+  component: ReservationsPage,
+});
+
+type Resa = {
+  id: string;
+  customer_name: string;
+  customer_phone: string;
+  party_size: number;
+  reservation_date: string;
+  reservation_time: string;
+  notes: string | null;
+  status: string;
+  created_at: string;
+};
+
+const STATUSES = [
+  {
+    id: "pending",
+    label: "En attente",
+    color: "text-amber-400 border-amber-500/30 bg-amber-500/10",
+  },
+  {
+    id: "confirmed",
+    label: "Confirmée",
+    color: "text-green-400 border-green-500/30 bg-green-500/10",
+  },
+  { id: "cancelled", label: "Annulée", color: "text-muted-foreground border-white/10" },
+];
+
+function ReservationsPage() {
+  const { restaurant } = useMyRestaurant();
+  const [list, setList] = useState<Resa[]>([]);
+
+  const load = async () => {
+    if (!restaurant) return;
+    const { data } = await supabase
+      .from("reservations")
+      .select("*")
+      .eq("restaurant_id", restaurant.id)
+      .order("reservation_date", { ascending: true })
+      .order("reservation_time", { ascending: true });
+    setList((data ?? []) as Resa[]);
+  };
+
+  useEffect(() => {
+    load();
+  }, [restaurant?.id]);
+
+  // Nouvelles réservations en temps réel + annonce vocale
+  useEffect(() => {
+    if (!restaurant) return;
+    const channel = supabase
+      .channel(`reservations-${restaurant.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "reservations",
+          filter: `restaurant_id=eq.${restaurant.id}`,
+        },
+        (payload) => {
+          const resa = payload.new as unknown as Resa;
+          setList((prev) => [resa, ...prev]);
+          toast.success(
+            `📅 Nouvelle réservation · ${resa.party_size} pers. · ${resa.reservation_time}`,
+          );
+          announceNewReservation({
+            customerName: resa.customer_name,
+            guests: resa.party_size,
+            time: resa.reservation_time,
+          });
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [restaurant?.id]);
+
+  const setStatus = async (id: string, status: string) => {
+    await supabase.from("reservations").update({ status }).eq("id", id);
+    toast.success("Mis à jour");
+    load();
+  };
+
+  const remove = async (id: string) => {
+    if (!confirm("Supprimer cette réservation ?")) return;
+    await supabase.from("reservations").delete().eq("id", id);
+    load();
+  };
+
+  const sendWhatsAppConfirmation = async (reservation: Resa) => {
+    if (!restaurant?.whatsapp) {
+      toast.error("Configurez votre numéro WhatsApp dans Paramètres");
+      return;
+    }
+
+    const channel = restaurant.notification_reservations_channel || "both";
+
+    const msg =
+      `Bonjour ${reservation.customer_name} !\n\n` +
+      `Votre réservation pour le ${new Date(reservation.reservation_date).toLocaleDateString("fr-FR")} à ${reservation.reservation_time} a bien été enregistrée.\n\n` +
+      `Détails :\n` +
+      `• Nombre de personnes : ${reservation.party_size}\n` +
+      (reservation.notes ? `• Notes : ${reservation.notes}\n` : "") +
+      `\nNous vous attendons avec impatience !\n\n` +
+      `Resto BF`;
+
+    if (channel === "whatsapp" || channel === "both") {
+      const cleanPhone = reservation.customer_phone.replace(/\D/g, "");
+      const encodedMsg = encodeURIComponent(msg);
+      window.open(`https://wa.me/${cleanPhone}?text=${encodedMsg}`, "_blank");
+      toast.success("Message de confirmation WhatsApp ouvert");
+    } else {
+      toast.success("Réservation confirmée dans le panneau admin");
+    }
+
+    await setStatus(reservation.id, "confirmed");
+  };
+
+  return (
+    <div className="max-w-5xl">
+      <div className="mb-6">
+        <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Réservations</p>
+        <h1 className="text-3xl font-black">
+          {list.length} réservation{list.length > 1 ? "s" : ""}
+        </h1>
+      </div>
+
+      {list.length === 0 ? (
+        <div className="p-10 rounded-2xl border border-dashed border-white/10 text-center text-muted-foreground">
+          Aucune réservation pour le moment.
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {list.map((r) => {
+            const st = STATUSES.find((s) => s.id === r.status) ?? STATUSES[0];
+            return (
+              <div key={r.id} className="p-5 rounded-2xl border border-white/8 bg-dark-card">
+                <div className="flex items-start justify-between gap-4 flex-wrap">
+                  <div>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <h3 className="font-bold text-lg">{r.customer_name}</h3>
+                      <span
+                        className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${st.color}`}
+                      >
+                        {st.label}
+                      </span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      📅{" "}
+                      {new Date(r.reservation_date).toLocaleDateString("fr-FR", {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "long",
+                      })}{" "}
+                      à{" "}
+                      <strong className="text-foreground">{r.reservation_time.slice(0, 5)}</strong>{" "}
+                      · 👥 {r.party_size} pers. · 📱{" "}
+                      <a href={`tel:${r.customer_phone}`} className="text-gold">
+                        {r.customer_phone}
+                      </a>
+                    </p>
+                    {r.notes && (
+                      <p className="text-sm mt-2 italic text-muted-foreground">« {r.notes} »</p>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    {STATUSES.filter((s) => s.id !== r.status).map((s) => (
+                      <button
+                        key={s.id}
+                        onClick={() => setStatus(r.id, s.id)}
+                        className="px-3 py-1.5 rounded-lg border border-white/10 text-xs font-semibold hover:border-gold/40"
+                      >
+                        → {s.label}
+                      </button>
+                    ))}
+                    {r.status === "pending" && (
+                      <button
+                        onClick={() => sendWhatsAppConfirmation(r)}
+                        className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-semibold hover:bg-emerald-500/20"
+                      >
+                        ✓ Confirmer + WhatsApp
+                      </button>
+                    )}
+                    <button
+                      onClick={() => remove(r.id)}
+                      className="px-3 py-1.5 rounded-lg border border-destructive/30 text-destructive text-xs hover:bg-destructive/10"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
