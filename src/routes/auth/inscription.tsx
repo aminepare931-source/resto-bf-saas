@@ -94,37 +94,14 @@ function SignupPage() {
       });
 
       if (authError) {
-        if (
-          authError.message.includes("Failed to fetch") ||
-          authError.message.includes("placeholder") ||
-          !import.meta.env.VITE_SUPABASE_URL
-        ) {
-          localStorage.setItem(
-            "restobf_demo_user",
-            JSON.stringify({
-              email: form.email,
-              id: "demo-user-1",
-              name: form.ownerName || "Restaurateur",
-            }),
-          );
-          setLoading(false);
-          toast.success("Compte créé avec succès !");
-          navigate({ to: "/auth/choisir-template" });
-          return;
-        }
         setLoading(false);
         toast.error(authError.message);
         return;
       }
     } catch (err) {
-      localStorage.setItem(
-        "restobf_demo_user",
-        JSON.stringify({
-          email: form.email,
-          id: "demo-user-1",
-          name: form.ownerName || "Restaurateur",
-        }),
-      );
+      setLoading(false);
+      toast.error("Erreur lors de la création du compte");
+      return;
     }
 
     setLoading(false);
