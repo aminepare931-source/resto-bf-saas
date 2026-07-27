@@ -35,20 +35,6 @@ function LoginPage() {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
-        // If placeholder Supabase URL or network error, allow seamless demo login
-        if (
-          error.message.includes("Failed to fetch") ||
-          error.message.includes("placeholder") ||
-          !import.meta.env.VITE_SUPABASE_URL
-        ) {
-          toast.success("Connexion réussie (Mode démonstration)");
-          localStorage.setItem(
-            "restobf_demo_user",
-            JSON.stringify({ email, id: "demo-user-1", name: "Restaurateur" }),
-          );
-          navigate({ to: search.redirect ?? "/dashboard" });
-          return;
-        }
         toast.error(
           error.message === "Invalid login credentials"
             ? "Email ou mot de passe incorrect"
@@ -60,13 +46,7 @@ function LoginPage() {
       toast.success("Bienvenue !");
       navigate({ to: search.redirect ?? "/dashboard" });
     } catch (err: any) {
-      // Fallback for unhandled fetch error
-      toast.success("Connexion réussie !");
-      localStorage.setItem(
-        "restobf_demo_user",
-        JSON.stringify({ email, id: "demo-user-1", name: "Restaurateur" }),
-      );
-      navigate({ to: search.redirect ?? "/dashboard" });
+      toast.error("Erreur lors de la connexion");
     } finally {
       setLoading(false);
     }
