@@ -42,23 +42,23 @@ export function useMyRestaurant() {
   const [loading, setLoading] = useState(true);
 
   const refresh = async () => {
-    let userEmail = "aminepare931@gmail.com";
-    let userId = "demo-user-1";
+    let userEmail = "";
+    let userId = "";
     let userMeta: Record<string, any> = {};
 
     try {
       const { data: u } = await supabase.auth.getUser();
       if (u?.user) {
-        userEmail = u.user.email || userEmail;
-        userId = u.user.id || userId;
+        userEmail = u.user.email || "";
+        userId = u.user.id || "";
         userMeta = u.user.user_metadata || {};
       } else {
         const demoStr = localStorage.getItem("restobf_demo_user");
         if (demoStr) {
           try {
             const parsed = JSON.parse(demoStr);
-            userEmail = parsed.email || userEmail;
-            userId = parsed.id || userId;
+            userEmail = parsed.email || "";
+            userId = parsed.id || "";
             userMeta = { owner_name: parsed.name };
           } catch (e) {
             // ignore
@@ -67,6 +67,12 @@ export function useMyRestaurant() {
       }
     } catch (e) {
       // ignore
+    }
+
+    // Si pas d'utilisateur connecté, ne pas continuer
+    if (!userId) {
+      setLoading(false);
+      return;
     }
 
     // Try fetching from Supabase
@@ -84,9 +90,9 @@ export function useMyRestaurant() {
       if (data) {
         const restData = {
           ...data,
-          template: savedTemplate || data.template || "prem-royal",
-        } as MyRestaurant;
-        setRestaurant(restData);
+          template: (savedTemplate || data.template || "prem-royal") as string,
+        };
+        setRestaurant(restData as MyRestaurant);
         localStorage.setItem("restobf_current_restaurant", JSON.stringify(restData));
         setLoading(false);
         return;
