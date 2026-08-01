@@ -17,7 +17,9 @@ import {
 } from "lucide-react";
 
 const PREMIUM_FEU_BG = "/premium-bgs/premium-feu-bg.png";
-const PREMIUM_ORANGE_BG = "/premium-bgs/premium-orange-bg.png";
+const PREMIUM_ROYAL_BG = "/premium-bgs/premium-royal-bg.jpg";
+const PREMIUM_GRILL_BG = "/premium-bgs/premium-grill-bg.jpg";
+const PREMIUM_PASTA_BG = "/premium-bgs/premium-pasta-bg.jpg";
 
 export const Route = createFileRoute("/_authenticated/dashboard/templates")({
   component: DashboardTemplates,
@@ -41,7 +43,7 @@ const templates: Tpl[] = [
     name: "Palais Royal",
     tagline: "Atmosphère prestige, Or & Ébène",
     plan: "premium",
-    vibe: `url(${PREMIUM_ORANGE_BG}) center/cover`,
+    vibe: `url(${PREMIUM_ROYAL_BG}) center/cover`,
     features: ["Bannière prestige", "Réservation VIP", "Carte des vins", "QR Code intégré"],
   },
   {
@@ -49,7 +51,7 @@ const templates: Tpl[] = [
     name: "Aurum Nuit",
     tagline: "Fine dining sombre & luxueux",
     plan: "premium",
-    vibe: "linear-gradient(135deg, #1a1508 0%, #3d2f0a 45%, #0a0a0f 100%)",
+    vibe: `url(${PREMIUM_PASTA_BG}) center/cover`,
     features: ["Carte curatée", "Avis clients", "Galerie HD", "Ambiance feutrée"],
   },
   {
@@ -70,7 +72,7 @@ const templates: Tpl[] = [
     name: "Luxe Grill & Lounge",
     tagline: "Table d'honneur & événements",
     plan: "premium",
-    vibe: "linear-gradient(135deg, #4a1508 0%, #7a2a0f 45%, #1a0a05 100%)",
+    vibe: `url(${PREMIUM_GRILL_BG}) center/cover`,
     features: ["Espace VIP", "Commandes QR", "Traiteur & Fêtes", "Galerie immersive"],
   },
   {

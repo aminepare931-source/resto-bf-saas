@@ -44,9 +44,9 @@ import {
 } from "lucide-react";
 
 const PREMIUM_FEU_BG = "/premium-bgs/premium-feu-bg.png";
-const PREMIUM_GRILL_BG = "/premium-bgs/premium-grill-bg.png";
-const PREMIUM_ORANGE_BG = "/premium-bgs/premium-orange-bg.png";
-const PREMIUM_PASTA_BG = "/premium-bgs/premium-pasta-bg.png";
+const PREMIUM_GRILL_BG = "/premium-bgs/premium-grill-bg.jpg";
+const PREMIUM_ROYAL_BG = "/premium-bgs/premium-royal-bg.jpg";
+const PREMIUM_PASTA_BG = "/premium-bgs/premium-pasta-bg.jpg";
 
 type PremiumKind = "royal" | "nuit" | "feu" | "luxe";
 
@@ -75,7 +75,7 @@ const PREMIUM_CONFIGS: Record<PremiumKind, PremiumConfig> = {
     label: "Le Palais Gourmand",
     title: "L'expérience royale & gastronomie",
     subtitle: "Menus d'exception, grands crus, salons VIP et réservation haute réception.",
-    background: PREMIUM_ORANGE_BG,
+    background: PREMIUM_ROYAL_BG,
     bg: "#09070b",
     surface: "rgba(22, 14, 12, 0.88)",
     surfaceAlt: "rgba(46, 26, 14, 0.82)",

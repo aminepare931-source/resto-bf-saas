@@ -7,9 +7,9 @@ import { renderTemplate } from "@/components/public/templates";
 import { demoData } from "@/components/public/demo-data";
 
 const PREMIUM_FEU_BG = "/premium-bgs/premium-feu-bg.png";
-const PREMIUM_GRILL_BG = "/premium-bgs/premium-grill-bg.png";
-const PREMIUM_ORANGE_BG = "/premium-bgs/premium-orange-bg.png";
-const PREMIUM_PASTA_BG = "/premium-bgs/premium-pasta-bg.png";
+const PREMIUM_GRILL_BG = "/premium-bgs/premium-grill-bg.jpg";
+const PREMIUM_ROYAL_BG = "/premium-bgs/premium-royal-bg.jpg";
+const PREMIUM_PASTA_BG = "/premium-bgs/premium-pasta-bg.jpg";
 
 export const Route = createFileRoute("/auth/choisir-template")({
   ssr: false,
@@ -65,7 +65,7 @@ const templates: Tpl[] = [
     name: "Palais Royal",
     tagline: "Or, QR, cave, événements",
     plan: "premium",
-    vibe: `url(${PREMIUM_ORANGE_BG}) center/cover`,
+    vibe: `url(${PREMIUM_ROYAL_BG}) center/cover`,
   },
   {
     id: "prem-nuit",
