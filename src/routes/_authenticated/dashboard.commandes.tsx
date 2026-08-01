@@ -13,6 +13,8 @@ import {
   ChevronUp,
   Volume2,
   VolumeX,
+  Trash2,
+  X,
 } from "lucide-react";
 import { OrderCardSkeleton } from "@/components/ui/skeleton";
 import type { Order, OrderStatus } from "@/types";
@@ -50,6 +52,9 @@ function OrdersPage() {
   const [paymentModalOrder, setPaymentModalOrder] = useState(null);
   const [voiceMutedState, setVoiceMutedState] = useState(() => isVoiceMuted());
   const [ticketOrder, setTicketOrder] = useState<Order | null>(null);
+  const [selectMode, setSelectMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [deleting, setDeleting] = useState(false);
 
   const printOrder = (o: Order) => {
     setTicketOrder(o);
@@ -139,6 +144,69 @@ function OrdersPage() {
       .eq("id", o.id);
     if (error) toast.error(error.message);
     else toast.success(`Commande #${o.id.slice(0, 8)} → ${ORDER_STATUS_LABEL[status]}`);
+  };
+
+  const deleteOrder = async (o: Order) => {
+    if (
+      !confirm(
+        `Supprimer définitivement la commande #${o.id.slice(0, 8)} (${formatCurrency(Number(o.total))}) ? Cette action est irréversible.`,
+      )
+    )
+      return;
+
+    const { error } = await supabase.from("orders" as never).delete().eq("id", o.id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    setOrders((prev) => prev.filter((ord) => ord.id !== o.id));
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      next.delete(o.id);
+      return next;
+    });
+    toast.success(`Commande #${o.id.slice(0, 8)} supprimée`);
+  };
+
+  const toggleSelected = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const selectAllVisible = () => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      paginatedOrders.forEach((o) => next.add(o.id));
+      return next;
+    });
+  };
+
+  const deleteSelected = async () => {
+    if (selectedIds.size === 0) return;
+    if (
+      !confirm(
+        `Supprimer définitivement ${selectedIds.size} commande${selectedIds.size > 1 ? "s" : ""} ? Cette action est irréversible.`,
+      )
+    )
+      return;
+
+    setDeleting(true);
+    const ids = Array.from(selectedIds);
+    const { error } = await supabase.from("orders" as never).delete().in("id", ids);
+    setDeleting(false);
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    setOrders((prev) => prev.filter((o) => !selectedIds.has(o.id)));
+    toast.success(`${ids.length} commande${ids.length > 1 ? "s" : ""} supprimée${ids.length > 1 ? "s" : ""}`);
+    setSelectedIds(new Set());
+    setSelectMode(false);
   };
 
   const sendToKitchen = async (order: Order) => {
@@ -340,21 +408,43 @@ function OrdersPage() {
       </div>
 
       {/* Tri et résultats */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
         <p className="text-xs text-muted-foreground">
           {filtered.length} commande{filtered.length > 1 ? "s" : ""}
           {debouncedSearch && ` pour "${debouncedSearch}"`}
           {paginatedOrders.length < filtered.length && ` (affichage ${paginatedOrders.length})`}
         </p>
-        <div className="flex gap-1">
-          {(["date", "total", "status"] as SortField[]).map((field) => (
-            <button
-              key={field}
-              onClick={() => toggleSort(field)}
-              className={`flex items-center gap-1 px-2 py-1 rounded text-[10px] font-semibold transition-colors ${
-                sortField === field
-                  ? "text-gold bg-gold/10"
-                  : "text-muted-foreground hover:text-foreground"
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              setSelectMode((v) => !v);
+              if (selectMode) setSelectedIds(new Set());
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
+              selectMode
+                ? "bg-red-500/15 border-red-500/40 text-red-400"
+                : "border-white/10 text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {selectMode ? (
+              <>
+                <X className="w-3.5 h-3.5" /> Annuler
+              </>
+            ) : (
+              <>
+                <Trash2 className="w-3.5 h-3.5" /> Supprimer des commandes
+              </>
+            )}
+          </button>
+          <div className="flex gap-1">
+            {(["date", "total", "status"] as SortField[]).map((field) => (
+              <button
+                key={field}
+                onClick={() => toggleSort(field)}
+                className={`flex items-center gap-1 px-2 py-1 rounded text-[10px] font-semibold transition-colors ${
+                  sortField === field
+                    ? "text-gold bg-gold/10"
+                    : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <ArrowUpDown className="w-3 h-3" />
@@ -367,8 +457,43 @@ function OrdersPage() {
                 ))}
             </button>
           ))}
+          </div>
         </div>
       </div>
+
+      {/* Barre d'action groupée (mode sélection) */}
+      {selectMode && (
+        <div className="flex items-center justify-between gap-3 mb-3 p-3 rounded-xl border border-red-500/30 bg-red-500/10 flex-wrap">
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold text-foreground">
+              {selectedIds.size} commande{selectedIds.size > 1 ? "s" : ""} sélectionnée
+              {selectedIds.size > 1 ? "s" : ""}
+            </span>
+            <button
+              onClick={selectAllVisible}
+              className="text-xs font-bold text-[#f0d48a] hover:underline"
+            >
+              Tout sélectionner ({paginatedOrders.length})
+            </button>
+            {selectedIds.size > 0 && (
+              <button
+                onClick={() => setSelectedIds(new Set())}
+                className="text-xs font-bold text-muted-foreground hover:text-foreground"
+              >
+                Désélectionner
+              </button>
+            )}
+          </div>
+          <button
+            onClick={deleteSelected}
+            disabled={selectedIds.size === 0 || deleting}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-red-500 text-white text-xs font-bold hover:bg-red-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            {deleting ? "Suppression..." : `Supprimer (${selectedIds.size})`}
+          </button>
+        </div>
+      )}
 
       {/* Liste des commandes */}
       <div className="space-y-3">
@@ -392,10 +517,23 @@ function OrdersPage() {
             return (
               <article
                 key={o.id}
-                className="p-5 rounded-2xl border border-white/8 bg-dark-card transition-all hover:border-white/15"
+                className={`p-5 rounded-2xl border transition-all ${
+                  selectMode && selectedIds.has(o.id)
+                    ? "border-red-500/50 bg-red-500/5"
+                    : "border-white/8 bg-dark-card hover:border-white/15"
+                }`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 flex items-start gap-3">
+                    {selectMode && (
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.has(o.id)}
+                        onChange={() => toggleSelected(o.id)}
+                        className="mt-1 w-4 h-4 shrink-0 accent-red-500 cursor-pointer"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <strong className="text-base">
                         {o.table_number ? `🪑 Table ${o.table_number}` : "🛍️ À emporter"}
@@ -414,6 +552,7 @@ function OrdersPage() {
                       {o.customer_name && ` · ${o.customer_name}`}
                       {o.customer_phone && ` · ${o.customer_phone}`}
                     </p>
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <strong className="text-xl text-gold">{formatCurrency(Number(o.total))}</strong>
@@ -501,6 +640,13 @@ function OrdersPage() {
                     className="px-4 py-2 rounded-lg border border-white/10 text-muted-foreground font-bold text-xs hover:text-gold hover:border-gold/30 transition-colors flex items-center gap-1.5"
                   >
                     🖨️ Imprimer le ticket
+                  </button>
+                  <button
+                    onClick={() => deleteOrder(o)}
+                    className="px-4 py-2 rounded-lg border border-red-500/20 text-red-400/80 font-bold text-xs hover:bg-red-500/10 hover:border-red-500/40 hover:text-red-400 transition-colors flex items-center gap-1.5"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    Supprimer
                   </button>
                 </div>
               </article>
