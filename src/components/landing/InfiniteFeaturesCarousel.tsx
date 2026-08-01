@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   QrCode,
   MessageSquare,
@@ -82,14 +83,20 @@ export const featuresList = [
 
 export function InfiniteFeaturesCarousel() {
   const [isPaused, setIsPaused] = useState(false);
+  const isMobile = useIsMobile();
+  const cardClass = isMobile
+    ? "w-[280px] sm:w-[340px] p-6 rounded-2xl border border-border/80 bg-[#111118] transition-colors duration-300 relative overflow-hidden"
+    : "w-[280px] sm:w-[340px] p-6 rounded-2xl border border-border/80 bg-[#111118]/90 backdrop-blur-xl hover:border-[#d4a853]/60 transition-all duration-300 hover:shadow-[0_10px_30px_rgba(212,168,83,0.25)] hover:-translate-y-1 group relative overflow-hidden";
 
   // Repeat items for seamless 360 continuous infinite scrolling marquee loop
   const marqueeItems = [...featuresList, ...featuresList, ...featuresList];
 
   return (
     <div className="relative w-full py-10 overflow-hidden">
-      {/* Glow Auroras background */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-64 bg-[#d4a853]/10 blur-[100px] pointer-events-none rounded-full" />
+      {/* Glow Auroras background — supprimé sur mobile (coûteux avec le flou) */}
+      {!isMobile && (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-64 bg-[#d4a853]/10 blur-[100px] pointer-events-none rounded-full" />
+      )}
 
       {/* Fade Gradients on edges for smooth blend */}
       <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-background via-background/80 to-transparent z-20 pointer-events-none" />
@@ -107,7 +114,7 @@ export function InfiniteFeaturesCarousel() {
             x: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: 35,
+              duration: isMobile ? 55 : 35,
               ease: "linear",
             },
           }}
@@ -116,15 +123,14 @@ export function InfiniteFeaturesCarousel() {
           {marqueeItems.map((item, idx) => {
             const Icon = item.icon;
             return (
-              <div
-                key={`row1-${idx}`}
-                className="w-[280px] sm:w-[340px] p-6 rounded-2xl border border-border/80 bg-[#111118]/90 backdrop-blur-xl hover:border-[#d4a853]/60 transition-all duration-300 hover:shadow-[0_10px_30px_rgba(212,168,83,0.25)] hover:-translate-y-1 group relative overflow-hidden"
-              >
-                {/* Glowing subtle hover accent */}
-                <div
-                  className="absolute top-0 right-0 w-24 h-24 blur-2xl opacity-10 group-hover:opacity-30 transition-opacity pointer-events-none rounded-full"
-                  style={{ backgroundColor: item.color }}
-                />
+              <div key={`row1-${idx}`} className={cardClass}>
+                {/* Glowing subtle hover accent — désactivé sur mobile */}
+                {!isMobile && (
+                  <div
+                    className="absolute top-0 right-0 w-24 h-24 blur-2xl opacity-10 group-hover:opacity-30 transition-opacity pointer-events-none rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  />
+                )}
 
                 <div className="flex items-center justify-between mb-4">
                   <div
@@ -161,7 +167,7 @@ export function InfiniteFeaturesCarousel() {
             x: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: 40,
+              duration: isMobile ? 60 : 40,
               ease: "linear",
             },
           }}
@@ -170,14 +176,13 @@ export function InfiniteFeaturesCarousel() {
           {marqueeItems.map((item, idx) => {
             const Icon = item.icon;
             return (
-              <div
-                key={`row2-${idx}`}
-                className="w-[280px] sm:w-[340px] p-6 rounded-2xl border border-border/80 bg-[#111118]/90 backdrop-blur-xl hover:border-[#d4a853]/60 transition-all duration-300 hover:shadow-[0_10px_30px_rgba(212,168,83,0.25)] hover:-translate-y-1 group relative overflow-hidden"
-              >
-                <div
-                  className="absolute top-0 right-0 w-24 h-24 blur-2xl opacity-10 group-hover:opacity-30 transition-opacity pointer-events-none rounded-full"
-                  style={{ backgroundColor: item.color }}
-                />
+              <div key={`row2-${idx}`} className={cardClass}>
+                {!isMobile && (
+                  <div
+                    className="absolute top-0 right-0 w-24 h-24 blur-2xl opacity-10 group-hover:opacity-30 transition-opacity pointer-events-none rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  />
+                )}
 
                 <div className="flex items-center justify-between mb-4">
                   <div

@@ -52,18 +52,6 @@ export function useMyRestaurant() {
         userEmail = u.user.email || "";
         userId = u.user.id || "";
         userMeta = u.user.user_metadata || {};
-      } else {
-        const demoStr = localStorage.getItem("restobf_demo_user");
-        if (demoStr) {
-          try {
-            const parsed = JSON.parse(demoStr);
-            userEmail = parsed.email || "";
-            userId = parsed.id || "";
-            userMeta = { owner_name: parsed.name };
-          } catch (e) {
-            // ignore
-          }
-        }
       }
     } catch (e) {
       // ignore

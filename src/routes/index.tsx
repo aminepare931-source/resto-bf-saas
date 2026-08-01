@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { Topbar } from "@/components/landing/Topbar";
 import { Footer } from "@/components/landing/Footer";
 import { Particles } from "@/components/landing/Particles";
@@ -10,6 +10,8 @@ import { InfiniteFeaturesCarousel } from "@/components/landing/InfiniteFeaturesC
 import { PricingSection } from "@/components/landing/PricingSection";
 import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useSpring, useTransform, AnimatePresence } from "motion/react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { supabase } from "@/integrations/supabase/client";
 import {
   X,
   CheckCircle2,
@@ -75,6 +77,20 @@ function AnimatedStat({ value }: { value: string }) {
 }
 
 export const Route = createFileRoute("/")({
+  ssr: false,
+  beforeLoad: async () => {
+    if (typeof window === "undefined") return;
+    let hasSession = false;
+    try {
+      const { data, error } = await supabase.auth.getUser();
+      hasSession = !error && !!data?.user;
+    } catch (err) {
+      // Pas de session valide, on affiche la page d'accueil normalement
+    }
+    if (hasSession) {
+      throw redirect({ to: "/dashboard" });
+    }
+  },
   head: () => ({
     meta: [
       { title: "Resto BF — SaaS pour restaurants au Burkina Faso" },
@@ -259,26 +275,27 @@ function ScrollProgressBar() {
   );
 }
 
-function ParallaxAurora() {
+function ParallaxAurora({ isMobile }: { isMobile: boolean }) {
   const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 2000], [0, 250]);
-  const y2 = useTransform(scrollY, [0, 2000], [0, -200]);
+  const y1 = useTransform(scrollY, [0, 2000], [0, isMobile ? 0 : 250]);
+  const y2 = useTransform(scrollY, [0, 2000], [0, isMobile ? 0 : -200]);
 
+  // Sur mobile : pas de parallax lié au scroll (coûteux) et flou très réduit
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none" aria-hidden="true">
       <motion.div
-        style={{ y: y1 }}
-        className="absolute -top-[15%] -left-[10%] w-[650px] h-[650px] rounded-full blur-[100px] opacity-35"
         style={{
+          y: isMobile ? 0 : y1,
           background: "radial-gradient(circle, rgba(212,168,83,0.4) 0%, transparent 70%)",
         }}
+        className={`absolute -top-[15%] -left-[10%] w-[650px] h-[650px] rounded-full opacity-35 ${isMobile ? "blur-2xl" : "blur-[100px]"}`}
       />
       <motion.div
-        style={{ y: y2 }}
-        className="absolute top-[35%] -right-[15%] w-[700px] h-[700px] rounded-full blur-[120px] opacity-30"
         style={{
+          y: isMobile ? 0 : y2,
           background: "radial-gradient(circle, rgba(240,212,138,0.3) 0%, transparent 70%)",
         }}
+        className={`absolute top-[35%] -right-[15%] w-[700px] h-[700px] rounded-full opacity-30 ${isMobile ? "blur-2xl" : "blur-[120px]"}`}
       />
       <div className="absolute inset-0 grid-bg opacity-30" />
     </div>
@@ -288,12 +305,13 @@ function ParallaxAurora() {
 function LandingPage() {
   const [selectedPlan, setSelectedPlan] = useState<(typeof plans)[0] | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const isMobile = useIsMobile();
 
   return (
     <div className="relative min-h-screen text-foreground selection:bg-[#d4a853]/30 selection:text-white overflow-x-hidden">
       <ScrollProgressBar />
-      <ParallaxAurora />
-      <Particles count={10} />
+      <ParallaxAurora isMobile={isMobile} />
+      <Particles count={isMobile ? 3 : 10} />
 
       <Topbar />
 
@@ -331,7 +349,13 @@ function LandingPage() {
                 <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#d4a853] via-[#f0d48a] to-[#b08800] rounded-l-2xl" />
                 <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-[#d4a853]/15 blur-2xl rounded-full pointer-events-none group-hover:scale-125 transition-transform" />
 
-                <p className="text-base sm:text-lg text-foreground/90 leading-relaxed font-medium pl-2">
+                <p className="text-base sm:text-lg text-foreground/90 leading-relaxed font-medium pl-2 sm:hidden">
+                  <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#d4a853] via-[#f0d48a] to-[#b08800]">
+                    RestoBF
+                  </span>{" "}
+                  modernise et fait grandir votre maquis ou restaurant au Burkina Faso.
+                </p>
+                <p className="hidden sm:block text-base sm:text-lg text-foreground/90 leading-relaxed font-medium pl-2">
                   <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#d4a853] via-[#f0d48a] to-[#b08800]">
                     RestoBF
                   </span>{" "}

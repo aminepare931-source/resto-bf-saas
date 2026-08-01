@@ -1,5 +1,6 @@
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import React, { useRef } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Motion3DTiltCardProps {
   children: React.ReactNode;
@@ -19,6 +20,7 @@ export function Motion3DTiltCard({
   delay = 0,
 }: Motion3DTiltCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -52,6 +54,22 @@ export function Motion3DTiltCard({
     x.set(0);
     y.set(0);
   };
+
+  if (isMobile) {
+    // Sur mobile : pas de tilt 3D (perspective/preserve-3d) ni de backdrop-blur permanent,
+    // juste une apparition simple au scroll — beaucoup plus léger à faire défiler.
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.4, delay: Math.min(delay, 0.2) }}
+        className={`relative rounded-xl border border-border bg-[#111118] overflow-hidden ${className}`}
+      >
+        <div className="relative z-20 h-full">{children}</div>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div

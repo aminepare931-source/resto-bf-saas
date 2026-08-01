@@ -42,7 +42,6 @@ function LoginPage() {
         );
         return;
       }
-      localStorage.removeItem("restobf_demo_user");
       toast.success("Bienvenue !");
       navigate({ to: search.redirect ?? "/dashboard" });
     } catch (err: any) {
