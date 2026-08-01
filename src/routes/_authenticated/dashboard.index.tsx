@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyRestaurant } from "@/hooks/use-my-restaurant";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { SubscribeContactModal } from "@/components/SubscribeContactModal";
 import { toast } from "sonner";
 import {
@@ -62,6 +63,7 @@ type RecentReview = {
 
 export function DashboardHome() {
   const { restaurant: r, refresh } = useMyRestaurant();
+  const isMobile = useIsMobile();
   const [counts, setCounts] = useState({
     menu: 18,
     resa: 6,
@@ -218,16 +220,16 @@ export function DashboardHome() {
   return (
     <div className="max-w-7xl mx-auto space-y-8 pb-12">
       {/* HEADER WITH SALUTATION & ACTION BUTTONS */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl border border-[#d4a853]/30 bg-gradient-to-r from-[#111118] via-[#111118] to-[#1a160d] shadow-2xl relative overflow-hidden">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 sm:p-8 rounded-3xl border border-[#d4a853]/30 bg-gradient-to-r from-[#111118] via-[#111118] to-[#1a160d] shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-[#d4a853]/10 blur-3xl pointer-events-none rounded-full" />
 
         <div className="space-y-2 relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d4a853]/15 border border-[#d4a853]/30 text-xs font-bold text-[#f0d48a]">
+          <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d4a853]/15 border border-[#d4a853]/30 text-xs font-bold text-[#f0d48a]">
             <Sparkles className="w-3.5 h-3.5 text-[#d4a853]" />
             <span>Panneau de Contrôle Officiel RestoBF</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">
+          <h1 className="text-2xl sm:text-4xl font-black text-foreground tracking-tight">
             Bienvenue,{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4a853] via-[#f0d48a] to-[#ffffff]">
               {r?.name ?? "Votre Restaurant"}
@@ -236,12 +238,8 @@ export function DashboardHome() {
           </h1>
 
           <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
-            <span>{r?.city || "Ouagadougou"}</span>
-            <span>•</span>
-            <span className="text-[#f0d48a] font-semibold">
-              {r?.cuisine || "Maquis & Grillades"}
-            </span>
-            <span>•</span>
+            <span className="hidden sm:inline">{r?.city || "Ouagadougou"}</span>
+            <span className="hidden sm:inline">•</span>
             <span className="text-emerald-400 font-bold inline-flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               Système En Ligne
@@ -254,7 +252,7 @@ export function DashboardHome() {
           {publicUrl && (
             <button
               onClick={handleCopyUrl}
-              className="px-3.5 py-2.5 rounded-xl border border-white/10 bg-[#0a0a0f] text-xs font-extrabold text-foreground hover:border-[#d4a853]/50 transition-all flex items-center gap-2 shadow-md cursor-pointer"
+              className="hidden sm:flex px-3.5 py-2.5 rounded-xl border border-white/10 bg-[#0a0a0f] text-xs font-extrabold text-foreground hover:border-[#d4a853]/50 transition-all items-center gap-2 shadow-md cursor-pointer"
             >
               {copied ? (
                 <Check className="w-4 h-4 text-emerald-400" />
@@ -282,21 +280,19 @@ export function DashboardHome() {
 
       {/* SUBSCRIPTION STATUS BANNER */}
       {(status === "trial" || !status) && (
-        <div className="p-5 rounded-2xl border border-[#d4a853]/40 bg-gradient-to-r from-[#d4a853]/15 via-[#111118] to-[#111118] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+        <div className="p-4 sm:p-5 rounded-2xl border border-[#d4a853]/40 bg-gradient-to-r from-[#d4a853]/15 via-[#111118] to-[#111118] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
           <div className="flex items-center gap-3 text-center sm:text-left">
             <div className="w-10 h-10 rounded-xl bg-[#d4a853]/20 border border-[#d4a853]/40 text-[#f0d48a] flex items-center justify-center shrink-0">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
               <p className="text-xs uppercase tracking-widest text-[#f0d48a] font-black">
-                🎁 Période d'essai VIP Active
+                🎁 Essai VIP Actif
               </p>
               <strong className="block text-sm text-foreground">
-                {daysLeft > 0
-                  ? `Il vous reste ${daysLeft} jours d'essai gratuit complet`
-                  : "Votre essai gratuit est arrivé à terme"}
+                {daysLeft > 0 ? `${daysLeft} jours d'essai gratuit restants` : "Essai gratuit terminé"}
               </strong>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="hidden sm:block text-xs text-muted-foreground mt-0.5">
                 Profitez de 0% de commission sur vos commandes WhatsApp & Mobile Money.
               </p>
             </div>
@@ -414,100 +410,112 @@ export function DashboardHome() {
       </div>
 
       {/* QUICK SHORTCUTS TOOLBAR */}
-      <div className="p-6 rounded-3xl border border-white/10 bg-[#111118]/90 backdrop-blur-2xl shadow-xl space-y-4">
-        <h3 className="text-sm font-extrabold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+      <div className="p-4 sm:p-6 rounded-3xl border border-white/10 bg-[#111118]/90 backdrop-blur-2xl shadow-xl space-y-3 sm:space-y-4">
+        <h3 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
           <ZapIcon className="w-4 h-4 text-[#d4a853]" />
-          <span>Raccourcis d'action rapide</span>
+          <span>Raccourcis</span>
         </h3>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
           <Link
             to="/dashboard/menu"
-            className="p-3.5 rounded-2xl border border-white/10 bg-[#0a0a0f] hover:border-[#d4a853]/50 hover:bg-[#1a1a24] transition-all text-left flex flex-col items-start gap-2 group"
+            className="p-2.5 sm:p-3.5 rounded-2xl border border-white/10 bg-[#0a0a0f] hover:border-[#d4a853]/50 hover:bg-[#1a1a24] transition-all flex flex-col items-center sm:items-start gap-1.5 sm:gap-2 group text-center sm:text-left"
           >
             <div className="w-8 h-8 rounded-xl bg-[#d4a853]/15 text-[#f0d48a] flex items-center justify-center group-hover:scale-110 transition-transform">
               <Plus className="w-4 h-4" />
             </div>
             <div>
-              <strong className="block text-xs text-foreground group-hover:text-[#f0d48a] transition-colors">
+              <strong className="block text-[11px] sm:text-xs text-foreground group-hover:text-[#f0d48a] transition-colors">
                 Ajouter un Plat
               </strong>
-              <span className="text-[10px] text-muted-foreground">Créer une entrée/plat</span>
+              <span className="hidden sm:block text-[10px] text-muted-foreground">
+                Créer une entrée/plat
+              </span>
             </div>
           </Link>
 
           <Link
             to="/dashboard/commandes"
-            className="p-3.5 rounded-2xl border border-white/10 bg-[#0a0a0f] hover:border-[#d4a853]/50 hover:bg-[#1a1a24] transition-all text-left flex flex-col items-start gap-2 group"
+            className="p-2.5 sm:p-3.5 rounded-2xl border border-white/10 bg-[#0a0a0f] hover:border-[#d4a853]/50 hover:bg-[#1a1a24] transition-all flex flex-col items-center sm:items-start gap-1.5 sm:gap-2 group text-center sm:text-left"
           >
             <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
               <ShoppingBag className="w-4 h-4" />
             </div>
             <div>
-              <strong className="block text-xs text-foreground group-hover:text-emerald-400 transition-colors">
-                Bons de Commande
+              <strong className="block text-[11px] sm:text-xs text-foreground group-hover:text-emerald-400 transition-colors">
+                Commandes
               </strong>
-              <span className="text-[10px] text-muted-foreground">Suivi des encaissements</span>
+              <span className="hidden sm:block text-[10px] text-muted-foreground">
+                Suivi des encaissements
+              </span>
             </div>
           </Link>
 
           <Link
             to="/dashboard/cuisine"
-            className="p-3.5 rounded-2xl border border-white/10 bg-[#0a0a0f] hover:border-[#d4a853]/50 hover:bg-[#1a1a24] transition-all text-left flex flex-col items-start gap-2 group"
+            className="p-2.5 sm:p-3.5 rounded-2xl border border-white/10 bg-[#0a0a0f] hover:border-[#d4a853]/50 hover:bg-[#1a1a24] transition-all flex flex-col items-center sm:items-start gap-1.5 sm:gap-2 group text-center sm:text-left"
           >
             <div className="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
               <ChefHat className="w-4 h-4" />
             </div>
             <div>
-              <strong className="block text-xs text-foreground group-hover:text-amber-400 transition-colors">
-                Écran Cuisine KDS
+              <strong className="block text-[11px] sm:text-xs text-foreground group-hover:text-amber-400 transition-colors">
+                Cuisine
               </strong>
-              <span className="text-[10px] text-muted-foreground">Préparation en direct</span>
+              <span className="hidden sm:block text-[10px] text-muted-foreground">
+                Préparation en direct
+              </span>
             </div>
           </Link>
 
           <Link
             to="/dashboard/qr-code"
-            className="p-3.5 rounded-2xl border border-white/10 bg-[#0a0a0f] hover:border-[#d4a853]/50 hover:bg-[#1a1a24] transition-all text-left flex flex-col items-start gap-2 group"
+            className="p-2.5 sm:p-3.5 rounded-2xl border border-white/10 bg-[#0a0a0f] hover:border-[#d4a853]/50 hover:bg-[#1a1a24] transition-all flex flex-col items-center sm:items-start gap-1.5 sm:gap-2 group text-center sm:text-left"
           >
             <div className="w-8 h-8 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center group-hover:scale-110 transition-transform">
               <QrCode className="w-4 h-4" />
             </div>
             <div>
-              <strong className="block text-xs text-foreground group-hover:text-purple-400 transition-colors">
-                QR Code Tables
+              <strong className="block text-[11px] sm:text-xs text-foreground group-hover:text-purple-400 transition-colors">
+                QR Code
               </strong>
-              <span className="text-[10px] text-muted-foreground">Télécharger HD</span>
+              <span className="hidden sm:block text-[10px] text-muted-foreground">
+                Télécharger HD
+              </span>
             </div>
           </Link>
 
           <Link
             to="/dashboard/messaging"
-            className="p-3.5 rounded-2xl border border-white/10 bg-[#0a0a0f] hover:border-[#d4a853]/50 hover:bg-[#1a1a24] transition-all text-left flex flex-col items-start gap-2 group"
+            className="p-2.5 sm:p-3.5 rounded-2xl border border-white/10 bg-[#0a0a0f] hover:border-[#d4a853]/50 hover:bg-[#1a1a24] transition-all flex flex-col items-center sm:items-start gap-1.5 sm:gap-2 group text-center sm:text-left"
           >
             <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Smartphone className="w-4 h-4" />
             </div>
             <div>
-              <strong className="block text-xs text-foreground group-hover:text-emerald-400 transition-colors">
-                WhatsApp Direct
+              <strong className="block text-[11px] sm:text-xs text-foreground group-hover:text-emerald-400 transition-colors">
+                WhatsApp
               </strong>
-              <span className="text-[10px] text-muted-foreground">Messages clients</span>
+              <span className="hidden sm:block text-[10px] text-muted-foreground">
+                Messages clients
+              </span>
             </div>
           </Link>
 
           <button
             onClick={handleShareWhatsapp}
-            className="p-3.5 rounded-2xl border border-white/10 bg-[#0a0a0f] hover:border-[#d4a853]/50 hover:bg-[#1a1a24] transition-all text-left flex flex-col items-start gap-2 group cursor-pointer"
+            className="p-2.5 sm:p-3.5 rounded-2xl border border-white/10 bg-[#0a0a0f] hover:border-[#d4a853]/50 hover:bg-[#1a1a24] transition-all flex flex-col items-center sm:items-start gap-1.5 sm:gap-2 group cursor-pointer text-center sm:text-left"
           >
             <div className="w-8 h-8 rounded-xl bg-[#d4a853]/15 text-[#f0d48a] flex items-center justify-center group-hover:scale-110 transition-transform">
               <Share2 className="w-4 h-4" />
             </div>
             <div>
-              <strong className="block text-xs text-foreground group-hover:text-[#f0d48a] transition-colors">
-                Partager Menu
+              <strong className="block text-[11px] sm:text-xs text-foreground group-hover:text-[#f0d48a] transition-colors">
+                Partager
               </strong>
-              <span className="text-[10px] text-muted-foreground">Envoyer sur WhatsApp</span>
+              <span className="hidden sm:block text-[10px] text-muted-foreground">
+                Envoyer sur WhatsApp
+              </span>
             </div>
           </button>
         </div>
@@ -540,10 +548,10 @@ export function DashboardHome() {
 
             {/* ORDERS STREAM */}
             <div className="space-y-3">
-              {recentOrders.map((ord) => (
+              {(isMobile ? recentOrders.slice(0, 2) : recentOrders).map((ord) => (
                 <div
                   key={ord.id}
-                  className="p-4 rounded-2xl border border-white/10 bg-[#0a0a0f] hover:border-[#d4a853]/30 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                  className="p-3.5 sm:p-4 rounded-2xl border border-white/10 bg-[#0a0a0f] hover:border-[#d4a853]/30 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4"
                 >
                   <div className="space-y-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -551,13 +559,13 @@ export function DashboardHome() {
                         {ord.id}
                       </span>
                       <span className="text-xs font-bold text-foreground">{ord.customer_name}</span>
-                      <span className="px-2 py-0.5 rounded-full bg-white/10 text-[10px] text-muted-foreground font-semibold">
+                      <span className="hidden sm:inline px-2 py-0.5 rounded-full bg-white/10 text-[10px] text-muted-foreground font-semibold">
                         {ord.table_or_delivery}
                       </span>
                       <span className="text-[10px] text-muted-foreground">{ord.created_at}</span>
                     </div>
 
-                    <p className="text-xs text-muted-foreground truncate max-w-md">
+                    <p className="hidden sm:block text-xs text-muted-foreground truncate max-w-md">
                       {ord.items_summary}
                     </p>
 
@@ -565,7 +573,7 @@ export function DashboardHome() {
                       <span className="text-xs font-black text-emerald-400">
                         {ord.total_amount.toLocaleString("fr-FR")} FCFA
                       </span>
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20">
+                      <span className="hidden sm:inline text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20">
                         {ord.payment_method === "orange_money"
                           ? "Orange Money"
                           : ord.payment_method === "moov_money"
@@ -605,8 +613,21 @@ export function DashboardHome() {
             </div>
           </div>
 
-          {/* RECENT REVIEWS STREAM */}
-          <div className="p-6 rounded-3xl border border-white/10 bg-[#111118]/90 backdrop-blur-2xl shadow-xl space-y-4">
+          {/* RECENT REVIEWS STREAM — masqué sur mobile pour réduire la page, lien direct à la place */}
+          <Link
+            to="/dashboard/avis"
+            className="sm:hidden flex items-center justify-between p-4 rounded-2xl border border-white/10 bg-[#111118]/90 shadow-xl"
+          >
+            <span className="text-sm font-bold text-foreground flex items-center gap-2">
+              <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+              Avis Clients
+            </span>
+            <span className="text-xs text-[#f0d48a] font-bold flex items-center gap-1">
+              Voir tout <ChevronRight className="w-3.5 h-3.5" />
+            </span>
+          </Link>
+
+          <div className="hidden sm:block p-6 rounded-3xl border border-white/10 bg-[#111118]/90 backdrop-blur-2xl shadow-xl space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-base font-black text-foreground flex items-center gap-2">
                 <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
@@ -649,7 +670,7 @@ export function DashboardHome() {
         {/* RIGHT COLUMN: RESTAURANT PROFILE & QR PREVIEW (4 COLS) */}
         <div className="lg:col-span-4 space-y-6">
           {/* PROFILE SUMMARY CARD */}
-          <div className="p-6 rounded-3xl border border-[#d4a853]/30 bg-[#111118]/90 backdrop-blur-2xl shadow-xl space-y-4">
+          <div className="p-5 sm:p-6 rounded-3xl border border-[#d4a853]/30 bg-[#111118]/90 backdrop-blur-2xl shadow-xl space-y-4">
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <h3 className="text-sm font-black uppercase tracking-wider text-[#f0d48a]">
                 Votre Fiche Établissement
@@ -662,7 +683,7 @@ export function DashboardHome() {
               </Link>
             </div>
 
-            <div className="space-y-3 text-xs">
+            <div className="hidden sm:block space-y-3 text-xs">
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Nom :</span>
                 <strong className="text-foreground font-bold">{r?.name}</strong>
@@ -687,6 +708,12 @@ export function DashboardHome() {
               </div>
             </div>
 
+            {/* Version mobile : juste le nom et la ville */}
+            <div className="sm:hidden text-xs">
+              <strong className="text-foreground font-bold block">{r?.name}</strong>
+              <span className="text-muted-foreground">{r?.city}</span>
+            </div>
+
             <div className="pt-2">
               <Link
                 to="/auth/choisir-template"
@@ -698,18 +725,18 @@ export function DashboardHome() {
           </div>
 
           {/* QR CODE BOX */}
-          <div className="p-6 rounded-3xl border border-[#d4a853]/30 bg-gradient-to-br from-[#111118] via-[#111118] to-[#1a160d] shadow-xl text-center space-y-4">
+          <div className="p-5 sm:p-6 rounded-3xl border border-[#d4a853]/30 bg-gradient-to-br from-[#111118] via-[#111118] to-[#1a160d] shadow-xl text-center space-y-3 sm:space-y-4">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#d4a853]/15 border border-[#d4a853]/30 text-[11px] font-bold text-[#f0d48a]">
               <QrCode className="w-3.5 h-3.5 text-[#d4a853]" />
               <span>QR Code Prêt à l'Emploi</span>
             </div>
 
-            <p className="text-xs text-muted-foreground">
+            <p className="hidden sm:block text-xs text-muted-foreground">
               Affichez ce QR Code sur vos tables pour permettre à vos clients de commander
               instantanément.
             </p>
 
-            <div className="p-4 bg-white rounded-2xl max-w-[180px] mx-auto shadow-2xl border border-[#d4a853]/40">
+            <div className="p-4 bg-white rounded-2xl max-w-[160px] sm:max-w-[180px] mx-auto shadow-2xl border border-[#d4a853]/40">
               <img
                 src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
                   publicUrl || "https://restobf.com",
@@ -730,8 +757,21 @@ export function DashboardHome() {
             </div>
           </div>
 
-          {/* SUPPORT VIP BOX */}
-          <div className="p-5 rounded-3xl border border-emerald-500/30 bg-emerald-950/20 space-y-3">
+          {/* SUPPORT VIP BOX — condensé sur mobile */}
+          <a
+            href="https://wa.me/22655300868?text=Bonjour%20Support%20RestoBF%2C%20j'ai%20besoin%20d'assistance"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="sm:hidden flex items-center justify-between p-4 rounded-2xl border border-emerald-500/30 bg-emerald-950/20"
+          >
+            <span className="text-xs font-bold text-foreground flex items-center gap-2">
+              <PhoneCall className="w-4 h-4 text-emerald-400" />
+              Support WhatsApp 7j/7
+            </span>
+            <Smartphone className="w-4 h-4 text-emerald-400" />
+          </a>
+
+          <div className="hidden sm:block p-5 rounded-3xl border border-emerald-500/30 bg-emerald-950/20 space-y-3">
             <div className="flex items-center gap-2">
               <PhoneCall className="w-4 h-4 text-emerald-400" />
               <strong className="text-xs font-extrabold text-foreground">
