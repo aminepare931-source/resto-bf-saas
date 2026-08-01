@@ -215,6 +215,7 @@ function PublicRestaurantPage() {
           phone: prev?.phone || "+226 70 00 00 00",
           whatsapp: prev?.whatsapp || "22670000000",
           email: prev?.email || "contact@restobf.com",
+          logo_url: prev?.logo_url ?? null,
           plan: "premium",
           template: activeTpl,
         }));

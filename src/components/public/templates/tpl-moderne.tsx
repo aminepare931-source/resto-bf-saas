@@ -6,7 +6,6 @@ import {
   ReviewList,
   AdvancedReservationForm,
   ReviewForm,
-  SectionHead,
   FloatingWhatsApp,
   CoverPlaceholder,
   DishModal,

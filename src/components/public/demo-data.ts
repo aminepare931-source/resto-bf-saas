@@ -18,6 +18,7 @@ const restaurant: PublicRestaurant = {
   phone: "+226 70 12 34 56",
   whatsapp: "22670123456",
   email: "contact@baobab-dore.bf",
+  logo_url: null,
   plan: "premium",
   template: null,
 };

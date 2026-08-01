@@ -565,7 +565,7 @@ export function StandardMobileBar({
   onOpenCart?: () => void;
 }) {
   const cart = useCart();
-  const totalCount = cart?.totalCount ?? 0;
+  const totalCount = cart?.count ?? 0;
 
   return (
     <div className="md:hidden fixed bottom-4 inset-x-4 z-[90] flex items-center justify-around py-2.5 px-4 rounded-2xl shadow-xl backdrop-blur-xl border"

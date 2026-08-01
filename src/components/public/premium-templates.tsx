@@ -1187,12 +1187,6 @@ function PremiumRestaurantTemplate({
           <Calendar className="w-4 h-4" />
           <span>Réserver</span>
         </a>
-        {cart && cart.items.length > 0 && (
-          <button onClick={() => cart.setOpen(true)} className="premium-mob-btn cart-badge">
-            <span className="count">{cart.items.reduce((s, i) => s + i.quantity, 0)}</span>
-            <span>Panier</span>
-          </button>
-        )}
         {waHref && (
           <a href={waHref} target="_blank" rel="noopener noreferrer" className="premium-mob-btn wa">
             <MessageSquare className="w-4 h-4 text-emerald-400" />
