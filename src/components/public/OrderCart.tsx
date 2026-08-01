@@ -223,7 +223,7 @@ export function OrderCartFab({
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-5 left-5 z-50 px-5 py-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold text-sm shadow-2xl hover:scale-105 transition"
+        className="fixed bottom-24 sm:bottom-5 left-5 z-40 px-5 py-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold text-sm shadow-2xl hover:scale-105 transition"
       >
         {done && lastOrderId ? (
           <>📦 Ma commande · {STATUS_LABELS[orderStatus]?.split(" ")[0] ?? "🆕"}</>
