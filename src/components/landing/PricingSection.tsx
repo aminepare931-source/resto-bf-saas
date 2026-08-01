@@ -102,12 +102,12 @@ export function PricingSection() {
   return (
     <section
       id="tarifs"
-      className="py-24 px-4 sm:px-6 bg-[#0a0a0f]/90 border-y border border-[#d4a853]/20 relative overflow-hidden"
+      className="py-12 sm:py-24 px-4 sm:px-6 bg-[#0a0a0f]/90 border-y border border-[#d4a853]/20 relative overflow-hidden"
     >
       {/* Background Radial Glow */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#d4a853]/10 blur-[130px] rounded-full pointer-events-none -z-10" />
 
-      <div className="max-w-6xl mx-auto text-center mb-12 space-y-4">
+      <div className="max-w-6xl mx-auto text-center mb-8 sm:mb-12 space-y-4">
         <span className="px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-[#d4a853]/15 text-[#f0d48a] border border-[#d4a853]/30 shadow-sm inline-flex items-center gap-1.5">
           <Sparkles className="w-3.5 h-3.5 text-[#d4a853]" />
           <span>Abonnements Transparents — 0% Commission</span>
@@ -159,7 +159,7 @@ export function PricingSection() {
       </div>
 
       {/* Pricing Cards Grid */}
-      <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8 items-stretch mb-16">
+      <div className="max-w-6xl mx-auto flex md:grid md:grid-cols-3 gap-5 md:gap-8 items-stretch mb-10 sm:mb-16 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none px-4 -mx-4 md:px-0 md:mx-auto [&::-webkit-scrollbar]:hidden">
         {plans.map((p, i) => {
           const displayPrice = billingCycle === "monthly" ? p.monthlyPrice : p.yearlyPrice;
 
@@ -171,7 +171,7 @@ export function PricingSection() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.12 }}
               whileHover={{ y: -8 }}
-              className={`relative rounded-3xl p-7 sm:p-8 border bg-[#111118]/95 backdrop-blur-2xl flex flex-col justify-between transition-all duration-300 group ${
+              className={`relative shrink-0 w-[84vw] md:w-auto snap-center rounded-3xl p-6 sm:p-8 border bg-[#111118]/95 backdrop-blur-2xl flex flex-col justify-between transition-all duration-300 group ${
                 p.popular
                   ? "border-[#d4a853] shadow-[0_20px_50px_rgba(212,168,83,0.3)] ring-2 ring-[#d4a853]/50"
                   : "border-border hover:border-[#d4a853]/40 shadow-xl"
@@ -271,17 +271,17 @@ export function PricingSection() {
       </div>
 
       {/* DEPLOIEMENT CLE EN MAIN & WHY RESTOBF (REPLACES SIMULATOR) */}
-      <div className="max-w-5xl mx-auto p-6 sm:p-10 rounded-3xl border border-[#d4a853]/40 bg-gradient-to-br from-[#111118] via-[#111118] to-[#1a160d] shadow-2xl relative overflow-hidden">
+      <div className="max-w-5xl mx-auto p-5 sm:p-10 rounded-3xl border border-[#d4a853]/40 bg-gradient-to-br from-[#111118] via-[#111118] to-[#1a160d] shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#d4a853]/10 blur-3xl pointer-events-none rounded-full" />
 
-        <div className="relative z-10 space-y-8">
+        <div className="relative z-10 space-y-6 sm:space-y-8">
           {/* Header */}
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#d4a853]/15 border border-[#d4a853]/30 text-xs font-bold text-[#f0d48a]">
               <ShieldCheck className="w-4 h-4 text-[#d4a853]" />
               <span>Inclus avec votre abonnement</span>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-black text-foreground">
+            <h3 className="text-xl sm:text-3xl font-black text-foreground">
               Déploiement <span className="text-[#f0d48a]">100% Clé en Main</span> & Sans Effort
             </h3>
             <p className="text-xs sm:text-sm text-muted-foreground">
@@ -291,46 +291,46 @@ export function PricingSection() {
           </div>
 
           {/* 4 Pillars of Turnkey Setup */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-2xl bg-[#0a0a0f]/80 border border-white/10 hover:border-[#d4a853]/50 transition-all space-y-2 group">
-              <div className="w-10 h-10 rounded-xl bg-[#d4a853]/20 text-[#f0d48a] flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="p-3.5 sm:p-5 rounded-2xl bg-[#0a0a0f]/80 border border-white/10 hover:border-[#d4a853]/50 transition-all space-y-1.5 sm:space-y-2 group">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[#d4a853]/20 text-[#f0d48a] flex items-center justify-center font-bold text-base sm:text-lg group-hover:scale-110 transition-transform">
                 1
               </div>
-              <h4 className="text-sm font-bold text-foreground">Saisie de votre Menu Offerte</h4>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <h4 className="text-xs sm:text-sm font-bold text-foreground">Saisie de votre Menu Offerte</h4>
+              <p className="hidden sm:block text-xs text-muted-foreground leading-relaxed">
                 Envoyez-nous simplement la photo de votre carte papier actuelle sur WhatsApp. Nous
                 saisissons tous vos plats, tarifs et photos en 24h.
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#0a0a0f]/80 border border-white/10 hover:border-[#d4a853]/50 transition-all space-y-2 group">
-              <div className="w-10 h-10 rounded-xl bg-[#d4a853]/20 text-[#f0d48a] flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+            <div className="p-3.5 sm:p-5 rounded-2xl bg-[#0a0a0f]/80 border border-white/10 hover:border-[#d4a853]/50 transition-all space-y-1.5 sm:space-y-2 group">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[#d4a853]/20 text-[#f0d48a] flex items-center justify-center font-bold text-base sm:text-lg group-hover:scale-110 transition-transform">
                 2
               </div>
-              <h4 className="text-sm font-bold text-foreground">Stickers QR Prêts à l'Emploi</h4>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <h4 className="text-xs sm:text-sm font-bold text-foreground">Stickers QR Prêts à l'Emploi</h4>
+              <p className="hidden sm:block text-xs text-muted-foreground leading-relaxed">
                 Nous générons vos visuels QR Code haute définition prêts à imprimer pour vos tables,
                 le bar, le comptoir et vos réseaux sociaux.
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#0a0a0f]/80 border border-white/10 hover:border-[#d4a853]/50 transition-all space-y-2 group">
-              <div className="w-10 h-10 rounded-xl bg-[#d4a853]/20 text-[#f0d48a] flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+            <div className="p-3.5 sm:p-5 rounded-2xl bg-[#0a0a0f]/80 border border-white/10 hover:border-[#d4a853]/50 transition-all space-y-1.5 sm:space-y-2 group">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[#d4a853]/20 text-[#f0d48a] flex items-center justify-center font-bold text-base sm:text-lg group-hover:scale-110 transition-transform">
                 3
               </div>
-              <h4 className="text-sm font-bold text-foreground">Formation Express Staff</h4>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <h4 className="text-xs sm:text-sm font-bold text-foreground">Formation Express Staff</h4>
+              <p className="hidden sm:block text-xs text-muted-foreground leading-relaxed">
                 Vos serveurs et cuisiniers sont formés en 15 minutes. L'interface est fluide et
                 s'utilise sur n'importe quel smartphone ou tablette.
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#0a0a0f]/80 border border-white/10 hover:border-[#d4a853]/50 transition-all space-y-2 group">
-              <div className="w-10 h-10 rounded-xl bg-[#d4a853]/20 text-[#f0d48a] flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+            <div className="p-3.5 sm:p-5 rounded-2xl bg-[#0a0a0f]/80 border border-white/10 hover:border-[#d4a853]/50 transition-all space-y-1.5 sm:space-y-2 group">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[#d4a853]/20 text-[#f0d48a] flex items-center justify-center font-bold text-base sm:text-lg group-hover:scale-110 transition-transform">
                 4
               </div>
-              <h4 className="text-sm font-bold text-foreground">Assistance WhatsApp 7j/7</h4>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <h4 className="text-xs sm:text-sm font-bold text-foreground">Assistance WhatsApp 7j/7</h4>
+              <p className="hidden sm:block text-xs text-muted-foreground leading-relaxed">
                 Une équipe basée à Ouagadougou et Bobo-Dioulasso disponible 7 jours sur 7 pour vous
                 assister à tout moment.
               </p>
@@ -366,7 +366,7 @@ export function PricingSection() {
       </div>
 
       {/* SUR MESURE / WHATSAPP BANNER */}
-      <div className="max-w-5xl mx-auto mt-12 p-6 sm:p-8 rounded-2xl border border-white/10 bg-[#111118]/80 backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div className="max-w-5xl mx-auto mt-8 sm:mt-12 p-5 sm:p-8 rounded-2xl border border-white/10 bg-[#111118]/80 backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="space-y-1 text-center sm:text-left">
           <span className="text-[10px] font-black uppercase tracking-widest text-[#f0d48a]">
             Grandes Enseignes & Multi-Salles

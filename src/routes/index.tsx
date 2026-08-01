@@ -475,8 +475,8 @@ function LandingPage() {
         </section>
 
         {/* TESTIMONIALS */}
-        <section id="avis" className="py-24 px-4 sm:px-6 relative">
-          <div className="max-w-6xl mx-auto text-center mb-16 space-y-3">
+        <section id="avis" className="py-12 sm:py-24 px-4 sm:px-6 relative">
+          <div className="max-w-6xl mx-auto text-center mb-8 sm:mb-16 space-y-3">
             <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#d4a853]/15 text-[#f0d48a] border border-[#d4a853]/30">
               Témoignages
             </span>
@@ -488,7 +488,39 @@ function LandingPage() {
             </p>
           </div>
 
-          <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
+          {/* Mobile: swipe horizontal (évite l'empilement vertical long) */}
+          <div className="md:hidden flex gap-4 overflow-x-auto snap-x snap-mandatory px-4 -mx-4 pb-2 [&::-webkit-scrollbar]:hidden">
+            {testimonials.map((t) => (
+              <div
+                key={t.name}
+                className="snap-center shrink-0 w-[82vw] rounded-xl border border-border bg-[#111118] p-5 flex flex-col justify-between space-y-3"
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1 text-[#f0d48a]">
+                    {[...Array(5)].map((_, idx) => (
+                      <Star key={idx} className="w-4 h-4 fill-current text-[#d4a853]" />
+                    ))}
+                    <span className="text-xs text-muted-foreground ml-2 font-semibold">
+                      Avis vérifié
+                    </span>
+                  </div>
+                  <p className="text-sm text-foreground/90 italic leading-relaxed">"{t.text}"</p>
+                </div>
+                <div className="pt-3 border-t border-border flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#d4a853]/20 border border-[#d4a853]/40 flex items-center justify-center font-bold text-sm text-[#f0d48a] shrink-0">
+                    {t.avatar}
+                  </div>
+                  <div>
+                    <strong className="block text-sm font-bold text-foreground">{t.name}</strong>
+                    <span className="text-xs text-muted-foreground">{t.role}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop / tablette: grille avec cartes 3D */}
+          <div className="hidden md:grid max-w-6xl mx-auto md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <Motion3DTiltCard key={t.name} delay={i * 0.12} maxRotate={8}>
                 <div className="p-6 h-full flex flex-col justify-between space-y-4">
