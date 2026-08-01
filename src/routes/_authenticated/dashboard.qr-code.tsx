@@ -4,10 +4,13 @@ import QRCode from "qrcode";
 import { useMyRestaurant } from "@/hooks/use-my-restaurant";
 import { toast } from "sonner";
 import { buildRestaurantUrl, getPublicSiteOrigin } from "@/lib/site-url";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/dashboard/qr-code")({
   component: QrCodePage,
 });
+
+type SavedTable = { id: string; number: string; zone: string | null };
 
 function QrCodePage() {
   const { restaurant: r, loading } = useMyRestaurant();
@@ -19,6 +22,19 @@ function QrCodePage() {
   const [pngUrl, setPngUrl] = useState<string>("");
   const [svgString, setSvgString] = useState<string>("");
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [savedTables, setSavedTables] = useState<SavedTable[]>([]);
+  const [bulkGenerating, setBulkGenerating] = useState(false);
+
+  useEffect(() => {
+    if (!r) return;
+    supabase
+      .from("restaurant_tables" as never)
+      .select("id, number, zone")
+      .eq("restaurant_id", r.id)
+      .then(({ data }) => {
+        if (data) setSavedTables(data as unknown as SavedTable[]);
+      });
+  }, [r?.id]);
 
   const override = r?.public_site_url ?? null;
   const targetUrl = r?.slug ? buildRestaurantUrl(r.slug, tableNum.trim() || null, override) : "";
@@ -137,11 +153,24 @@ function QrCodePage() {
         <p className="mt-2 text-sm text-muted-foreground">
           À imprimer sur vos cartes de table, vitrines, flyers. Pointe vers{" "}
           <strong className="text-gold">{getPublicSiteOrigin(override)}</strong>.
-          <br />
-          Optionnel : entrez un numéro de table pour générer un QR par table (la commande sera
-          automatiquement rattachée).
         </p>
       </div>
+
+      {!tableNum.trim() && (
+        <div className="mb-6 p-4 rounded-2xl border border-amber-400/40 bg-amber-400/10 flex items-start gap-3">
+          <span className="text-xl shrink-0">⚠️</span>
+          <div className="text-sm">
+            <strong className="text-amber-300 block mb-1">
+              Ce QR est générique — vous ne saurez pas à quelle table s'assoit le client.
+            </strong>
+            <p className="text-muted-foreground">
+              Pour un service fluide (savoir où livrer chaque commande), générez un QR{" "}
+              <strong className="text-foreground">différent pour chaque table</strong> en
+              choisissant son numéro ci-dessous, puis collez-le physiquement sur cette table.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="grid lg:grid-cols-[1fr_320px] gap-8">
         <div className="p-8 rounded-3xl border border-white/8 bg-dark-card flex flex-col items-center justify-center">
@@ -186,7 +215,7 @@ function QrCodePage() {
         </div>
 
         <div className="space-y-5">
-          <SettingCard label="Numéro de table (optionnel)">
+          <SettingCard label="Numéro de table">
             <input
               type="text"
               value={tableNum}
@@ -196,10 +225,66 @@ function QrCodePage() {
               placeholder="ex : 12"
               className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
             />
-            <p className="text-xs text-muted-foreground mt-1">
-              Laisse vide pour un QR générique restaurant.
-            </p>
+            {savedTables.length > 0 ? (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {savedTables.map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setTableNum(t.number)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-colors ${
+                      tableNum === t.number
+                        ? "bg-gold text-[#0a0a0f] border-gold"
+                        : "bg-white/5 border-white/10 text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Table {t.number}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground mt-1">
+                Ajoutez vos tables dans <strong>Tables</strong> pour les retrouver ici
+                rapidement.
+              </p>
+            )}
           </SettingCard>
+
+          {savedTables.length > 0 && (
+            <button
+              onClick={async () => {
+                if (!r?.slug) return;
+                setBulkGenerating(true);
+                try {
+                  for (const t of savedTables) {
+                    const url = buildRestaurantUrl(r.slug, t.number, override);
+                    const dataUrl = await QRCode.toDataURL(url, {
+                      errorCorrectionLevel: "H",
+                      margin,
+                      width: size,
+                      color: { dark: color, light: bg },
+                    });
+                    const a = document.createElement("a");
+                    a.href = dataUrl;
+                    a.download = `qr-table-${t.number}.png`;
+                    a.click();
+                    await new Promise((res) => setTimeout(res, 400));
+                  }
+                  toast.success(`${savedTables.length} QR codes téléchargés (un par table)`);
+                } catch {
+                  toast.error("Erreur pendant la génération groupée");
+                } finally {
+                  setBulkGenerating(false);
+                }
+              }}
+              disabled={bulkGenerating}
+              className="w-full px-4 py-3 rounded-2xl border border-gold/40 bg-gold/10 text-gold font-bold text-sm hover:bg-gold/20 transition-colors disabled:opacity-50"
+            >
+              {bulkGenerating
+                ? "Génération en cours..."
+                : `📥 Télécharger les ${savedTables.length} QR (un par table)`}
+            </button>
+          )}
 
           <SettingCard label="Taille">
             <input

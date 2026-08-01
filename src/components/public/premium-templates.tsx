@@ -1277,17 +1277,6 @@ function PremiumDishModal({
 }) {
   const cart = useCart();
   const [qty, setQty] = useState(1);
-  const [spiciness, setSpiciness] = useState<number>(1);
-  const [side, setSide] = useState<string>("Frites Maison");
-  const [notes, setNotes] = useState<string>("");
-
-  const sideOptions = [
-    "Frites Maison",
-    "Riz Parfumé",
-    "Alloco Banane",
-    "Attiéké Frais",
-    "Légumes Sautés",
-  ];
 
   return (
     <div
@@ -1407,57 +1396,6 @@ function PremiumDishModal({
             </p>
           )}
 
-          {/* Spiciness Level Selector */}
-          <div className="mb-4 p-3 rounded-xl bg-black/30 border border-white/10">
-            <span className="text-[11px] font-black uppercase text-[#f0d48a] tracking-wider block mb-2">
-              🌶️ Niveau de Piment / Épices
-            </span>
-            <div className="grid grid-cols-4 gap-2">
-              {[
-                { lvl: 0, label: "Doux" },
-                { lvl: 1, label: "Moyen" },
-                { lvl: 2, label: "Épicé" },
-                { lvl: 3, label: "Extra Feu" },
-              ].map(({ lvl, label }) => (
-                <button
-                  type="button"
-                  key={lvl}
-                  onClick={() => setSpiciness(lvl)}
-                  className={`py-1.5 px-2 rounded-lg text-xs font-bold transition-all border ${
-                    spiciness === lvl
-                      ? "bg-[#f0d48a] text-black border-[#f0d48a]"
-                      : "bg-white/5 text-white/70 border-white/10 hover:border-white/30"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Accompaniment Choice */}
-          <div className="mb-4 p-3 rounded-xl bg-black/30 border border-white/10">
-            <span className="text-[11px] font-black uppercase text-[#f0d48a] tracking-wider block mb-2">
-              🍚 Accompagnement Préféré
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {sideOptions.map((opt) => (
-                <button
-                  type="button"
-                  key={opt}
-                  onClick={() => setSide(opt)}
-                  className={`py-1.5 px-3 rounded-lg text-xs font-bold transition-all border ${
-                    side === opt
-                      ? "bg-[#f0d48a] text-black border-[#f0d48a]"
-                      : "bg-white/5 text-white/70 border-white/10 hover:border-white/30"
-                  }`}
-                >
-                  {opt}
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Quantity Controls */}
           <div
             style={{
@@ -1519,7 +1457,7 @@ function PremiumDishModal({
                   for (let i = 0; i < qty; i++) {
                     cart.addItem(dish.id);
                   }
-                  toast.success(`${qty}x ${dish.name} (${side}) ajouté au panier !`);
+                  toast.success(`${qty}x ${dish.name} ajouté au panier !`);
                   onClose();
                 }}
                 style={{
@@ -1971,7 +1909,7 @@ const PREMIUM_CSS = `
 .premium-btn-wa:hover{background:rgba(16,185,129,0.3);transform:translateY(-2px)}
 
 .premium-hero-panel{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.premium-hero-panel div{background:var(--pr-surface);border:1px solid var(--pr-border);padding:18px 12px;backdrop-filter:blur(16px);border-radius:var(--pr-radius);text-align:center}
+.premium-hero-panel div{background:var(--pr-surface);border:1px solid var(--pr-border);padding:18px 12px;border-radius:var(--pr-radius);text-align:center}
 .premium-hero-panel span{display:block;font-family:var(--pr-serif);font-size:32px;color:var(--pr-accent);line-height:1;font-weight:800}
 .premium-hero-panel small{color:var(--pr-muted);font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;margin-top:6px;display:block}
 
@@ -2016,7 +1954,7 @@ const PREMIUM_CSS = `
 .premium-time-grid button.active,.premium-time-grid button:hover{background:var(--pr-accent);border-color:var(--pr-accent);color:var(--pr-ink);font-weight:900}
 
 .premium-menu-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.premium-menu-grid article{display:grid;gap:18px;background:var(--pr-surface);border:1px solid var(--pr-border);padding:22px;backdrop-filter:blur(16px);border-radius:var(--pr-radius);transition:transform .25s,box-shadow .25s,border-color .25s}
+.premium-menu-grid article{display:grid;gap:18px;background:var(--pr-surface);border:1px solid var(--pr-border);padding:22px;border-radius:var(--pr-radius);transition:transform .25s,box-shadow .25s,border-color .25s}
 .premium-menu-grid article:hover{border-color:var(--pr-accent);box-shadow:0 12px 34px color-mix(in oklab,var(--pr-accent) 20%,transparent);transform:translateY(-3px)}
 .premium-menu-grid h3{color:var(--pr-text);margin:6px 0 6px;font-size:21px;font-family:var(--pr-serif)}
 .premium-menu-grid p{color:var(--pr-muted);line-height:1.6;font-size:14px;margin:0}

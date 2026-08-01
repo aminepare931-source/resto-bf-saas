@@ -48,6 +48,7 @@ export function OrderCartFab({
         });
   const [customer, setCustomer] = useState({ name: "", phone: "", notes: "", address: "" });
   const [mode, setMode] = useState<"sur_place" | "livraison">("sur_place");
+  const [tableInput, setTableInput] = useState("");
   const canDeliver = restaurant.offers_delivery === true;
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
@@ -111,20 +112,24 @@ export function OrderCartFab({
       toast.error("Un numéro de téléphone est requis pour vous contacter");
       return;
     }
-    if (!tableNumber && mode === "livraison" && canDeliver && !customer.address.trim()) {
+    const effectiveMode = canDeliver ? mode : "sur_place";
+    if (!tableNumber && effectiveMode === "sur_place" && !tableInput.trim()) {
+      toast.error("Merci d'indiquer votre numéro de table pour qu'on puisse vous servir");
+      return;
+    }
+    if (!tableNumber && effectiveMode === "livraison" && canDeliver && !customer.address.trim()) {
       toast.error("Merci d'indiquer votre adresse de livraison");
       return;
     }
-    const effectiveMode = canDeliver ? mode : "sur_place";
-    const locationNote = tableNumber
-      ? null
-      : effectiveMode === "livraison"
+    const effectiveTable = tableNumber || (effectiveMode === "sur_place" ? tableInput.trim() : null);
+    const locationNote =
+      effectiveMode === "livraison" && !tableNumber
         ? `🛵 Livraison — ${customer.address.trim()}`
-        : "🍽️ À consommer sur place (pas de table scannée)";
+        : null;
     const notes = [locationNote, customer.notes.trim() || null].filter(Boolean).join(" — ");
     const payload = {
       restaurant_id: restaurant.id,
-      table_number: tableNumber,
+      table_number: effectiveTable,
       customer_name: customer.name.trim() || null,
       customer_phone: customer.phone.trim() || null,
       notes: notes || null,
@@ -358,6 +363,15 @@ export function OrderCartFab({
                           🛵 Livraison
                         </button>
                       </div>
+                    )}
+                    {!tableNumber && (canDeliver ? mode === "sur_place" : true) && (
+                      <input
+                        value={tableInput}
+                        onChange={(e) => setTableInput(e.target.value.slice(0, 20))}
+                        placeholder="Numéro de votre table * (ex: 4, Terrasse 2...)"
+                        required
+                        className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-amber-500/30 text-sm placeholder:text-white/40"
+                      />
                     )}
                     <input
                       value={customer.name}
