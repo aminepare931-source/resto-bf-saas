@@ -87,32 +87,19 @@ const CHANNELS: ChannelInfo[] = [
   },
 ];
 
-const STAFF_PROFILES: { role: StaffRole; name: string; avatarBg: string; title: string }[] = [
-  {
-    role: "admin",
-    name: "Mamadou (Gérant)",
-    avatarBg: "bg-amber-500/20 text-amber-300 border-amber-500/40",
-    title: "Admin & Direction",
-  },
-  {
-    role: "cuisinier",
-    name: "Chef Ousmane",
-    avatarBg: "bg-blue-500/20 text-blue-300 border-blue-500/40",
-    title: "Chef Cuisinier",
-  },
-  {
-    role: "serveur",
-    name: "Awa (Table N°1-6)",
-    avatarBg: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
-    title: "Serveuse Senior",
-  },
-  {
-    role: "manager",
-    name: "Kader (Barman/Caissier)",
-    avatarBg: "bg-purple-500/20 text-purple-300 border-purple-500/40",
-    title: "Manager de Salle",
-  },
-];
+// Couleurs d'avatar par rôle (le nom réel vient de la base de données)
+const ROLE_AVATAR_BG: Record<string, string> = {
+  admin: "bg-amber-500/20 text-amber-300 border-amber-500/40",
+  cuisinier: "bg-blue-500/20 text-blue-300 border-blue-500/40",
+  serveur: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
+  manager: "bg-purple-500/20 text-purple-300 border-purple-500/40",
+};
+const ROLE_TITLE: Record<string, string> = {
+  admin: "Administrateur",
+  cuisinier: "Cuisinier",
+  serveur: "Serveur",
+  manager: "Manager",
+};
 
 const QUICK_PINGS: Record<ChannelId, { label: string; text: string; icon: string }[]> = {
   general: [
@@ -178,57 +165,7 @@ const QUICK_PINGS: Record<ChannelId, { label: string; text: string; icon: string
   ],
 };
 
-const INITIAL_MESSAGES: (ChatMessage & {
-  channel?: ChannelId;
-  reactions?: Record<string, number>;
-})[] = [
-  {
-    id: "msg-1",
-    restaurant_id: "demo",
-    sender_name: "Mamadou (Gérant)",
-    sender_role: "admin",
-    message:
-      "Bienvenue sur le chat interne RestoBF ! N'oubliez pas d'utiliser les pings rapides pour fluidifier le service entre la cuisine et les tables.",
-    read: true,
-    created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
-    channel: "general",
-    reactions: { "👍": 4, "🔥": 2 },
-  },
-  {
-    id: "msg-2",
-    restaurant_id: "demo",
-    sender_name: "Chef Ousmane",
-    sender_role: "cuisinier",
-    message:
-      "Le poulet bicyclette flambé est prêt. Pensez à proposer du piment frais maison aux clients.",
-    read: true,
-    created_at: new Date(Date.now() - 3600000).toISOString(),
-    channel: "cuisine",
-    reactions: { "🔥": 3 },
-  },
-  {
-    id: "msg-3",
-    restaurant_id: "demo",
-    sender_name: "Awa (Table N°1-6)",
-    sender_role: "serveur",
-    message: "Reçu Chef ! Table N°4 demande si la livraison en zone ZI est partie.",
-    read: true,
-    created_at: new Date(Date.now() - 1800000).toISOString(),
-    channel: "service",
-    reactions: { "✅": 2 },
-  },
-  {
-    id: "msg-4",
-    restaurant_id: "demo",
-    sender_name: "Kader (Barman/Caissier)",
-    sender_role: "manager",
-    message: "Le paiement Orange Money de la Table N°4 est validé (14.000 FCFA).",
-    read: true,
-    created_at: new Date(Date.now() - 600000).toISOString(),
-    channel: "caisse",
-    reactions: { "👍": 1 },
-  },
-];
+
 
 export function ChatPage() {
   const { restaurant: r } = useMyRestaurant();
@@ -243,13 +180,46 @@ export function ChatPage() {
   const [sending, setSending] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
+  // Profils réels du restaurant (vous + votre staff enregistré dans Personnel)
+  type Profile = { role: StaffRole; name: string; avatarBg: string; title: string };
+  const [profiles, setProfiles] = useState<Profile[]>([
+    { role: "admin", name: "Vous", avatarBg: ROLE_AVATAR_BG.admin, title: "Administrateur" },
+  ]);
+
+  useEffect(() => {
+    if (!r) return;
+    (async () => {
+      const { data } = await supabase
+        .from("staff_members")
+        .select("name, role")
+        .eq("restaurant_id", r.id)
+        .eq("is_active", true);
+
+      const ownerProfile: Profile = {
+        role: "admin",
+        name: r.name ? `Vous (${r.name})` : "Vous",
+        avatarBg: ROLE_AVATAR_BG.admin,
+        title: "Administrateur",
+      };
+
+      const staffProfiles: Profile[] = (data || []).map((s: any) => ({
+        role: (s.role as StaffRole) || "serveur",
+        name: s.name,
+        avatarBg: ROLE_AVATAR_BG[s.role] || ROLE_AVATAR_BG.serveur,
+        title: ROLE_TITLE[s.role] || "Staff",
+      }));
+
+      setProfiles([ownerProfile, ...staffProfiles]);
+    })();
+  }, [r?.id]);
+
   // Active staff profile selection
   const [activeProfileIndex, setActiveProfileIndex] = useState(0);
-  const activeProfile = STAFF_PROFILES[activeProfileIndex];
+  const activeProfile = profiles[activeProfileIndex] || profiles[0];
 
   // Pinned Notice Board
   const [noticeBoard, setNoticeBoard] = useState(
-    "📌 Note du Chef : Spécial Capitaine du Niger grillé au feu de bois ce soir. Suggestion : proposer avec frites d'alloco et jus de bissap frais.",
+    "📌 Aucune note épinglée pour le moment. Cliquez sur « Éditer la note » pour en ajouter une pour votre équipe.",
   );
   const [editingNotice, setEditingNotice] = useState(false);
   const [noticeDraft, setNoticeDraft] = useState(noticeBoard);
@@ -307,16 +277,16 @@ export function ChatPage() {
         if (fetchedMsgs.length > 0) {
           setMessages(fetchedMsgs);
         } else {
-          // Check local storage
+          // Check local storage (messages réellement envoyés depuis cet appareil)
           const stored = localStorage.getItem(localKey);
           if (stored) {
             try {
               setMessages(JSON.parse(stored));
             } catch {
-              setMessages(INITIAL_MESSAGES);
+              setMessages([]);
             }
           } else {
-            setMessages(INITIAL_MESSAGES);
+            setMessages([]);
           }
         }
         setLoading(false);
@@ -330,8 +300,8 @@ export function ChatPage() {
 
   // Persist local state backup
   useEffect(() => {
+    const localKey = `restobf_chat_${r?.id || "demo"}`;
     if (messages.length > 0) {
-      const localKey = `restobf_chat_${r?.id || "demo"}`;
       localStorage.setItem(localKey, JSON.stringify(messages));
     }
   }, [messages, r?.id]);
@@ -458,7 +428,7 @@ export function ChatPage() {
   }, [messages, activeChannel]);
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 pb-12">
+    <div className="max-w-7xl mx-auto space-y-6 pb-12 overflow-x-hidden">
       {/* PAGE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-6 rounded-3xl border border-[#d4a853]/30 bg-gradient-to-r from-[#111118] via-[#111118] to-[#1a160d] shadow-2xl">
         <div className="space-y-1 min-w-0">
@@ -514,7 +484,7 @@ export function ChatPage() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
-          {STAFF_PROFILES.map((prof, idx) => {
+          {profiles.map((prof, idx) => {
             const isActive = activeProfileIndex === idx;
             return (
               <button
@@ -598,9 +568,9 @@ export function ChatPage() {
       </div>
 
       {/* MAIN CHAT APPLICATION LAYOUT (CHANNELS SIDEBAR + MESSAGE CONTAINER) */}
-      <div className="grid lg:grid-cols-12 gap-4 sm:gap-6 items-start">
+      <div className="grid lg:grid-cols-12 gap-4 sm:gap-6 items-start min-w-0">
         {/* LEFT COLUMN: CHANNELS NAVIGATION (4 COLS) — après le chat sur mobile */}
-        <div className="order-2 lg:order-1 lg:col-span-4 space-y-3">
+        <div className="order-2 lg:order-1 lg:col-span-4 space-y-3 min-w-0 w-full">
           {/* Mobile: chips horizontales compactes */}
           <div className="lg:hidden flex gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden">
             {CHANNELS.map((ch) => {
@@ -743,7 +713,7 @@ export function ChatPage() {
         </div>
 
         {/* RIGHT COLUMN: CHAT CONVERSATION VIEW (8 COLS) — en premier sur mobile */}
-        <div className="order-1 lg:order-2 lg:col-span-8 space-y-4">
+        <div className="order-1 lg:order-2 lg:col-span-8 space-y-4 min-w-0 w-full">
           <div className="rounded-3xl border border-white/10 bg-[#111118]/90 backdrop-blur-2xl shadow-2xl overflow-hidden flex flex-col h-[75vh] max-h-[560px] lg:h-[620px] lg:max-h-none">
             {/* CHAT HEADER */}
             <div className="p-3 sm:p-4 border-b border-white/10 bg-[#0a0a0f]/80 flex items-center justify-between gap-2">
@@ -796,7 +766,7 @@ export function ChatPage() {
                 channelMessages.map((msg) => {
                   const isMe = msg.sender_name === activeProfile.name;
                   const roleObj =
-                    STAFF_PROFILES.find((p) => p.role === msg.sender_role) || STAFF_PROFILES[0];
+                    profiles.find((p) => p.role === msg.sender_role) || profiles[0];
 
                   return (
                     <div

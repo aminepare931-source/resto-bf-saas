@@ -64,71 +64,29 @@ type RecentReview = {
 export function DashboardHome() {
   const { restaurant: r, refresh } = useMyRestaurant();
   const isMobile = useIsMobile();
+  const [statsLoading, setStatsLoading] = useState(true);
   const [counts, setCounts] = useState({
-    menu: 18,
-    resa: 6,
-    reviews: 12,
-    pendingResa: 2,
-    todayOrders: 24,
-    todayRevenue: 87500,
+    menu: 0,
+    resa: 0,
+    reviews: 0,
+    pendingResa: 0,
+    todayOrders: 0,
+    todayRevenue: 0,
   });
   const [copied, setCopied] = useState(false);
   const [subModal, setSubModal] = useState(false);
-  const [recentOrders, setRecentOrders] = useState<LiveOrder[]>([
-    {
-      id: "CMD-108",
-      customer_name: "Ibrahim Traoré",
-      table_or_delivery: "Table N° 4",
-      items_summary: "1x Poulet Bicyclette Grillé, 2x Brakina 65cl",
-      total_amount: 8500,
-      status: "pending",
-      payment_method: "orange_money",
-      created_at: "Il y a 3 min",
-    },
-    {
-      id: "CMD-107",
-      customer_name: "Fatoumata Kaboré",
-      table_or_delivery: "Livraison (Zone ZI)",
-      items_summary: "2x Capitaine Grillé, 1x Frites d'Alloco",
-      total_amount: 14000,
-      status: "preparing",
-      payment_method: "moov_money",
-      created_at: "Il y a 12 min",
-    },
-    {
-      id: "CMD-106",
-      customer_name: "Salif Ouedraogo",
-      table_or_delivery: "Table N° 2 (Terrasse)",
-      items_summary: "3x Brochettes de Bœuf, 3x Beaufort",
-      total_amount: 9500,
-      status: "delivered",
-      payment_method: "especes",
-      created_at: "Il y a 28 min",
-    },
-  ]);
-
-  const [recentReviews] = useState<RecentReview[]>([
-    {
-      id: "rev-1",
-      author: "Moussa S.",
-      rating: 5,
-      comment: "Le poulet bicyclette était excellent et la commande par QR code est super rapide !",
-      date: "Aujourd'hui, 14:20",
-    },
-    {
-      id: "rev-2",
-      author: "Aïcha D.",
-      rating: 5,
-      comment: "Cadre magnifique, service au top. Le système WhatsApp marche parfaitement.",
-      date: "Hier, 20:15",
-    },
-  ]);
+  const [recentOrders, setRecentOrders] = useState<LiveOrder[]>([]);
+  const [recentReviews, setRecentReviews] = useState<RecentReview[]>([]);
 
   useEffect(() => {
     if (!r) return;
+    setStatsLoading(true);
     (async () => {
       try {
-        const [m, res, rev, pen, ord] = await Promise.all([
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+
+        const [m, res, rev, pen, ord, todayOrd, revData] = await Promise.all([
           supabase
             .from("menu_items")
             .select("id", { count: "exact", head: true })
@@ -152,19 +110,34 @@ export function DashboardHome() {
             .eq("restaurant_id", r.id)
             .order("created_at", { ascending: false })
             .limit(5),
+          supabase
+            .from("orders")
+            .select("total_amount")
+            .eq("restaurant_id", r.id)
+            .gte("created_at", startOfToday.toISOString()),
+          supabase
+            .from("reviews")
+            .select("*")
+            .eq("restaurant_id", r.id)
+            .order("created_at", { ascending: false })
+            .limit(2),
         ]);
 
-        if (m.count !== null && m.count > 0) {
-          setCounts((prev) => ({
-            ...prev,
-            menu: m.count ?? prev.menu,
-            resa: res.count ?? prev.resa,
-            reviews: rev.count ?? prev.reviews,
-            pendingResa: pen.count ?? prev.pendingResa,
-          }));
-        }
+        const todayRevenue = (todayOrd.data || []).reduce(
+          (sum: number, o: any) => sum + (Number(o.total_amount) || 0),
+          0,
+        );
 
-        if (ord.data && ord.data.length > 0) {
+        setCounts({
+          menu: m.count ?? 0,
+          resa: res.count ?? 0,
+          reviews: rev.count ?? 0,
+          pendingResa: pen.count ?? 0,
+          todayOrders: todayOrd.data?.length ?? 0,
+          todayRevenue,
+        });
+
+        if (ord.data) {
           const mapped: LiveOrder[] = ord.data.map((o: any) => ({
             id: o.id.slice(0, 8).toUpperCase(),
             customer_name: o.customer_name || "Client Anonyme",
@@ -180,8 +153,26 @@ export function DashboardHome() {
           }));
           setRecentOrders(mapped);
         }
+
+        if (revData.data) {
+          const mappedReviews: RecentReview[] = revData.data.map((rv: any) => ({
+            id: rv.id,
+            author: rv.author_name || rv.customer_name || "Client",
+            rating: rv.rating || 5,
+            comment: rv.comment || "",
+            date: new Date(rv.created_at).toLocaleDateString("fr-FR", {
+              day: "2-digit",
+              month: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          }));
+          setRecentReviews(mappedReviews);
+        }
       } catch (err) {
         console.warn("Dashboard real data fetch error", err);
+      } finally {
+        setStatsLoading(false);
       }
     })();
   }, [r?.id]);
@@ -324,8 +315,7 @@ export function DashboardHome() {
           </div>
           <div className="mt-4">
             <div className="text-2xl sm:text-3xl font-black text-foreground">
-              {counts.todayOrders}{" "}
-              <span className="text-xs text-emerald-400 font-bold">+18% vs hier</span>
+              {counts.todayOrders}
             </div>
             <p className="text-[11px] text-muted-foreground mt-1">Reçues via WhatsApp & QR Code</p>
           </div>
@@ -548,7 +538,17 @@ export function DashboardHome() {
 
             {/* ORDERS STREAM */}
             <div className="space-y-3">
-              {(isMobile ? recentOrders.slice(0, 2) : recentOrders).map((ord) => (
+              {statsLoading ? (
+                <p className="text-xs text-muted-foreground text-center py-6">Chargement...</p>
+              ) : recentOrders.length === 0 ? (
+                <div className="p-6 text-center rounded-2xl border border-dashed border-white/10">
+                  <p className="text-xs text-muted-foreground">
+                    Aucune commande pour le moment. Elles apparaîtront ici dès que vos clients
+                    commanderont via WhatsApp ou le QR code.
+                  </p>
+                </div>
+              ) : (
+                (isMobile ? recentOrders.slice(0, 2) : recentOrders).map((ord) => (
                 <div
                   key={ord.id}
                   className="p-3.5 sm:p-4 rounded-2xl border border-white/10 bg-[#0a0a0f] hover:border-[#d4a853]/30 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4"
@@ -609,7 +609,8 @@ export function DashboardHome() {
                     )}
                   </div>
                 </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
 
@@ -642,7 +643,14 @@ export function DashboardHome() {
             </div>
 
             <div className="grid sm:grid-cols-2 gap-3">
-              {recentReviews.map((rev) => (
+              {recentReviews.length === 0 ? (
+                <div className="sm:col-span-2 p-6 text-center rounded-2xl border border-dashed border-white/10">
+                  <p className="text-xs text-muted-foreground">
+                    Aucun avis client pour le moment.
+                  </p>
+                </div>
+              ) : (
+                recentReviews.map((rev) => (
                 <div
                   key={rev.id}
                   className="p-4 rounded-2xl bg-[#0a0a0f] border border-white/5 space-y-2"
@@ -662,7 +670,8 @@ export function DashboardHome() {
                     {rev.date}
                   </span>
                 </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </div>
