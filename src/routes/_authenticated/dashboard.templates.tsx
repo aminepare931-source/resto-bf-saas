@@ -139,27 +139,20 @@ function DashboardTemplates() {
   const [previewId, setPreviewId] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<TplCategory>("tout");
   const [saving, setSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<string | null>(null);
 
   useEffect(() => {
     if (!r) return;
     setUserPlan("premium"); // Ensure user has full testing access
-    const saved = typeof window !== "undefined" ? localStorage.getItem("restobf_selected_template") : null;
-    if (saved) {
-      setSelected(saved);
-    } else if (r.template) {
+    if (r.template) {
       setSelected(r.template);
+      setLastSaved(r.template);
     }
   }, [r]);
 
   const selectTemplate = (id: string) => {
     setSelected(id);
-    localStorage.setItem("restobf_selected_template", id);
-    if (r) {
-      const updated = { ...r, template: id, plan: "premium" };
-      localStorage.setItem("restobf_current_restaurant", JSON.stringify(updated));
-    }
-    window.dispatchEvent(new Event("storage"));
-    window.dispatchEvent(new CustomEvent("template-changed", { detail: id }));
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
   };
 
   const canPick = (_p: PlanTier) => true; // Allow picking any template for full testing access
@@ -172,35 +165,52 @@ function DashboardTemplates() {
     setSaving(true);
     try {
       const { data: u } = await supabase.auth.getUser();
-      const userId = u?.user?.id || r?.id;
 
-      if (userId) {
-        // Try updating restaurants table
+      if (!u?.user?.id) {
+        setSaving(false);
+        toast.error("Session expirée — reconnectez-vous puis réessayez.");
+        return;
+      }
+
+      const { error: mainError, data: mainData } = await supabase
+        .from("restaurants")
+        .update({ template: selected })
+        .eq("user_id", u.user.id)
+        .select("id");
+
+      if (mainError) {
+        setSaving(false);
+        toast.error("Erreur lors de la sauvegarde : " + mainError.message);
+        return;
+      }
+
+      if (!mainData || mainData.length === 0) {
+        setSaving(false);
+        toast.error("Aucun restaurant trouvé pour votre compte — la sauvegarde n'a pas pu s'appliquer.");
+        return;
+      }
+
+      // Also update public_restaurants if exists (non bloquant : le site public
+      // peut aussi lire directement depuis restaurants)
+      if (r?.slug) {
         await supabase
-          .from("restaurants")
-          .update({ template: selected })
-          .eq(u?.user?.id ? "user_id" : "id", userId);
-
-        // Also update public_restaurants if exists
-        if (r?.slug) {
-          await supabase
-            .from("public_restaurants" as never)
-            .update({ template: selected } as never)
-            .eq("slug", r.slug);
-        }
+          .from("public_restaurants" as never)
+          .update({ template: selected } as never)
+          .eq("slug", r.slug);
       }
 
       // Local storage update for instant reactivity across tabs/previews
       localStorage.setItem("restobf_selected_template", selected);
       if (r) {
-        const updated = { ...r, template: selected, plan: "premium" };
+        const updated = { ...r, template: selected };
         localStorage.setItem("restobf_current_restaurant", JSON.stringify(updated));
       }
       window.dispatchEvent(new Event("storage"));
       window.dispatchEvent(new CustomEvent("template-changed", { detail: selected }));
 
       setSaving(false);
-      toast.success(`Template « ${tpl.name} » enregistré avec succès ! Votre site public a été mis à jour.`);
+      setLastSaved(selected);
+      toast.success(`Template « ${tpl.name} » enregistré et publié sur votre site public !`);
     } catch (err: any) {
       setSaving(false);
       toast.error("Erreur lors de la sauvegarde : " + (err.message || "Impossible de sauvegarder"));
@@ -326,7 +336,7 @@ function DashboardTemplates() {
                             {isSelected && (
                               <span className="px-1.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] text-[8px] sm:text-[10px] font-black shadow-lg flex items-center gap-1">
                                 <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                                <span className="hidden sm:inline">Actif</span>
+                                <span className="hidden sm:inline">Sélectionné</span>
                               </span>
                             )}
                           </div>
@@ -382,7 +392,6 @@ function DashboardTemplates() {
                               type="button"
                               onClick={() => {
                                 selectTemplate(t.id);
-                                toast.info(`Template « ${t.name} » sélectionné et appliqué !`);
                               }}
                               className={`py-1.5 sm:py-2.5 px-1.5 sm:px-3 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-black transition-all flex items-center justify-center gap-1 cursor-pointer ${
                                 isSelected
@@ -390,7 +399,7 @@ function DashboardTemplates() {
                                   : "bg-white/10 border border-white/20 text-foreground hover:border-[#d4a853] hover:text-[#f0d48a]"
                               }`}
                             >
-                              {isSelected ? "✓ Actif" : "Choisir"}
+                              {isSelected ? "✓ Sélectionné" : "Choisir"}
                             </button>
                           </div>
                         </div>
@@ -412,6 +421,11 @@ function DashboardTemplates() {
           <p className="text-sm sm:text-base font-black text-[#f0d48a] truncate">
             {templates.find((t) => t.id === selected)?.name}
           </p>
+          {selected !== lastSaved && (
+            <p className="text-[11px] text-amber-400 font-bold flex items-center gap-1 justify-center sm:justify-start">
+              ⚠️ Pas encore publié — cliquez sur Enregistrer
+            </p>
+          )}
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
@@ -429,10 +443,10 @@ function DashboardTemplates() {
 
           <button
             onClick={handleSave}
-            disabled={saving}
+            disabled={saving || selected === lastSaved}
             className="flex-1 sm:flex-none px-5 sm:px-8 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-[#d4a853] via-[#f0d48a] to-[#d4a853] text-[#0a0a0f] font-black text-xs shadow-xl hover:brightness-110 disabled:opacity-50 cursor-pointer transition-all whitespace-nowrap"
           >
-            {saving ? "..." : "💾 Enregistrer"}
+            {saving ? "..." : selected === lastSaved ? "✓ Publié" : "💾 Enregistrer"}
           </button>
         </div>
       </div>
@@ -447,7 +461,7 @@ function DashboardTemplates() {
           onSelect={() => {
             selectTemplate(previewId);
             setPreviewId(null);
-            toast.success("Template sélectionné ! Enregistrement mis à jour.");
+            toast.info("Sélectionné — cliquez sur « Enregistrer » en bas pour le publier.");
           }}
         />
       )}
@@ -489,7 +503,7 @@ function PreviewModal({
               onClick={onSelect}
               className="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] font-black text-xs shadow-lg hover:brightness-110 cursor-pointer whitespace-nowrap"
             >
-              {isCurrent ? "✓ Déjà actif" : "Choisir ce template"}
+              {isCurrent ? "✓ Sélectionné" : "Choisir ce template"}
             </button>
           ) : (
             <Link
