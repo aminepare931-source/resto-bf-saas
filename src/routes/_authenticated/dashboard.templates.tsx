@@ -215,21 +215,21 @@ function DashboardTemplates() {
   return (
     <div className="max-w-7xl mx-auto space-y-8 pb-16">
       {/* HEADER */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-8 rounded-3xl border border-[#d4a853]/30 bg-gradient-to-r from-[#111118] via-[#111118] to-[#1e170c] shadow-2xl">
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#d4a853]/15 border border-[#d4a853]/30 text-xs font-bold text-[#f0d48a]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 sm:p-8 rounded-3xl border border-[#d4a853]/30 bg-gradient-to-r from-[#111118] via-[#111118] to-[#1e170c] shadow-2xl">
+        <div className="space-y-2 min-w-0">
+          <div className="hidden sm:inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#d4a853]/15 border border-[#d4a853]/30 text-xs font-bold text-[#f0d48a]">
             <Palette className="w-3.5 h-3.5 text-[#d4a853]" />
             <span>Design & Identité Visuelle</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-black text-foreground">
+          <h1 className="text-2xl sm:text-4xl font-black text-foreground">
             Galerie de{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4a853] via-[#f0d48a] to-[#ffffff]">
-              Templates Resto
+              Templates
             </span>
           </h1>
 
-          <p className="text-sm text-muted-foreground max-w-2xl">
+          <p className="hidden sm:block text-sm text-muted-foreground max-w-2xl">
             Personnalisez l'apparence de votre site web public en 1 clic. Chaque template est
             optimisé pour les téléphones, la commande WhatsApp et le scan de QR code sur table.
           </p>
@@ -240,31 +240,31 @@ function DashboardTemplates() {
             href={`/r/${r.slug}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-5 py-3 rounded-2xl border border-[#d4a853]/50 bg-[#d4a853]/10 hover:bg-[#d4a853]/20 text-[#f0d48a] text-xs font-black flex items-center gap-2 shadow-lg transition-all shrink-0 cursor-pointer"
+            className="px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl border border-[#d4a853]/50 bg-[#d4a853]/10 hover:bg-[#d4a853]/20 text-[#f0d48a] text-xs font-black flex items-center justify-center gap-2 shadow-lg transition-all shrink-0 cursor-pointer"
           >
             <ExternalLink className="w-4 h-4" />
-            <span>Voir mon site public live</span>
+            <span>Voir mon site public</span>
           </a>
         )}
       </div>
 
       {/* PLAN STATUS BANNER */}
-      <div className="p-5 rounded-2xl border border-[#d4a853]/40 bg-[#111118] flex flex-wrap items-center justify-between gap-4 shadow-xl">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#d4a853]/20 border border-[#d4a853]/40 text-[#f0d48a] flex items-center justify-center font-black">
+      <div className="p-4 sm:p-5 rounded-2xl border border-[#d4a853]/40 bg-[#111118] flex flex-wrap items-center justify-between gap-3 sm:gap-4 shadow-xl">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#d4a853]/20 border border-[#d4a853]/40 text-[#f0d48a] flex items-center justify-center font-black shrink-0">
             👑
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                Accès Créateur & Testeur :
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="hidden sm:inline text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                Accès Créateur :
               </span>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f]">
-                ⭐ Tous les 9 Templates Débloqués
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] sm:text-xs font-black bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] whitespace-nowrap">
+                ⭐ 9 Templates Débloqués
               </span>
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Vous pouvez tester, personnaliser et enregistrer n'importe quel thème (Premium, Standard ou Basique) sur votre site.
+            <p className="hidden sm:block text-xs text-muted-foreground mt-0.5">
+              Vous pouvez tester, personnaliser et enregistrer n'importe quel thème sur votre site.
             </p>
           </div>
         </div>
@@ -274,26 +274,26 @@ function DashboardTemplates() {
             href={`/r/${r.slug}?tpl=${selected}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] text-xs font-extrabold flex items-center gap-1.5 shadow-md hover:brightness-110"
+            className="px-3.5 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] text-[11px] sm:text-xs font-extrabold flex items-center gap-1.5 shadow-md hover:brightness-110 shrink-0"
           >
-            <span>Tester en direct dans un nouvel onglet</span>
+            <span>Tester en direct</span>
             <ExternalLink className="w-3.5 h-3.5" />
           </a>
         )}
       </div>
 
       {/* CATEGORY FILTER TABS */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-white/10">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-white/10 [&::-webkit-scrollbar]:hidden">
         {[
-          { id: "tout", label: "Tous les Templates (9)" },
-          { id: "premium", label: "⭐ Premium VIP Animés (4)" },
+          { id: "tout", label: "Tous (9)" },
+          { id: "premium", label: "⭐ Premium (4)" },
           { id: "standard", label: "📦 Standard (4)" },
           { id: "basique", label: "🎁 Gratuit (1)" },
         ].map((cat) => (
           <button
             key={cat.id}
             onClick={() => setCategoryFilter(cat.id as TplCategory)}
-            className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap ${
+            className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
               categoryFilter === cat.id
                 ? "bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] shadow-lg"
                 : "bg-white/5 border border-white/10 text-muted-foreground hover:text-foreground"
@@ -410,36 +410,35 @@ function DashboardTemplates() {
       </div>
 
       {/* SAVE FLOATING/FOOTER BAR */}
-      <div className="p-6 rounded-3xl border border-[#d4a853]/40 bg-[#111118]/90 backdrop-blur-2xl shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-4 z-30">
-        <div className="space-y-0.5 text-center sm:text-left">
-          <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+      <div className="p-4 sm:p-6 rounded-3xl border border-[#d4a853]/40 bg-[#111118]/90 backdrop-blur-2xl shadow-2xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 sticky bottom-4 z-30">
+        <div className="space-y-0.5 text-center sm:text-left min-w-0">
+          <span className="text-[11px] sm:text-xs font-bold text-muted-foreground uppercase tracking-wider">
             Template Sélectionné :
           </span>
-          <p className="text-base font-black text-[#f0d48a]">
-            {templates.find((t) => t.id === selected)?.name} —{" "}
-            {templates.find((t) => t.id === selected)?.tagline}
+          <p className="text-sm sm:text-base font-black text-[#f0d48a] truncate">
+            {templates.find((t) => t.id === selected)?.name}
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {r?.slug && (
             <a
               href={`/r/${r.slug}?tpl=${selected}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-xs font-bold hover:border-[#d4a853] transition-all flex items-center gap-1.5"
+              className="flex-1 sm:flex-none px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border border-white/10 bg-white/5 text-xs font-bold hover:border-[#d4a853] transition-all flex items-center justify-center gap-1.5"
             >
               <ExternalLink className="w-3.5 h-3.5" />
-              <span>Tester en direct</span>
+              <span className="hidden xs:inline sm:inline">Tester</span>
             </a>
           )}
 
           <button
             onClick={handleSave}
             disabled={saving}
-            className="px-8 py-3 rounded-xl bg-gradient-to-r from-[#d4a853] via-[#f0d48a] to-[#d4a853] text-[#0a0a0f] font-black text-xs shadow-xl hover:brightness-110 disabled:opacity-50 cursor-pointer transition-all"
+            className="flex-1 sm:flex-none px-5 sm:px-8 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-[#d4a853] via-[#f0d48a] to-[#d4a853] text-[#0a0a0f] font-black text-xs shadow-xl hover:brightness-110 disabled:opacity-50 cursor-pointer transition-all whitespace-nowrap"
           >
-            {saving ? "Mise à jour..." : "💾 Enregistrer ce template"}
+            {saving ? "..." : "💾 Enregistrer"}
           </button>
         </div>
       </div>
@@ -477,39 +476,39 @@ function PreviewModal({
 }) {
   return (
     <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col animate-in fade-in duration-200">
-      <header className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-[#0a0a0f] shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#d4a853]/20 border border-[#d4a853]/40 text-[#f0d48a] flex items-center justify-center font-black text-xs">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 sm:px-6 py-3 sm:py-4 border-b border-white/10 bg-[#0a0a0f] shrink-0">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-9 h-9 rounded-xl bg-[#d4a853]/20 border border-[#d4a853]/40 text-[#f0d48a] flex items-center justify-center font-black text-xs shrink-0">
             ✨
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-[10px] uppercase tracking-widest text-[#f0d48a] font-bold">
-              Aperçu Interactif — {tpl.plan.toUpperCase()}
+              Aperçu — {tpl.plan.toUpperCase()}
             </p>
-            <h3 className="text-base font-black text-white">{tpl.name}</h3>
+            <h3 className="text-sm sm:text-base font-black text-white truncate">{tpl.name}</h3>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {canActivate ? (
             <button
               onClick={onSelect}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] font-black text-xs shadow-lg hover:brightness-110 cursor-pointer"
+              className="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] font-black text-xs shadow-lg hover:brightness-110 cursor-pointer whitespace-nowrap"
             >
-              {isCurrent ? "✓ Déjà sélectionné" : "Choisir ce template"}
+              {isCurrent ? "✓ Déjà actif" : "Choisir ce template"}
             </button>
           ) : (
             <Link
               to="/dashboard/parametres"
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] font-black text-xs shadow-lg"
+              className="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] font-black text-xs shadow-lg text-center whitespace-nowrap"
             >
-              👑 Activer le Forfait Premium
+              👑 Activer Premium
             </Link>
           )}
 
           <button
             onClick={onClose}
-            className="w-10 h-10 rounded-xl border border-white/10 hover:border-white/30 flex items-center justify-center text-muted-foreground hover:text-white transition-all cursor-pointer"
+            className="w-10 h-10 rounded-xl border border-white/10 hover:border-white/30 flex items-center justify-center text-muted-foreground hover:text-white transition-all cursor-pointer shrink-0"
           >
             ✕
           </button>

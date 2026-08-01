@@ -31,6 +31,7 @@ import {
   Hash,
   Crown,
   Share2,
+  ChevronDown,
 } from "lucide-react";
 import type { ChatMessage, StaffRole } from "@/types";
 
@@ -459,14 +460,14 @@ export function ChatPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-12">
       {/* PAGE HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl border border-[#d4a853]/30 bg-gradient-to-r from-[#111118] via-[#111118] to-[#1a160d] shadow-2xl">
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d4a853]/15 border border-[#d4a853]/30 text-xs font-bold text-[#f0d48a]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-6 rounded-3xl border border-[#d4a853]/30 bg-gradient-to-r from-[#111118] via-[#111118] to-[#1a160d] shadow-2xl">
+        <div className="space-y-1 min-w-0">
+          <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d4a853]/15 border border-[#d4a853]/30 text-xs font-bold text-[#f0d48a]">
             <Sparkles className="w-3.5 h-3.5 text-[#d4a853]" />
             <span>Messagerie Équipe Temps Réel</span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-black text-foreground">
+          <h1 className="text-xl sm:text-3xl font-black text-foreground truncate">
             Chat Interne —{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4a853] via-[#f0d48a] to-[#ffffff]">
               {r?.name || "Votre Restaurant"}
@@ -474,8 +475,8 @@ export function ChatPage() {
           </h1>
 
           <p className="text-xs text-muted-foreground flex items-center gap-2">
-            <span>Communication Cuisine, Salle, Caisse & Direction</span>
-            <span>•</span>
+            <span className="hidden sm:inline">Communication Cuisine, Salle, Caisse & Direction</span>
+            <span className="hidden sm:inline">•</span>
             <span className="text-emerald-400 font-bold inline-flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               Direct Connecté
@@ -484,7 +485,7 @@ export function ChatPage() {
         </div>
 
         {/* Top Control Bar */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => setSoundEnabled((prev) => !prev)}
             className={`p-2.5 rounded-xl border text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
@@ -501,13 +502,15 @@ export function ChatPage() {
       </div>
 
       {/* STAFF PROFILE SWITCHER (SIMULATE WHO IS SENDING) */}
-      <div className="p-4 rounded-2xl border border-white/10 bg-[#111118]/90 backdrop-blur-xl shadow-lg space-y-2">
-        <div className="flex items-center justify-between text-xs">
-          <span className="font-extrabold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-            <Crown className="w-3.5 h-3.5 text-[#d4a853]" />
-            <span>Vous émettez actuellement en tant que :</span>
+      <div className="p-3 sm:p-4 rounded-2xl border border-white/10 bg-[#111118]/90 backdrop-blur-xl shadow-lg space-y-2">
+        <div className="flex items-center justify-between text-xs gap-2">
+          <span className="font-extrabold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 min-w-0">
+            <Crown className="w-3.5 h-3.5 text-[#d4a853] shrink-0" />
+            <span className="truncate">Vous émettez en tant que :</span>
           </span>
-          <span className="text-[11px] text-[#f0d48a] italic">Cliquez pour basculer de rôle</span>
+          <span className="hidden sm:inline text-[11px] text-[#f0d48a] italic shrink-0">
+            Cliquez pour basculer de rôle
+          </span>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
@@ -517,7 +520,7 @@ export function ChatPage() {
               <button
                 key={prof.name}
                 onClick={() => setActiveProfileIndex(idx)}
-                className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-2.5 ${
+                className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-2.5 min-w-0 ${
                   isActive
                     ? "border-[#d4a853] bg-[#d4a853]/15 text-foreground shadow-lg scale-[1.02]"
                     : "border-white/5 bg-[#0a0a0f] text-muted-foreground hover:border-white/20"
@@ -595,10 +598,39 @@ export function ChatPage() {
       </div>
 
       {/* MAIN CHAT APPLICATION LAYOUT (CHANNELS SIDEBAR + MESSAGE CONTAINER) */}
-      <div className="grid lg:grid-cols-12 gap-6 items-start">
-        {/* LEFT COLUMN: CHANNELS NAVIGATION (4 COLS) */}
-        <div className="lg:col-span-4 space-y-3">
-          <div className="p-4 rounded-2xl border border-white/10 bg-[#111118]/90 backdrop-blur-2xl shadow-xl space-y-2">
+      <div className="grid lg:grid-cols-12 gap-4 sm:gap-6 items-start">
+        {/* LEFT COLUMN: CHANNELS NAVIGATION (4 COLS) — après le chat sur mobile */}
+        <div className="order-2 lg:order-1 lg:col-span-4 space-y-3">
+          {/* Mobile: chips horizontales compactes */}
+          <div className="lg:hidden flex gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden">
+            {CHANNELS.map((ch) => {
+              const Icon = ch.icon;
+              const isActive = activeChannel === ch.id;
+              const unread = unreadPerChannel[ch.id];
+              return (
+                <button
+                  key={ch.id}
+                  onClick={() => setActiveChannel(ch.id)}
+                  className={`shrink-0 px-3 py-2 rounded-xl border flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer ${
+                    isActive
+                      ? "border-[#d4a853]/60 bg-[#d4a853]/15 text-foreground"
+                      : "border-white/10 text-muted-foreground"
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{ch.name}</span>
+                  {unread > 0 && !isActive && (
+                    <span className="px-1.5 py-0.5 rounded-full bg-emerald-500 text-[#0a0a0f] text-[9px] font-black">
+                      +{unread}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Desktop: liste complète avec description */}
+          <div className="hidden lg:block p-4 rounded-2xl border border-white/10 bg-[#111118]/90 backdrop-blur-2xl shadow-xl space-y-2">
             <div className="flex items-center justify-between pb-2 border-b border-white/10">
               <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                 <Hash className="w-3.5 h-3.5 text-[#d4a853]" />
@@ -652,8 +684,35 @@ export function ChatPage() {
             </div>
           </div>
 
-          {/* QUICK PINGS / MACROS BOX */}
-          <div className="p-4 rounded-2xl border border-white/10 bg-[#111118]/90 backdrop-blur-2xl shadow-xl space-y-3">
+          {/* QUICK PINGS / MACROS BOX — repliable sur mobile */}
+          <details className="lg:hidden group rounded-2xl border border-white/10 bg-[#111118]/90 backdrop-blur-2xl shadow-xl overflow-hidden">
+            <summary className="p-3.5 cursor-pointer list-none flex items-center justify-between text-xs font-extrabold text-[#f0d48a] uppercase tracking-wider">
+              <span className="flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-[#d4a853]" />
+                <span>Réponses rapides</span>
+              </span>
+              <ChevronDown className="w-3.5 h-3.5 transition-transform group-open:rotate-180" />
+            </summary>
+            <div className="px-3.5 pb-3.5 flex flex-col gap-1.5">
+              {QUICK_PINGS[activeChannel]?.map((ping) => (
+                <button
+                  key={ping.label}
+                  onClick={() => handleSendMessage(ping.text)}
+                  className="p-2.5 rounded-xl border border-white/10 bg-[#0a0a0f] hover:border-[#d4a853]/50 transition-all text-left flex items-center gap-2 text-xs text-foreground cursor-pointer"
+                >
+                  <span className="text-base">{ping.icon}</span>
+                  <div className="min-w-0 flex-1">
+                    <strong className="block font-bold text-[11px] text-[#f0d48a]">
+                      {ping.label}
+                    </strong>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </details>
+
+          {/* Desktop: liste toujours visible */}
+          <div className="hidden lg:block p-4 rounded-2xl border border-white/10 bg-[#111118]/90 backdrop-blur-2xl shadow-xl space-y-3">
             <h4 className="text-xs font-extrabold text-[#f0d48a] uppercase tracking-wider flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-[#d4a853]" />
               <span>Envoi Rapide (Pings 1-Clic)</span>
@@ -683,34 +742,34 @@ export function ChatPage() {
           </div>
         </div>
 
-        {/* RIGHT COLUMN: CHAT CONVERSATION VIEW (8 COLS) */}
-        <div className="lg:col-span-8 space-y-4">
-          <div className="rounded-3xl border border-white/10 bg-[#111118]/90 backdrop-blur-2xl shadow-2xl overflow-hidden flex flex-col h-[620px]">
+        {/* RIGHT COLUMN: CHAT CONVERSATION VIEW (8 COLS) — en premier sur mobile */}
+        <div className="order-1 lg:order-2 lg:col-span-8 space-y-4">
+          <div className="rounded-3xl border border-white/10 bg-[#111118]/90 backdrop-blur-2xl shadow-2xl overflow-hidden flex flex-col h-[75vh] max-h-[560px] lg:h-[620px] lg:max-h-none">
             {/* CHAT HEADER */}
-            <div className="p-4 border-b border-white/10 bg-[#0a0a0f]/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-[#d4a853]/20 border border-[#d4a853]/40 text-[#f0d48a] flex items-center justify-center font-bold">
+            <div className="p-3 sm:p-4 border-b border-white/10 bg-[#0a0a0f]/80 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#d4a853]/20 border border-[#d4a853]/40 text-[#f0d48a] flex items-center justify-center font-bold shrink-0">
                   #
                 </div>
-                <div>
-                  <h3 className="text-sm font-black text-foreground uppercase tracking-wider">
+                <div className="min-w-0">
+                  <h3 className="text-xs sm:text-sm font-black text-foreground uppercase tracking-wider truncate">
                     {CHANNELS.find((c) => c.id === activeChannel)?.name}
                   </h3>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="hidden sm:block text-[11px] text-muted-foreground truncate">
                     {CHANNELS.find((c) => c.id === activeChannel)?.desc}
                   </p>
                 </div>
               </div>
 
               {/* SEARCH IN CHAT */}
-              <div className="relative w-full sm:w-48">
-                <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-muted-foreground" />
+              <div className="relative w-24 sm:w-48 shrink-0">
+                <Search className="w-3.5 h-3.5 absolute left-2.5 sm:left-3 top-2.5 text-muted-foreground pointer-events-none" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Rechercher..."
-                  className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-foreground focus:outline-none focus:border-[#d4a853]"
+                  className="w-full pl-7 sm:pl-8 pr-2 sm:pr-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-[11px] sm:text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#d4a853]"
                 />
               </div>
             </div>
@@ -816,29 +875,29 @@ export function ChatPage() {
             </div>
 
             {/* INPUT INPUT FOOTER */}
-            <div className="p-4 border-t border-white/10 bg-[#0a0a0f]">
+            <div className="p-3 sm:p-4 border-t border-white/10 bg-[#0a0a0f]">
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyDown={handleKeyPress}
-                  placeholder={`Écrire dans #${CHANNELS.find((c) => c.id === activeChannel)?.name}...`}
-                  className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-[#d4a853] transition-colors"
+                  placeholder="Écrire un message..."
+                  className="flex-1 min-w-0 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-[#d4a853] transition-colors"
                   disabled={sending}
                 />
 
                 <button
                   onClick={() => handleSendMessage()}
                   disabled={!newMessage.trim() || sending}
-                  className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] font-black text-xs disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:brightness-110 transition-all shrink-0 cursor-pointer"
+                  className="px-4 sm:px-5 py-3 rounded-xl bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] font-black text-xs disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:brightness-110 transition-all shrink-0 cursor-pointer"
                 >
                   <Send className="w-4 h-4" />
-                  <span>Envoyer</span>
+                  <span className="hidden sm:inline">Envoyer</span>
                 </button>
               </div>
 
-              <div className="flex items-center justify-between mt-2 text-[10px] text-muted-foreground">
+              <div className="hidden sm:flex items-center justify-between mt-2 text-[10px] text-muted-foreground">
                 <span>Appuyez sur Entrée pour envoyer</span>
                 <span>Canal actif : #{activeChannel}</span>
               </div>
