@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Interactive3DButton } from "./Interactive3DButton";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Sparkles,
   Zap,
@@ -31,9 +32,18 @@ export function Topbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 40);
+        ticking = false;
+      });
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -43,9 +53,11 @@ export function Topbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
         scrolled
-          ? "bg-[#0a0a0f]/90 backdrop-blur-xl border-b border-[#d4a853]/30 shadow-[0_10px_30px_rgba(0,0,0,0.8)] py-2.5"
+          ? isMobile
+            ? "bg-[#0a0a0f] border-b border-[#d4a853]/30 py-2.5"
+            : "bg-[#0a0a0f]/90 backdrop-blur-xl border-b border-[#d4a853]/30 shadow-[0_10px_30px_rgba(0,0,0,0.8)] py-2.5"
           : "bg-transparent py-4"
       }`}
     >
@@ -157,7 +169,7 @@ export function Topbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="lg:hidden border-b border-[#d4a853]/30 bg-[#0a0a0f]/98 backdrop-blur-2xl overflow-hidden shadow-2xl"
+            className="lg:hidden border-b border-[#d4a853]/30 bg-[#0a0a0f] sm:bg-[#0a0a0f]/98 sm:backdrop-blur-2xl overflow-hidden shadow-2xl"
           >
             <nav className="flex flex-col px-4 py-4 gap-2 max-w-xl mx-auto">
               {navItems.map((n) => {

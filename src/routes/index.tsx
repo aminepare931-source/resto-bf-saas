@@ -259,7 +259,7 @@ const faqs = [
   },
 ];
 
-function ScrollProgressBar() {
+function ScrollProgressBar({ isMobile }: { isMobile: boolean }) {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 400,
@@ -269,7 +269,7 @@ function ScrollProgressBar() {
 
   return (
     <motion.div
-      className="fixed top-0 left-0 right-0 h-[3.5px] z-[100] origin-left bg-gradient-to-r from-[#b08800] via-[#d4a853] to-[#f0d48a] shadow-[0_0_12px_rgba(212,168,83,0.8)]"
+      className={`fixed top-0 left-0 right-0 h-[3.5px] z-[100] origin-left bg-gradient-to-r from-[#b08800] via-[#d4a853] to-[#f0d48a] ${isMobile ? "" : "shadow-[0_0_12px_rgba(212,168,83,0.8)]"}`}
       style={{ scaleX }}
     />
   );
@@ -309,7 +309,7 @@ function LandingPage() {
 
   return (
     <div className="relative min-h-screen text-foreground selection:bg-[#d4a853]/30 selection:text-white overflow-x-hidden">
-      <ScrollProgressBar />
+      <ScrollProgressBar isMobile={isMobile} />
       <ParallaxAurora isMobile={isMobile} />
       <Particles count={isMobile ? 3 : 10} />
 

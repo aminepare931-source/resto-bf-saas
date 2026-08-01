@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
 import { Interactive3DButton } from "./Interactive3DButton";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Sparkles,
   Eye,
@@ -103,9 +104,16 @@ export const templatesData = [
 ];
 
 export function TemplateCarousel3D() {
+  const isMobile = useIsMobile();
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(!isMobile);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Le hook useIsMobile ne connaît la taille d'écran qu'après le montage,
+  // donc on désactive l'autoplay dès que mobile est détecté.
+  useEffect(() => {
+    if (isMobile) setIsAutoPlaying(false);
+  }, [isMobile]);
 
   // Auto-play infinite rotation loop
   useEffect(() => {
@@ -192,6 +200,10 @@ export function TemplateCarousel3D() {
           const isCurrent = offset === 0;
           const absOffset = Math.abs(offset);
 
+          // Sur mobile, on ne rend que la carte active + ses 2 voisines directes
+          // pour réduire le nombre de transformations 3D actives en même temps.
+          if (isMobile && absOffset > 1) return null;
+
           // 3D Matrix Math Transformations
           const rotateY = offset * -25; // 3D rotation angle
           const translateZ = isCurrent ? 120 : -100 * absOffset; // Depth
@@ -233,7 +245,9 @@ export function TemplateCarousel3D() {
 
                 {/* Top Badge */}
                 <div className="relative z-10 flex items-center justify-between">
-                  <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[11px] font-bold text-white flex items-center gap-1.5">
+                  <span
+                    className={`px-3 py-1 rounded-full bg-black/60 border border-white/20 text-[11px] font-bold text-white flex items-center gap-1.5 ${isMobile ? "" : "backdrop-blur-md"}`}
+                  >
                     <Sparkles className="w-3 h-3 text-[#d4a853]" /> {tpl.badge}
                   </span>
                   <span className="text-3xl">{tpl.emoji}</span>
@@ -253,7 +267,9 @@ export function TemplateCarousel3D() {
                 </div>
 
                 {/* Bottom Mock Preview Bar */}
-                <div className="relative z-10 p-2.5 rounded-xl bg-black/70 backdrop-blur-md border border-white/10 flex items-center justify-between text-xs text-white">
+                <div
+                  className={`relative z-10 p-2.5 rounded-xl bg-black/70 border border-white/10 flex items-center justify-between text-xs text-white ${isMobile ? "" : "backdrop-blur-md"}`}
+                >
                   <span className="font-bold text-[11px] truncate">Menu QR & WhatsApp</span>
                   <span
                     className="px-2.5 py-1 rounded font-bold text-[10px] shrink-0"
@@ -291,7 +307,7 @@ export function TemplateCarousel3D() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.4 }}
-          className="mt-8 p-6 sm:p-8 rounded-2xl border border-[#d4a853]/40 bg-[#111118]/95 backdrop-blur-xl shadow-2xl grid md:grid-cols-12 gap-6 items-center"
+          className={`mt-8 p-6 sm:p-8 rounded-2xl border border-[#d4a853]/40 bg-[#111118]/95 shadow-2xl grid md:grid-cols-12 gap-6 items-center ${isMobile ? "" : "backdrop-blur-xl"}`}
         >
           <div className="md:col-span-8 space-y-3">
             <div className="flex items-center gap-2">
