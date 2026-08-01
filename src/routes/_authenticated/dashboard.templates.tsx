@@ -248,40 +248,6 @@ function DashboardTemplates() {
         )}
       </div>
 
-      {/* PLAN STATUS BANNER */}
-      <div className="p-4 sm:p-5 rounded-2xl border border-[#d4a853]/40 bg-[#111118] flex flex-wrap items-center justify-between gap-3 sm:gap-4 shadow-xl">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#d4a853]/20 border border-[#d4a853]/40 text-[#f0d48a] flex items-center justify-center font-black shrink-0">
-            👑
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="hidden sm:inline text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                Accès Créateur :
-              </span>
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] sm:text-xs font-black bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] whitespace-nowrap">
-                ⭐ 9 Templates Débloqués
-              </span>
-            </div>
-            <p className="hidden sm:block text-xs text-muted-foreground mt-0.5">
-              Vous pouvez tester, personnaliser et enregistrer n'importe quel thème sur votre site.
-            </p>
-          </div>
-        </div>
-
-        {r?.slug && (
-          <a
-            href={`/r/${r.slug}?tpl=${selected}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-3.5 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] text-[11px] sm:text-xs font-extrabold flex items-center gap-1.5 shadow-md hover:brightness-110 shrink-0"
-          >
-            <span>Tester en direct</span>
-            <ExternalLink className="w-3.5 h-3.5" />
-          </a>
-        )}
-      </div>
-
       {/* CATEGORY FILTER TABS */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-white/10 [&::-webkit-scrollbar]:hidden">
         {[
