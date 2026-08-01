@@ -4,10 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useMyRestaurant } from "@/hooks/use-my-restaurant";
 import { useRealtimeSubscription, useNotificationSound } from "@/hooks/use-realtime";
 import { toast } from "sonner";
-import { Clock, ChefHat, Bell, RefreshCw } from "lucide-react";
+import { Clock, ChefHat, Bell, RefreshCw, Volume2, VolumeX } from "lucide-react";
 import { OrderCardSkeleton } from "@/components/ui/skeleton";
 import type { Order, OrderStatus } from "@/types";
 import { formatCurrency } from "@/types";
+import { announceNewOrder, isVoiceMuted, setVoiceMuted } from "@/lib/voice";
 
 export const Route = createFileRoute("/_authenticated/dashboard/cuisine")({
   component: CuisinePage,
@@ -67,6 +68,7 @@ function CuisinePage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"pending" | "cooking" | "ready">("pending");
+  const [voiceMutedState, setVoiceMutedState] = useState(() => isVoiceMuted());
   const playSound = useNotificationSound();
 
   // Chargement initial
@@ -103,6 +105,11 @@ function CuisinePage() {
         setOrders((prev) => [...prev, newOrder]);
         toast.success(`🛎️ Nouvelle commande !`, { duration: 5000 });
         playSound();
+        announceNewOrder({
+          tableNumber: newOrder.table_number,
+          items: newOrder.items ?? [],
+          total: newOrder.total,
+        });
       }
     },
     onUpdate: (updated) => {
@@ -150,9 +157,28 @@ function CuisinePage() {
 
   return (
     <div className="max-w-6xl">
-      <div className="mb-6">
-        <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Cuisine</p>
-        <h1 className="text-3xl font-black">Espace Cuisine</h1>
+      <div className="mb-6 flex items-start justify-between gap-3">
+        <div>
+          <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Cuisine</p>
+          <h1 className="text-3xl font-black">Espace Cuisine</h1>
+        </div>
+        <button
+          onClick={() => {
+            setVoiceMutedState((v) => {
+              setVoiceMuted(!v);
+              return !v;
+            });
+          }}
+          className={`shrink-0 p-2.5 rounded-xl border text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+            voiceMutedState
+              ? "border-white/10 bg-white/5 text-muted-foreground"
+              : "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
+          }`}
+          title={voiceMutedState ? "Annonces vocales coupées" : "Annonces vocales activées"}
+        >
+          {voiceMutedState ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          <span className="hidden sm:inline">{voiceMutedState ? "Son coupé" : "Son actif"}</span>
+        </button>
       </div>
 
       {/* Stats */}
