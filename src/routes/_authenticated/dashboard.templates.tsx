@@ -268,109 +268,137 @@ function DashboardTemplates() {
         ))}
       </div>
 
-      {/* TEMPLATE CARDS GRID */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTemplates.map((t) => {
-          const locked = !canPick(t.plan);
-          const isSelected = selected === t.id;
+      {/* TEMPLATE CARDS — groupés par catégorie, compacts sur mobile */}
+      <div className="space-y-8">
+        {(categoryFilter === "tout"
+          ? [
+              { key: "premium", label: "✨ Premium", items: filteredTemplates.filter((t) => t.plan === "premium") },
+              { key: "standard", label: "📦 Standard", items: filteredTemplates.filter((t) => t.plan === "standard") },
+              { key: "basique", label: "🎁 Gratuit", items: filteredTemplates.filter((t) => t.plan === "basique") },
+            ]
+          : [{ key: categoryFilter, label: "", items: filteredTemplates }]
+        ).map(
+          (group) =>
+            group.items.length > 0 && (
+              <div key={group.key}>
+                {group.label && (
+                  <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-3">
+                    {group.label}
+                  </h2>
+                )}
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+                  {group.items.map((t) => {
+                    const isSelected = selected === t.id;
 
-          return (
-            <div
-              key={t.id}
-              className={`rounded-3xl border-2 overflow-hidden bg-[#111118] transition-all flex flex-col justify-between group ${
-                isSelected
-                  ? "border-[#d4a853] shadow-[0_0_30px_rgba(212,168,83,0.25)] scale-[1.01]"
-                  : "border-white/10 hover:border-[#d4a853]/50 hover:-translate-y-1"
-              }`}
-            >
-              {/* Card Banner Preview */}
-              <div
-                className="relative h-56 w-full p-4 flex flex-col justify-between cursor-pointer"
-                style={{ background: t.vibe }}
-                onClick={() => setPreviewId(t.id)}
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-[#111118] via-[#111118]/40 to-transparent" />
-
-                {/* Top badges */}
-                <div className="relative z-10 flex items-center justify-between">
-                  <span className="px-3 py-1 rounded-full bg-[#0a0a0f]/80 backdrop-blur-md border border-white/20 text-[10px] font-black uppercase tracking-wider text-[#f0d48a]">
-                    {t.plan === "premium"
-                      ? "✨ Premium"
-                      : t.plan === "standard"
-                        ? "📦 Standard"
-                        : "🎁 Gratuit"}
-                  </span>
-
-                  {isSelected && (
-                    <span className="px-3 py-1 rounded-full bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] text-[10px] font-black shadow-lg flex items-center gap-1">
-                      <Check className="w-3 h-3" />
-                      Actif
-                    </span>
-                  )}
-                </div>
-
-                {/* Hover overlay preview button */}
-                <div className="relative z-10 my-auto text-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] text-xs font-black shadow-xl">
-                    <Eye className="w-3.5 h-3.5" />
-                    <span>Aperçu interactif</span>
-                  </span>
-                </div>
-
-                {/* Bottom title */}
-                <div className="relative z-10">
-                  <h3 className="text-xl font-black text-white">{t.name}</h3>
-                  <p className="text-xs text-white/80 font-medium">{t.tagline}</p>
-                </div>
-              </div>
-
-              {/* Features & Action Footer */}
-              <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
-                <div className="space-y-2">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">
-                    Points forts :
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {t.features.map((f) => (
-                      <span
-                        key={f}
-                        className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] text-foreground font-medium"
+                    return (
+                      <div
+                        key={t.id}
+                        className={`rounded-2xl sm:rounded-3xl border-2 overflow-hidden bg-[#111118] transition-all flex flex-col justify-between group ${
+                          isSelected
+                            ? "border-[#d4a853] shadow-[0_0_30px_rgba(212,168,83,0.25)]"
+                            : "border-white/10 hover:border-[#d4a853]/50 sm:hover:-translate-y-1"
+                        }`}
                       >
-                        {f}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                        {/* Card Banner Preview */}
+                        <div
+                          className="relative h-24 sm:h-56 w-full p-2 sm:p-4 flex flex-col justify-between cursor-pointer"
+                          style={{ background: t.vibe }}
+                          onClick={() => setPreviewId(t.id)}
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#111118] via-[#111118]/40 to-transparent" />
 
-                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/10">
-                  <button
-                    type="button"
-                    onClick={() => setPreviewId(t.id)}
-                    className="py-2.5 px-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-bold text-foreground transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                  >
-                    <Eye className="w-3.5 h-3.5 text-[#d4a853]" />
-                    <span>Aperçu</span>
-                  </button>
+                          {/* Top badges */}
+                          <div className="relative z-10 flex items-center justify-between">
+                            <span className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-[#0a0a0f]/80 border border-white/20 text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-[#f0d48a]">
+                              {t.plan === "premium" ? "✨" : t.plan === "standard" ? "📦" : "🎁"}
+                              <span className="hidden sm:inline">
+                                {" "}
+                                {t.plan === "premium"
+                                  ? "Premium"
+                                  : t.plan === "standard"
+                                    ? "Standard"
+                                    : "Gratuit"}
+                              </span>
+                            </span>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      selectTemplate(t.id);
-                      toast.info(`Template « ${t.name} » sélectionné et appliqué !`);
-                    }}
-                    className={`py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1 cursor-pointer ${
-                      isSelected
-                        ? "bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] shadow-lg"
-                        : "bg-white/10 border border-white/20 text-foreground hover:border-[#d4a853] hover:text-[#f0d48a]"
-                    }`}
-                  >
-                    {isSelected ? "✓ Actif" : "Sélectionner"}
-                  </button>
+                            {isSelected && (
+                              <span className="px-1.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] text-[8px] sm:text-[10px] font-black shadow-lg flex items-center gap-1">
+                                <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                                <span className="hidden sm:inline">Actif</span>
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Hover overlay preview button — desktop uniquement */}
+                          <div className="relative z-10 my-auto text-center opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block">
+                            <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] text-xs font-black shadow-xl">
+                              <Eye className="w-3.5 h-3.5" />
+                              <span>Aperçu interactif</span>
+                            </span>
+                          </div>
+
+                          {/* Bottom title */}
+                          <div className="relative z-10">
+                            <h3 className="text-xs sm:text-xl font-black text-white leading-tight truncate">
+                              {t.name}
+                            </h3>
+                            <p className="hidden sm:block text-xs text-white/80 font-medium">
+                              {t.tagline}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Features & Action Footer */}
+                        <div className="p-2.5 sm:p-5 space-y-2 sm:space-y-4 flex-1 flex flex-col justify-between">
+                          <div className="hidden sm:block space-y-2">
+                            <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">
+                              Points forts :
+                            </span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {t.features.map((f) => (
+                                <span
+                                  key={f}
+                                  className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] text-foreground font-medium"
+                                >
+                                  {f}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-1.5 sm:gap-2 sm:pt-2 sm:border-t sm:border-white/10">
+                            <button
+                              type="button"
+                              onClick={() => setPreviewId(t.id)}
+                              className="py-1.5 sm:py-2.5 px-1.5 sm:px-3 rounded-lg sm:rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-[10px] sm:text-xs font-bold text-foreground transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer"
+                            >
+                              <Eye className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#d4a853]" />
+                              <span>Aperçu</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                selectTemplate(t.id);
+                                toast.info(`Template « ${t.name} » sélectionné et appliqué !`);
+                              }}
+                              className={`py-1.5 sm:py-2.5 px-1.5 sm:px-3 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-black transition-all flex items-center justify-center gap-1 cursor-pointer ${
+                                isSelected
+                                  ? "bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] shadow-lg"
+                                  : "bg-white/10 border border-white/20 text-foreground hover:border-[#d4a853] hover:text-[#f0d48a]"
+                              }`}
+                            >
+                              {isSelected ? "✓ Actif" : "Choisir"}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-            </div>
-          );
-        })}
+            ),
+        )}
       </div>
 
       {/* SAVE FLOATING/FOOTER BAR */}
