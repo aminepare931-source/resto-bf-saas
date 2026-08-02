@@ -75,14 +75,9 @@ export function Topbar() {
             />
           </div>
           <div className="flex flex-col leading-tight">
-            <div className="flex items-center gap-1.5">
-              <strong className="text-base font-black tracking-tight text-foreground group-hover:text-[#f0d48a] transition-colors">
-                RestoBF
-              </strong>
-              <span className="px-1.5 py-0.5 rounded-full text-[9px] font-extrabold bg-[#d4a853] text-[#0a0a0f] uppercase tracking-wider shadow-sm">
-                SaaS
-              </span>
-            </div>
+            <strong className="text-base font-black tracking-tight text-foreground group-hover:text-[#f0d48a] transition-colors">
+              RestoBF
+            </strong>
             <small className="text-[10px] text-muted-foreground font-medium">
               Pour les restaurateurs
             </small>

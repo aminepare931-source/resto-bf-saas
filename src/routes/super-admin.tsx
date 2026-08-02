@@ -1328,7 +1328,7 @@ function SuperAdminPage() {
                       <td className="px-4 py-3 text-right">
                         {r.slug && (
                           <a
-                            href={`/r/${r.slug}`}
+                            href={`/${r.slug}`}
                             target="_blank"
                             rel="noopener"
                             className="text-xs text-gold hover:underline"
@@ -1386,7 +1386,7 @@ function SuperAdminPage() {
                   </div>
                   <div className="flex gap-2 shrink-0">
                     <a
-                      href={`/r/${r.slug}`}
+                      href={`/${r.slug}`}
                       target="_blank"
                       rel="noreferrer"
                       className="px-3 py-1.5 rounded-lg border border-white/10 text-xs font-semibold hover:border-gold/40 transition-colors"

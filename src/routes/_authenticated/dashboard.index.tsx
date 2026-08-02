@@ -178,7 +178,7 @@ export function DashboardHome() {
   }, [r?.id]);
 
   const publicUrl = r?.slug
-    ? `${typeof window !== "undefined" ? window.location.origin : ""}/r/${r.slug}`
+    ? `${typeof window !== "undefined" ? window.location.origin : ""}/${r.slug}`
     : null;
 
   const handleCopyUrl = () => {

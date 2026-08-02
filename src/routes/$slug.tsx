@@ -12,7 +12,7 @@ import { OrderCartFab } from "@/components/public/OrderCart";
 import { CartProvider } from "@/components/public/CartContext";
 import { demoData } from "@/components/public/demo-data";
 
-export const Route = createFileRoute("/r/$slug")({
+export const Route = createFileRoute("/$slug")({
   ssr: false,
   validateSearch: (s: Record<string, unknown>) => ({
     table: typeof s.table === "string" ? s.table.slice(0, 10) : undefined,
@@ -193,9 +193,21 @@ function PublicRestaurantPage() {
             const reviewItems = (rev.data ?? []) as PublicReview[];
             const galleryItems = (g.data ?? []) as PublicGalleryImage[];
 
-            if (menuItems.length > 0) setMenu(menuItems);
-            if (reviewItems.length > 0) setReviews(reviewItems);
-            if (galleryItems.length > 0) setGallery(galleryItems);
+            if (menuItems.length > 0) {
+              setMenu(menuItems);
+            } else {
+              setMenu([]);
+            }
+            if (reviewItems.length > 0) {
+              setReviews(reviewItems);
+            } else {
+              setReviews([]);
+            }
+            if (galleryItems.length > 0) {
+              setGallery(galleryItems);
+            } else {
+              setGallery([]);
+            }
           }
         } catch (e) {
           console.warn("Details fetch error:", e);

@@ -28,7 +28,7 @@ export function getPublicSiteOrigin(restaurantOverride?: string | null): string 
 
 export function buildRestaurantUrl(slug: string, table?: string | null, override?: string | null) {
   const base = getPublicSiteOrigin(override);
-  const u = new URL(`/r/${slug}`, base);
+  const u = new URL(`/${slug}`, base);
   if (table) u.searchParams.set("table", table);
   return u.toString();
 }

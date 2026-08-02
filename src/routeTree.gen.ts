@@ -15,10 +15,10 @@ import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as DebugUserRouteImport } from './routes/debug-user'
 import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
 import { Route as ConditionsRouteImport } from './routes/conditions'
+import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthIndexRouteImport } from './routes/auth/index'
-import { Route as RSlugRouteImport } from './routes/r.$slug'
 import { Route as AuthStaffLoginRouteImport } from './routes/auth/staff-login'
 import { Route as AuthInscriptionRouteImport } from './routes/auth/inscription'
 import { Route as AuthConnexionRouteImport } from './routes/auth/connexion'
@@ -76,6 +76,11 @@ const ConditionsRoute = ConditionsRouteImport.update({
   path: '/conditions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SlugRoute = SlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -88,11 +93,6 @@ const IndexRoute = IndexRouteImport.update({
 const AuthIndexRoute = AuthIndexRouteImport.update({
   id: '/auth/',
   path: '/auth/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RSlugRoute = RSlugRouteImport.update({
-  id: '/r/$slug',
-  path: '/r/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthStaffLoginRoute = AuthStaffLoginRouteImport.update({
@@ -247,6 +247,7 @@ const AuthenticatedDashboardAvisRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$slug': typeof SlugRoute
   '/conditions': typeof ConditionsRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/debug-user': typeof DebugUserRoute
@@ -260,7 +261,6 @@ export interface FileRoutesByFullPath {
   '/auth/connexion': typeof AuthConnexionRoute
   '/auth/inscription': typeof AuthInscriptionRoute
   '/auth/staff-login': typeof AuthStaffLoginRoute
-  '/r/$slug': typeof RSlugRoute
   '/auth/': typeof AuthIndexRoute
   '/dashboard/avis': typeof AuthenticatedDashboardAvisRoute
   '/dashboard/chat': typeof AuthenticatedDashboardChatRoute
@@ -284,6 +284,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$slug': typeof SlugRoute
   '/conditions': typeof ConditionsRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/debug-user': typeof DebugUserRoute
@@ -296,7 +297,6 @@ export interface FileRoutesByTo {
   '/auth/connexion': typeof AuthConnexionRoute
   '/auth/inscription': typeof AuthInscriptionRoute
   '/auth/staff-login': typeof AuthStaffLoginRoute
-  '/r/$slug': typeof RSlugRoute
   '/auth': typeof AuthIndexRoute
   '/dashboard/avis': typeof AuthenticatedDashboardAvisRoute
   '/dashboard/chat': typeof AuthenticatedDashboardChatRoute
@@ -322,6 +322,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/$slug': typeof SlugRoute
   '/conditions': typeof ConditionsRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/debug-user': typeof DebugUserRoute
@@ -335,7 +336,6 @@ export interface FileRoutesById {
   '/auth/connexion': typeof AuthConnexionRoute
   '/auth/inscription': typeof AuthInscriptionRoute
   '/auth/staff-login': typeof AuthStaffLoginRoute
-  '/r/$slug': typeof RSlugRoute
   '/auth/': typeof AuthIndexRoute
   '/_authenticated/dashboard/avis': typeof AuthenticatedDashboardAvisRoute
   '/_authenticated/dashboard/chat': typeof AuthenticatedDashboardChatRoute
@@ -361,6 +361,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/$slug'
     | '/conditions'
     | '/confidentialite'
     | '/debug-user'
@@ -374,7 +375,6 @@ export interface FileRouteTypes {
     | '/auth/connexion'
     | '/auth/inscription'
     | '/auth/staff-login'
-    | '/r/$slug'
     | '/auth/'
     | '/dashboard/avis'
     | '/dashboard/chat'
@@ -398,6 +398,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/$slug'
     | '/conditions'
     | '/confidentialite'
     | '/debug-user'
@@ -410,7 +411,6 @@ export interface FileRouteTypes {
     | '/auth/connexion'
     | '/auth/inscription'
     | '/auth/staff-login'
-    | '/r/$slug'
     | '/auth'
     | '/dashboard/avis'
     | '/dashboard/chat'
@@ -435,6 +435,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/$slug'
     | '/conditions'
     | '/confidentialite'
     | '/debug-user'
@@ -448,7 +449,6 @@ export interface FileRouteTypes {
     | '/auth/connexion'
     | '/auth/inscription'
     | '/auth/staff-login'
-    | '/r/$slug'
     | '/auth/'
     | '/_authenticated/dashboard/avis'
     | '/_authenticated/dashboard/chat'
@@ -474,6 +474,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  SlugRoute: typeof SlugRoute
   ConditionsRoute: typeof ConditionsRoute
   ConfidentialiteRoute: typeof ConfidentialiteRoute
   DebugUserRoute: typeof DebugUserRoute
@@ -486,7 +487,6 @@ export interface RootRouteChildren {
   AuthConnexionRoute: typeof AuthConnexionRoute
   AuthInscriptionRoute: typeof AuthInscriptionRoute
   AuthStaffLoginRoute: typeof AuthStaffLoginRoute
-  RSlugRoute: typeof RSlugRoute
   AuthIndexRoute: typeof AuthIndexRoute
 }
 
@@ -534,6 +534,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConditionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$slug': {
+      id: '/$slug'
+      path: '/$slug'
+      fullPath: '/$slug'
+      preLoaderRoute: typeof SlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -553,13 +560,6 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth/'
       preLoaderRoute: typeof AuthIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/r/$slug': {
-      id: '/r/$slug'
-      path: '/r/$slug'
-      fullPath: '/r/$slug'
-      preLoaderRoute: typeof RSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/staff-login': {
@@ -815,6 +815,7 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  SlugRoute: SlugRoute,
   ConditionsRoute: ConditionsRoute,
   ConfidentialiteRoute: ConfidentialiteRoute,
   DebugUserRoute: DebugUserRoute,
@@ -827,7 +828,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthConnexionRoute: AuthConnexionRoute,
   AuthInscriptionRoute: AuthInscriptionRoute,
   AuthStaffLoginRoute: AuthStaffLoginRoute,
-  RSlugRoute: RSlugRoute,
   AuthIndexRoute: AuthIndexRoute,
 }
 export const routeTree = rootRouteImport

@@ -247,7 +247,7 @@ function DashboardTemplates() {
 
         {r?.slug && (
           <a
-            href={`/r/${r.slug}`}
+            href={`/${r.slug}`}
             target="_blank"
             rel="noopener noreferrer"
             className="px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl border border-[#d4a853]/50 bg-[#d4a853]/10 hover:bg-[#d4a853]/20 text-[#f0d48a] text-xs font-black flex items-center justify-center gap-2 shadow-lg transition-all shrink-0 cursor-pointer"
@@ -431,7 +431,7 @@ function DashboardTemplates() {
         <div className="flex items-center gap-2 sm:gap-3">
           {r?.slug && (
             <a
-              href={`/r/${r.slug}?tpl=${selected}`}
+              href={`/${r.slug}?tpl=${selected}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 sm:flex-none px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border border-white/10 bg-white/5 text-xs font-bold hover:border-[#d4a853] transition-all flex items-center justify-center gap-1.5"
