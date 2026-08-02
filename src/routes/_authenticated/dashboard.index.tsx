@@ -195,6 +195,24 @@ export function DashboardHome() {
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
   };
 
+  const handleShareLink = async () => {
+    if (!publicUrl) return;
+    const shareData = {
+      title: r?.name || "Mon restaurant",
+      text: `Découvrez la carte digitale de ${r?.name || "notre restaurant"} :`,
+      url: publicUrl,
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch {
+        // partage annulé par l'utilisateur, rien à faire
+      }
+    } else {
+      handleCopyUrl();
+    }
+  };
+
   const handleUpdateOrderStatus = (id: string, newStatus: LiveOrder["status"]) => {
     setRecentOrders((prev) =>
       prev.map((ord) => (ord.id === id ? { ...ord, status: newStatus } : ord)),
@@ -238,35 +256,46 @@ export function DashboardHome() {
           </p>
         </div>
 
-        {/* Quick actions top bar */}
-        <div className="flex flex-wrap items-center gap-2.5 relative z-10 pt-2 md:pt-0">
-          {publicUrl && (
+        {/* Lien du site public — visible et copiable/partageable partout */}
+        {publicUrl && (
+          <div className="relative z-10 mt-3 flex items-center gap-2 p-2 pl-3.5 rounded-xl border border-white/10 bg-[#0a0a0f] flex-wrap">
+            <a
+              href={publicUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 min-w-0 text-xs sm:text-sm text-[#f0d48a] font-mono truncate hover:underline"
+            >
+              {publicUrl.replace(/^https?:\/\//, "")}
+            </a>
             <button
               onClick={handleCopyUrl}
-              className="hidden sm:flex px-3.5 py-2.5 rounded-xl border border-white/10 bg-[#0a0a0f] text-xs font-extrabold text-foreground hover:border-[#d4a853]/50 transition-all items-center gap-2 shadow-md cursor-pointer"
+              className="shrink-0 p-2 rounded-lg border border-white/10 hover:border-[#d4a853]/50 transition-all cursor-pointer"
+              title="Copier le lien"
             >
               {copied ? (
                 <Check className="w-4 h-4 text-emerald-400" />
               ) : (
                 <Copy className="w-4 h-4 text-[#d4a853]" />
               )}
-              <span>{copied ? "Lien Copié !" : "Copier le Lien"}</span>
             </button>
-          )}
-
-          {publicUrl && (
+            <button
+              onClick={handleShareLink}
+              className="shrink-0 p-2 rounded-lg border border-white/10 hover:border-[#d4a853]/50 transition-all cursor-pointer"
+              title="Partager le lien"
+            >
+              <Share2 className="w-4 h-4 text-[#d4a853]" />
+            </button>
             <a
               href={publicUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] text-xs font-black shadow-lg hover:brightness-110 transition-all flex items-center gap-2"
+              className="shrink-0 p-2 rounded-lg border border-white/10 hover:border-[#d4a853]/50 transition-all cursor-pointer"
+              title="Voir la carte publique"
             >
-              <Eye className="w-4 h-4" />
-              <span>Voir la Carte Publique</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
+              <Eye className="w-4 h-4 text-[#d4a853]" />
             </a>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* SUBSCRIPTION STATUS BANNER */}
