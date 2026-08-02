@@ -77,7 +77,6 @@ function AnimatedStat({ value }: { value: string }) {
 }
 
 export const Route = createFileRoute("/")({
-  ssr: false,
   beforeLoad: async () => {
     if (typeof window === "undefined") return;
     let hasSession = false;
