@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://resto-bf-saas.vercel.app/sitemap.xml

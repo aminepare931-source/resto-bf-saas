@@ -82,19 +82,29 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Resto BF — Mettez votre restaurant en ligne" },
+      { title: "Resto BF — Mettez votre restaurant en ligne au Burkina Faso" },
       {
         name: "description",
-        content: "Le SaaS pour les restaurants, maquis et fast-foods du Burkina Faso.",
+        content:
+          "Le SaaS pour les restaurants, maquis et fast-foods du Burkina Faso : menu digital, commande WhatsApp, réservation en ligne, QR code par table. Essai gratuit.",
       },
+      { name: "keywords", content: "restobf, resto bf, menu digital burkina faso, commande whatsapp restaurant, saas restaurant burkina, site web maquis ouagadougou" },
       { name: "author", content: "Resto BF" },
-      { property: "og:title", content: "Resto BF — Mettez votre restaurant en ligne" },
+      { name: "robots", content: "index, follow" },
+      { property: "og:site_name", content: "Resto BF" },
+      { property: "og:title", content: "Resto BF — Mettez votre restaurant en ligne au Burkina Faso" },
       {
         property: "og:description",
         content: "Menu digital, commande WhatsApp, réservation. Simple et pas cher.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://resto-bf-saas.vercel.app/" },
+      { property: "og:image", content: "https://resto-bf-saas.vercel.app/restobf-logo.png" },
+      { property: "og:locale", content: "fr_FR" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Resto BF — Mettez votre restaurant en ligne" },
+      { name: "twitter:description", content: "Menu digital, commande WhatsApp, réservation pour restaurants au Burkina Faso." },
+      { name: "twitter:image", content: "https://resto-bf-saas.vercel.app/restobf-logo.png" },
       { name: "theme-color", content: "#0a0a0f" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "mobile-web-app-capable", content: "yes" },
@@ -105,6 +115,29 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "icon", type: "image/png", href: "/restobf-logo.png" },
       { rel: "apple-touch-icon", href: "/restobf-logo.png" },
+      { rel: "canonical", href: "https://resto-bf-saas.vercel.app/" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: "Resto BF",
+          applicationCategory: "BusinessApplication",
+          operatingSystem: "Web",
+          description:
+            "SaaS pour restaurants, maquis et fast-foods au Burkina Faso : menu digital, commande WhatsApp, réservation en ligne.",
+          offers: {
+            "@type": "Offer",
+            priceCurrency: "XOF",
+          },
+          areaServed: {
+            "@type": "Country",
+            name: "Burkina Faso",
+          },
+        }),
+      },
     ],
   }),
   shellComponent: RootShell,
