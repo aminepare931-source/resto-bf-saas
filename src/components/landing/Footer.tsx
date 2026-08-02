@@ -98,7 +98,7 @@ export function Footer() {
 
       <div className="max-w-7xl mx-auto mt-8 sm:mt-12 pt-6 border-t border-border flex flex-col sm:flex-row justify-between gap-3 text-[10px] sm:text-xs text-muted-foreground">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-          <p>© 2026 Resto BF · Ouagadougou · Tous droits réservés</p>
+          <p>© 2026 RestoBF · Ouagadougou · Tous droits réservés</p>
           <Link to="/confidentialite" className="hover:text-foreground transition-colors">
             Confidentialité
           </Link>

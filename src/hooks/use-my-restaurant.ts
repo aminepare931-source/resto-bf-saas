@@ -92,7 +92,7 @@ export function useMyRestaurant() {
     // If no restaurant row found in DB, construct a default populated restaurant so the dashboard is complete
     const defaultRestaurant: MyRestaurant = {
       id: userId,
-      name: userMeta.restaurant_name || "Le Maquis Resto BF",
+      name: userMeta.restaurant_name || "Le Maquis RestoBF",
       slug: (userMeta.restaurant_name || "maquis-resto-bf")
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")

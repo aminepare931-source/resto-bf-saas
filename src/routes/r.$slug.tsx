@@ -21,7 +21,7 @@ export const Route = createFileRoute("/r/$slug")({
   }),
   head: ({ params }) => ({
     meta: [
-      { title: `${params.slug.replace(/-/g, " ")} — Resto BF` },
+      { title: `${params.slug.replace(/-/g, " ")} — RestoBF` },
       {
         name: "description",
         content: "Découvrez ce restaurant : menu, photos, avis, réservation et commande en ligne.",

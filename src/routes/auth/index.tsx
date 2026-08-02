@@ -3,8 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/auth/")({
   head: () => ({
     meta: [
-      { title: "Connexion — Resto BF" },
-      { name: "description", content: "Accédez à votre espace Resto BF" },
+      { title: "Connexion — RestoBF" },
+      { name: "description", content: "Accédez à votre espace RestoBF" },
     ],
   }),
   component: AuthHomePage,
@@ -20,7 +20,7 @@ function AuthHomePage() {
             alt="RestoBF"
             className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-white object-contain p-2 shadow-gold"
           />
-          <h1 className="text-4xl font-black mb-2">Bienvenue sur Resto BF</h1>
+          <h1 className="text-4xl font-black mb-2">Bienvenue sur RestoBF</h1>
           <p className="text-muted-foreground">Choisissez votre espace pour continuer</p>
         </div>
 

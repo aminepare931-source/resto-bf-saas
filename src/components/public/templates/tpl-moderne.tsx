@@ -196,7 +196,7 @@ function PoweredFooter({
         <span>
           Site propulsé par{" "}
           <a href="/" className="underline" style={{ color: theme.accent }}>
-            Resto BF
+            RestoBF
           </a>
         </span>
       </div>

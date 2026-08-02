@@ -92,13 +92,13 @@ export const Route = createFileRoute("/")({
   },
   head: () => ({
     meta: [
-      { title: "Resto BF — SaaS pour restaurants au Burkina Faso" },
+      { title: "RestoBF — SaaS pour restaurants au Burkina Faso" },
       {
         name: "description",
         content:
           "Créez un site web professionnel pour votre restaurant, maquis ou fast-food au Burkina Faso. Menu digital, commande WhatsApp, réservation en ligne.",
       },
-      { property: "og:title", content: "Resto BF — Le SaaS pour les restaurateurs du Burkina" },
+      { property: "og:title", content: "RestoBF — Le SaaS pour les restaurateurs du Burkina" },
       {
         property: "og:description",
         content:
@@ -155,7 +155,7 @@ const testimonials = [
     name: "Aminata K.",
     role: "Gérante de Maquis VIP — Ouagadougou",
     avatar: "AK",
-    text: "Depuis que nous avons lancé notre page Resto BF, nos clients scannent le QR Code à table et commandent directement. On vend beaucoup plus vite aux heures de pointe !",
+    text: "Depuis que nous avons lancé notre page RestoBF, nos clients scannent le QR Code à table et commandent directement. On vend beaucoup plus vite aux heures de pointe !",
   },
   {
     name: "Oumar S.",
@@ -483,7 +483,7 @@ function LandingPage() {
               Approuvé par les <span className="text-[#f0d48a]">restaurateurs du Burkina</span>
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
-              Découvrez les retours de ceux qui utilisent Resto BF tous les jours.
+              Découvrez les retours de ceux qui utilisent RestoBF tous les jours.
             </p>
           </div>
 

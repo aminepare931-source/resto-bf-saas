@@ -27,10 +27,10 @@ export const Route = createFileRoute("/auth/inscription")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "Inscription — Resto BF" },
+      { title: "Inscription — RestoBF" },
       {
         name: "description",
-        content: "Créez votre espace restaurateur sur Resto BF en 2 minutes.",
+        content: "Créez votre espace restaurateur sur RestoBF en 2 minutes.",
       },
     ],
   }),

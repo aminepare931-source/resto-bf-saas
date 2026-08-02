@@ -113,7 +113,7 @@ function ReservationsPage() {
       `• Nombre de personnes : ${reservation.party_size}\n` +
       (reservation.notes ? `• Notes : ${reservation.notes}\n` : "") +
       `\nNous vous attendons avec impatience !\n\n` +
-      `Resto BF`;
+      `RestoBF`;
 
     if (channel === "whatsapp" || channel === "both") {
       const cleanPhone = reservation.customer_phone.replace(/\D/g, "");

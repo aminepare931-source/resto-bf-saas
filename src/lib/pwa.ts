@@ -59,7 +59,7 @@ function showUpdatePrompt(registration: ServiceWorkerRegistration) {
       <strong style="font-size:14px;">Nouvelle version disponible</strong>
     </div>
     <p style="font-size:12px;color:#999;margin:0 0 12px 0;">
-      Une mise à jour de Resto BF est disponible. Actualisez pour profiter des dernières améliorations.
+      Une mise à jour de RestoBF est disponible. Actualisez pour profiter des dernières améliorations.
     </p>
     <div style="display:flex;gap:8px;justify-content:flex-end;">
       <button id="sw-update-ignore" style="padding:6px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#999;font-size:12px;cursor:pointer;">Plus tard</button>

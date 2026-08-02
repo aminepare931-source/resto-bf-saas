@@ -81,7 +81,7 @@ function MessagingPage() {
       (reservation.occasion ? `• Occasion : ${reservation.occasion}\n` : "") +
       (reservation.budget ? `• Budget : ${reservation.budget}\n` : "") +
       `\nNous vous attendons avec impatience !\n\n` +
-      `Resto BF`;
+      `RestoBF`;
 
     openWhatsApp(reservation.customer_phone, msg);
     toast.success("Message de confirmation ouvert");
@@ -95,7 +95,7 @@ function MessagingPage() {
       `• Heure : ${reservation.reservation_time}\n` +
       `• Personnes : ${reservation.party_size}\n\n` +
       `À demain !\n\n` +
-      `Resto BF`;
+      `RestoBF`;
 
     openWhatsApp(reservation.customer_phone, msg);
     toast.success("Message de rappel ouvert");
@@ -106,7 +106,7 @@ function MessagingPage() {
       `Bonjour ${order.customer_name || "Client"} !\n\n` +
       `Nous vous rappelons que votre commande d'un montant de ${order.total.toLocaleString("fr-FR")} F n'a pas encore été payée.\n\n` +
       `Merci de régler votre commande.\n\n` +
-      `Resto BF`;
+      `RestoBF`;
 
     openWhatsApp(order.customer_phone || "", msg);
     toast.success("Rappel de paiement ouvert");

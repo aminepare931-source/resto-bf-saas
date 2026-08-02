@@ -73,7 +73,7 @@ export function AuthShell({
 
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#d4a853]/15 border border-[#d4a853]/30 text-[11px] font-semibold text-[#f0d48a]">
           <Sparkles className="w-3 h-3 text-[#d4a853]" />
-          <span>SaaS Resto BF — Burkina Faso</span>
+          <span>SaaS RestoBF — Burkina Faso</span>
         </div>
       </div>
 
@@ -111,7 +111,7 @@ export function AuthShell({
               <div className="absolute -inset-2 rounded-2xl bg-[#d4a853]/30 blur-md opacity-0 group-hover/logo:opacity-100 transition-opacity duration-300" />
               <img
                 src="/restobf-logo.png"
-                alt="Resto BF"
+                alt="RestoBF"
                 width={72}
                 height={72}
                 className="relative w-16 h-16 sm:w-18 sm:h-18 mx-auto rounded-2xl object-contain border border-[#d4a853]/40 bg-[#0a0a0f] p-1.5 shadow-xl group-hover/logo:scale-105 transition-transform"

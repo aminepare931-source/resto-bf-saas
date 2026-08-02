@@ -24,7 +24,7 @@ export function SubscribeContactModal({
   if (!open) return null;
 
   const waMsg = encodeURIComponent(
-    `Bonjour, je souhaite activer mon abonnement Resto BF${plan ? ` (${plan})` : ""}.`,
+    `Bonjour, je souhaite activer mon abonnement RestoBF${plan ? ` (${plan})` : ""}.`,
   );
 
   return (

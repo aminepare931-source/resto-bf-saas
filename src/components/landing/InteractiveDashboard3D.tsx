@@ -175,7 +175,7 @@ export function InteractiveDashboard3D() {
         <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-[#1a1a24]/60">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs font-semibold text-foreground">Resto BF Dashboard</span>
+            <span className="text-xs font-semibold text-foreground">RestoBF Dashboard</span>
           </div>
 
           <div className="flex items-center gap-1.5 bg-[#0a0a0f] px-2.5 py-1 rounded-lg border border-border">

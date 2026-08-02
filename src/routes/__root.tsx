@@ -82,17 +82,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Resto BF — Mettez votre restaurant en ligne au Burkina Faso" },
+      { title: "RestoBF — Mettez votre restaurant en ligne au Burkina Faso" },
       {
         name: "description",
         content:
           "Le SaaS pour les restaurants, maquis et fast-foods du Burkina Faso : menu digital, commande WhatsApp, réservation en ligne, QR code par table. Essai gratuit.",
       },
       { name: "keywords", content: "restobf, resto bf, menu digital burkina faso, commande whatsapp restaurant, saas restaurant burkina, site web maquis ouagadougou" },
-      { name: "author", content: "Resto BF" },
+      { name: "author", content: "RestoBF" },
       { name: "robots", content: "index, follow" },
-      { property: "og:site_name", content: "Resto BF" },
-      { property: "og:title", content: "Resto BF — Mettez votre restaurant en ligne au Burkina Faso" },
+      { property: "og:site_name", content: "RestoBF" },
+      { property: "og:title", content: "RestoBF — Mettez votre restaurant en ligne au Burkina Faso" },
       {
         property: "og:description",
         content: "Menu digital, commande WhatsApp, réservation. Simple et pas cher.",
@@ -102,7 +102,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:image", content: "https://resto-bf-saas.vercel.app/restobf-logo.png" },
       { property: "og:locale", content: "fr_FR" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "Resto BF — Mettez votre restaurant en ligne" },
+      { name: "twitter:title", content: "RestoBF — Mettez votre restaurant en ligne" },
       { name: "twitter:description", content: "Menu digital, commande WhatsApp, réservation pour restaurants au Burkina Faso." },
       { name: "twitter:image", content: "https://resto-bf-saas.vercel.app/restobf-logo.png" },
       { name: "theme-color", content: "#0a0a0f" },
@@ -123,7 +123,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "SoftwareApplication",
-          name: "Resto BF",
+          name: "RestoBF",
           applicationCategory: "BusinessApplication",
           operatingSystem: "Web",
           description:

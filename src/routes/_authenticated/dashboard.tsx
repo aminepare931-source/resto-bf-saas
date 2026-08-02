@@ -7,7 +7,7 @@ import { toast } from "sonner";
 const LOGO_URL = "/restobf-logo.png";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  head: () => ({ meta: [{ title: "Tableau de bord — Resto BF" }] }),
+  head: () => ({ meta: [{ title: "Tableau de bord — RestoBF" }] }),
   component: DashboardLayout,
 });
 
@@ -227,7 +227,7 @@ function DashboardLayout() {
           >
             ☰
           </button>
-          <strong className="text-sm">{resto?.name ?? "Resto BF"}</strong>
+          <strong className="text-sm">{resto?.name ?? "RestoBF"}</strong>
           <div className="w-10" />
         </header>
 

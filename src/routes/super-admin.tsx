@@ -16,7 +16,7 @@ export const Route = createFileRoute("/super-admin")({
       .maybeSingle();
     if (!data) throw redirect({ to: "/" });
   },
-  head: () => ({ meta: [{ title: "Super Administration — Resto BF" }] }),
+  head: () => ({ meta: [{ title: "Super Administration — RestoBF" }] }),
   component: SuperAdminPage,
 });
 
@@ -1217,7 +1217,7 @@ function SuperAdminPage() {
               <p className="text-[10px] uppercase tracking-widest text-gold font-bold">
                 Super Administration
               </p>
-              <strong className="block text-base truncate">Pilotage Resto BF</strong>
+              <strong className="block text-base truncate">Pilotage RestoBF</strong>
             </div>
           </div>
           <div className="flex gap-2 shrink-0">

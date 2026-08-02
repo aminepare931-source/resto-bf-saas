@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/offline")({
   head: () => ({
     meta: [
-      { title: "Hors ligne — Resto BF" },
+      { title: "Hors ligne — RestoBF" },
       { name: "description", content: "Vous êtes actuellement hors ligne." },
     ],
   }),

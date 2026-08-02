@@ -3,11 +3,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/auth/abonnement")({
   head: () => ({
     meta: [
-      { title: "Abonnement Basique — Resto BF" },
+      { title: "Abonnement Basique — RestoBF" },
       {
         name: "description",
         content:
-          "Découvrez l'abonnement basique de Resto BF. Menu digital, commandes en ligne, QR Code. Simple et abordable.",
+          "Découvrez l'abonnement basique de RestoBF. Menu digital, commandes en ligne, QR Code. Simple et abordable.",
       },
     ],
   }),

@@ -5,7 +5,7 @@ import { useMyRestaurant } from "@/hooks/use-my-restaurant";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/dashboard/paiements")({
-  head: () => ({ meta: [{ title: "Paiements — Resto BF" }] }),
+  head: () => ({ meta: [{ title: "Paiements — RestoBF" }] }),
   component: PaiementsPage,
 });
 

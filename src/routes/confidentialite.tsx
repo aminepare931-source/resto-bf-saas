@@ -4,10 +4,10 @@ import { LegalLayout, LSection } from "@/components/legal/LegalLayout";
 export const Route = createFileRoute("/confidentialite")({
   head: () => ({
     meta: [
-      { title: "Politique de confidentialité — Resto BF" },
+      { title: "Politique de confidentialité — RestoBF" },
       {
         name: "description",
-        content: "Comment Resto BF collecte, utilise et protège vos données.",
+        content: "Comment RestoBF collecte, utilise et protège vos données.",
       },
     ],
   }),
@@ -18,7 +18,7 @@ function PrivacyPage() {
   return (
     <LegalLayout title="Politique de confidentialité" updated="24 juillet 2026">
       <p>
-        Resto BF ("nous", "notre") édite une plateforme SaaS permettant aux restaurants, maquis et
+        RestoBF ("nous", "notre") édite une plateforme SaaS permettant aux restaurants, maquis et
         fast-foods du Burkina Faso de créer un site vitrine, de gérer leur menu digital, leurs
         commandes et leurs réservations. Cette politique explique quelles données nous collectons,
         pourquoi, et comment elles sont protégées.
@@ -26,7 +26,7 @@ function PrivacyPage() {
 
       <LSection title="1. Qui est responsable de vos données">
         <p>
-          Resto BF, service édité depuis le Burkina Faso. Pour toute question relative à vos données
+          RestoBF, service édité depuis le Burkina Faso. Pour toute question relative à vos données
           personnelles, vous pouvez nous contacter à{" "}
           <a href="mailto:aminepare931@gmail.com">aminepare931@gmail.com</a> ou au{" "}
           <a href="tel:+22655300868">+226 55 30 08 68</a>.
@@ -46,7 +46,7 @@ function PrivacyPage() {
         </ul>
         <p className="mt-3">
           <strong>Données des clients de vos restaurants</strong> — lorsqu'un client passe commande
-          ou réserve une table via un site Resto BF :
+          ou réserve une table via un site RestoBF :
         </p>
         <ul>
           <li>Nom, numéro de téléphone</li>
@@ -85,7 +85,7 @@ function PrivacyPage() {
       </LSection>
 
       <LSection title="4. Avec qui vos données sont partagées">
-        <p>Nous faisons appel à des prestataires techniques pour faire fonctionner Resto BF :</p>
+        <p>Nous faisons appel à des prestataires techniques pour faire fonctionner RestoBF :</p>
         <ul>
           <li>
             <strong>Supabase</strong> — hébergement de la base de données et authentification des

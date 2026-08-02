@@ -15,8 +15,8 @@ export const Route = createFileRoute("/auth/connexion")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "Connexion — Resto BF" },
-      { name: "description", content: "Connectez-vous à votre espace restaurateur Resto BF." },
+      { title: "Connexion — RestoBF" },
+      { name: "description", content: "Connectez-vous à votre espace restaurateur RestoBF." },
     ],
   }),
   component: LoginPage,
@@ -159,7 +159,7 @@ function LoginPage() {
       </button>
 
       <p className="text-center mt-6 text-xs text-muted-foreground">
-        Nouveau sur Resto BF ?{" "}
+        Nouveau sur RestoBF ?{" "}
         <Link to="/auth/inscription" className="text-[#f0d48a] font-extrabold hover:underline">
           Créer un compte restaurant (30j gratuits)
         </Link>

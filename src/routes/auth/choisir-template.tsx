@@ -17,7 +17,7 @@ export const Route = createFileRoute("/auth/choisir-template")({
     const { data } = await supabase.auth.getUser();
     if (!data.user) throw redirect({ to: "/auth/connexion" });
   },
-  head: () => ({ meta: [{ title: "Choisir un template — Resto BF" }] }),
+  head: () => ({ meta: [{ title: "Choisir un template — RestoBF" }] }),
   component: ChooseTemplate,
 });
 

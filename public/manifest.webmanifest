@@ -1,6 +1,6 @@
 {
-  "name": "Resto BF — SaaS pour restaurateurs au Burkina Faso",
-  "short_name": "Resto BF",
+  "name": "RestoBF — SaaS pour restaurateurs au Burkina Faso",
+  "short_name": "RestoBF",
   "description": "Créez un site web professionnel pour votre restaurant, maquis ou fast-food au Burkina Faso. Menu digital, commande WhatsApp, réservation en ligne.",
   "start_url": "/",
   "display": "standalone",

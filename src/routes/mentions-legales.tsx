@@ -4,10 +4,10 @@ import { LegalLayout, LSection } from "@/components/legal/LegalLayout";
 export const Route = createFileRoute("/mentions-legales")({
   head: () => ({
     meta: [
-      { title: "Mentions légales — Resto BF" },
+      { title: "Mentions légales — RestoBF" },
       {
         name: "description",
-        content: "Informations légales sur l'éditeur de la plateforme Resto BF.",
+        content: "Informations légales sur l'éditeur de la plateforme RestoBF.",
       },
     ],
   }),
@@ -18,7 +18,7 @@ function LegalNoticePage() {
   return (
     <LegalLayout title="Mentions légales" updated="24 juillet 2026">
       <LSection title="Éditeur du site">
-        <p>Le site et la plateforme Resto BF sont édités depuis le Burkina Faso.</p>
+        <p>Le site et la plateforme RestoBF sont édités depuis le Burkina Faso.</p>
         <ul>
           <li>
             Contact : <a href="mailto:aminepare931@gmail.com">aminepare931@gmail.com</a>
@@ -51,7 +51,7 @@ function LegalNoticePage() {
 
       <LSection title="Propriété intellectuelle">
         <p>
-          La marque "Resto BF", son logo et l'ensemble des éléments graphiques et techniques de la
+          La marque "RestoBF", son logo et l'ensemble des éléments graphiques et techniques de la
           plateforme sont la propriété de leur éditeur, sauf mention contraire. Les contenus publiés
           par chaque restaurant (photos, menu, textes) restent la propriété de ce restaurant.
         </p>

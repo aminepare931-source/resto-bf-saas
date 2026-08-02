@@ -35,7 +35,7 @@ export function LegalLayout({
       </header>
 
       <main className="relative z-10 max-w-3xl mx-auto px-5 py-12 sm:py-16">
-        <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">Resto BF</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-3">RestoBF</p>
         <h1 className="text-3xl sm:text-4xl font-black mb-2">{title}</h1>
         <p className="text-xs text-muted-foreground mb-10">Dernière mise à jour : {updated}</p>
 

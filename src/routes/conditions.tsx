@@ -4,8 +4,8 @@ import { LegalLayout, LSection } from "@/components/legal/LegalLayout";
 export const Route = createFileRoute("/conditions")({
   head: () => ({
     meta: [
-      { title: "Conditions d'utilisation — Resto BF" },
-      { name: "description", content: "Les règles d'utilisation de la plateforme Resto BF." },
+      { title: "Conditions d'utilisation — RestoBF" },
+      { name: "description", content: "Les règles d'utilisation de la plateforme RestoBF." },
     ],
   }),
   component: TermsPage,
@@ -15,13 +15,13 @@ function TermsPage() {
   return (
     <LegalLayout title="Conditions d'utilisation" updated="24 juillet 2026">
       <p>
-        En créant un compte ou en utilisant la plateforme Resto BF, vous acceptez les présentes
+        En créant un compte ou en utilisant la plateforme RestoBF, vous acceptez les présentes
         conditions. Merci de les lire attentivement.
       </p>
 
       <LSection title="1. Le service">
         <p>
-          Resto BF est une plateforme SaaS qui permet aux restaurants, maquis et fast-foods de créer
+          RestoBF est une plateforme SaaS qui permet aux restaurants, maquis et fast-foods de créer
           un site en ligne (menu digital, galerie, avis), de recevoir des commandes et des
           réservations, et de gérer leur activité (cuisine, stocks, facturation, statistiques)
           depuis un tableau de bord.
@@ -43,7 +43,7 @@ function TermsPage() {
       </LSection>
 
       <LSection title="3. Abonnements et tarifs">
-        <p>Resto BF propose plusieurs formules :</p>
+        <p>RestoBF propose plusieurs formules :</p>
         <ul>
           <li>
             <strong>Basique</strong> — 30 jours d'essai gratuit, puis 2 500 FCFA/mois
@@ -68,7 +68,7 @@ function TermsPage() {
       <LSection title="4. Vos contenus">
         <p>
           Vous restez propriétaire de tous les contenus que vous publiez sur votre site (photos,
-          description, menu, textes). En les publiant sur Resto BF, vous nous autorisez à les
+          description, menu, textes). En les publiant sur RestoBF, vous nous autorisez à les
           héberger et à les afficher publiquement dans le cadre du fonctionnement du service.
         </p>
         <p>Vous vous engagez à ne pas publier de contenu :</p>
@@ -81,9 +81,9 @@ function TermsPage() {
 
       <LSection title="5. Commandes et réservations">
         <p>
-          Resto BF fournit l'outil technique permettant à vos clients de commander et réserver en
+          RestoBF fournit l'outil technique permettant à vos clients de commander et réserver en
           ligne. La relation commerciale (préparation, tarification, qualité, livraison, litiges
-          liés à une commande) reste entièrement entre vous et votre client — Resto BF n'est ni
+          liés à une commande) reste entièrement entre vous et votre client — RestoBF n'est ni
           vendeur ni intermédiaire commercial dans cette relation.
         </p>
       </LSection>
@@ -106,7 +106,7 @@ function TermsPage() {
 
       <LSection title="8. Limitation de responsabilité">
         <p>
-          Resto BF est fourni "en l'état". Dans la mesure permise par la loi applicable, nous ne
+          RestoBF est fourni "en l'état". Dans la mesure permise par la loi applicable, nous ne
           pourrons être tenus responsables des pertes indirectes (perte de chiffre d'affaires, de
           clientèle) résultant de l'utilisation ou de l'impossibilité d'utiliser le service.
         </p>

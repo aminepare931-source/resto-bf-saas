@@ -173,7 +173,7 @@ function PoweredFooter({
         <span>
           Site propulsé par{" "}
           <a href="/" className="underline" style={{ color: theme.accent }}>
-            Resto BF
+            RestoBF
           </a>
         </span>
       </div>
@@ -781,7 +781,7 @@ function ClassiqueGratuit({
           ))}
         </div>
         <div className="cl-footer-credit">
-          Propulsé par <a href="/">Resto BF</a>
+          Propulsé par <a href="/">RestoBF</a>
         </div>
       </footer>
 
