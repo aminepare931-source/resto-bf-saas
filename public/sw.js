@@ -3,7 +3,7 @@
  * Stratégies de cache intelligentes pour le mode hors ligne
  */
 
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v2";
 const STATIC_CACHE = `restobf-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `restobf-dynamic-${CACHE_VERSION}`;
 const IMAGE_CACHE = `restobf-images-${CACHE_VERSION}`;
@@ -93,6 +93,27 @@ async function networkFirst(request) {
   }
 }
 
+// ─── Network First (navigation HTML) ───
+// Pour les pages, on veut TOUJOURS le HTML le plus récent en priorité :
+// après un déploiement, le HTML référence de nouveaux fichiers JS/CSS
+// (noms avec hash différent) — si on sert une vieille page en cache
+// d'abord, elle pointe vers des fichiers qui n'existent plus (404) et
+// l'app ne charge plus du tout tant que le cache n'est pas vidé.
+async function networkFirstNavigation(request) {
+  try {
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(DYNAMIC_CACHE);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    const cache = await caches.open(DYNAMIC_CACHE);
+    const cached = await cache.match(request);
+    return cached || caches.match("/offline");
+  }
+}
+
 // ─── Stale While Revalidate (pages) ───
 async function staleWhileRevalidate(request) {
   const cache = await caches.open(DYNAMIC_CACHE);
@@ -143,7 +164,9 @@ self.addEventListener("fetch", (event) => {
   if (url.protocol === "chrome-extension:") return;
 
   // Stratégie selon le type de ressource
-  if (isImage(url.href)) {
+  if (request.mode === "navigate") {
+    event.respondWith(networkFirstNavigation(request));
+  } else if (isImage(url.href)) {
     event.respondWith(cacheOnly(request));
   } else if (isApiRequest(url.href)) {
     event.respondWith(networkFirst(request));
