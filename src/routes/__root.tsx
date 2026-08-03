@@ -117,28 +117,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "apple-touch-icon", href: "/restobf-logo.png" },
       { rel: "canonical", href: "https://resto-bf-saas.vercel.app/" },
     ],
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "SoftwareApplication",
-          name: "RestoBF",
-          applicationCategory: "BusinessApplication",
-          operatingSystem: "Web",
-          description:
-            "SaaS pour restaurants, maquis et fast-foods au Burkina Faso : menu digital, commande WhatsApp, réservation en ligne.",
-          offers: {
-            "@type": "Offer",
-            priceCurrency: "XOF",
-          },
-          areaServed: {
-            "@type": "Country",
-            name: "Burkina Faso",
-          },
-        }),
-      },
-    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
