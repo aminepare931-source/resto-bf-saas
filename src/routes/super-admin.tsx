@@ -6,6 +6,16 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/super-admin")({
   ssr: false,
   beforeLoad: async () => {
+    // Attendre que le client Supabase ait fini de restaurer la session
+    // depuis le stockage local avant de vérifier — sur une ouverture
+    // directe de l'URL (à froid), un simple getUser() peut répondre
+    // trop vite et croire l'utilisateur déconnecté alors qu'il ne l'est
+    // pas encore su.
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData?.session) {
+      throw redirect({ to: "/auth/connexion" });
+    }
+
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) throw redirect({ to: "/auth/connexion" });
     const { data } = await supabase
