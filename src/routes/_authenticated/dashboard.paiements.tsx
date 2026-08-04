@@ -70,24 +70,19 @@ function PaiementsPage() {
     if (!r) return;
     setLoading(true);
 
-    const { data: restaurants } = await supabase
-      .from("restaurants")
-      .select("id")
-      .eq("user_id", (r as any).user_id);
-
-    const restoIds = restaurants?.map((rest) => rest.id) ?? [r.id];
-
     const { data: orders } = await supabase
       .from("orders")
       .select("id, table_number, customer_name, status")
-      .in("restaurant_id", restoIds);
+      .eq("restaurant_id", r.id);
 
     const orderMap = new Map<string, OrderInfo>();
+    const orderIds = (orders ?? []).map((o) => o.id);
     orders?.forEach((o) => orderMap.set(o.id, o as OrderInfo));
 
     const { data: codes } = await supabase
       .from("payment_codes" as never)
       .select("*")
+      .eq("restaurant_id", r.id)
       .order("created_at", { ascending: false });
 
     const enriched = ((codes ?? []) as PaymentCode[]).map((pc) => ({

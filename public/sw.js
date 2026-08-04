@@ -3,7 +3,7 @@
  * Stratégies de cache intelligentes pour le mode hors ligne
  */
 
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
 const STATIC_CACHE = `restobf-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `restobf-dynamic-${CACHE_VERSION}`;
 const IMAGE_CACHE = `restobf-images-${CACHE_VERSION}`;
@@ -66,7 +66,7 @@ async function cacheFirst(request) {
     const response = await fetch(request);
     if (response.ok) {
       const cache = await caches.open(STATIC_CACHE);
-      cache.put(request, response.clone());
+      if (request.method === "GET") cache.put(request, response.clone()).catch(() => {});
     }
     return response;
   } catch {
@@ -78,12 +78,18 @@ async function cacheFirst(request) {
 async function networkFirst(request) {
   try {
     const response = await fetch(request);
-    if (response.ok) {
+    if (response.ok && request.method === "GET") {
       const cache = await caches.open(API_CACHE);
-      cache.put(request, response.clone());
+      cache.put(request, response.clone()).catch(() => {});
     }
     return response;
   } catch {
+    if (request.method !== "GET") {
+      return new Response(JSON.stringify({ error: "offline", message: "Vous êtes hors ligne" }), {
+        status: 503,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
     const cached = await caches.match(request);
     if (cached) return cached;
     return new Response(JSON.stringify({ error: "offline", message: "Vous êtes hors ligne" }), {
@@ -104,7 +110,7 @@ async function networkFirstNavigation(request) {
     const response = await fetch(request);
     if (response.ok) {
       const cache = await caches.open(DYNAMIC_CACHE);
-      cache.put(request, response.clone());
+      if (request.method === "GET") cache.put(request, response.clone()).catch(() => {});
     }
     return response;
   } catch {
@@ -122,7 +128,7 @@ async function staleWhileRevalidate(request) {
   const fetchPromise = fetch(request)
     .then((response) => {
       if (response.ok) {
-        cache.put(request, response.clone());
+        if (request.method === "GET") cache.put(request, response.clone()).catch(() => {});
       }
       return response;
     })
@@ -140,7 +146,7 @@ async function cacheOnly(request) {
     const response = await fetch(request);
     if (response.ok) {
       const cache = await caches.open(IMAGE_CACHE);
-      cache.put(request, response.clone());
+      if (request.method === "GET") cache.put(request, response.clone()).catch(() => {});
     }
     return response;
   } catch {

@@ -47,9 +47,8 @@ type LiveOrder = {
   customer_name: string;
   table_or_delivery: string;
   items_summary: string;
-  total_amount: number;
-  status: "pending" | "preparing" | "ready" | "delivered" | "cancelled";
-  payment_method: "orange_money" | "moov_money" | "especes";
+  total: number;
+  status: "new" | "in_kitchen" | "ready" | "served" | "paid" | "cancelled";
   created_at: string;
 };
 
@@ -112,7 +111,7 @@ export function DashboardHome() {
             .limit(5),
           supabase
             .from("orders")
-            .select("total_amount")
+            .select("total")
             .eq("restaurant_id", r.id)
             .gte("created_at", startOfToday.toISOString()),
           supabase
@@ -124,7 +123,7 @@ export function DashboardHome() {
         ]);
 
         const todayRevenue = (todayOrd.data || []).reduce(
-          (sum: number, o: any) => sum + (Number(o.total_amount) || 0),
+          (sum: number, o: any) => sum + (Number(o.total) || 0),
           0,
         );
 
@@ -138,19 +137,25 @@ export function DashboardHome() {
         });
 
         if (ord.data) {
-          const mapped: LiveOrder[] = ord.data.map((o: any) => ({
-            id: o.id.slice(0, 8).toUpperCase(),
-            customer_name: o.customer_name || "Client Anonyme",
-            table_or_delivery: o.table_number ? `Table N° ${o.table_number}` : "Commande emporter",
-            items_summary: o.items_summary || "Plats divers",
-            total_amount: o.total_amount || 0,
-            status: o.status || "pending",
-            payment_method: o.payment_method || "orange_money",
-            created_at: new Date(o.created_at).toLocaleTimeString("fr-FR", {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-          }));
+          const mapped: LiveOrder[] = ord.data.map((o: any) => {
+            const items = Array.isArray(o.items) ? o.items : [];
+            const summary =
+              items.length > 0
+                ? items.map((it: any) => `${it.qty ?? it.quantity ?? 1}x ${it.name}`).join(", ")
+                : "Plats divers";
+            return {
+              id: o.id,
+              customer_name: o.customer_name || "Client Anonyme",
+              table_or_delivery: o.table_number ? `Table N° ${o.table_number}` : "Commande emporter",
+              items_summary: summary,
+              total: o.total || 0,
+              status: o.status || "new",
+              created_at: new Date(o.created_at).toLocaleTimeString("fr-FR", {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            };
+          });
           setRecentOrders(mapped);
         }
 
@@ -213,11 +218,19 @@ export function DashboardHome() {
     }
   };
 
-  const handleUpdateOrderStatus = (id: string, newStatus: LiveOrder["status"]) => {
+  const handleUpdateOrderStatus = async (id: string, newStatus: LiveOrder["status"]) => {
+    const { error } = await supabase
+      .from("orders")
+      .update({ status: newStatus } as never)
+      .eq("id", id);
+    if (error) {
+      toast.error("Erreur : " + error.message);
+      return;
+    }
     setRecentOrders((prev) =>
       prev.map((ord) => (ord.id === id ? { ...ord, status: newStatus } : ord)),
     );
-    toast.success(`Statut de la commande ${id} mis à jour : ${newStatus}`);
+    toast.success(`Statut mis à jour : ${newStatus}`);
   };
 
   const status = (r as { subscription_status?: string } | null)?.subscription_status;
@@ -585,7 +598,7 @@ export function DashboardHome() {
                   <div className="space-y-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-xs font-extrabold font-mono text-[#f0d48a]">
-                        {ord.id}
+                        {ord.id.slice(0, 8).toUpperCase()}
                       </span>
                       <span className="text-xs font-bold text-foreground">{ord.customer_name}</span>
                       <span className="hidden sm:inline px-2 py-0.5 rounded-full bg-white/10 text-[10px] text-muted-foreground font-semibold">
@@ -600,37 +613,38 @@ export function DashboardHome() {
 
                     <div className="flex items-center gap-2 pt-1">
                       <span className="text-xs font-black text-emerald-400">
-                        {ord.total_amount.toLocaleString("fr-FR")} FCFA
-                      </span>
-                      <span className="hidden sm:inline text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20">
-                        {ord.payment_method === "orange_money"
-                          ? "Orange Money"
-                          : ord.payment_method === "moov_money"
-                            ? "Moov Money"
-                            : "Espèces"}
+                        {ord.total.toLocaleString("fr-FR")} FCFA
                       </span>
                     </div>
                   </div>
 
                   {/* Status Toggle buttons */}
                   <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
-                    {ord.status === "pending" && (
+                    {ord.status === "new" && (
                       <button
-                        onClick={() => handleUpdateOrderStatus(ord.id, "preparing")}
+                        onClick={() => handleUpdateOrderStatus(ord.id, "in_kitchen")}
                         className="px-3 py-1.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold hover:bg-amber-500/30 transition-colors"
                       >
                         En Préparation
                       </button>
                     )}
-                    {ord.status === "preparing" && (
+                    {ord.status === "in_kitchen" && (
                       <button
-                        onClick={() => handleUpdateOrderStatus(ord.id, "delivered")}
-                        className="px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold hover:bg-emerald-500/30 transition-colors"
+                        onClick={() => handleUpdateOrderStatus(ord.id, "ready")}
+                        className="px-3 py-1.5 rounded-xl bg-blue-500/20 border border-blue-500/40 text-blue-300 text-xs font-bold hover:bg-blue-500/30 transition-colors"
                       >
-                        Marquer Livré
+                        Prêt
                       </button>
                     )}
-                    {ord.status === "delivered" && (
+                    {ord.status === "ready" && (
+                      <button
+                        onClick={() => handleUpdateOrderStatus(ord.id, "served")}
+                        className="px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold hover:bg-emerald-500/30 transition-colors"
+                      >
+                        Marquer Servi
+                      </button>
+                    )}
+                    {(ord.status === "served" || ord.status === "paid") && (
                       <span className="px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         Servi
