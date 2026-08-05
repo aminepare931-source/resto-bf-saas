@@ -57,12 +57,13 @@ function StaffLoginPage() {
         return;
       }
 
-      // Find staff by name (case insensitive, partial match)
-      const { data: staff, error } = await (supabase as any)
-        .from("staff_members")
-        .select("id, name, role, is_active")
-        .ilike("name", `%${name}%`)
-        .maybeSingle();
+      // Find staff by name (case insensitive, partial match) via a secure
+      // RPC — une requête directe est bloquée par les policies RLS tant
+      // qu'on n'est pas connecté en tant que propriétaire du restaurant.
+      const { data: staffList, error } = await (supabase as any).rpc("staff_find_by_name", {
+        p_name: name,
+      });
+      const staff = staffList?.[0] ?? null;
 
       if (error) {
         console.error("Erreur lors de la recherche:", error);
@@ -98,14 +99,13 @@ function StaffLoginPage() {
     setLoading(true);
 
     try {
-      // Verify PIN
-      const { data: staff, error } = await (supabase as any)
-        .from("staff_members")
-        .select("id, name, role")
-        .eq("id", staffId)
-        .eq("pin", pinCode)
-        .eq("is_active", true)
-        .maybeSingle();
+      // Verify PIN via une fonction sécurisée (le PIN n'est jamais exposé
+      // au client, il est comparé côté serveur uniquement)
+      const { data: staffList, error } = await (supabase as any).rpc("staff_verify_pin", {
+        p_staff_id: staffId,
+        p_pin: pinCode,
+      });
+      const staff = staffList?.[0] ?? null;
 
       if (error || !staff) {
         toast.error("Code PIN incorrect");
