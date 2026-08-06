@@ -66,13 +66,10 @@ export function OrderCartFab({
         localStorage.removeItem(trackingKey(restaurant.id));
         return;
       }
-      supabase
-        .from("orders" as never)
-        .select("id, status")
-        .eq("id", saved.orderId)
-        .single()
-        .then(({ data }) => {
-          const row = data as { id: string; status: string } | null;
+      (supabase as any)
+        .rpc("get_order_status", { p_order_id: saved.orderId })
+        .then(({ data: rows }: { data: any[] | null }) => {
+          const row = rows?.[0] as { id: string; status: string } | null;
           if (!row) {
             localStorage.removeItem(trackingKey(restaurant.id));
             return;
@@ -141,9 +138,11 @@ export function OrderCartFab({
       return;
     }
     setBusy(true);
-    const { data, error } = await supabase
+    const newOrderId = crypto.randomUUID();
+    const { error } = await supabase
       .from("orders" as never)
       .insert({
+        id: newOrderId,
         restaurant_id: restaurant.id,
         table_number: tableNumber,
         customer_name: customer.name.trim() || null,
@@ -154,15 +153,14 @@ export function OrderCartFab({
         total,
         status: "new",
         source: "qr",
-      } as never)
-      .select("id")
-      .single();
+      } as never);
 
     setBusy(false);
     if (error) {
       toast.error(error.message);
       return;
     }
+    const data = { id: newOrderId };
 
     const orderId = (data as { id?: string } | null)?.id;
     if (orderId) {
