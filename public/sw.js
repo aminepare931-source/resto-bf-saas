@@ -3,7 +3,7 @@
  * Stratégies de cache intelligentes pour le mode hors ligne
  */
 
-const CACHE_VERSION = "v3";
+const CACHE_VERSION = "v4";
 const STATIC_CACHE = `restobf-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `restobf-dynamic-${CACHE_VERSION}`;
 const IMAGE_CACHE = `restobf-images-${CACHE_VERSION}`;
@@ -132,7 +132,11 @@ async function staleWhileRevalidate(request) {
       }
       return response;
     })
-    .catch(() => cached);
+    .catch(
+      () =>
+        cached ||
+        new Response("", { status: 504, statusText: "Gateway Timeout (offline)" }),
+    );
 
   return cached || fetchPromise;
 }

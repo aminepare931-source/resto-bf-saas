@@ -118,6 +118,9 @@ function StaffLoginPage() {
       sessionStorage.setItem("staff_id", staff.id);
       sessionStorage.setItem("staff_name", staff.name);
       sessionStorage.setItem("staff_role", staff.role);
+      if (staff.restaurant_id) {
+        sessionStorage.setItem("staff_restaurant_id", staff.restaurant_id);
+      }
 
       toast.success(`Bienvenue ${staff.name} !`);
 

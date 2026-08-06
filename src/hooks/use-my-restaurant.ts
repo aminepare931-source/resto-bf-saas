@@ -57,8 +57,29 @@ export function useMyRestaurant() {
       // ignore
     }
 
-    // Si pas d'utilisateur connecté, ne pas continuer
+    // Si pas d'utilisateur connecté, vérifier une session staff (nom+PIN,
+    // pas de compte Supabase) avant d'abandonner.
     if (!userId) {
+      const staffRestaurantId =
+        typeof window !== "undefined" ? sessionStorage.getItem("staff_restaurant_id") : null;
+      if (staffRestaurantId) {
+        try {
+          const { data } = await supabase
+            .from("restaurants")
+            .select(
+              "id, name, slug, plan, template, city, cuisine, phone, whatsapp, email, address, hours, description, owner_name, subscription_status, trial_ends_at, subscription_ends_at, logo_url, public_site_url, notification_orders_channel, notification_reservations_channel",
+            )
+            .eq("id", staffRestaurantId)
+            .maybeSingle();
+          if (data) {
+            setRestaurant(data as MyRestaurant);
+            setLoading(false);
+            return;
+          }
+        } catch (err) {
+          console.warn("Staff restaurant fetch error", err);
+        }
+      }
       setLoading(false);
       return;
     }

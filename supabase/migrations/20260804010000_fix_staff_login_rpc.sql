@@ -28,12 +28,12 @@ GRANT EXECUTE ON FUNCTION public.staff_find_by_name(text) TO anon, authenticated
 -- Étape 2 : vérifier le PIN (jamais renvoyé au client, seulement comparé
 -- côté serveur)
 CREATE OR REPLACE FUNCTION public.staff_verify_pin(p_staff_id uuid, p_pin text)
-RETURNS TABLE (id uuid, name text, role text)
+RETURNS TABLE (id uuid, name text, role text, restaurant_id uuid)
 LANGUAGE sql
 SECURITY DEFINER
 SET search_path = public
 AS $$
-  SELECT id, name, role
+  SELECT id, name, role, restaurant_id
   FROM public.staff_members
   WHERE id = p_staff_id
     AND pin = p_pin

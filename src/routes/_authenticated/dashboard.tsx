@@ -109,6 +109,7 @@ function DashboardLayout() {
     sessionStorage.removeItem("staff_id");
     sessionStorage.removeItem("staff_name");
     sessionStorage.removeItem("staff_role");
+    sessionStorage.removeItem("staff_restaurant_id");
 
     await supabase.auth.signOut();
     toast.success("Déconnexion réussie");
