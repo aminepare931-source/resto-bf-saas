@@ -552,6 +552,16 @@ function OrdersPage() {
                       {o.customer_name && ` · ${o.customer_name}`}
                       {o.customer_phone && ` · ${o.customer_phone}`}
                     </p>
+                    {o.delivery_lat != null && o.delivery_lng != null && (
+                      <a
+                        href={`https://www.google.com/maps?q=${o.delivery_lat},${o.delivery_lng}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 mt-1.5 px-2.5 py-1 rounded-lg bg-blue-500/15 border border-blue-500/30 text-blue-300 text-xs font-bold hover:bg-blue-500/25 transition-colors"
+                      >
+                        📍 Voir la position exacte sur Maps
+                      </a>
+                    )}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">

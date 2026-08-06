@@ -49,6 +49,29 @@ export function OrderCartFab({
   const [customer, setCustomer] = useState({ name: "", phone: "", notes: "", address: "" });
   const [mode, setMode] = useState<"sur_place" | "livraison">("sur_place");
   const [tableInput, setTableInput] = useState("");
+  const [geoLocation, setGeoLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [geoStatus, setGeoStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
+
+  const detectLocation = () => {
+    if (!navigator.geolocation) {
+      setGeoStatus("error");
+      toast.error("La géolocalisation n'est pas disponible sur cet appareil");
+      return;
+    }
+    setGeoStatus("loading");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setGeoLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setGeoStatus("done");
+        toast.success("Position détectée ✓");
+      },
+      () => {
+        setGeoStatus("error");
+        toast.error("Impossible de détecter votre position — autorisez la localisation");
+      },
+      { enableHighAccuracy: true, timeout: 10000 },
+    );
+  };
   const canDeliver = restaurant.offers_delivery === true;
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
@@ -88,6 +111,32 @@ export function OrderCartFab({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [restaurant.id]);
+
+  // Suivi en direct : tant qu'une commande est affichée et pas terminée,
+  // on revérifie son statut toutes les 5 secondes — le client voit la
+  // cuisine avancer sans jamais recharger la page.
+  useEffect(() => {
+    if (!done || !lastOrderId || TERMINAL_STATUSES.has(orderStatus)) return;
+
+    const intervalId = setInterval(async () => {
+      const { data: rows } = await (supabase as any).rpc("get_order_status", {
+        p_order_id: lastOrderId,
+      });
+      const row = rows?.[0] as { id: string; status: string } | null;
+      if (!row) return;
+      setOrderStatus((prev) => {
+        if (prev !== row.status) {
+          setStatusHistory((h) => [...h, { status: row.status, time: new Date() }]);
+        }
+        return row.status;
+      });
+      if (TERMINAL_STATUSES.has(row.status)) {
+        localStorage.removeItem(trackingKey(restaurant.id));
+      }
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [done, lastOrderId, orderStatus]);
 
   const available = useMemo(() => menu.filter((m) => m.available), [menu]);
   const lines: OrderItem[] = useMemo(
@@ -153,6 +202,10 @@ export function OrderCartFab({
         total,
         status: "new",
         source: "qr",
+        delivery_lat:
+          !tableNumber && effectiveMode === "livraison" ? (geoLocation?.lat ?? null) : null,
+        delivery_lng:
+          !tableNumber && effectiveMode === "livraison" ? (geoLocation?.lng ?? null) : null,
       } as never);
 
     setBusy(false);
@@ -389,15 +442,33 @@ export function OrderCartFab({
                       className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm"
                     />
                     {!tableNumber && canDeliver && mode === "livraison" && (
-                      <input
-                        value={customer.address}
-                        onChange={(e) =>
-                          setCustomer({ ...customer, address: e.target.value.slice(0, 200) })
-                        }
-                        placeholder="Adresse de livraison *"
-                        required
-                        className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm"
-                      />
+                      <>
+                        <input
+                          value={customer.address}
+                          onChange={(e) =>
+                            setCustomer({ ...customer, address: e.target.value.slice(0, 200) })
+                          }
+                          placeholder="Adresse de livraison *"
+                          required
+                          className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm"
+                        />
+                        <button
+                          type="button"
+                          onClick={detectLocation}
+                          disabled={geoStatus === "loading"}
+                          className={`w-full py-2.5 rounded-xl text-sm font-bold border flex items-center justify-center gap-2 transition-colors ${
+                            geoStatus === "done"
+                              ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400"
+                              : "bg-white/5 border-white/10 text-white/80 hover:border-amber-500/40"
+                          }`}
+                        >
+                          {geoStatus === "loading"
+                            ? "Détection en cours..."
+                            : geoStatus === "done"
+                              ? "✓ Position précise partagée"
+                              : "📍 Partager ma position exacte (recommandé)"}
+                        </button>
+                      </>
                     )}
                     <textarea
                       value={customer.notes}

@@ -24,6 +24,8 @@ export interface Order {
   notes: string | null;
   created_at: string;
   whatsapp_sent_at: string | null;
+  delivery_lat?: number | null;
+  delivery_lng?: number | null;
 }
 
 export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
