@@ -77,6 +77,13 @@ export function OrderCartFab({
   const [done, setDone] = useState(false);
   const [lastOrderId, setLastOrderId] = useState<string | null>(null);
   const [orderStatus, setOrderStatus] = useState<string>("new");
+  const [paymentInfo, setPaymentInfo] = useState<{
+    method: string;
+    amount: number;
+    code: string;
+    status: string;
+  } | null>(null);
+  const [claimingPayment, setClaimingPayment] = useState(false);
   const [statusHistory, setStatusHistory] = useState<Array<{ status: string; time: Date }>>([]);
 
   // Reprendre le suivi d'une commande en cours si la page est rafraîchie
@@ -137,6 +144,42 @@ export function OrderCartFab({
 
     return () => clearInterval(intervalId);
   }, [done, lastOrderId, orderStatus]);
+
+  // Sondage des infos de paiement — continue même une fois la commande
+  // "servie", tant que le paiement n'est pas confirmé par l'admin.
+  useEffect(() => {
+    if (!done || !lastOrderId || orderStatus === "cancelled") return;
+    if (paymentInfo?.status === "confirmed") return;
+
+    const checkPayment = async () => {
+      const { data: payRows } = await (supabase as any).rpc("get_order_payment", {
+        p_order_id: lastOrderId,
+      });
+      const pay = payRows?.[0] as
+        | { method: string; amount: number; code: string; status: string }
+        | undefined;
+      if (pay) setPaymentInfo(pay);
+    };
+    checkPayment();
+    const intervalId = setInterval(checkPayment, 5000);
+    return () => clearInterval(intervalId);
+  }, [done, lastOrderId, orderStatus, paymentInfo?.status]);
+
+  const claimPayment = async () => {
+    if (!lastOrderId || !paymentInfo) return;
+    setClaimingPayment(true);
+    const { data: ok } = await (supabase as any).rpc("client_claim_payment", {
+      p_order_id: lastOrderId,
+      p_code: paymentInfo.code,
+    });
+    setClaimingPayment(false);
+    if (ok) {
+      setPaymentInfo((prev) => (prev ? { ...prev, status: "claimed" } : prev));
+      toast.success("Merci ! Le restaurant va vérifier et valider votre paiement.");
+    } else {
+      toast.error("Une erreur est survenue, réessayez.");
+    }
+  };
 
   const available = useMemo(() => menu.filter((m) => m.available), [menu]);
   const lines: OrderItem[] = useMemo(
@@ -355,6 +398,63 @@ export function OrderCartFab({
                         </div>
                       )}
                     </div>
+                  </div>
+                )}
+
+                {/* Instructions de paiement Mobile Money */}
+                {paymentInfo && paymentInfo.status !== "confirmed" && (
+                  <div className="mt-4 w-full max-w-sm">
+                    <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
+                      {paymentInfo.status === "pending" && (
+                        <>
+                          <p className="text-xs uppercase tracking-widest text-amber-400 font-bold mb-2">
+                            💳 Paiement à effectuer
+                          </p>
+                          <p className="text-sm text-white/80 mb-1">
+                            Payez{" "}
+                            <strong className="text-amber-400">
+                              {Number(paymentInfo.amount).toLocaleString("fr-FR")} FCFA
+                            </strong>{" "}
+                            via{" "}
+                            <strong>
+                              {paymentInfo.method === "orange_money"
+                                ? "Orange Money"
+                                : paymentInfo.method === "moov_money"
+                                  ? "Moov Money"
+                                  : "Wave"}
+                            </strong>
+                          </p>
+                          <p className="text-xs text-white/60 mb-3">
+                            Indiquez cette référence dans le libellé du transfert :{" "}
+                            <span className="font-mono font-bold text-white">
+                              {paymentInfo.code}
+                            </span>
+                          </p>
+                          <button
+                            onClick={claimPayment}
+                            disabled={claimingPayment}
+                            className="w-full py-2.5 rounded-xl bg-amber-500 text-black font-bold text-sm disabled:opacity-60"
+                          >
+                            {claimingPayment ? "..." : "✅ J'ai payé"}
+                          </button>
+                        </>
+                      )}
+                      {paymentInfo.status === "claimed" && (
+                        <>
+                          <p className="text-xs uppercase tracking-widest text-blue-400 font-bold mb-1">
+                            ⏳ En attente de validation
+                          </p>
+                          <p className="text-sm text-white/70">
+                            Le restaurant vérifie votre paiement, ça ne devrait pas tarder.
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+                {paymentInfo?.status === "confirmed" && (
+                  <div className="mt-4 w-full max-w-sm p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center">
+                    <p className="text-emerald-400 font-bold text-sm">✅ Paiement confirmé</p>
                   </div>
                 )}
               </div>

@@ -39,6 +39,9 @@ type SortDir = "asc" | "desc";
 function OrdersPage() {
   const { restaurant: r } = useMyRestaurant();
   const [orders, setOrders] = useState<Order[]>([]);
+  const [paymentByOrder, setPaymentByOrder] = useState<
+    Record<string, { code: string; method: string; amount: number; status: string }>
+  >({});
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<OrderStatus | "all">("all");
   const [search, setSearch] = useState("");
@@ -92,6 +95,20 @@ function OrdersPage() {
         setOrders(data as unknown as Order[]);
         lastSeenCount.current = data.length;
       }
+
+      const { data: pending } = await supabase
+        .from("payment_codes" as never)
+        .select("order_id, code, method, amount, status")
+        .eq("restaurant_id", r.id)
+        .in("status", ["pending", "claimed"]);
+      if (!cancelled && pending) {
+        const map: Record<string, any> = {};
+        (pending as any[]).forEach((p) => {
+          map[p.order_id] = p;
+        });
+        setPaymentByOrder(map);
+      }
+
       if (!cancelled) setLoading(false);
     })();
 
@@ -144,6 +161,30 @@ function OrdersPage() {
       .eq("id", o.id);
     if (error) toast.error(error.message);
     else toast.success(`Commande #${o.id.slice(0, 8)} → ${ORDER_STATUS_LABEL[status]}`);
+  };
+
+  const confirmPayment = async (orderId: string) => {
+    const { error: codeError } = await supabase
+      .from("payment_codes" as never)
+      .update({ status: "confirmed" } as never)
+      .eq("order_id", orderId);
+    const { error: orderError } = await supabase
+      .from("orders" as never)
+      .update({ payment_status: "paid" } as never)
+      .eq("id", orderId);
+    if (codeError || orderError) {
+      toast.error("Erreur : " + (codeError || orderError)?.message);
+      return;
+    }
+    setPaymentByOrder((prev) => {
+      const next = { ...prev };
+      delete next[orderId];
+      return next;
+    });
+    setOrders((prev) =>
+      prev.map((o) => (o.id === orderId ? { ...o, payment_status: "paid" as any } : o)),
+    );
+    toast.success("Paiement validé ✓");
   };
 
   const deleteOrder = async (o: Order) => {
@@ -629,12 +670,25 @@ function OrdersPage() {
                       ✓ Marquer servi
                     </button>
                   )}
-                  {o.status === "served" && o.payment_status !== "completed" && (
+                  {o.status === "served" && o.payment_status !== "paid" && !paymentByOrder[o.id] && (
                     <button
                       onClick={() => setPaymentModalOrder(o)}
                       className="px-4 py-2 rounded-lg bg-green-500/20 text-green-300 font-bold text-xs hover:bg-green-500/30"
                     >
                       💳 Générer code paiement
+                    </button>
+                  )}
+                  {paymentByOrder[o.id]?.status === "pending" && (
+                    <span className="px-3 py-2 rounded-lg bg-blue-500/15 border border-blue-500/30 text-blue-300 font-bold text-xs flex items-center gap-1.5">
+                      ⏳ En attente du client
+                    </span>
+                  )}
+                  {paymentByOrder[o.id]?.status === "claimed" && (
+                    <button
+                      onClick={() => confirmPayment(o.id)}
+                      className="px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold text-xs hover:bg-amber-500/30 animate-pulse"
+                    >
+                      🔔 Valider le paiement client
                     </button>
                   )}
                   {o.status !== "cancelled" && o.status !== "paid" && (
@@ -668,7 +722,39 @@ function OrdersPage() {
       {ticketOrder && <KitchenTicket order={ticketOrder} restaurantName={r?.name ?? ""} />}
 
       {paymentModalOrder && (
-        <PaymentCodeModal order={paymentModalOrder} onClose={() => setPaymentModalOrder(null)} />
+        <PaymentCodeModal
+          order={paymentModalOrder}
+          onClose={async () => {
+            const closedOrderId = paymentModalOrder?.id;
+            setPaymentModalOrder(null);
+            if (!closedOrderId || !r) return;
+
+            const { data: freshOrder } = await supabase
+              .from("orders" as never)
+              .select("payment_status")
+              .eq("id", closedOrderId)
+              .maybeSingle();
+            if (freshOrder) {
+              setOrders((prev) =>
+                prev.map((o) =>
+                  o.id === closedOrderId
+                    ? { ...o, payment_status: (freshOrder as any).payment_status }
+                    : o,
+                ),
+              );
+            }
+
+            const { data: pending } = await supabase
+              .from("payment_codes" as never)
+              .select("order_id, code, method, amount, status")
+              .eq("order_id", closedOrderId)
+              .in("status", ["pending", "claimed"])
+              .maybeSingle();
+            if (pending) {
+              setPaymentByOrder((prev) => ({ ...prev, [closedOrderId]: pending as any }));
+            }
+          }}
+        />
       )}
 
       {/* Pagination */}
