@@ -258,15 +258,25 @@ export function ChatPage() {
       let fetchedMsgs: any[] = [];
       if (r?.id) {
         try {
-          const { data, error } = await supabase
-            .from("chat_messages" as never)
-            .select("*")
-            .eq("restaurant_id", r.id)
-            .order("created_at", { ascending: true })
-            .limit(100);
+          const staffId =
+            typeof window !== "undefined" ? sessionStorage.getItem("staff_id") : null;
 
-          if (!error && data && data.length > 0) {
-            fetchedMsgs = data;
+          if (staffId) {
+            // Session staff (pas de compte Supabase) → fonction sécurisée
+            const { data, error } = await (supabase as any).rpc("staff_read_chat", {
+              p_staff_id: staffId,
+              p_restaurant_id: r.id,
+            });
+            if (!error && data && data.length > 0) fetchedMsgs = data;
+          } else {
+            // Propriétaire connecté avec son vrai compte
+            const { data, error } = await supabase
+              .from("chat_messages" as never)
+              .select("*")
+              .eq("restaurant_id", r.id)
+              .order("created_at", { ascending: true })
+              .limit(100);
+            if (!error && data && data.length > 0) fetchedMsgs = data;
           }
         } catch (err) {
           console.warn("Error fetching Supabase chat:", err);
@@ -357,13 +367,26 @@ export function ChatPage() {
     // Supabase insert attempt
     if (r?.id) {
       try {
-        await supabase.from("chat_messages" as never).insert({
-          restaurant_id: r.id,
-          sender_name: activeProfile.name,
-          sender_role: activeProfile.role,
-          message: text,
-          read: false,
-        });
+        const staffId =
+          typeof window !== "undefined" ? sessionStorage.getItem("staff_id") : null;
+
+        if (staffId) {
+          await (supabase as any).rpc("staff_send_chat", {
+            p_staff_id: staffId,
+            p_restaurant_id: r.id,
+            p_message: text,
+            p_sender_name: activeProfile.name,
+            p_sender_role: activeProfile.role,
+          });
+        } else {
+          await supabase.from("chat_messages" as never).insert({
+            restaurant_id: r.id,
+            sender_name: activeProfile.name,
+            sender_role: activeProfile.role,
+            message: text,
+            read: false,
+          });
+        }
       } catch (err) {
         console.warn("Supabase insert silent failover to local:", err);
       }
