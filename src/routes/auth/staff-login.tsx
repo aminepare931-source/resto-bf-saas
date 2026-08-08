@@ -14,6 +14,7 @@ function StaffLoginPage() {
   const [step, setStep] = useState<"scan" | "pin">("scan");
   const [staffId, setStaffId] = useState<string | null>(null);
   const [staffName, setStaffName] = useState("");
+  const failedAttemptsRef = useRef(0);
   const [pin, setPin] = useState(["", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -108,11 +109,21 @@ function StaffLoginPage() {
       const staff = staffList?.[0] ?? null;
 
       if (error || !staff) {
-        toast.error("Code PIN incorrect");
+        const attempts = failedAttemptsRef.current + 1;
+        failedAttemptsRef.current = attempts;
+        if (attempts >= 5) {
+          toast.error(
+            "Trop de tentatives incorrectes — compte temporairement bloqué 15 minutes par sécurité",
+            { duration: 6000 },
+          );
+        } else {
+          toast.error("Code PIN incorrect");
+        }
         setPin(["", "", "", ""]);
         inputRefs.current[0]?.focus();
         return;
       }
+      failedAttemptsRef.current = 0;
 
       // Store staff info in session
       sessionStorage.setItem("staff_id", staff.id);
