@@ -47,7 +47,6 @@ import {
   Sunset,
   Music,
   Lamp,
-  Mail,
 } from "lucide-react";
 
 const PREMIUM_FEU_BG = "/premium-bgs/premium-feu-bg.png";
@@ -1241,37 +1240,18 @@ function PremiumRestaurantTemplate({
               </Reveal>
             </section>
 
-            {/* RESERVATION FORM */}
-            <section id="reservation" className="premium-reservation">
-              <div className="premium-reservation-inner">
+            {/* RESERVATION CTA (compact — le formulaire complet vit sur la page réservation) */}
+            <section id="reservation" className="premium-reservation premium-reservation-cta">
+              <div className="premium-reservation-inner premium-cta-inner">
                 <PremiumHeading
                   eyebrow="Réservation de Table"
                   title="Réservez Votre Table en Quelques Clics"
-                  subtitle="Une confirmation instantanée et une organisation irréprochable pour votre arrivée."
+                  subtitle="Date, heure et nombre de couverts : la page réservation s'ouvre en un clic."
                 />
-                <div className="premium-reservation-layout">
-                  <PremiumReservationForm restaurant={restaurant} config={config} />
-                  <aside className="premium-qr-card">
-                    <h3>QR Code de la Page</h3>
-                    <p>Faites scanner ce code pour ouvrir le menu interactif instantanément.</p>
-                    {qr ? (
-                      <img src={qr} alt={`QR code ${restaurant.name}`} />
-                    ) : (
-                      <div className="premium-qr-placeholder">QR</div>
-                    )}
-                    <div className="premium-contact-mini">
-                      <span className="flex items-center gap-2">
-                        <Phone className="w-3.5 h-3.5 shrink-0" /> {restaurant.phone}
-                      </span>
-                      <span className="flex items-center gap-2">
-                        <Mail className="w-3.5 h-3.5 shrink-0" /> {restaurant.email}
-                      </span>
-                      <span className="flex items-center gap-2">
-                        <MapPin className="w-3.5 h-3.5 shrink-0" /> {restaurant.address ?? restaurant.city}
-                      </span>
-                    </div>
-                  </aside>
-                </div>
+                <a href={buildViewHref("reservation")} className="premium-btn-main premium-cta-btn">
+                  <Calendar className="w-4 h-4" />
+                  <span>Réserver maintenant</span>
+                </a>
               </div>
             </section>
 
@@ -2119,6 +2099,11 @@ const PREMIUM_CSS = `
 .premium-reservation{padding:96px clamp(18px,5vw,72px);background:linear-gradient(135deg,color-mix(in oklab,var(--pr-accent-2) 32%,transparent),rgba(0,0,0,.5));border-block:1px solid var(--pr-border)}
 .premium-reservation-inner{max-width:1320px;margin:auto}
 .premium-reservation-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:26px}
+.premium-reservation-cta{padding:64px clamp(18px,5vw,72px);text-align:center}
+.premium-cta-inner{display:flex;flex-direction:column;align-items:center;max-width:760px}
+.premium-reservation-cta .premium-heading{margin-bottom:26px}
+.premium-reservation-cta .premium-heading h2{font-size:clamp(28px,4.5vw,50px)}
+.premium-cta-btn{display:inline-flex;align-items:center;gap:10px}
 
 .premium-form{padding:28px;display:grid;gap:16px}
 .premium-form-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
