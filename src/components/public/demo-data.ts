@@ -141,35 +141,40 @@ const reviews: PublicReview[] = [
     id: "r1",
     author_name: "Awa Compaoré",
     rating: 5,
-    comment: "Le meilleur tô de Ouaga, sans hésitation. Service impeccable et ambiance familiale.",
+    comment:
+      "Le tô sauce gombo est excellent, on y passe chaque samedi. Terrasse ombragée et du personnel qui connaît ses habitués.",
     created_at: new Date(Date.now() - 86400_000 * 3).toISOString(),
   },
   {
     id: "r2",
     author_name: "Jean-Marc Sawadogo",
-    rating: 5,
-    comment: "Le poulet bicyclette flambé est une tuerie. J'y emmène tous mes clients.",
+    rating: 4,
+    comment:
+      "Poulet bicyclette très bon, portions généreuses. Un peu cher pour un midi de semaine, mais on y retourne.",
     created_at: new Date(Date.now() - 86400_000 * 9).toISOString(),
   },
   {
     id: "r3",
     author_name: "Fatou Ouédraogo",
-    rating: 4,
-    comment: "Cuisine authentique, prix raisonnables. La terrasse est top en soirée.",
+    rating: 3,
+    comment:
+      "Cuisine correcte et prix raisonnables, mais on a attendu près de 30 minutes un samedi soir. Dommage.",
     created_at: new Date(Date.now() - 86400_000 * 15).toISOString(),
   },
   {
     id: "r4",
     author_name: "Marc Tiendrébéogo",
     rating: 5,
-    comment: "On se croirait chez grand-mère. Le riz gras au mouton vaut le détour.",
+    comment:
+      "Les brochettes de capitaine au feu de bois sont parfaites. On se croirait chez grand-mère.",
     created_at: new Date(Date.now() - 86400_000 * 22).toISOString(),
   },
   {
     id: "r5",
     author_name: "Aïcha Kaboré",
-    rating: 5,
-    comment: "Réservation facile, accueil chaleureux, plats généreux. Je recommande à 100%.",
+    rating: 4,
+    comment:
+      "Réservation en deux minutes sur le site, bissap maison très frais. Le dolo était déjà épuisé à 21h — à venir plus tôt !",
     created_at: new Date(Date.now() - 86400_000 * 30).toISOString(),
   },
 ];

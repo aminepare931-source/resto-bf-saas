@@ -62,7 +62,10 @@ function AnimatedStat({ value }: { value: string }) {
   }, [value]);
 
   return (
-    <div ref={ref} className="text-3xl sm:text-4xl font-extrabold text-terracotta-deep tracking-tight tnum">
+    <div
+      ref={ref}
+      className="text-3xl sm:text-4xl font-extrabold text-terracotta-deep tracking-tight tnum"
+    >
       {display}
     </div>
   );
@@ -115,19 +118,22 @@ const testimonials = [
     name: "Aminata K.",
     role: "Gérante de Maquis VIP — Ouagadougou",
     avatar: "AK",
-    text: "Depuis que nous avons lancé notre page RestoBF, nos clients scannent le QR Code à table et commandent directement. On vend beaucoup plus vite aux heures de pointe !",
+    rating: 4,
+    text: "Depuis le QR code sur les tables, les clients commandent pendant que la salle est pleine, ça débloque vraiment aux heures de pointe. Par contre quand le réseau coupe, la page met du temps à réagir — faut prévoir une 4G de secours.",
   },
   {
     name: "Oumar S.",
     role: "Propriétaire Grillades — Bobo-Dioulasso",
     avatar: "OS",
-    text: "Créer ma page a pris moins de 10 minutes. Les commandes WhatsApp pré-remplies m'évitent de répéter le menu par téléphone. C'est ultra pratique.",
+    rating: 5,
+    text: "J'ai monté ma page en une soirée, tout seul, sans connaître l'informatique. Les commandes WhatsApp arrivent déjà remplies, je ne répète plus le menu cinquante fois par jour.",
   },
   {
     name: "Fatima D.",
     role: "Cheffe de Cuisine — Koudougou",
     avatar: "FD",
-    text: "L'écran cuisine est révolutionnaire. Les bons de commande arrivent en temps réel. La gestion des stocks m'a permis d'éliminer le gaspillage.",
+    rating: 4,
+    text: "Les bons arrivent sur l'écran cuisine au lieu de crier par la fenêtre, les samedis sont beaucoup plus calmes. Il a juste fallu une semaine avant que l'équipe s'y habitue.",
   },
 ];
 
@@ -383,7 +389,8 @@ function LandingPage() {
               Témoignages
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground">
-              Approuvé par les <span className="text-terracotta-deep">restaurateurs du Burkina</span>
+              Approuvé par les{" "}
+              <span className="text-terracotta-deep">restaurateurs du Burkina</span>
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
               Découvrez les retours de ceux qui utilisent RestoBF tous les jours.
@@ -400,7 +407,12 @@ function LandingPage() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-1">
                     {[...Array(5)].map((_, idx) => (
-                      <Star key={idx} className="w-4 h-4 fill-current text-amber-brand" />
+                      <Star
+                        key={idx}
+                        className={`w-4 h-4 ${
+                          idx < t.rating ? "fill-current text-amber-brand" : "text-border"
+                        }`}
+                      />
                     ))}
                     <span className="text-xs text-muted-foreground ml-2 font-semibold">
                       Avis vérifié
@@ -429,7 +441,12 @@ function LandingPage() {
                   <div className="space-y-3">
                     <div className="flex items-center gap-1">
                       {[...Array(5)].map((_, idx) => (
-                        <Star key={idx} className="w-4 h-4 fill-current text-amber-brand" />
+                        <Star
+                          key={idx}
+                          className={`w-4 h-4 ${
+                            idx < t.rating ? "fill-current text-amber-brand" : "text-border"
+                          }`}
+                        />
                       ))}
                       <span className="text-xs text-muted-foreground ml-2 font-semibold">
                         Avis vérifié
