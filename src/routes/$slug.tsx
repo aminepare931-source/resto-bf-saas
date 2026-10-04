@@ -113,7 +113,10 @@ function PublicRestaurantPage() {
       let rRaw: any = null;
 
       // Timeout wrapper to guarantee page renders under 1 second
-      const withTimeout = <T,>(promise: Promise<T>, timeoutMs = 800): Promise<T | null> => {
+      const withTimeout = <T,>(
+        promise: Promise<T> | PromiseLike<T>,
+        timeoutMs = 800,
+      ): Promise<T | null> => {
         return Promise.race([
           promise,
           new Promise<null>((resolve) => setTimeout(() => resolve(null), timeoutMs)),

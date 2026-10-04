@@ -61,7 +61,7 @@ function TablesPage() {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from("restaurant_tables" as never)
+        .from("restaurant_tables")
         .select("*")
         .eq("restaurant_id", r.id)
         .order("position");
@@ -85,7 +85,7 @@ function TablesPage() {
     try {
       const maxPosition = tables.reduce((max, t) => Math.max(max, t.position), 0);
 
-      const { error } = await supabase.from("restaurant_tables" as never).insert({
+      const { error } = await supabase.from("restaurant_tables").insert({
         restaurant_id: r.id,
         number: newTable.number,
         capacity: newTable.capacity,
@@ -109,7 +109,7 @@ function TablesPage() {
   const updateTableStatus = async (table: RestaurantTable, status: TableStatus) => {
     try {
       const { error } = await supabase
-        .from("restaurant_tables" as never)
+        .from("restaurant_tables")
         .update({ status })
         .eq("id", table.id);
 
@@ -129,7 +129,7 @@ function TablesPage() {
     try {
       setDeleting(true);
       const { error } = await supabase
-        .from("restaurant_tables" as never)
+        .from("restaurant_tables")
         .delete()
         .eq("id", deleteTarget.id);
 

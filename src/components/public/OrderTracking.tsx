@@ -119,7 +119,7 @@ export function OrderTracking({
 
     // Vérifier le code de paiement auprès de l'admin
     const { data: validCode, error: codeError } = await supabase
-      .from("payment_codes" as never)
+      .from("payment_codes")
       .select("*")
       .eq("code", paymentCode.trim())
       .eq("order_id", selectedOrder.id)
@@ -134,13 +134,13 @@ export function OrderTracking({
 
     // Marquer le code comme utilisé
     await supabase
-      .from("payment_codes" as never)
+      .from("payment_codes")
       .update({ used: true, used_at: new Date().toISOString() })
       .eq("id", validCode.id);
 
     // Mettre à jour la commande
     const { error: updateError } = await supabase
-      .from("orders" as never)
+      .from("orders")
       .update({
         status: "paid",
         payment_status: "completed",
@@ -260,7 +260,9 @@ export function OrderTracking({
             <div className="p-3 rounded-xl bg-emerald-tint border border-emerald/30 text-center">
               <p className="text-sm text-emerald-deep font-bold inline-flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4" />
-                Payé le {new Date(order.paid_at).toLocaleString("fr-FR")}
+                {order.paid_at
+                  ? `Payé le ${new Date(order.paid_at).toLocaleString("fr-FR")}`
+                  : "Paiement confirmé"}
               </p>
               {order.payment_method && (
                 <p className="text-xs text-muted-foreground mt-1">Via {order.payment_method}</p>

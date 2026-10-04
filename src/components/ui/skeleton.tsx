@@ -1,8 +1,16 @@
+import type { CSSProperties } from "react";
+
 /**
  * Composant Skeleton pour les états de chargement
  */
-export function Skeleton({ className = "" }: { className?: string }) {
-  return <div className={`animate-pulse rounded-lg bg-white/5 ${className}`} />;
+export function Skeleton({
+  className = "",
+  style,
+}: {
+  className?: string;
+  style?: CSSProperties;
+}) {
+  return <div className={`animate-pulse rounded-lg bg-white/5 ${className}`} style={style} />;
 }
 
 /**

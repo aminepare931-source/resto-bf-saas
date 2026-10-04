@@ -393,7 +393,7 @@ export function ChatPage() {
             p_sender_role: activeProfile.role,
           });
         } else {
-          await supabase.from("chat_messages" as never).insert({
+          await supabase.from("chat_messages").insert({
             restaurant_id: r.id,
             sender_name: activeProfile.name,
             sender_role: activeProfile.role,

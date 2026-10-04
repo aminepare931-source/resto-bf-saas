@@ -1,11 +1,8 @@
-const PROJECT_ID = "7026f809-5121-4b45-95b2-1e33d36539a6";
-const STABLE_PUBLISHED = `https://project--${PROJECT_ID}.lovable.app`;
-
 /**
  * Returns the URL clients should reach for the public restaurant site.
- * Priority: explicit per-restaurant override → VITE_PUBLIC_SITE_URL → stable
- * Lovable production URL. The window.location fallback only kicks in when
- * none of those are usable, so QR codes never encode the preview host.
+ * Priority: explicit per-restaurant override → VITE_PUBLIC_SITE_URL → current
+ * browser origin. Never encodes a hardcoded host, so QR codes always match
+ * wherever the site is actually deployed.
  */
 export function getPublicSiteOrigin(restaurantOverride?: string | null): string {
   const override = (restaurantOverride ?? "").trim();
@@ -14,21 +11,18 @@ export function getPublicSiteOrigin(restaurantOverride?: string | null): string 
   const env = (import.meta.env.VITE_PUBLIC_SITE_URL as string | undefined)?.trim();
   if (env) return env.replace(/\/$/, "");
 
-  if (typeof window !== "undefined") {
-    const host = window.location.hostname;
-    const looksLikePreview =
-      host.startsWith("id-preview--") ||
-      host.startsWith("preview--") ||
-      host.endsWith("lovableproject.com") ||
-      host.endsWith("lovableproject-dev.com");
-    if (!looksLikePreview && host !== "localhost") return window.location.origin;
-  }
-  return STABLE_PUBLISHED;
+  if (typeof window !== "undefined") return window.location.origin;
+  return "";
 }
 
 export function buildRestaurantUrl(slug: string, table?: string | null, override?: string | null) {
   const base = getPublicSiteOrigin(override);
-  const u = new URL(`/${slug}`, base);
+  const path = `/${slug}`;
+  if (!base) {
+    // No origin resolvable (SSR without env): return a relative URL rather than throw.
+    return table ? `${path}?table=${encodeURIComponent(table)}` : path;
+  }
+  const u = new URL(path, base);
   if (table) u.searchParams.set("table", table);
   return u.toString();
 }

@@ -949,7 +949,6 @@ resto-bf-saas/
     │   └── supabase/
     │       └── client.ts
     ├── lib/
-    │   ├── lovable-error-reporting.ts
     │   ├── pwa.ts
     │   ├── site-url.ts
     │   ├── storage.ts

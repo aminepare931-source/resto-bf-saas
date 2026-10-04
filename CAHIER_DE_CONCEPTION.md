@@ -298,7 +298,6 @@ resto-bf-saas/
 │   │   └── supabase/
 │   │       └── client.ts        # Client Supabase
 │   ├── lib/                     # Utilitaires
-│   │   ├── lovable-error-reporting.ts
 │   │   ├── pwa.ts
 │   │   ├── site-url.ts
 │   │   ├── storage.ts

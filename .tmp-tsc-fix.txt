@@ -1,0 +1,104 @@
+src/components/InvoiceCustomizer.tsx(63,15): error TS2339: Property 'invoice_colors' does not exist on type 'SelectQueryError<"column 'invoice_colors' does not exist on 'restaurants'.">'.
+src/components/InvoiceCustomizer.tsx(64,22): error TS2339: Property 'invoice_colors' does not exist on type 'SelectQueryError<"column 'invoice_colors' does not exist on 'restaurants'.">'.
+src/components/InvoiceCustomizer.tsx(72,17): error TS2353: Object literal may only specify known properties, and 'invoice_colors' does not exist in type 'RejectExcessProperties<{ about_text?: string | null | undefined; address?: string | null | undefined; city?: string | undefined; created_at?: string | undefined; cuisine?: string | null | undefined; description?: string | ... 1 more ... | undefined; ... 27 more ...; whatsapp?: string | ... 1 more ... | undefined; },...'.
+src/components/public/OrderTracking.tsx(138,15): error TS2345: Argument of type '{ used: boolean; used_at: string; }' is not assignable to parameter of type 'never'.
+src/components/public/OrderTracking.tsx(139,27): error TS2339: Property 'id' does not exist on type 'never'.
+src/components/public/OrderTracking.tsx(144,15): error TS2345: Argument of type '{ status: string; payment_status: string; payment_method: any; paid_at: string; }' is not assignable to parameter of type 'never'.
+src/components/public/OrderTracking.tsx(147,35): error TS2339: Property 'method' does not exist on type 'never'.
+src/components/public/OrderTracking.tsx(263,35): error TS2769: No overload matches this call.
+  Overload 1 of 4, '(value: string | number | Date): Date', gave the following error.
+    Argument of type 'string | undefined' is not assignable to parameter of type 'string | number | Date'.
+      Type 'undefined' is not assignable to type 'string | number | Date'.
+  Overload 2 of 4, '(value: string | number): Date', gave the following error.
+    Argument of type 'string | undefined' is not assignable to parameter of type 'string | number'.
+      Type 'undefined' is not assignable to type 'string | number'.
+src/components/ui/sidebar.tsx(657,9): error TS2322: Type '{ className: string; "data-sidebar": string; style: CSSProperties; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.
+src/hooks/use-my-restaurant.ts(161,11): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/hooks/use-staff-role.ts(43,15): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(relation: "restaurants" | "restaurant_tables" | "custom_orders" | "gallery_images" | "invoices" | "menu_items" | "orders" | "reservations" | "reviews" | "user_roles"): PostgrestQueryBuilder<...>', gave the following error.
+    Argument of type '"staff_members"' is not assignable to parameter of type '"restaurants" | "restaurant_tables" | "custom_orders" | "gallery_images" | "invoices" | "menu_items" | "orders" | "reservations" | "reviews" | "user_roles"'.
+  Overload 2 of 2, '(relation: "public_restaurants"): PostgrestQueryBuilder<{ PostgrestVersion: "14.5"; }, { Tables: { custom_orders: { Row: { budget: string | null; city: string | null; contact_name: string; created_at: string; ... 5 more ...; status: string; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 8 more ...; user_roles: { ...; }; }; Views: { ...; }; Functions: { ...; }; Enums: { ...; }; CompositeTypes: {}; }, { ...; }, "public_restaurants", []>', gave the following error.
+    Argument of type '"staff_members"' is not assignable to parameter of type '"public_restaurants"'.
+src/hooks/use-staff-role.ts(45,13): error TS2345: Argument of type '"user_id"' is not assignable to parameter of type '"id" | "created_at"'.
+src/hooks/use-staff-role.ts(46,13): error TS2345: Argument of type '"is_active"' is not assignable to parameter of type '"id" | "created_at"'.
+src/hooks/use-staff-role.ts(68,27): error TS2352: Conversion of type '{ about_text: string | null; address: string | null; city: string; created_at: string; cuisine: string | null; description: string | null; email: string; font_family: string | null; ... 25 more ...; whatsapp: string | null; } | ... 8 more ... | { ...; }' to type 'StaffMember' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ created_at: string; id: string; role: "super_admin" | "user"; user_id: string; }' is missing the following properties from type 'StaffMember': restaurant_id, name, email, phone, and 2 more.
+src/lib/offline-db.ts(91,17): error TS2339: Property 'html' does not exist on type '{ html: string; } | { html: string; }[]'.
+  Property 'html' does not exist on type '{ html: string; }[]'.
+src/lib/offline-db.ts(103,17): error TS2339: Property 'blob' does not exist on type '{ blob: Blob; } | { blob: Blob; }[]'.
+  Property 'blob' does not exist on type '{ blob: Blob; }[]'.
+src/lib/offline-db.ts(114,17): error TS2339: Property 'value' does not exist on type '{ value: T; } | { value: T; }[]'.
+  Property 'value' does not exist on type '{ value: T; }[]'.
+src/routes/$slug.tsx(133,34): error TS2345: Argument of type 'PromiseLike<null>' is not assignable to parameter of type 'Promise<null>'.
+  Type 'PromiseLike<null>' is missing the following properties from type 'Promise<null>': catch, finally, [Symbol.toStringTag]
+src/routes/$slug.tsx(146,36): error TS2345: Argument of type 'PromiseLike<{ id: string; name: string; city: string; cuisine: string | null; description: string | null; address: string | null; hours: string | null; phone: string; whatsapp: string | null; logo_url: string | null; template: string | null; } | null>' is not assignable to parameter of type 'Promise<{ id: string; name: string; city: string; cuisine: string | null; description: string | null; address: string | null; hours: string | null; phone: string; whatsapp: string | null; logo_url: string | null; template: string | null; } | null>'.
+  Type 'PromiseLike<{ id: string; name: string; city: string; cuisine: string | null; description: string | null; address: string | null; hours: string | null; phone: string; whatsapp: string | null; logo_url: string | null; template: string | null; } | null>' is missing the following properties from type 'Promise<{ id: string; name: string; city: string; cuisine: string | null; description: string | null; address: string | null; hours: string | null; phone: string; whatsapp: string | null; logo_url: string | null; template: string | null; } | null>': catch, finally, [Symbol.toStringTag]
+src/routes/_authenticated/dashboard.chat.tsx(207,15): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(relation: "restaurants" | "restaurant_tables" | "custom_orders" | "gallery_images" | "invoices" | "menu_items" | "orders" | "reservations" | "reviews" | "user_roles"): PostgrestQueryBuilder<...>', gave the following error.
+    Argument of type '"staff_members"' is not assignable to parameter of type '"restaurants" | "restaurant_tables" | "custom_orders" | "gallery_images" | "invoices" | "menu_items" | "orders" | "reservations" | "reviews" | "user_roles"'.
+  Overload 2 of 2, '(relation: "public_restaurants"): PostgrestQueryBuilder<{ PostgrestVersion: "14.5"; }, { Tables: { custom_orders: { Row: { budget: string | null; city: string | null; contact_name: string; created_at: string; ... 5 more ...; status: string; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 8 more ...; user_roles: { ...; }; }; Views: { ...; }; Functions: { ...; }; Enums: { ...; }; CompositeTypes: {}; }, { ...; }, "public_restaurants", []>', gave the following error.
+    Argument of type '"staff_members"' is not assignable to parameter of type '"public_restaurants"'.
+src/routes/_authenticated/dashboard.chat.tsx(209,13): error TS2345: Argument of type '"restaurant_id"' is not assignable to parameter of type '"id" | "created_at"'.
+src/routes/_authenticated/dashboard.chat.tsx(210,13): error TS2345: Argument of type '"is_active"' is not assignable to parameter of type '"id" | "created_at"'.
+src/routes/_authenticated/dashboard.chat.tsx(397,13): error TS2353: Object literal may only specify known properties, and 'restaurant_id' does not exist in type 'never[]'.
+src/routes/_authenticated/dashboard.facturation.tsx(264,7): error TS2322: Type 'string | null' is not assignable to type 'never'.
+  Type 'null' is not assignable to type 'never'.
+src/routes/_authenticated/dashboard.facturation.tsx(265,7): error TS2322: Type 'string | null' is not assignable to type 'never'.
+  Type 'null' is not assignable to type 'never'.
+src/routes/_authenticated/dashboard.facturation.tsx(266,7): error TS2322: Type 'string | null' is not assignable to type 'never'.
+  Type 'null' is not assignable to type 'never'.
+src/routes/_authenticated/dashboard.staff.tsx(62,15): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(relation: "restaurants" | "restaurant_tables" | "custom_orders" | "gallery_images" | "invoices" | "menu_items" | "orders" | "reservations" | "reviews" | "user_roles"): PostgrestQueryBuilder<...>', gave the following error.
+    Argument of type '"staff_members"' is not assignable to parameter of type '"restaurants" | "restaurant_tables" | "custom_orders" | "gallery_images" | "invoices" | "menu_items" | "orders" | "reservations" | "reviews" | "user_roles"'.
+  Overload 2 of 2, '(relation: "public_restaurants"): PostgrestQueryBuilder<{ PostgrestVersion: "14.5"; }, { Tables: { custom_orders: { Row: { budget: string | null; city: string | null; contact_name: string; created_at: string; ... 5 more ...; status: string; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 8 more ...; user_roles: { ...; }; }; Views: { ...; }; Functions: { ...; }; Enums: { ...; }; CompositeTypes: {}; }, { ...; }, "public_restaurants", []>', gave the following error.
+    Argument of type '"staff_members"' is not assignable to parameter of type '"public_restaurants"'.
+src/routes/_authenticated/dashboard.staff.tsx(64,13): error TS2345: Argument of type '"restaurant_id"' is not assignable to parameter of type '"id" | "created_at"'.
+src/routes/_authenticated/dashboard.staff.tsx(68,16): error TS2345: Argument of type '({ about_text: string | null; address: string | null; city: string; created_at: string; cuisine: string | null; description: string | null; email: string; font_family: string | null; ... 25 more ...; whatsapp: string | null; } | ... 8 more ... | { ...; })[]' is not assignable to parameter of type 'SetStateAction<StaffMember[]>'.
+  Type '({ about_text: string | null; address: string | null; city: string; created_at: string; cuisine: string | null; description: string | null; email: string; font_family: string | null; ... 25 more ...; whatsapp: string | null; } | ... 8 more ... | { ...; })[]' is not assignable to type 'StaffMember[]'.
+    Type '{ about_text: string | null; address: string | null; city: string; created_at: string; cuisine: string | null; description: string | null; email: string; font_family: string | null; ... 25 more ...; whatsapp: string | null; } | ... 8 more ... | { ...; }' is not assignable to type 'StaffMember'.
+      Type '{ about_text: string | null; address: string | null; city: string; created_at: string; cuisine: string | null; description: string | null; email: string; font_family: string | null; ... 25 more ...; whatsapp: string | null; }' is missing the following properties from type 'StaffMember': restaurant_id, role, pin, is_active, permissions
+src/routes/_authenticated/dashboard.staff.tsx(90,58): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(relation: "restaurants" | "restaurant_tables" | "custom_orders" | "gallery_images" | "invoices" | "menu_items" | "orders" | "reservations" | "reviews" | "user_roles"): PostgrestQueryBuilder<...>', gave the following error.
+    Argument of type '"staff_members"' is not assignable to parameter of type '"restaurants" | "restaurant_tables" | "custom_orders" | "gallery_images" | "invoices" | "menu_items" | "orders" | "reservations" | "reviews" | "user_roles"'.
+  Overload 2 of 2, '(relation: "public_restaurants"): PostgrestQueryBuilder<{ PostgrestVersion: "14.5"; }, { Tables: { custom_orders: { Row: { budget: string | null; city: string | null; contact_name: string; created_at: string; ... 5 more ...; status: string; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 8 more ...; user_roles: { ...; }; }; Views: { ...; }; Functions: { ...; }; Enums: { ...; }; CompositeTypes: {}; }, { ...; }, "public_restaurants", []>', gave the following error.
+    Argument of type '"staff_members"' is not assignable to parameter of type '"public_restaurants"'.
+src/routes/_authenticated/dashboard.staff.tsx(91,9): error TS2322: Type 'string' is not assignable to type 'never'.
+src/routes/_authenticated/dashboard.staff.tsx(92,9): error TS2322: Type 'string' is not assignable to type 'never'.
+src/routes/_authenticated/dashboard.staff.tsx(93,9): error TS2322: Type 'string' is not assignable to type 'never'.
+src/routes/_authenticated/dashboard.staff.tsx(94,9): error TS2322: Type 'string | null' is not assignable to type 'never'.
+  Type 'null' is not assignable to type 'never'.
+src/routes/_authenticated/dashboard.staff.tsx(95,9): error TS2322: Type 'StaffRole' is not assignable to type 'never'.
+  Type '"manager"' is not assignable to type 'never'.
+src/routes/_authenticated/dashboard.staff.tsx(96,9): error TS2322: Type 'string' is not assignable to type 'never'.
+src/routes/_authenticated/dashboard.staff.tsx(97,9): error TS2322: Type 'true' is not assignable to type 'never'.
+src/routes/_authenticated/dashboard.staff.tsx(123,15): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(relation: "restaurants" | "restaurant_tables" | "custom_orders" | "gallery_images" | "invoices" | "menu_items" | "orders" | "reservations" | "reviews" | "user_roles"): PostgrestQueryBuilder<...>', gave the following error.
+    Argument of type '"staff_members"' is not assignable to parameter of type '"restaurants" | "restaurant_tables" | "custom_orders" | "gallery_images" | "invoices" | "menu_items" | "orders" | "reservations" | "reviews" | "user_roles"'.
+  Overload 2 of 2, '(relation: "public_restaurants"): PostgrestQueryBuilder<{ PostgrestVersion: "14.5"; }, { Tables: { custom_orders: { Row: { budget: string | null; city: string | null; contact_name: string; created_at: string; ... 5 more ...; status: string; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 8 more ...; user_roles: { ...; }; }; Views: { ...; }; Functions: { ...; }; Enums: { ...; }; CompositeTypes: {}; }, { ...; }, "public_restaurants", []>', gave the following error.
+    Argument of type '"staff_members"' is not assignable to parameter of type '"public_restaurants"'.
+src/routes/_authenticated/dashboard.staff.tsx(125,11): error TS2322: Type 'string' is not assignable to type 'never'.
+src/routes/_authenticated/dashboard.staff.tsx(126,11): error TS2322: Type 'string' is not assignable to type 'never'.
+src/routes/_authenticated/dashboard.staff.tsx(127,11): error TS2322: Type 'string | null' is not assignable to type 'never'.
+  Type 'null' is not assignable to type 'never'.
+src/routes/_authenticated/dashboard.staff.tsx(128,11): error TS2322: Type 'StaffRole' is not assignable to type 'never'.
+  Type '"manager"' is not assignable to type 'never'.
+src/routes/_authenticated/dashboard.staff.tsx(129,11): error TS2322: Type 'string | null' is not assignable to type 'never'.
+  Type 'null' is not assignable to type 'never'.
+src/routes/_authenticated/dashboard.staff.tsx(148,15): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(relation: "restaurants" | "restaurant_tables" | "custom_orders" | "gallery_images" | "invoices" | "menu_items" | "orders" | "reservations" | "reviews" | "user_roles"): PostgrestQueryBuilder<...>', gave the following error.
+    Argument of type '"staff_members"' is not assignable to parameter of type '"restaurants" | "restaurant_tables" | "custom_orders" | "gallery_images" | "invoices" | "menu_items" | "orders" | "reservations" | "reviews" | "user_roles"'.
+  Overload 2 of 2, '(relation: "public_restaurants"): PostgrestQueryBuilder<{ PostgrestVersion: "14.5"; }, { Tables: { custom_orders: { Row: { budget: string | null; city: string | null; contact_name: string; created_at: string; ... 5 more ...; status: string; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 8 more ...; user_roles: { ...; }; }; Views: { ...; }; Functions: { ...; }; Enums: { ...; }; CompositeTypes: {}; }, { ...; }, "public_restaurants", []>', gave the following error.
+    Argument of type '"staff_members"' is not assignable to parameter of type '"public_restaurants"'.
+src/routes/_authenticated/dashboard.staff.tsx(149,19): error TS2353: Object literal may only specify known properties, and 'is_active' does not exist in type 'RejectExcessProperties<{ budget?: string | null | undefined; city?: string | null | undefined; contact_name?: string | undefined; created_at?: string | undefined; email?: string | undefined; id?: string | undefined; message?: string | undefined; phone?: string | undefined; restaurant_name?: string | undefined; statu...'.
+src/routes/_authenticated/dashboard.staff.tsx(167,45): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(relation: "restaurants" | "restaurant_tables" | "custom_orders" | "gallery_images" | "invoices" | "menu_items" | "orders" | "reservations" | "reviews" | "user_roles"): PostgrestQueryBuilder<...>', gave the following error.
+    Argument of type '"staff_members"' is not assignable to parameter of type '"restaurants" | "restaurant_tables" | "custom_orders" | "gallery_images" | "invoices" | "menu_items" | "orders" | "reservations" | "reviews" | "user_roles"'.
+  Overload 2 of 2, '(relation: "public_restaurants"): PostgrestQueryBuilder<{ PostgrestVersion: "14.5"; }, { Tables: { custom_orders: { Row: { budget: string | null; city: string | null; contact_name: string; created_at: string; ... 5 more ...; status: string; }; Insert: { ...; }; Update: { ...; }; Relationships: []; }; ... 8 more ...; user_roles: { ...; }; }; Views: { ...; }; Functions: { ...; }; Enums: { ...; }; CompositeTypes: {}; }, { ...; }, "public_restaurants", []>', gave the following error.
+    Argument of type '"staff_members"' is not assignable to parameter of type '"public_restaurants"'.
+src/routes/_authenticated/dashboard.stocks.tsx(91,9): error TS2353: Object literal may only specify known properties, and 'restaurant_id' does not exist in type 'never[]'.
+src/routes/_authenticated/dashboard.stocks.tsx(126,17): error TS2345: Argument of type '{ current_quantity: number; status: string; last_restock: string; }' is not assignable to parameter of type 'never'.
+src/routes/_authenticated/dashboard.tables.tsx(89,9): error TS2353: Object literal may only specify known properties, and 'restaurant_id' does not exist in type 'never[]'.
+src/routes/_authenticated/dashboard.tables.tsx(113,17): error TS2345: Argument of type '{ status: TableStatus; }' is not assignable to parameter of type 'never'.
+EXIT=2

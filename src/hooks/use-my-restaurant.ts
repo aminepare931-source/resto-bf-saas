@@ -158,7 +158,7 @@ export function useMyRestaurant() {
           hours: defaultRestaurant.hours,
           description: defaultRestaurant.description,
           owner_name: defaultRestaurant.owner_name,
-          subscription_status: defaultRestaurant.subscription_status,
+          subscription_status: defaultRestaurant.subscription_status ?? "trial",
           trial_ends_at: defaultRestaurant.trial_ends_at,
         })
         .select()

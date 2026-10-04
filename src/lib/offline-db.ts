@@ -64,6 +64,8 @@ export async function cacheData(
   await tx.done;
 }
 
+export async function getCachedData<T = unknown>(store: StoreName, key: string): Promise<T | null>;
+export async function getCachedData<T = unknown>(store: StoreName): Promise<T[] | null>;
 export async function getCachedData<T = unknown>(
   store: StoreName,
   key?: string,

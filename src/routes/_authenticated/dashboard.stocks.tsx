@@ -63,7 +63,7 @@ function StocksPage() {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from("stock_items" as never)
+        .from("stock_items")
         .select("*")
         .eq("restaurant_id", r.id)
         .order("name");
@@ -87,7 +87,7 @@ function StocksPage() {
     try {
       const status = newItem.current_quantity <= newItem.min_quantity ? "low" : "ok";
 
-      const { error } = await supabase.from("stock_items" as never).insert({
+      const { error } = await supabase.from("stock_items").insert({
         restaurant_id: r.id,
         name: newItem.name,
         category: newItem.category,
@@ -122,7 +122,7 @@ function StocksPage() {
 
     try {
       const { error } = await supabase
-        .from("stock_items" as never)
+        .from("stock_items")
         .update({
           current_quantity: newQty,
           status,
@@ -151,7 +151,7 @@ function StocksPage() {
     try {
       setDeleting(true);
       const { error } = await supabase
-        .from("stock_items" as never)
+        .from("stock_items")
         .delete()
         .eq("id", deleteTarget.id);
 

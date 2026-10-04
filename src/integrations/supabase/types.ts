@@ -8,6 +8,36 @@ export type Database = {
   };
   public: {
     Tables: {
+      chat_messages: {
+        Row: {
+          created_at: string;
+          id: string;
+          message: string;
+          read: boolean;
+          restaurant_id: string;
+          sender_name: string;
+          sender_role: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          message: string;
+          read?: boolean;
+          restaurant_id: string;
+          sender_name: string;
+          sender_role: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          message?: string;
+          read?: boolean;
+          restaurant_id?: string;
+          sender_name?: string;
+          sender_role?: string;
+        };
+        Relationships: [];
+      };
       custom_orders: {
         Row: {
           budget: string | null;
@@ -102,13 +132,16 @@ export type Database = {
           issued_at: string;
           items: Json;
           notes: string | null;
+          payment_method: string | null;
           restaurant_id: string;
           status: string;
           subtotal: number;
+          table_number: string | null;
           tax_amount: number;
           tax_rate: number;
           total: number;
           updated_at: string;
+          waiter: string | null;
         };
         Insert: {
           created_at?: string;
@@ -122,13 +155,16 @@ export type Database = {
           issued_at?: string;
           items?: Json;
           notes?: string | null;
+          payment_method?: string | null;
           restaurant_id: string;
           status?: string;
           subtotal?: number;
+          table_number?: string | null;
           tax_amount?: number;
           tax_rate?: number;
           total?: number;
           updated_at?: string;
+          waiter?: string | null;
         };
         Update: {
           created_at?: string;
@@ -142,13 +178,16 @@ export type Database = {
           issued_at?: string;
           items?: Json;
           notes?: string | null;
+          payment_method?: string | null;
           restaurant_id?: string;
           status?: string;
           subtotal?: number;
+          table_number?: string | null;
           tax_amount?: number;
           tax_rate?: number;
           total?: number;
           updated_at?: string;
+          waiter?: string | null;
         };
         Relationships: [
           {
@@ -232,6 +271,9 @@ export type Database = {
           id: string;
           items: Json;
           notes: string | null;
+          paid_at: string | null;
+          payment_method: string | null;
+          payment_status: string | null;
           restaurant_id: string;
           source: string;
           status: string;
@@ -249,6 +291,9 @@ export type Database = {
           id?: string;
           items?: Json;
           notes?: string | null;
+          paid_at?: string | null;
+          payment_method?: string | null;
+          payment_status?: string | null;
           restaurant_id: string;
           source?: string;
           status?: string;
@@ -266,6 +311,9 @@ export type Database = {
           id?: string;
           items?: Json;
           notes?: string | null;
+          paid_at?: string | null;
+          payment_method?: string | null;
+          payment_status?: string | null;
           restaurant_id?: string;
           source?: string;
           status?: string;
@@ -299,6 +347,42 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      payment_codes: {
+        Row: {
+          amount: number | null;
+          code: string;
+          created_at: string;
+          id: string;
+          method: string | null;
+          order_id: string;
+          status: string | null;
+          used: boolean;
+          used_at: string | null;
+        };
+        Insert: {
+          amount?: number | null;
+          code: string;
+          created_at?: string;
+          id?: string;
+          method?: string | null;
+          order_id: string;
+          status?: string | null;
+          used?: boolean;
+          used_at?: string | null;
+        };
+        Update: {
+          amount?: number | null;
+          code?: string;
+          created_at?: string;
+          id?: string;
+          method?: string | null;
+          order_id?: string;
+          status?: string | null;
+          used?: boolean;
+          used_at?: string | null;
+        };
+        Relationships: [];
       };
       reservations: {
         Row: {
@@ -422,6 +506,7 @@ export type Database = {
           hero_title: string | null;
           hours: string | null;
           id: string;
+          invoice_colors: Json | null;
           invoice_footer: string | null;
           invoice_prefix: string | null;
           logo_url: string | null;
@@ -458,6 +543,7 @@ export type Database = {
           hero_title?: string | null;
           hours?: string | null;
           id?: string;
+          invoice_colors?: Json | null;
           invoice_footer?: string | null;
           invoice_prefix?: string | null;
           logo_url?: string | null;
@@ -494,6 +580,7 @@ export type Database = {
           hero_title?: string | null;
           hours?: string | null;
           id?: string;
+          invoice_colors?: Json | null;
           invoice_footer?: string | null;
           invoice_prefix?: string | null;
           logo_url?: string | null;
@@ -563,6 +650,87 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      staff_members: {
+        Row: {
+          created_at: string;
+          email: string;
+          id: string;
+          is_active: boolean;
+          name: string;
+          permissions: Record<string, any>;
+          phone: string | null;
+          pin: string | null;
+          restaurant_id: string;
+          role: "admin" | "cuisinier" | "serveur" | "manager";
+          user_id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          email: string;
+          id?: string;
+          is_active?: boolean;
+          name: string;
+          permissions?: Record<string, any> | null;
+          phone?: string | null;
+          pin?: string | null;
+          restaurant_id: string;
+          role: "admin" | "cuisinier" | "serveur" | "manager";
+          user_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          email?: string;
+          id?: string;
+          is_active?: boolean;
+          name?: string;
+          permissions?: Record<string, any> | null;
+          phone?: string | null;
+          pin?: string | null;
+          restaurant_id?: string;
+          role?: "admin" | "cuisinier" | "serveur" | "manager";
+          user_id?: string | null;
+        };
+        Relationships: [];
+      };
+      stock_items: {
+        Row: {
+          category: string;
+          created_at: string;
+          current_quantity: number;
+          id: string;
+          last_restock: string | null;
+          min_quantity: number;
+          name: string;
+          restaurant_id: string;
+          status: string;
+          unit: string;
+        };
+        Insert: {
+          category?: string;
+          created_at?: string;
+          current_quantity?: number;
+          id?: string;
+          last_restock?: string | null;
+          min_quantity?: number;
+          name: string;
+          restaurant_id: string;
+          status?: string;
+          unit?: string;
+        };
+        Update: {
+          category?: string;
+          created_at?: string;
+          current_quantity?: number;
+          id?: string;
+          last_restock?: string | null;
+          min_quantity?: number;
+          name?: string;
+          restaurant_id?: string;
+          status?: string;
+          unit?: string;
+        };
+        Relationships: [];
       };
       user_roles: {
         Row: {
