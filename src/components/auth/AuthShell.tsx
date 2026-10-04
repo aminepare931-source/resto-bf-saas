@@ -1,9 +1,8 @@
 import type { ReactNode } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
-import { Particles } from "@/components/landing/Particles";
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import React, { useRef } from "react";
-import { Sparkles, ShieldCheck, ArrowLeft, LogIn, UserPlus, ChefHat } from "lucide-react";
+import { MapPin, ShieldCheck, ArrowLeft, LogIn, UserPlus, ChefHat } from "lucide-react";
 
 export function AuthShell({
   title,
@@ -49,30 +48,29 @@ export function AuthShell({
   const pathname = location.pathname;
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center px-4 py-10 overflow-hidden text-foreground selection:bg-[#d4a853]/30">
-      {/* Dynamic Background Glow Auroras */}
+    <div className="relative min-h-screen flex flex-col items-center justify-center px-4 py-10 overflow-hidden text-foreground selection:bg-terracotta/20">
+      {/* Fond clair — halos terracotta & ambre très doux + grille statique */}
       <div
-        className="fixed inset-0 opacity-40 pointer-events-none -z-10"
+        className="fixed inset-0 pointer-events-none -z-10"
         style={{
           background:
-            "radial-gradient(circle at 20% 20%, rgba(212,168,83,0.3) 0%, transparent 60%), radial-gradient(circle at 80% 80%, rgba(240,212,138,0.2) 0%, transparent 65%)",
+            "radial-gradient(circle at 18% 12%, rgba(200,90,50,0.10) 0%, transparent 55%), radial-gradient(circle at 85% 85%, rgba(229,169,60,0.12) 0%, transparent 60%)",
         }}
       />
-      <div className="fixed inset-0 grid-bg opacity-30 pointer-events-none -z-10" />
-      <Particles count={8} />
+      <div className="fixed inset-0 grid-bg opacity-40 pointer-events-none -z-10" />
 
       {/* Top Header Return Button */}
       <div className="w-full max-w-2xl flex items-center justify-between mb-6 z-20">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#111118]/80 hover:bg-[#1a1a24] border border-[#d4a853]/30 text-xs font-bold text-foreground hover:text-[#f0d48a] transition-all shadow-md active:scale-95"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-card hover:bg-muted border border-border text-xs font-bold text-foreground hover:text-terracotta-deep transition-all shadow-card active:scale-95"
         >
-          <ArrowLeft className="w-3.5 h-3.5 text-[#d4a853]" />
+          <ArrowLeft className="w-3.5 h-3.5 text-terracotta" />
           <span>Retour à l'accueil</span>
         </Link>
 
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#d4a853]/15 border border-[#d4a853]/30 text-[11px] font-semibold text-[#f0d48a]">
-          <Sparkles className="w-3 h-3 text-[#d4a853]" />
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-terracotta-tint border border-terracotta/25 text-[11px] font-semibold text-terracotta-deep">
+          <MapPin className="w-3 h-3 text-terracotta" />
           <span>SaaS RestoBF — Burkina Faso</span>
         </div>
       </div>
@@ -92,45 +90,44 @@ export function AuthShell({
             transformStyle: "preserve-3d",
             perspective: 1200,
           }}
-          className="relative rounded-3xl border border-[#d4a853]/40 bg-[#111118]/95 backdrop-blur-2xl p-6 sm:p-10 shadow-[0_30px_90px_rgba(0,0,0,0.8)] overflow-hidden group"
+          className="relative rounded-3xl border border-border bg-card p-6 sm:p-10 shadow-elevated overflow-hidden group"
         >
           {/* Specular Light Spotlight following mouse */}
           <motion.div
             className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
             style={{
-              background: `radial-gradient(350px circle at ${spotX} ${spotY}, rgba(212,168,83,0.25), transparent 80%)`,
+              background: `radial-gradient(350px circle at ${spotX} ${spotY}, rgba(200,90,50,0.08), transparent 80%)`,
             }}
           />
 
-          {/* Golden Top Border Highlight Line */}
-          <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#d4a853] to-transparent opacity-80" />
+          {/* Dan Fani top border */}
+          <div className="absolute top-0 inset-x-0 h-[3px] border-danfani opacity-70" />
 
           {/* Header Branding */}
           <div className="text-center mb-6 relative z-20">
-            <Link to="/" className="inline-block relative mb-3 group/logo">
-              <div className="absolute -inset-2 rounded-2xl bg-[#d4a853]/30 blur-md opacity-0 group-hover/logo:opacity-100 transition-opacity duration-300" />
+            <Link to="/" className="inline-block mb-3">
               <img
                 src="/restobf-logo.png"
                 alt="RestoBF"
                 width={72}
                 height={72}
-                className="relative w-16 h-16 sm:w-18 sm:h-18 mx-auto rounded-2xl object-contain border border-[#d4a853]/40 bg-[#0a0a0f] p-1.5 shadow-xl group-hover/logo:scale-105 transition-transform"
+                className="relative w-16 h-16 sm:w-18 sm:h-18 mx-auto rounded-2xl object-contain border border-border bg-card p-1.5 shadow-card hover:scale-105 transition-transform"
               />
             </Link>
 
-            <h1 className="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#d4a853] via-[#f0d48a] to-[#b08800] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#9f3c16] via-[#c85a32] to-[#e5a93c] tracking-tight font-display">
               {title}
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-medium">{subtitle}</p>
 
             {/* Quick Auth Navigation Tabs */}
-            <div className="mt-5 inline-flex p-1 rounded-xl bg-[#0a0a0f] border border-border text-xs font-semibold gap-1 max-w-full overflow-x-auto">
+            <div className="mt-5 inline-flex p-1 rounded-xl bg-muted border border-border text-xs font-semibold gap-1 max-w-full overflow-x-auto">
               <Link
                 to="/auth/connexion"
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
                   pathname.includes("/connexion")
-                    ? "bg-[#d4a853] text-[#0a0a0f] font-bold shadow-md"
-                    : "text-muted-foreground hover:text-foreground hover:bg-[#1a1a24]"
+                    ? "bg-terracotta text-white font-bold shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent"
                 }`}
               >
                 <LogIn className="w-3.5 h-3.5" />
@@ -141,8 +138,8 @@ export function AuthShell({
                 to="/auth/inscription"
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
                   pathname.includes("/inscription")
-                    ? "bg-[#d4a853] text-[#0a0a0f] font-bold shadow-md"
-                    : "text-muted-foreground hover:text-foreground hover:bg-[#1a1a24]"
+                    ? "bg-terracotta text-white font-bold shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent"
                 }`}
               >
                 <UserPlus className="w-3.5 h-3.5" />
@@ -153,8 +150,8 @@ export function AuthShell({
                 to="/auth/staff-login"
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
                   pathname.includes("/staff-login")
-                    ? "bg-[#d4a853] text-[#0a0a0f] font-bold shadow-md"
-                    : "text-muted-foreground hover:text-foreground hover:bg-[#1a1a24]"
+                    ? "bg-terracotta text-white font-bold shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent"
                 }`}
               >
                 <ChefHat className="w-3.5 h-3.5" />
@@ -167,8 +164,8 @@ export function AuthShell({
           <div className="relative z-20">{children}</div>
 
           {/* Footer Security Badge */}
-          <div className="mt-6 pt-4 border-t border-border/60 flex items-center justify-center gap-2 text-[11px] text-muted-foreground font-medium relative z-20">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          <div className="mt-6 pt-4 border-t border-border flex items-center justify-center gap-2 text-[11px] text-muted-foreground font-medium relative z-20">
+            <ShieldCheck className="w-4 h-4 text-emerald-deep" />
             <span>Connexion 100% sécurisée & données chiffrées au Burkina</span>
           </div>
         </motion.div>

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Bike } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard/parametres")({
   component: SettingsPage,
@@ -71,7 +72,9 @@ function SettingsPage() {
   return (
     <div className="max-w-3xl">
       <div className="mb-8">
-        <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Paramètres</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">
+          Paramètres
+        </p>
         <h1 className="text-3xl font-black">Informations du restaurant</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Ces informations apparaîtront sur votre site public.
@@ -113,9 +116,11 @@ function SettingsPage() {
           placeholder="Lun-Dim · 11h - 23h30"
         />
 
-        <label className="flex items-center justify-between gap-4 p-4 rounded-xl border border-white/8 bg-white/[0.02] cursor-pointer">
+        <label className="flex items-center justify-between gap-4 p-4 rounded-xl border border-border bg-surface-warm cursor-pointer">
           <span>
-            <span className="block text-sm font-bold">🛵 Je propose la livraison</span>
+            <span className="flex items-center gap-1.5 text-sm font-bold">
+              <Bike className="w-4 h-4 text-terracotta" /> Je propose la livraison
+            </span>
             <span className="block text-[11px] text-muted-foreground mt-0.5">
               Si désactivé, vos clients ne verront jamais l'option "Livraison" — seulement "Sur
               place".
@@ -125,7 +130,7 @@ function SettingsPage() {
             type="checkbox"
             checked={form.offers_delivery}
             onChange={(e) => setForm((f) => ({ ...f, offers_delivery: e.target.checked }))}
-            className="w-5 h-5 accent-[var(--color-gold)] shrink-0"
+            className="w-5 h-5 accent-terracotta shrink-0"
           />
         </label>
         <div className="flex flex-col gap-1.5">
@@ -136,13 +141,13 @@ function SettingsPage() {
             value={form.description}
             onChange={(e) => set("description", e.target.value)}
             rows={4}
-            className="px-4 py-3 rounded-xl bg-white/[0.04] border border-white/8 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-sm"
+            className="px-4 py-3 rounded-xl bg-card border border-border focus:border-terracotta/50 focus:outline-none focus:ring-2 focus:ring-terracotta/20 transition-all text-sm"
             placeholder="Présentez votre restaurant en quelques phrases..."
           />
         </div>
 
-        <div className="p-6 rounded-2xl border border-gold/20 bg-gold/5">
-          <h3 className="text-sm font-black uppercase tracking-widest text-gold mb-4">
+        <div className="p-6 rounded-2xl border border-terracotta/20 bg-terracotta-tint/40">
+          <h3 className="text-sm font-black uppercase tracking-widest text-terracotta mb-4">
             Notifications
           </h3>
 
@@ -154,7 +159,7 @@ function SettingsPage() {
               <select
                 value={form.notification_orders_channel || "both"}
                 onChange={(e) => set("notification_orders_channel", e.target.value)}
-                className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/8 focus:border-gold focus:outline-none text-sm"
+                className="px-4 py-2.5 rounded-xl bg-card border border-border focus:border-terracotta/50 focus:outline-none text-sm"
               >
                 <option value="admin">Panneau admin uniquement</option>
                 <option value="whatsapp">WhatsApp uniquement</option>
@@ -172,7 +177,7 @@ function SettingsPage() {
               <select
                 value={form.notification_reservations_channel || "both"}
                 onChange={(e) => set("notification_reservations_channel", e.target.value)}
-                className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/8 focus:border-gold focus:outline-none text-sm"
+                className="px-4 py-2.5 rounded-xl bg-card border border-border focus:border-terracotta/50 focus:outline-none text-sm"
               >
                 <option value="admin">Panneau admin uniquement</option>
                 <option value="whatsapp">WhatsApp uniquement</option>
@@ -188,7 +193,7 @@ function SettingsPage() {
         <button
           type="submit"
           disabled={saving}
-          className="px-7 py-3 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold hover:shadow-gold transition-shadow disabled:opacity-60"
+          className="px-7 py-3 rounded-xl bg-terracotta text-white font-bold hover:bg-terracotta-deep transition-colors disabled:opacity-60"
         >
           {saving ? "Enregistrement..." : "Enregistrer"}
         </button>
@@ -217,7 +222,7 @@ function Field({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="px-4 py-3 rounded-xl bg-white/[0.04] border border-white/8 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all text-sm"
+        className="px-4 py-3 rounded-xl bg-card border border-border focus:border-terracotta/50 focus:outline-none focus:ring-2 focus:ring-terracotta/20 transition-all text-sm"
       />
     </div>
   );

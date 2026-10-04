@@ -62,7 +62,7 @@ interface WeeklyComparison {
   lastWeek: number;
 }
 
-const CHART_COLORS = ["#f59e0b", "#10b981", "#3b82f6", "#8b5cf6", "#ef4444", "#ec4899"];
+const CHART_COLORS = ["#c85a32", "#1b8354", "#e5a93c", "#1c2024", "#9f3c16", "#13633f"];
 
 function StatisticsPage() {
   const { restaurant: r, loading: loadingResto } = useMyRestaurant();
@@ -290,7 +290,7 @@ function StatisticsPage() {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-[#0a0a0f] border border-white/10 rounded-xl p-3 shadow-xl">
+        <div className="bg-card border border-border rounded-xl p-3 shadow-xl">
           <p className="text-xs text-muted-foreground mb-1">{label}</p>
           {payload.map((entry: any, index: number) => (
             <p key={index} className="text-sm font-semibold" style={{ color: entry.color }}>
@@ -331,27 +331,27 @@ function StatisticsPage() {
   return (
     <div className="max-w-6xl">
       <div className="mb-8">
-        <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Analytics</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">Analytics</p>
         <h1 className="text-3xl font-black">Statistiques</h1>
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-terracotta border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
         <>
           {/* KPI Cards */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div className="p-6 rounded-2xl border border-white/8 bg-dark-card">
+            <div className="p-6 rounded-2xl border border-border bg-card">
               <div className="flex items-center justify-between mb-2">
-                <DollarSign className="w-5 h-5 text-gold" />
+                <DollarSign className="w-5 h-5 text-terracotta" />
                 <span className="text-xs text-muted-foreground">Aujourd'hui</span>
               </div>
               <p className="text-2xl font-black">{stats.today.toLocaleString("fr-FR")} F</p>
               {todayChange !== 0 && (
                 <p
-                  className={`text-xs mt-1 flex items-center gap-1 ${todayChange > 0 ? "text-emerald-400" : "text-red-400"}`}
+                  className={`text-xs mt-1 flex items-center gap-1 ${todayChange > 0 ? "text-emerald-deep" : "text-destructive"}`}
                 >
                   {todayChange > 0 ? (
                     <ArrowUpRight className="w-3 h-3" />
@@ -363,15 +363,15 @@ function StatisticsPage() {
               )}
             </div>
 
-            <div className="p-6 rounded-2xl border border-white/8 bg-dark-card">
+            <div className="p-6 rounded-2xl border border-border bg-card">
               <div className="flex items-center justify-between mb-2">
-                <TrendingUp className="w-5 h-5 text-emerald-400" />
+                <TrendingUp className="w-5 h-5 text-emerald-deep" />
                 <span className="text-xs text-muted-foreground">Cette semaine</span>
               </div>
               <p className="text-2xl font-black">{stats.week.toLocaleString("fr-FR")} F</p>
               {weekChange !== 0 && (
                 <p
-                  className={`text-xs mt-1 flex items-center gap-1 ${weekChange > 0 ? "text-emerald-400" : "text-red-400"}`}
+                  className={`text-xs mt-1 flex items-center gap-1 ${weekChange > 0 ? "text-emerald-deep" : "text-destructive"}`}
                 >
                   {weekChange > 0 ? (
                     <ArrowUpRight className="w-3 h-3" />
@@ -383,17 +383,17 @@ function StatisticsPage() {
               )}
             </div>
 
-            <div className="p-6 rounded-2xl border border-white/8 bg-dark-card">
+            <div className="p-6 rounded-2xl border border-border bg-card">
               <div className="flex items-center justify-between mb-2">
-                <Receipt className="w-5 h-5 text-blue-400" />
+                <Receipt className="w-5 h-5 text-charcoal" />
                 <span className="text-xs text-muted-foreground">Ce mois</span>
               </div>
               <p className="text-2xl font-black">{stats.month.toLocaleString("fr-FR")} F</p>
             </div>
 
-            <div className="p-6 rounded-2xl border border-white/8 bg-dark-card">
+            <div className="p-6 rounded-2xl border border-border bg-card">
               <div className="flex items-center justify-between mb-2">
-                <Award className="w-5 h-5 text-purple-400" />
+                <Award className="w-5 h-5 text-amber-deep" />
                 <span className="text-xs text-muted-foreground">Cette année</span>
               </div>
               <p className="text-2xl font-black">{stats.year.toLocaleString("fr-FR")} F</p>
@@ -407,8 +407,8 @@ function StatisticsPage() {
                 onClick={() => setActiveChart("revenue")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                   activeChart === "revenue"
-                    ? "bg-gold text-[#0a0a0f]"
-                    : "bg-white/5 text-muted-foreground hover:text-foreground"
+                    ? "bg-terracotta text-white shadow-sm"
+                    : "bg-surface-warm text-muted-foreground hover:text-foreground"
                 }`}
               >
                 Revenus
@@ -417,8 +417,8 @@ function StatisticsPage() {
                 onClick={() => setActiveChart("orders")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                   activeChart === "orders"
-                    ? "bg-gold text-[#0a0a0f]"
-                    : "bg-white/5 text-muted-foreground hover:text-foreground"
+                    ? "bg-terracotta text-white shadow-sm"
+                    : "bg-surface-warm text-muted-foreground hover:text-foreground"
                 }`}
               >
                 Commandes
@@ -427,8 +427,8 @@ function StatisticsPage() {
                 onClick={() => setActiveChart("comparison")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                   activeChart === "comparison"
-                    ? "bg-gold text-[#0a0a0f]"
-                    : "bg-white/5 text-muted-foreground hover:text-foreground"
+                    ? "bg-terracotta text-white shadow-sm"
+                    : "bg-surface-warm text-muted-foreground hover:text-foreground"
                 }`}
               >
                 Comparaison
@@ -442,8 +442,8 @@ function StatisticsPage() {
                   onClick={() => setPeriod(p)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                     period === p
-                      ? "bg-white/10 text-foreground"
-                      : "bg-white/5 text-muted-foreground hover:text-foreground"
+                      ? "bg-charcoal text-white"
+                      : "bg-surface-warm text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {p === "week" ? "7 jours" : p === "month" ? "30 jours" : "1 an"}
@@ -453,10 +453,10 @@ function StatisticsPage() {
           </div>
 
           {/* Graphique principal */}
-          <div className="p-6 rounded-2xl border border-white/8 bg-dark-card mb-8">
+          <div className="p-6 rounded-2xl border border-border bg-card mb-8">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-gold" />
+                <BarChart3 className="w-5 h-5 text-terracotta" />
                 {activeChart === "revenue" && "Évolution des revenus"}
                 {activeChart === "orders" && "Nombre de commandes"}
                 {activeChart === "comparison" && "Comparaison semaine"}
@@ -469,20 +469,20 @@ function StatisticsPage() {
                   <AreaChart data={dailyStats}>
                     <defs>
                       <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                        <stop offset="5%" stopColor="#c85a32" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#c85a32" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,32,36,0.06)" />
                     <XAxis
                       dataKey="date"
-                      tick={{ fill: "#888", fontSize: 11 }}
-                      axisLine={{ stroke: "rgba(255,255,255,0.1)" }}
+                      tick={{ fill: "#8a726a", fontSize: 11 }}
+                      axisLine={{ stroke: "rgba(28,32,36,0.12)" }}
                       tickLine={false}
                       interval={period === "year" ? 30 : period === "month" ? 5 : 0}
                     />
                     <YAxis
-                      tick={{ fill: "#888", fontSize: 11 }}
+                      tick={{ fill: "#8a726a", fontSize: 11 }}
                       axisLine={false}
                       tickLine={false}
                       tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
@@ -491,7 +491,7 @@ function StatisticsPage() {
                     <Area
                       type="monotone"
                       dataKey="revenue"
-                      stroke="#f59e0b"
+                      stroke="#c85a32"
                       fillOpacity={1}
                       fill="url(#colorRevenue)"
                       strokeWidth={2}
@@ -506,29 +506,29 @@ function StatisticsPage() {
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={dailyStats}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,32,36,0.06)" />
                     <XAxis
                       dataKey="date"
-                      tick={{ fill: "#888", fontSize: 11 }}
-                      axisLine={{ stroke: "rgba(255,255,255,0.1)" }}
+                      tick={{ fill: "#8a726a", fontSize: 11 }}
+                      axisLine={{ stroke: "rgba(28,32,36,0.12)" }}
                       tickLine={false}
                       interval={period === "year" ? 30 : period === "month" ? 5 : 0}
                     />
                     <YAxis
-                      tick={{ fill: "#888", fontSize: 11 }}
+                      tick={{ fill: "#8a726a", fontSize: 11 }}
                       axisLine={false}
                       tickLine={false}
                       allowDecimals={false}
                     />
                     <Tooltip
                       contentStyle={{
-                        background: "#0a0a0f",
-                        border: "1px solid rgba(255,255,255,0.1)",
+                        background: "#ffffff",
+                        border: "1px solid rgba(28,32,36,0.1)",
                         borderRadius: 12,
                       }}
-                      labelStyle={{ color: "#888" }}
+                      labelStyle={{ color: "#8a726a" }}
                     />
-                    <Bar dataKey="orders" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Commandes" />
+                    <Bar dataKey="orders" fill="#1b8354" radius={[4, 4, 0, 0]} name="Commandes" />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -538,15 +538,15 @@ function StatisticsPage() {
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={weeklyComparison}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,32,36,0.06)" />
                     <XAxis
                       dataKey="day"
-                      tick={{ fill: "#888", fontSize: 11 }}
-                      axisLine={{ stroke: "rgba(255,255,255,0.1)" }}
+                      tick={{ fill: "#8a726a", fontSize: 11 }}
+                      axisLine={{ stroke: "rgba(28,32,36,0.12)" }}
                       tickLine={false}
                     />
                     <YAxis
-                      tick={{ fill: "#888", fontSize: 11 }}
+                      tick={{ fill: "#8a726a", fontSize: 11 }}
                       axisLine={false}
                       tickLine={false}
                       tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
@@ -554,13 +554,13 @@ function StatisticsPage() {
                     <Tooltip content={<CustomTooltip />} />
                     <Bar
                       dataKey="thisWeek"
-                      fill="#f59e0b"
+                      fill="#c85a32"
                       radius={[4, 4, 0, 0]}
                       name="Cette semaine"
                     />
                     <Bar
                       dataKey="lastWeek"
-                      fill="#3b82f6"
+                      fill="#8a726a"
                       radius={[4, 4, 0, 0]}
                       name="Semaine dernière"
                     />
@@ -573,9 +573,9 @@ function StatisticsPage() {
           {/* Graphiques secondaires */}
           <div className="grid lg:grid-cols-2 gap-6 mb-8">
             {/* Top items avec graphique */}
-            <div className="p-6 rounded-2xl border border-white/8 bg-dark-card">
+            <div className="p-6 rounded-2xl border border-border bg-card">
               <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <PieChart className="w-5 h-5 text-gold" />
+                <PieChart className="w-5 h-5 text-terracotta" />
                 Top 5 des articles
               </h3>
               {topItems.length === 0 ? (
@@ -601,8 +601,8 @@ function StatisticsPage() {
                         </Pie>
                         <Tooltip
                           contentStyle={{
-                            background: "#0a0a0f",
-                            border: "1px solid rgba(255,255,255,0.1)",
+                            background: "#ffffff",
+                            border: "1px solid rgba(28,32,36,0.1)",
                             borderRadius: 12,
                           }}
                           formatter={(value: number) => formatCurrency(value)}
@@ -616,7 +616,7 @@ function StatisticsPage() {
                     {topItems.map((item, i) => (
                       <div
                         key={i}
-                        className="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                        className="flex items-center justify-between p-3 rounded-lg bg-surface-warm hover:bg-charcoal/5 transition-colors"
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           <div
@@ -633,7 +633,7 @@ function StatisticsPage() {
                             <p className="text-xs text-muted-foreground">{item.quantity} vendus</p>
                           </div>
                         </div>
-                        <p className="text-sm font-bold text-gold flex-shrink-0 ml-2">
+                        <p className="text-sm font-bold text-terracotta-deep flex-shrink-0 ml-2">
                           {item.revenue.toLocaleString("fr-FR")} F
                         </p>
                       </div>
@@ -644,9 +644,9 @@ function StatisticsPage() {
             </div>
 
             {/* Heures de pointe avec bar chart */}
-            <div className="p-6 rounded-2xl border border-white/8 bg-dark-card">
+            <div className="p-6 rounded-2xl border border-border bg-card">
               <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-gold" />
+                <Clock className="w-5 h-5 text-terracotta" />
                 Heures de pointe
               </h3>
               {peakHours.length === 0 ? (
@@ -657,26 +657,26 @@ function StatisticsPage() {
                   <div className="h-48">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={peakHoursData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,32,36,0.06)" />
                         <XAxis
                           dataKey="hour"
-                          tick={{ fill: "#888", fontSize: 10 }}
-                          axisLine={{ stroke: "rgba(255,255,255,0.1)" }}
+                          tick={{ fill: "#8a726a", fontSize: 10 }}
+                          axisLine={{ stroke: "rgba(28,32,36,0.12)" }}
                           tickLine={false}
                           interval={2}
                         />
                         <YAxis hide />
                         <Tooltip
                           contentStyle={{
-                            background: "#0a0a0f",
-                            border: "1px solid rgba(255,255,255,0.1)",
+                            background: "#ffffff",
+                            border: "1px solid rgba(28,32,36,0.1)",
                             borderRadius: 12,
                           }}
-                          labelStyle={{ color: "#888" }}
+                          labelStyle={{ color: "#8a726a" }}
                         />
                         <Bar
                           dataKey="commandes"
-                          fill="#f59e0b"
+                          fill="#c85a32"
                           radius={[4, 4, 0, 0]}
                           name="Commandes"
                         />
@@ -689,10 +689,10 @@ function StatisticsPage() {
                     {peakHours.map((peak, i) => (
                       <div
                         key={i}
-                        className="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                        className="flex items-center justify-between p-3 rounded-lg bg-surface-warm hover:bg-charcoal/5 transition-colors"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-gold/20 text-gold flex items-center justify-center font-bold text-sm">
+                          <div className="w-8 h-8 rounded-full bg-terracotta-tint text-terracotta-deep flex items-center justify-center font-bold text-sm">
                             {peak.hour}h
                           </div>
                           <div>
@@ -702,7 +702,7 @@ function StatisticsPage() {
                             <p className="text-xs text-muted-foreground">{peak.orders} commandes</p>
                           </div>
                         </div>
-                        {i === 0 && <TrendingUp className="w-4 h-4 text-emerald-400" />}
+                        {i === 0 && <TrendingUp className="w-4 h-4 text-emerald-deep" />}
                       </div>
                     ))}
                   </div>
@@ -713,18 +713,18 @@ function StatisticsPage() {
 
           {/* Carte jour de la semaine */}
           {dailyStats.length >= 7 && (
-            <div className="p-6 rounded-2xl border border-white/8 bg-dark-card mb-8">
+            <div className="p-6 rounded-2xl border border-border bg-card mb-8">
               <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-gold" />
+                <BarChart3 className="w-5 h-5 text-terracotta" />
                 Revenus des 7 derniers jours
               </h3>
               <div className="space-y-3">
                 {dailyStats.slice(-7).map((day, i) => (
                   <div key={i} className="flex items-center gap-3">
                     <div className="w-20 text-xs text-muted-foreground">{day.date}</div>
-                    <div className="flex-1 h-8 bg-white/5 rounded-lg overflow-hidden relative">
+                    <div className="flex-1 h-8 bg-surface-warm rounded-lg overflow-hidden relative">
                       <div
-                        className="h-full bg-gradient-gold rounded-lg transition-all duration-500"
+                        className="h-full bg-gradient-to-r from-terracotta to-amber-brand rounded-lg transition-all duration-500"
                         style={{ width: `${(day.revenue / maxDailyRevenue) * 100}%` }}
                       />
                       <div className="absolute inset-0 flex items-center px-3">
@@ -744,42 +744,42 @@ function StatisticsPage() {
 
           {/* Carte des tickets moyens */}
           {dailyStats.length > 0 && (
-            <div className="p-6 rounded-2xl border border-white/8 bg-dark-card mb-8">
+            <div className="p-6 rounded-2xl border border-border bg-card mb-8">
               <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-gold" />
+                <DollarSign className="w-5 h-5 text-terracotta" />
                 Ticket moyen par jour
               </h3>
               <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={dailyStats.slice(-14)}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,32,36,0.06)" />
                     <XAxis
                       dataKey="date"
-                      tick={{ fill: "#888", fontSize: 11 }}
-                      axisLine={{ stroke: "rgba(255,255,255,0.1)" }}
+                      tick={{ fill: "#8a726a", fontSize: 11 }}
+                      axisLine={{ stroke: "rgba(28,32,36,0.12)" }}
                       tickLine={false}
                     />
                     <YAxis
-                      tick={{ fill: "#888", fontSize: 11 }}
+                      tick={{ fill: "#8a726a", fontSize: 11 }}
                       axisLine={false}
                       tickLine={false}
                       tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
                     />
                     <Tooltip
                       contentStyle={{
-                        background: "#0a0a0f",
-                        border: "1px solid rgba(255,255,255,0.1)",
+                        background: "#ffffff",
+                        border: "1px solid rgba(28,32,36,0.1)",
                         borderRadius: 12,
                       }}
                       formatter={(value: number) => formatCurrency(value)}
-                      labelStyle={{ color: "#888" }}
+                      labelStyle={{ color: "#8a726a" }}
                     />
                     <Line
                       type="monotone"
                       dataKey="avgTicket"
-                      stroke="#10b981"
+                      stroke="#1b8354"
                       strokeWidth={2}
-                      dot={{ fill: "#10b981", r: 3 }}
+                      dot={{ fill: "#1b8354", r: 3 }}
                       name="Ticket moyen"
                     />
                   </LineChart>
@@ -788,10 +788,10 @@ function StatisticsPage() {
             </div>
           )}
 
-          <div className="mt-8 p-4 rounded-xl border border-gold/30 bg-gold/5 flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-gold flex-shrink-0 mt-0.5" />
+          <div className="mt-8 p-4 rounded-xl border border-amber-brand/40 bg-amber-tint flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-amber-deep flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-gold">Conseil d'optimisation</p>
+              <p className="text-sm font-semibold text-amber-deep">Conseil d'optimisation</p>
               <p className="text-xs text-muted-foreground mt-1">
                 {peakHours.length > 0 && topItems.length > 0 ? (
                   <>

@@ -1,5 +1,70 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import {
+  type LucideIcon,
+  Activity,
+  AlarmClock,
+  AlertTriangle,
+  Armchair,
+  Ban,
+  Banknote,
+  BarChart3,
+  Bell,
+  BookOpen,
+  Brush,
+  Calendar,
+  CalendarDays,
+  CheckCircle2,
+  ChefHat,
+  ClipboardList,
+  Clock,
+  Coins,
+  CreditCard,
+  ExternalLink,
+  FileText,
+  Film,
+  FolderOpen,
+  Gem,
+  Globe,
+  Headphones,
+  Image,
+  Inbox,
+  Key,
+  Leaf,
+  Lightbulb,
+  Link2,
+  Lock,
+  Mail,
+  MapPin,
+  Megaphone,
+  MessageSquare,
+  Moon,
+  Package,
+  Palette,
+  Paperclip,
+  Pencil,
+  Phone,
+  Pin,
+  QrCode,
+  Receipt,
+  Save,
+  Send,
+  Settings,
+  ShieldCheck,
+  ShoppingCart,
+  Smartphone,
+  Sparkles,
+  Star,
+  Sun,
+  Tag,
+  Trash2,
+  TrendingUp,
+  Truck,
+  User,
+  Users,
+  Utensils,
+  Zap,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -97,6 +162,77 @@ const PLAN_LABEL: Record<string, string> = {
   sur_mesure: "Sur mesure",
   gratuit: "Gratuit (legacy)",
 };
+
+/** Icône lucide par émoji hérité (données DB existantes) ou par nom court (saisie admin). */
+const FEATURE_ICONS: Record<string, LucideIcon> = {
+  "📱": Smartphone,
+  "🍽️": Utensils,
+  "📂": FolderOpen,
+  "🌿": Leaf,
+  "💬": MessageSquare,
+  "🛒": ShoppingCart,
+  "📋": ClipboardList,
+  "🔔": Bell,
+  "📲": QrCode,
+  "🪑": Armchair,
+  "🎨": Palette,
+  "📅": Calendar,
+  "🗓️": CalendarDays,
+  "✅": CheckCircle2,
+  "⏰": AlarmClock,
+  "✨": Sparkles,
+  "✏️": Pencil,
+  "📊": BarChart3,
+  "📈": TrendingUp,
+  "💰": Coins,
+  "👥": Users,
+  "📥": Inbox,
+  "🖼️": Image,
+  "🎬": Film,
+  "⭐": Star,
+  "🔗": Link2,
+  "🔑": Key,
+  "👨‍🍳": ChefHat,
+  "🟢": Activity,
+  "📌": Pin,
+  "📎": Paperclip,
+  "🏷️": Tag,
+  "📢": Megaphone,
+  "💎": Gem,
+  "📦": Package,
+  "⚠️": AlertTriangle,
+  "🚚": Truck,
+  "📨": Send,
+  "⚙️": Settings,
+  "🌙": Moon,
+  "💡": Lightbulb,
+  "☀️": Sun,
+  "🖌️": Brush,
+  "🎧": Headphones,
+  "📧": Mail,
+  "📚": BookOpen,
+  "💾": Save,
+  "🧾": Receipt,
+  "📄": FileText,
+  "🌐": Globe,
+  "⚡": Zap,
+  menu: Utensils,
+  qr: QrCode,
+  stats: BarChart3,
+  users: Users,
+  card: CreditCard,
+  clock: Clock,
+  star: Star,
+  bell: Bell,
+  calendar: Calendar,
+  message: MessageSquare,
+  gallery: Image,
+  settings: Settings,
+  package: Package,
+};
+
+const featureIcon = (icon: string | null | undefined): LucideIcon =>
+  (icon && FEATURE_ICONS[icon]) || Package;
 
 const DEFAULT_FEATURES: PlanFeature[] = [
   {
@@ -839,24 +975,24 @@ const generate2FAPIN = (): string => {
 
 const sendPINByEmail = async (email: string, pin: string): Promise<boolean> => {
   try {
-    console.log(`📧 Tentative d'envoi d'email à ${email} avec PIN: ${pin}`);
+    console.log(`Tentative d'envoi d'email à ${email}`);
     const { data, error } = await supabase.functions.invoke("send-2fa-email", {
       body: { email, pin },
     });
-    console.log("📧 Réponse Edge Function:", { data, error });
+    console.log("Réponse Edge Function:", { data, error });
     if (error) {
-      console.error("❌ Erreur Edge Function:", error);
+      console.error("Erreur Edge Function:", error);
       toast.error(`Erreur: ${error.message || "Impossible d'envoyer l'email"}`);
       return false;
     }
     if (data?.error) {
-      console.error("❌ Erreur dans la réponse:", data.error);
+      console.error("Erreur dans la réponse:", data.error);
       toast.error(`Erreur: ${data.error}`);
       return false;
     }
     return data?.success || false;
   } catch (error) {
-    console.error("❌ Exception lors de l'envoi d'email:", error);
+    console.error("Exception lors de l'envoi d'email:", error);
     return false;
   }
 };
@@ -956,18 +1092,18 @@ function SuperAdminPage() {
         try {
           const result = await sendPINByEmail(user.email, pin);
           if (result) {
-            toast.success(`📧 Code envoyé à ${user.email}`, { duration: 5000 });
+            toast.success(`Code envoyé à ${user.email}`, { duration: 5000 });
           } else {
             toast.error("Impossible d'envoyer l'email.", { duration: 5000 });
-            toast.info(`🔐 Code: ${pin}`, { duration: 15000 });
+            toast.info(`Code de sécurité : ${pin}`, { duration: 15000 });
             toast.warning("Configurez RESEND_API_KEY", { duration: 8000 });
           }
         } catch (error) {
           toast.error("Erreur lors de l'envoi.", { duration: 5000 });
-          toast.info(`🔐 Code: ${pin}`, { duration: 15000 });
+          toast.info(`Code de sécurité : ${pin}`, { duration: 15000 });
         }
       } else {
-        toast.info(`🔐 Code: ${pin}`, { duration: 15000 });
+        toast.info(`Code de sécurité : ${pin}`, { duration: 15000 });
       }
     } else {
       setAuthError(true);
@@ -981,7 +1117,7 @@ function SuperAdminPage() {
       setIsAuthenticated(true);
       sessionStorage.setItem("super_admin_auth", "true");
       setPinError(false);
-      toast.success("✅ Authentification réussie");
+      toast.success("Authentification réussie");
     } else {
       setPinError(true);
       toast.error("Code PIN incorrect");
@@ -1056,7 +1192,8 @@ function SuperAdminPage() {
     if (!name) return;
     const description = prompt("Description (optionnelle) :") || "";
     const category = prompt("Catégorie :") || "other";
-    const icon = prompt("Icône (emoji) :") || "📌";
+    const icon =
+      prompt("Icône (menu, qr, stats, users, card, clock, star, bell, settings…) :") || "package";
     const newFeature: PlanFeature = {
       id: `local-${Date.now()}`,
       name,
@@ -1117,10 +1254,10 @@ function SuperAdminPage() {
     return (
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
         <div className="max-w-md w-full">
-          <div className="p-8 rounded-2xl border border-white/8 bg-dark-card">
+          <div className="p-8 rounded-2xl border border-border bg-card shadow-card">
             <div className="flex items-center justify-center mb-6">
-              <div className="w-16 h-16 rounded-xl bg-gradient-gold flex items-center justify-center font-black text-[#0a0a0f] text-2xl">
-                🔐
+              <div className="w-16 h-16 rounded-xl bg-gradient-gold flex items-center justify-center text-[#0a0a0f]">
+                <ShieldCheck className="h-8 w-8" />
               </div>
             </div>
             <h1 className="text-2xl font-black text-center mb-2">Super Administration</h1>
@@ -1141,11 +1278,11 @@ function SuperAdminPage() {
                       setAuthError(false);
                     }}
                     placeholder="Entrez le mot de passe"
-                    className={`w-full px-4 py-3 rounded-xl bg-white/[0.04] border text-sm outline-none focus:border-gold/50 transition-colors ${authError ? "border-red-500/50" : "border-white/10"}`}
+                    className={`w-full px-4 py-3 rounded-xl bg-surface-warm border text-sm outline-none focus:border-gold/50 transition-colors ${authError ? "border-destructive/50" : "border-input"}`}
                     autoFocus
                   />
                   {authError && (
-                    <p className="text-xs text-red-400 mt-2">
+                    <p className="text-xs text-destructive mt-2">
                       Mot de passe incorrect. Veuillez réessayer.
                     </p>
                   )}
@@ -1176,11 +1313,11 @@ function SuperAdminPage() {
                     }}
                     placeholder="000000"
                     maxLength={6}
-                    className={`w-full px-4 py-3 rounded-xl bg-white/[0.04] border text-sm outline-none focus:border-gold/50 transition-colors text-center text-2xl tracking-widest ${pinError ? "border-red-500/50" : "border-white/10"}`}
+                    className={`w-full px-4 py-3 rounded-xl bg-surface-warm border text-sm outline-none focus:border-gold/50 transition-colors text-center text-2xl tracking-widest ${pinError ? "border-destructive/50" : "border-input"}`}
                     autoFocus
                   />
                   {pinError && (
-                    <p className="text-xs text-red-400 mt-2">
+                    <p className="text-xs text-destructive mt-2">
                       Code PIN incorrect. Veuillez réessayer.
                     </p>
                   )}
@@ -1193,7 +1330,7 @@ function SuperAdminPage() {
                       setPinInput("");
                       setGeneratedPIN("");
                     }}
-                    className="flex-1 px-5 py-3 rounded-xl border border-white/10 text-sm font-semibold hover:border-gold/40 transition-colors"
+                    className="flex-1 px-5 py-3 rounded-xl border border-border text-sm font-semibold hover:border-gold/40 transition-colors"
                   >
                     ← Retour
                   </button>
@@ -1207,7 +1344,7 @@ function SuperAdminPage() {
               </form>
             )}
             <p className="text-xs text-muted-foreground text-center mt-4">
-              🔒 Accès réservé aux super administrateurs uniquement
+              Accès réservé aux super administrateurs uniquement
             </p>
           </div>
         </div>
@@ -1217,7 +1354,7 @@ function SuperAdminPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-20 bg-background/85 backdrop-blur-xl border-b border-gold/20">
+      <header className="sticky top-0 z-20 bg-background/95 border-b border-gold/20">
         <div className="max-w-7xl mx-auto px-6 py-4 grid grid-cols-[minmax(0,1fr)_auto] sm:flex sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-10 h-10 shrink-0 rounded-xl bg-gradient-gold flex items-center justify-center font-black text-[#0a0a0f]">
@@ -1233,7 +1370,7 @@ function SuperAdminPage() {
           <div className="flex gap-2 shrink-0">
             <Link
               to="/"
-              className="px-4 py-2 rounded-xl border border-white/10 text-sm font-semibold hover:border-gold/40"
+              className="px-4 py-2 rounded-xl border border-border text-sm font-semibold hover:border-gold/40"
             >
               ← Site
             </Link>
@@ -1245,7 +1382,7 @@ function SuperAdminPage() {
             </button>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto px-6 flex gap-1 border-t border-white/5 overflow-x-auto">
+        <div className="max-w-7xl mx-auto px-6 flex gap-1 border-t border-border/60 overflow-x-auto">
           {(["overview", "restaurants", "subscriptions", "features", "leads"] as const).map((t) => (
             <button
               key={t}
@@ -1278,15 +1415,15 @@ function SuperAdminPage() {
               <Stat label="Revenus mensuels" value={`${stats.revenue.toLocaleString("fr-FR")} F`} />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="p-6 rounded-2xl border border-amber-400/30 bg-amber-400/5">
-                <p className="text-xs uppercase tracking-widest text-amber-400 font-bold">
+              <div className="p-6 rounded-2xl border border-amber-brand/30 bg-amber-tint/60">
+                <p className="text-xs uppercase tracking-widest text-amber-deep font-bold">
                   Demandes sur mesure
                 </p>
                 <p className="mt-2 text-4xl font-black">{stats.leads}</p>
                 <p className="text-xs text-muted-foreground mt-1">nouvelles non traitées</p>
               </div>
-              <div className="p-6 rounded-2xl border border-red-400/30 bg-red-400/5">
-                <p className="text-xs uppercase tracking-widest text-red-400 font-bold">
+              <div className="p-6 rounded-2xl border border-destructive/30 bg-destructive/5">
+                <p className="text-xs uppercase tracking-widest text-destructive font-bold">
                   Expirés à relancer
                 </p>
                 <p className="mt-2 text-4xl font-black">{stats.expired}</p>
@@ -1301,12 +1438,12 @@ function SuperAdminPage() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Rechercher (nom, ville, email, gérant)..."
-              className="w-full max-w-md mb-5 px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-sm focus:border-gold/40 outline-none"
+              className="w-full max-w-md mb-5 px-4 py-2.5 rounded-xl bg-surface-warm border border-input text-sm focus:border-gold/40 outline-none"
             />
-            <div className="overflow-x-auto rounded-2xl border border-white/8 bg-dark-card">
+            <div className="overflow-x-auto rounded-2xl border border-border bg-card shadow-card">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-[10px] uppercase tracking-widest text-muted-foreground border-b border-white/5">
+                  <tr className="text-left text-[10px] uppercase tracking-widest text-muted-foreground border-b border-border">
                     <th className="px-4 py-3">Restaurant</th>
                     <th className="px-4 py-3">Gérant</th>
                     <th className="px-4 py-3">Forfait</th>
@@ -1317,7 +1454,7 @@ function SuperAdminPage() {
                 </thead>
                 <tbody>
                   {filtered.map((r) => (
-                    <tr key={r.id} className="border-b border-white/5 hover:bg-white/[0.02]">
+                    <tr key={r.id} className="border-b border-border/60 hover:bg-surface-warm">
                       <td className="px-4 py-3">
                         <strong>{r.name}</strong>
                         <div className="text-xs text-muted-foreground">
@@ -1369,18 +1506,26 @@ function SuperAdminPage() {
               restaurant.
             </p>
             {restos.map((r) => (
-              <div key={r.id} className="p-6 rounded-2xl border border-white/8 bg-dark-card">
-                <div className="flex flex-wrap items-start justify-between gap-3 mb-4 pb-4 border-b border-white/5">
+              <div key={r.id} className="p-6 rounded-2xl border border-border bg-card shadow-card">
+                <div className="flex flex-wrap items-start justify-between gap-3 mb-4 pb-4 border-b border-border/60">
                   <div className="min-w-0 flex-1">
                     <strong className="truncate block text-base mb-1">{r.name}</strong>
                     <div className="text-xs text-muted-foreground space-x-2">
-                      <span>👤 {r.owner_name}</span>
+                      <span className="inline-flex items-center gap-1">
+                        <User className="h-3 w-3" /> {r.owner_name}
+                      </span>
                       <span>·</span>
-                      <span>✉️ {r.email}</span>
+                      <span className="inline-flex items-center gap-1">
+                        <Mail className="h-3 w-3" /> {r.email}
+                      </span>
                       <span>·</span>
-                      <span>📍 {r.city}</span>
+                      <span className="inline-flex items-center gap-1">
+                        <MapPin className="h-3 w-3" /> {r.city}
+                      </span>
                       <span>·</span>
-                      <span>📱 {r.phone}</span>
+                      <span className="inline-flex items-center gap-1">
+                        <Phone className="h-3 w-3" /> {r.phone}
+                      </span>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 mt-2">
                       <StatusBadge status={r.subscription_status} />
@@ -1399,31 +1544,32 @@ function SuperAdminPage() {
                       href={`/${r.slug}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="px-3 py-1.5 rounded-lg border border-white/10 text-xs font-semibold hover:border-gold/40 transition-colors"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-semibold hover:border-gold/40 transition-colors"
                     >
-                      🌐 Voir le site
+                      <ExternalLink className="h-3.5 w-3.5" />
+                      Voir le site
                     </a>
                   </div>
                 </div>
-                <div className="mb-4 p-4 rounded-xl bg-white/[0.02] border border-white/5">
-                  <p className="text-xs font-bold uppercase tracking-wider text-gold mb-3">
-                    📊 Plan d'abonnement
+                <div className="mb-4 p-4 rounded-xl bg-surface-warm border border-border/60">
+                  <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold mb-3">
+                    <CreditCard className="h-3.5 w-3.5" /> Plan d'abonnement
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {(["basique", "standard", "premium"] as const).map((p) => (
                       <button
                         key={p}
                         onClick={() => updatePlan(r.id, p)}
-                        className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${r.plan === p ? "bg-gradient-gold text-[#0a0a0f] shadow-gold" : "bg-white/[0.04] border border-white/10 hover:border-gold/40 hover:bg-gold/5"}`}
+                        className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${r.plan === p ? "bg-gradient-gold text-[#0a0a0f] shadow-gold" : "bg-surface-warm border border-input hover:border-gold/40 hover:bg-gold/5"}`}
                       >
                         {PLAN_LABEL[p]}
                       </button>
                     ))}
                   </div>
                 </div>
-                <div className="mb-4 p-4 rounded-xl bg-white/[0.02] border border-white/5">
-                  <p className="text-xs font-bold uppercase tracking-wider text-gold mb-3">
-                    🎨 Template du site
+                <div className="mb-4 p-4 rounded-xl bg-surface-warm border border-border/60">
+                  <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold mb-3">
+                    <Palette className="h-3.5 w-3.5" /> Template du site
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {[
@@ -1446,50 +1592,50 @@ function SuperAdminPage() {
                           key={tpl.id}
                           onClick={() => canUse && updateTemplate(r.id, tpl.id)}
                           disabled={!canUse}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${r.template === tpl.id ? "bg-gradient-gold text-[#0a0a0f]" : canUse ? "bg-white/[0.04] border border-white/10 hover:border-gold/40" : "bg-white/[0.02] border border-white/5 text-muted-foreground/50 cursor-not-allowed"}`}
+                          className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${r.template === tpl.id ? "bg-gradient-gold text-[#0a0a0f]" : canUse ? "bg-surface-warm border border-input hover:border-gold/40" : "bg-surface-warm border border-border/60 text-muted-foreground/50 cursor-not-allowed"}`}
                         >
                           {tpl.name}
-                          {!canUse && " 🔒"}
+                          {!canUse && <Lock className="h-3 w-3" />}
                         </button>
                       );
                     })}
                   </div>
                 </div>
-                <div className="mb-4 p-4 rounded-xl bg-white/[0.02] border border-white/5">
-                  <p className="text-xs font-bold uppercase tracking-wider text-gold mb-3">
-                    ⏱️ Statut d'abonnement
+                <div className="mb-4 p-4 rounded-xl bg-surface-warm border border-border/60">
+                  <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold mb-3">
+                    <Clock className="h-3.5 w-3.5" /> Statut d'abonnement
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {[
                       {
                         value: "trial",
                         label: "Essai",
-                        color: "bg-blue-500/10 border-blue-500/30 text-blue-300",
+                        color: "bg-amber-tint border-amber-brand/30 text-amber-deep",
                       },
                       {
                         value: "active",
                         label: "Actif",
-                        color: "bg-green-500/10 border-green-500/30 text-green-300",
+                        color: "bg-emerald-tint border-emerald/30 text-emerald-deep",
                       },
                       {
                         value: "expired",
                         label: "Expiré",
-                        color: "bg-red-500/10 border-red-500/30 text-red-400",
+                        color: "bg-destructive/10 border-destructive/30 text-destructive",
                       },
                     ].map((status) => (
                       <button
                         key={status.value}
                         onClick={() => updateSubscriptionStatus(r.id, status.value)}
-                        className={`px-4 py-2 rounded-lg border text-xs font-bold transition-all ${r.subscription_status === status.value ? status.color : "bg-white/[0.04] border-white/10 text-muted-foreground hover:border-gold/40"}`}
+                        className={`px-4 py-2 rounded-lg border text-xs font-bold transition-all ${r.subscription_status === status.value ? status.color : "bg-surface-warm border-input text-muted-foreground hover:border-gold/40"}`}
                       >
                         {status.label}
                       </button>
                     ))}
                   </div>
                 </div>
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
-                  <p className="text-xs font-bold uppercase tracking-wider text-gold mb-3">
-                    ⚡ Actions rapides
+                <div className="p-4 rounded-xl bg-surface-warm border border-border/60">
+                  <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold mb-3">
+                    <Zap className="h-3.5 w-3.5" /> Actions rapides
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <button
@@ -1500,10 +1646,10 @@ function SuperAdminPage() {
                           .from("restaurants")
                           .update({ subscription_ends_at: date.toISOString() })
                           .eq("id", r.id);
-                        toast.success("✅ Abonnement prolongé de 30 jours");
+                        toast.success("Abonnement prolongé de 30 jours");
                         load();
                       }}
-                      className="px-4 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs font-bold text-emerald-300 hover:bg-emerald-500/20 transition-all"
+                      className="px-4 py-2 rounded-lg bg-emerald-tint border border-emerald/30 text-xs font-bold text-emerald-deep hover:bg-emerald/15 transition-all"
                     >
                       +30 jours
                     </button>
@@ -1515,18 +1661,18 @@ function SuperAdminPage() {
                           .from("restaurants")
                           .update({ subscription_ends_at: date.toISOString() })
                           .eq("id", r.id);
-                        toast.success("✅ Abonnement prolongé de 3 mois");
+                        toast.success("Abonnement prolongé de 3 mois");
                         load();
                       }}
-                      className="px-4 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs font-bold text-emerald-300 hover:bg-emerald-500/20 transition-all"
+                      className="px-4 py-2 rounded-lg bg-emerald-tint border border-emerald/30 text-xs font-bold text-emerald-deep hover:bg-emerald/15 transition-all"
                     >
                       +3 mois
                     </button>
                     <button
                       onClick={() => expire(r.id)}
-                      className="px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-xs font-bold text-red-400 hover:bg-red-500/20 transition-all"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-destructive/10 border border-destructive/30 text-xs font-bold text-destructive hover:bg-destructive/15 transition-all"
                     >
-                      🚫 Marquer expiré
+                      <Ban className="h-3.5 w-3.5" /> Marquer expiré
                     </button>
                     <button
                       onClick={() => {
@@ -1540,14 +1686,14 @@ function SuperAdminPage() {
                             .delete()
                             .eq("id", r.id)
                             .then(() => {
-                              toast.success("🗑️ Restaurant supprimé");
+                              toast.success("Restaurant supprimé");
                               load();
                             });
                         }
                       }}
-                      className="px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-xs font-bold text-red-400 hover:bg-red-500/20 transition-all"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-destructive/10 border border-destructive/30 text-xs font-bold text-destructive hover:bg-destructive/15 transition-all"
                     >
-                      🗑️ Supprimer
+                      <Trash2 className="h-3.5 w-3.5" /> Supprimer
                     </button>
                   </div>
                 </div>
@@ -1594,11 +1740,11 @@ function SuperAdminPage() {
                       {categoryFeatures.map((feature) => (
                         <div
                           key={feature.id}
-                          className="p-4 rounded-xl border border-white/8 bg-dark-card hover:border-gold/30 transition-all"
+                          className="p-4 rounded-xl border border-border bg-card shadow-card hover:border-gold/30 transition-all"
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex items-start gap-3 flex-1 min-w-0">
-                              <span className="text-2xl">{feature.icon}</span>
+                              <FeatureGlyph icon={feature.icon} />
                               <div>
                                 <strong className="text-sm block">{feature.name}</strong>
                                 {feature.description && (
@@ -1632,10 +1778,10 @@ function SuperAdminPage() {
                               ))}
                               <button
                                 onClick={() => deleteFeature(feature.id)}
-                                className="px-2 py-1 rounded-lg bg-red-500/10 border border-red-500/30 text-xs font-bold text-red-400 hover:bg-red-500/20"
+                                className="inline-flex items-center px-2 py-1 rounded-lg bg-destructive/10 border border-destructive/30 text-xs font-bold text-destructive hover:bg-destructive/15"
                                 title="Supprimer"
                               >
-                                🗑️
+                                <Trash2 className="h-3.5 w-3.5" />
                               </button>
                             </div>
                           </div>
@@ -1659,7 +1805,7 @@ function SuperAdminPage() {
               <p className="text-muted-foreground">Aucune demande sur mesure pour l'instant.</p>
             )}
             {leads.map((l) => (
-              <div key={l.id} className="p-5 rounded-2xl border border-white/8 bg-dark-card">
+              <div key={l.id} className="p-5 rounded-2xl border border-border bg-card shadow-card">
                 <div className="flex justify-between gap-3 flex-wrap mb-2">
                   <div>
                     <strong className="text-base">{l.restaurant_name}</strong>
@@ -1668,14 +1814,31 @@ function SuperAdminPage() {
                       {new Date(l.created_at).toLocaleString("fr-FR")}
                     </div>
                   </div>
-                  <span className="text-xs px-2 py-0.5 rounded-md bg-amber-400/10 text-amber-400 border border-amber-400/30 self-start">
+                  <span className="text-xs px-2 py-0.5 rounded-md bg-amber-tint text-amber-deep border border-amber-brand/30 self-start">
                     {l.status}
                   </span>
                 </div>
-                <div className="text-sm mb-2">
-                  📞 {l.phone} · ✉️ {l.email} {l.budget && <>· 💰 {l.budget}</>}
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm mb-2">
+                  <span className="inline-flex items-center gap-1">
+                    <Phone className="h-3.5 w-3.5 text-muted-foreground" />
+                    {l.phone}
+                  </span>
+                  <span>·</span>
+                  <span className="inline-flex items-center gap-1">
+                    <Mail className="h-3.5 w-3.5 text-muted-foreground" />
+                    {l.email}
+                  </span>
+                  {l.budget && (
+                    <>
+                      <span>·</span>
+                      <span className="inline-flex items-center gap-1">
+                        <Banknote className="h-3.5 w-3.5 text-muted-foreground" />
+                        {l.budget}
+                      </span>
+                    </>
+                  )}
                 </div>
-                <p className="text-sm text-foreground/85 bg-white/[0.03] rounded-xl p-3">
+                <p className="text-sm text-foreground/85 bg-surface-warm rounded-xl p-3">
                   {l.message}
                 </p>
               </div>
@@ -1684,13 +1847,13 @@ function SuperAdminPage() {
         )}
 
         {!loading && tab === "overview" && reservations.length > 0 && (
-          <div className="mt-8 p-6 rounded-2xl border border-white/8 bg-dark-card">
+          <div className="mt-8 p-6 rounded-2xl border border-border bg-card shadow-card">
             <h3 className="text-sm font-black uppercase tracking-widest text-gold mb-4">
               Dernières réservations
             </h3>
             <div className="space-y-2 max-h-[400px] overflow-y-auto">
               {reservations.map((r) => (
-                <div key={r.id} className="p-3 rounded-xl bg-white/[0.02] text-sm">
+                <div key={r.id} className="p-3 rounded-xl bg-surface-warm text-sm">
                   <div className="flex justify-between gap-2 flex-wrap">
                     <strong>{r.customer_name}</strong>
                     <span className="text-xs text-muted-foreground">
@@ -1712,29 +1875,34 @@ function SuperAdminPage() {
 
 function getCategoryLabel(category: string): string {
   const labels: Record<string, string> = {
-    menu: "🍽️ Menu",
-    order: "💬 Commandes",
-    qr: "📲 QR Code",
-    reservation: "📅 Réservations",
-    template: "🎨 Templates",
-    stats: "📊 Statistiques",
-    gallery: "🖼️ Galerie",
-    reviews: "⭐ Avis clients",
-    billing: "🧾 Facturation",
-    staff: "👥 Staff",
-    marketing: "🏷️ Marketing",
-    reports: "📄 Rapports",
-    support: "🎧 Support",
-    custom: "✨ Personnalisation",
-    domain: "🌐 Domaine",
-    advanced: "🚀 Avancé",
-    tables: "🪑 Tables",
-    chat: "💬 Chat interne",
-    stock: "📦 Stocks",
-    messaging: "📨 Messagerie",
-    settings: "⚙️ Paramètres",
+    menu: "Menu",
+    order: "Commandes",
+    qr: "QR Code",
+    reservation: "Réservations",
+    template: "Templates",
+    stats: "Statistiques",
+    gallery: "Galerie",
+    reviews: "Avis clients",
+    billing: "Facturation",
+    staff: "Staff",
+    marketing: "Marketing",
+    reports: "Rapports",
+    support: "Support",
+    custom: "Personnalisation",
+    domain: "Domaine",
+    advanced: "Avancé",
+    tables: "Tables",
+    chat: "Chat interne",
+    stock: "Stocks",
+    messaging: "Messagerie",
+    settings: "Paramètres",
   };
   return labels[category] || category;
+}
+
+function FeatureGlyph({ icon }: { icon: string | null }) {
+  const Icon = featureIcon(icon);
+  return <Icon className="h-5 w-5 mt-0.5 shrink-0 text-gold" />;
 }
 
 function Stat({
@@ -1748,7 +1916,7 @@ function Stat({
 }) {
   return (
     <div
-      className={`p-6 rounded-2xl border ${accent ? "border-gold/30 bg-gradient-to-br from-gold/10 to-transparent" : "border-white/8 bg-dark-card"}`}
+      className={`p-6 rounded-2xl border ${accent ? "border-gold/30 bg-gradient-to-br from-gold/10 to-transparent" : "border-border bg-card shadow-card"}`}
     >
       <p className="text-xs text-muted-foreground uppercase tracking-wider">{label}</p>
       <p className="mt-2 text-3xl font-black text-gradient-gold">{value}</p>
@@ -1758,12 +1926,12 @@ function Stat({
 
 function StatusBadge({ status }: { status: string | null }) {
   const map: Record<string, string> = {
-    trial: "bg-blue-500/15 text-blue-300 border-blue-500/30",
-    active: "bg-green-500/15 text-green-300 border-green-500/30",
-    expired: "bg-red-500/15 text-red-300 border-red-500/30",
-    cancelled: "bg-white/5 text-muted-foreground border-white/10",
+    trial: "bg-amber-tint text-amber-deep border-amber-brand/30",
+    active: "bg-emerald-tint text-emerald-deep border-emerald/30",
+    expired: "bg-destructive/10 text-destructive border-destructive/30",
+    cancelled: "bg-muted text-muted-foreground border-border",
   };
-  const cls = map[status ?? ""] ?? "bg-white/5 text-muted-foreground border-white/10";
+  const cls = map[status ?? ""] ?? "bg-muted text-muted-foreground border-border";
   return (
     <span
       className={`inline-block px-2 py-0.5 rounded-md border text-[10px] font-bold uppercase tracking-wider ${cls}`}

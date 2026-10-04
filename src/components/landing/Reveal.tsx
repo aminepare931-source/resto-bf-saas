@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { createElement, useEffect, useRef, type ReactNode } from "react";
 
 export function Reveal({
   children,
@@ -32,19 +32,18 @@ export function Reveal({
   }, []);
 
   const delayClass = delay ? `reveal-delay-${delay}` : "";
-  const Comp = Tag as React.ElementType;
-  return (
-    <Comp
-      ref={ref as React.Ref<HTMLElement>}
-      className={`reveal ${delayClass} ${className}`.trim()}
-      style={{
+  return createElement(
+    Tag as string,
+    {
+      ref,
+      className: `reveal ${delayClass} ${className}`.trim(),
+      style: {
         willChange: "transform, opacity",
         backfaceVisibility: "hidden",
         WebkitBackfaceVisibility: "hidden",
         transform: "translateZ(0)",
-      }}
-    >
-      {children}
-    </Comp>
+      },
+    },
+    children,
   );
 }

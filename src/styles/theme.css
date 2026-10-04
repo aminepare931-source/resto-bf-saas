@@ -1,135 +1,96 @@
 /* ============================================================
-   RestoBF - Systeme de themes (Light / Dark / Neon)
+   RestoBF — Modern Sahelian Hospitality Tech
+   Thème unique (light warm) — tokens de base
+   Palette : terracotta C85A32 · émeraude 1B8354 · ambre E5A93C
    ============================================================ */
 
-/* --- Theme Light (Jour) --- */
-.theme-light {
-  --background: #ffffff;
-  --foreground: #0a0a0f;
+:root {
+  /* --- Surfaces --- */
+  --background: #fdfbf7; /* toile de fond calico blanchi */
+  --foreground: #1c2024; /* charbon volcanique */
   --card: #ffffff;
-  --card-foreground: #0a0a0f;
+  --card-foreground: #1c2024;
   --popover: #ffffff;
-  --popover-foreground: #0a0a0f;
-  --primary: #f59e0b;
-  --primary-foreground: #0a0a0f;
-  --secondary: #f3f4f6;
-  --secondary-foreground: #0a0a0f;
-  --muted: #f3f4f6;
-  --muted-foreground: #6b7280;
-  --accent: rgba(245, 158, 11, 0.12);
-  --accent-foreground: #0a0a0f;
-  --destructive: #ef4444;
+  --popover-foreground: #1c2024;
+  --canvas: #fdfbf7;
+  --surface-warm: #faf7f2; /* rangées alternées ledger */
+
+  /* --- Marque --- */
+  --primary: #c85a32; /* terre cuite brûlée — actions principales */
+  --primary-foreground: #ffffff;
+  --primary-deep: #9f3c16; /* survol / états actifs */
+  --primary-tint: #fff4ee; /* fonds dégradés terracotta */
+
+  --secondary: #1b8354; /* émeraude marché — paiements, validé */
+  --secondary-foreground: #ffffff;
+  --secondary-deep: #13633f;
+  --secondary-tint: #edf7f1;
+
+  --tertiary: #e5a93c; /* ambre doré — en préparation, alertes */
+  --tertiary-foreground: #281900;
+  --tertiary-deep: #996800;
+  --tertiary-tint: #fff8ec;
+
+  /* --- Neutres chauds --- */
+  --muted: #faf7f2;
+  --muted-foreground: #57423b; /* brun chaud — texte secondaire */
+  --accent: #fff4ee;
+  --accent-foreground: #9f3c16;
+  --border: #eae3d9; /* bordure cartes */
+  --input: #d9d2c7; /* bordure champs */
+  --outline: #8a726a;
+  --ring: #c85a32; /* focus franc 2px, pas de flou */
+
+  /* --- États --- */
+  --destructive: #ba1a1a;
   --destructive-foreground: #ffffff;
-  --border: rgba(0, 0, 0, 0.1);
-  --input: rgba(0, 0, 0, 0.1);
-  --ring: #f59e0b;
-  --gold: #f59e0b;
-  --gold-light: #fbbf24;
-  --gold-dark: #d97706;
-  --gold-glow: none;
-}
+  --destructive-tint: #fdf2f0;
+  --destructive-deep: #c03225;
 
-.theme-light body {
-  background-color: var(--background);
-  color: var(--foreground);
-}
+  /* --- Chips de statut (réf. DESIGN.md) --- */
+  --status-prep-bg: #fff8ec;
+  --status-prep-text: #996800;
+  --status-prep-border: #f3d89f;
+  --status-paid-bg: #edf7f1;
+  --status-paid-text: #13633f;
+  --status-paid-border: #a8ddc2;
+  --status-void-bg: #f1f3f5;
+  --status-void-text: #495057;
 
-/* --- Theme Dark (Nuit) --- */
-.theme-dark {
-  --background: #0a0a0f;
-  --foreground: #e8e6e3;
-  --card: #111118;
-  --card-foreground: #e8e6e3;
-  --popover: #111118;
-  --popover-foreground: #e8e6e3;
-  --primary: #d4a853;
-  --primary-foreground: #0a0a0f;
-  --secondary: #1a1a24;
-  --secondary-foreground: #e8e6e3;
-  --muted: #1a1a24;
-  --muted-foreground: #8b8a88;
-  --accent: rgba(212, 168, 83, 0.12);
-  --accent-foreground: #f0d48a;
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
-  --border: rgba(255, 255, 255, 0.08);
-  --input: rgba(255, 255, 255, 0.08);
-  --ring: #d4a853;
-  --gold: #d4a853;
-  --gold-light: #f0d48a;
-  --gold-dark: #b08800;
-  --gold-glow: none;
-}
+  /* --- Alias legacy (transition vers le nouveau système) --- */
+  --gold: #c85a32;
+  --gold-light: #e5a93c;
+  --gold-dark: #9f3c16;
+  --dark: #1c2024;
+  --dark-card: #ffffff;
+  --dark-card-hover: #faf7f2;
 
-.theme-dark body {
-  background-color: var(--background);
-  color: var(--foreground);
-}
+  /* --- Sidebar --- */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1c2024;
+  --sidebar-primary: #c85a32;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #faf7f2;
+  --sidebar-accent-foreground: #9f3c16;
+  --sidebar-border: #eae3d9;
+  --sidebar-ring: #c85a32;
 
-/* --- Theme Neon (Néon) --- */
-.theme-neon {
-  --background: #0a0a1a;
-  --foreground: #ffffff;
-  --card: #14143a;
-  --card-foreground: #ffffff;
-  --popover: #14143a;
-  --popover-foreground: #ffffff;
-  --primary: #fbbf24;
-  --primary-foreground: #0a0a1a;
-  --secondary: #1e1e3f;
-  --secondary-foreground: #a5b4fc;
-  --muted: #1e1e3f;
-  --muted-foreground: #a5b4fc;
-  --accent: rgba(139, 92, 246, 0.15);
-  --accent-foreground: #fbbf24;
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
-  --border: rgba(139, 92, 246, 0.3);
-  --input: rgba(139, 92, 246, 0.2);
-  --ring: #8b5cf6;
-  --gold: #fbbf24;
-  --gold-light: #fcd34d;
-  --gold-dark: #f59e0b;
-  --gold-glow: 0 0 20px rgba(251, 191, 36, 0.5);
-}
+  /* --- Ombres chaudes (niveaux 1-3) --- */
+  --shadow-level1: 0 1px 3px rgba(28, 32, 36, 0.05);
+  --shadow-level2:
+    0 8px 24px -4px rgba(200, 90, 50, 0.12), 0 2px 6px -1px rgba(28, 32, 36, 0.06);
+  --shadow-level3:
+    0 16px 32px -8px rgba(28, 32, 36, 0.18), 0 0 0 1px rgba(28, 32, 36, 0.08);
 
-.theme-neon body {
-  background-color: var(--background);
-  color: var(--foreground);
-}
+  /* --- Dégradés --- */
+  --gradient-primary: linear-gradient(135deg, #c85a32 0%, #e5a93c 100%);
+  --gradient-hero: linear-gradient(135deg, #9f3c16 0%, #c85a32 55%, #e5a93c 100%);
+  --gradient-warm-surface: linear-gradient(180deg, #fdfbf7 0%, #faf7f2 100%);
+  --shadow-gold: 0 8px 30px rgba(200, 90, 50, 0.25);
+  --shadow-card: var(--shadow-level2);
 
-.theme-neon {
-  background-image: none;
-}
-
-.theme-neon body::before {
-  background: rgba(10, 10, 26, 0.85);
-}
-
-/* --- Animations Neon --- */
-.theme-neon * {
-  transition: all 0.3s ease;
-}
-
-.theme-neon .bg-gradient-gold {
-  box-shadow: var(--gold-glow);
-}
-
-.theme-neon button:hover {
-  transform: translateY(-1px);
-}
-
-.theme-neon .rounded-2xl {
-  transition: all 0.3s ease;
-}
-
-.theme-neon .rounded-2xl:hover {
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-}
-
-/* --- Responsive --- */
-@media (max-width: 768px) {
-  .theme-neon .bg-dark-card {
-    box-shadow: none;
-  }
+  /* --- Motif Dan Fani (zigzag sahélien) --- */
+  --danfani-zigzag: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='6' viewBox='0 0 16 6'%3E%3Cpath d='M0 6 L4 0 L8 6 L12 0 L16 6' fill='none' stroke='%23C85A32' stroke-width='1.6'/%3E%3C/svg%3E");
+  --danfani-zigzag-gold: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='6' viewBox='0 0 16 6'%3E%3Cpath d='M0 6 L4 0 L8 6 L12 0 L16 6' fill='none' stroke='%23E5A93C' stroke-width='1.6'/%3E%3C/svg%3E");
+  --danfani-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M0 12 L6 4 L12 12 L18 4 L24 12' fill='none' stroke='%23C85A32' stroke-opacity='0.07' stroke-width='2'/%3E%3C/svg%3E");
 }

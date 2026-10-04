@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useMyRestaurant } from "@/hooks/use-my-restaurant";
 import { announceNewReservation } from "@/lib/voice";
+import { Calendar, Users, Phone } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard/reservations")({
   component: ReservationsPage,
@@ -25,14 +26,14 @@ const STATUSES = [
   {
     id: "pending",
     label: "En attente",
-    color: "text-amber-400 border-amber-500/30 bg-amber-500/10",
+    color: "text-amber-deep border-amber-brand/40 bg-amber-tint",
   },
   {
     id: "confirmed",
     label: "Confirmée",
-    color: "text-green-400 border-green-500/30 bg-green-500/10",
+    color: "text-emerald-deep border-emerald/30 bg-emerald-tint",
   },
-  { id: "cancelled", label: "Annulée", color: "text-muted-foreground border-white/10" },
+  { id: "cancelled", label: "Annulée", color: "text-muted-foreground border-border" },
 ];
 
 function ReservationsPage() {
@@ -71,7 +72,7 @@ function ReservationsPage() {
           const resa = payload.new as unknown as Resa;
           setList((prev) => [resa, ...prev]);
           toast.success(
-            `📅 Nouvelle réservation · ${resa.party_size} pers. · ${resa.reservation_time}`,
+            `Nouvelle réservation · ${resa.party_size} pers. · ${resa.reservation_time}`,
           );
           announceNewReservation({
             customerName: resa.customer_name,
@@ -130,14 +131,16 @@ function ReservationsPage() {
   return (
     <div className="max-w-5xl">
       <div className="mb-6">
-        <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Réservations</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">
+          Réservations
+        </p>
         <h1 className="text-3xl font-black">
           {list.length} réservation{list.length > 1 ? "s" : ""}
         </h1>
       </div>
 
       {list.length === 0 ? (
-        <div className="p-10 rounded-2xl border border-dashed border-white/10 text-center text-muted-foreground">
+        <div className="p-10 rounded-2xl border border-dashed border-border text-center text-muted-foreground">
           Aucune réservation pour le moment.
         </div>
       ) : (
@@ -145,7 +148,7 @@ function ReservationsPage() {
           {list.map((r) => {
             const st = STATUSES.find((s) => s.id === r.status) ?? STATUSES[0];
             return (
-              <div key={r.id} className="p-5 rounded-2xl border border-white/8 bg-dark-card">
+              <div key={r.id} className="p-5 rounded-2xl border border-border bg-card">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div>
                     <div className="flex items-center gap-3 flex-wrap">
@@ -156,17 +159,23 @@ function ReservationsPage() {
                         {st.label}
                       </span>
                     </div>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      📅{" "}
+                    <p className="text-sm text-muted-foreground mt-1.5 inline-flex items-center gap-1.5 flex-wrap">
+                      <Calendar className="w-3.5 h-3.5 text-terracotta" />
                       {new Date(r.reservation_date).toLocaleDateString("fr-FR", {
                         weekday: "long",
                         day: "numeric",
                         month: "long",
                       })}{" "}
                       à{" "}
-                      <strong className="text-foreground">{r.reservation_time.slice(0, 5)}</strong>{" "}
-                      · 👥 {r.party_size} pers. · 📱{" "}
-                      <a href={`tel:${r.customer_phone}`} className="text-gold">
+                      <strong className="text-foreground">{r.reservation_time.slice(0, 5)}</strong>
+                      <span className="mx-1 text-border">·</span>
+                      <Users className="w-3.5 h-3.5 text-terracotta" /> {r.party_size} pers.
+                      <span className="mx-1 text-border">·</span>
+                      <Phone className="w-3.5 h-3.5 text-terracotta" />
+                      <a
+                        href={`tel:${r.customer_phone}`}
+                        className="text-terracotta-deep hover:underline"
+                      >
                         {r.customer_phone}
                       </a>
                     </p>
@@ -179,7 +188,7 @@ function ReservationsPage() {
                       <button
                         key={s.id}
                         onClick={() => setStatus(r.id, s.id)}
-                        className="px-3 py-1.5 rounded-lg border border-white/10 text-xs font-semibold hover:border-gold/40"
+                        className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-surface-warm transition-colors"
                       >
                         → {s.label}
                       </button>
@@ -187,14 +196,14 @@ function ReservationsPage() {
                     {r.status === "pending" && (
                       <button
                         onClick={() => sendWhatsAppConfirmation(r)}
-                        className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-semibold hover:bg-emerald-500/20"
+                        className="px-3 py-1.5 rounded-lg bg-emerald text-white text-xs font-semibold hover:bg-emerald-deep transition-colors"
                       >
                         ✓ Confirmer + WhatsApp
                       </button>
                     )}
                     <button
                       onClick={() => remove(r.id)}
-                      className="px-3 py-1.5 rounded-lg border border-destructive/30 text-destructive text-xs hover:bg-destructive/10"
+                      className="px-3 py-1.5 rounded-lg border border-destructive/20 text-destructive/80 text-xs hover:bg-destructive/10 hover:border-destructive/40 hover:text-destructive transition-colors"
                     >
                       ✕
                     </button>

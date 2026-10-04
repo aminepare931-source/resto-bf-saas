@@ -1,13 +1,16 @@
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/outfit";
 @import "tailwindcss";
 @source "../src";
 @import "tw-animate-css";
 @import "./styles/theme.css";
 
+/* dark: rendu inerte — le produit est light unique */
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================
-   RESTO BF — Design System
-   Premium dark + gold
+   RESTO BF — Modern Sahelian Hospitality Tech
+   Design system : terre cuite · émeraude · ambre
    ============================================ */
 
 @theme inline {
@@ -38,6 +41,27 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
+  /* Marque étendue */
+  --color-terracotta: var(--primary);
+  --color-terracotta-deep: var(--primary-deep);
+  --color-terracotta-tint: var(--primary-tint);
+  --color-emerald: var(--secondary);
+  --color-emerald-deep: var(--secondary-deep);
+  --color-emerald-tint: var(--secondary-tint);
+  --color-amber-brand: var(--tertiary);
+  --color-amber-deep: var(--tertiary-deep);
+  --color-amber-tint: var(--tertiary-tint);
+  --color-charcoal: var(--foreground);
+  --color-canvas: var(--canvas);
+  --color-surface-warm: var(--surface-warm);
+  --color-outline: var(--outline);
+
+  /* Chips de statut */
+  --color-status-prep: var(--status-prep-text);
+  --color-status-paid: var(--status-paid-text);
+  --color-status-void: var(--status-void-text);
+
+  /* Alias legacy (re-skinnés, en cours de migration) */
   --color-gold: var(--gold);
   --color-gold-light: var(--gold-light);
   --color-gold-dark: var(--gold-dark);
@@ -54,54 +78,12 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  --font-display: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: "Inter Variable", Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit Variable", Outfit, "Inter Variable", ui-sans-serif, sans-serif;
 }
 
 :root {
-  --radius: 0.75rem;
-
-  /* Brand palette */
-  --gold: #d4a853;
-  --gold-light: #f0d48a;
-  --gold-dark: #b08800;
-  --dark: #0a0a0f;
-  --dark-card: #111118;
-  --dark-card-hover: #1a1a24;
-
-  /* Force dark theme as the only theme */
-  --background: #0a0a0f;
-  --foreground: #e8e6e3;
-  --card: #111118;
-  --card-foreground: #e8e6e3;
-  --popover: #111118;
-  --popover-foreground: #e8e6e3;
-  --primary: #d4a853;
-  --primary-foreground: #0a0a0f;
-  --secondary: #1a1a24;
-  --secondary-foreground: #e8e6e3;
-  --muted: #1a1a24;
-  --muted-foreground: #8b8a88;
-  --accent: rgba(212, 168, 83, 0.12);
-  --accent-foreground: #f0d48a;
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
-  --border: rgba(255, 255, 255, 0.08);
-  --input: rgba(255, 255, 255, 0.08);
-  --ring: #d4a853;
-
-  --sidebar: #0a0a0f;
-  --sidebar-foreground: #e8e6e3;
-  --sidebar-primary: #d4a853;
-  --sidebar-primary-foreground: #0a0a0f;
-  --sidebar-accent: #1a1a24;
-  --sidebar-accent-foreground: #f0d48a;
-  --sidebar-border: rgba(255, 255, 255, 0.08);
-  --sidebar-ring: #d4a853;
-
-  --gradient-gold: linear-gradient(135deg, #d4a853, #f0d48a, #b08800);
-  --gradient-dark: linear-gradient(180deg, #0a0a0f 0%, #111118 100%);
-  --shadow-gold: 0 8px 30px rgba(212, 168, 83, 0.35);
-  --shadow-card: 0 25px 60px rgba(0, 0, 0, 0.5);
+  --radius: 0.5rem;
 }
 
 @layer base {
@@ -117,30 +99,18 @@
     overflow-x: hidden;
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: var(--font-display);
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-image: url("/bg-saas.jpg");
-    background-repeat: repeat;
-    background-size: 360px;
-    background-attachment: fixed;
     /* Safe areas pour iPhone */
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
   }
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: rgba(10, 10, 15, 0.55);
-    pointer-events: none;
-    z-index: -1;
-  }
   ::selection {
-    background: rgba(212, 168, 83, 0.3);
-    color: #fff;
+    background: rgba(200, 90, 50, 0.22);
+    color: #1c2024;
   }
 
   /* Améliorations tactiles pour mobile */
@@ -162,16 +132,60 @@
   }
 }
 
-/* ===== UTILITIES ===== */
+/* ===== UTILITÉS ===== */
+
+/* Chiffres tabulaires — ledgers, tickets, totaux XOF */
+@utility tnum {
+  font-feature-settings:
+    "tnum" 1,
+    "cv05" 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Niveaux d'élévation */
+@utility shadow-card {
+  box-shadow: var(--shadow-level1);
+}
+@utility shadow-elevated {
+  box-shadow: var(--shadow-level2);
+}
+@utility shadow-overlay {
+  box-shadow: var(--shadow-level3);
+}
+
+/* Perspective 3D (maquettes interactives landing) */
+@utility perspective-1000 {
+  perspective: 1000px;
+}
+
+/* Bordure supérieure Dan Fani (cartes VIP / fidélité) */
+@utility border-danfani {
+  background-image: var(--danfani-zigzag), var(--danfani-zigzag-gold);
+  background-repeat: repeat-x, repeat-x;
+  background-position:
+    top left,
+    top 3px left;
+  background-size:
+    16px 6px,
+    16px 6px;
+}
+
+/* Filigrane chevrons Dan Fani */
+@utility bg-danfani {
+  background-image: var(--danfani-chevron);
+  background-size: 24px 24px;
+}
+
+/* ===== LEGACY (re-skinnés vers la palette Sahelian, migrés écran par écran) ===== */
 @utility text-gradient-gold {
-  background: var(--gradient-gold);
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 @utility bg-gradient-gold {
-  background: var(--gradient-gold);
+  background: var(--gradient-primary);
 }
 
 @utility shadow-gold {
@@ -179,52 +193,6 @@
 }
 
 /* ===== ANIMATIONS ===== */
-@keyframes reveal-up {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes float-particle {
-  0%,
-  100% {
-    transform: translateY(0) scale(1);
-    opacity: 0.3;
-  }
-  50% {
-    transform: translateY(-30px) scale(1.2);
-    opacity: 0.8;
-  }
-}
-@keyframes grid-drift {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 60px 60px;
-  }
-}
-@keyframes logo-pulse {
-  0%,
-  100% {
-    filter: drop-shadow(0 4px 12px rgba(212, 168, 83, 0.3));
-  }
-  50% {
-    filter: drop-shadow(0 4px 24px rgba(212, 168, 83, 0.6));
-  }
-}
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
 
 .reveal {
   opacity: 0;
@@ -253,26 +221,6 @@
   transition-delay: 0.5s;
 }
 
-@keyframes glow-pulse {
-  0%,
-  100% {
-    opacity: 0.7;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.08);
-  }
-}
-.animate-glow-pulse {
-  animation: glow-pulse 4s ease-in-out infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .animate-glow-pulse {
-    animation: none;
-  }
-}
-
 @keyframes float-soft {
   0%,
   100% {
@@ -292,117 +240,45 @@
   }
 }
 
-@keyframes hero-in {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.auth-input {
+  width: 100%;
+  padding: 12px 14px 12px 42px;
+  background: var(--card);
+  border: 1px solid var(--input);
+  border-radius: 12px;
+  color: var(--foreground);
+  font-size: 14px;
+  font-weight: 500;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
-.hero-in {
-  opacity: 0;
-  animation: hero-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.auth-input::placeholder {
+  color: color-mix(in srgb, var(--muted-foreground) 60%, transparent);
 }
-@keyframes gold-shimmer-text {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+.auth-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(200, 90, 50, 0.15);
 }
-.text-shimmer {
-  background: linear-gradient(
-    110deg,
-    var(--gold) 20%,
-    var(--gold-light) 40%,
-    var(--gold) 60%,
-    var(--gold-light) 80%
-  );
-  background-size: 250% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: gold-shimmer-text 6s ease-in-out infinite;
+.auth-input option {
+  background: var(--card);
+  color: var(--foreground);
 }
-@media (prefers-reduced-motion: reduce) {
-  .hero-in {
-    animation: none;
-    opacity: 1;
-  }
-  .text-shimmer {
-    animation: none;
-  }
+.auth-input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--card) inset;
+  -webkit-text-fill-color: var(--foreground);
 }
 
-@keyframes aurora-drift {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(4%, 6%) scale(1.12);
-  }
-  66% {
-    transform: translate(-5%, 3%) scale(0.94);
-  }
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-}
-.aurora-blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(60px);
-  animation-name: aurora-drift;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-  will-change: transform;
-}
-@media (prefers-reduced-motion: reduce) {
-  .aurora-blob {
-    animation: none;
-  }
-}
-
-@media (max-width: 640px) {
-  .aurora-blob {
-    width: 260px !important;
-    height: 260px !important;
-  }
-}
-
-/* Particles */
-.particle {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  background: var(--gold);
-  border-radius: 50%;
-  opacity: 0.4;
-  animation: float-particle 8s ease-in-out infinite;
-}
-
-/* Dotted grid backdrop */
+/* Grille pointillée chaude */
 .grid-bg {
   background-image:
-    linear-gradient(rgba(212, 168, 83, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(212, 168, 83, 0.04) 1px, transparent 1px);
+    linear-gradient(rgba(200, 90, 50, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200, 90, 50, 0.05) 1px, transparent 1px);
   background-size: 60px 60px;
-  animation: grid-drift 25s linear infinite;
 }
 
-/* Glass card */
-.glass-card {
-  background: var(--dark-card);
-  border: 1px solid var(--border);
-  backdrop-filter: blur(20px);
-}
-
-/* ══════ Standard template full-screen backgrounds ══════ */
+/* ══════ Fonds plein écran pour templates ══════ */
 .tpl-bg {
   position: fixed;
   inset: 0;
@@ -438,7 +314,7 @@
   }
 }
 
-/* ══════ Modal slide-up animation ══════ */
+/* ══════ Modale slide-up ══════ */
 @keyframes slide-up {
   from {
     transform: translateY(100%);
@@ -458,7 +334,7 @@
   }
 }
 
-/* ══════ Mobile & iPhone Optimizations ══════ */
+/* ══════ Optimisations mobile & iPhone ══════ */
 @media (max-width: 768px) {
   /* Optimisations tactiles iPhone */
   * {
@@ -474,27 +350,22 @@
     transform: translateZ(0);
   }
 
-  /* Optimiser les cartes pour mobile */
-  .glass-card,
   [class*="bg-dark-card"] {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
   }
 
-  /* Améliorer la lisibilité du texte sur mobile */
   body {
     text-rendering: optimizeLegibility;
     -webkit-text-size-adjust: 100%;
   }
 
-  /* Optimiser les boutons pour le tactile */
   button,
   [role="button"] {
     min-height: 44px;
     min-width: 44px;
   }
 
-  /* Améliorer les inputs sur iOS */
   input,
   textarea,
   select {
@@ -503,13 +374,11 @@
     appearance: none;
   }
 
-  /* Optimiser le scroll */
   html {
     -webkit-overflow-scrolling: touch;
     overflow-x: hidden;
   }
 
-  /* Améliorer les liens et boutons */
   a,
   button {
     cursor: pointer;
@@ -546,14 +415,6 @@
     animation: none;
     transform: scale(1.05);
   }
-
-  .grid-bg {
-    animation: none;
-  }
-
-  .particle {
-    display: none;
-  }
 }
 
 /* ============================================
@@ -572,14 +433,14 @@
   left: 50%;
   width: 0%;
   height: 2px;
-  background: linear-gradient(90deg, #d4a853, #f0d48a, #b08800);
+  background: linear-gradient(90deg, #c85a32, #e5a93c, #9f3c16);
   border-radius: 9999px;
   transition:
     width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
     left 0.35s cubic-bezier(0.16, 1, 0.3, 1),
     opacity 0.3s ease;
   opacity: 0;
-  box-shadow: 0 0 10px rgba(212, 168, 83, 0.9);
+  box-shadow: 0 0 10px rgba(200, 90, 50, 0.5);
 }
 
 .underline-grow:hover::after,
@@ -590,12 +451,107 @@ a:hover .underline-grow::after {
   opacity: 1;
 }
 
-/* Dynamic Hover Glow on Navigation Items */
+/* Halo dynamique au survol des items de navigation */
 .nav-item-btn {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .nav-item-btn:hover {
   transform: translateY(-2px);
-  text-shadow: 0 0 12px rgba(240, 212, 138, 0.6);
+  text-shadow: 0 0 12px rgba(200, 90, 50, 0.45);
+}
+
+/* ============================================
+   MARQUEES CSS (transform uniquement → thread compositeur)
+   ============================================ */
+
+@keyframes marquee-left {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-33.3333%, 0, 0);
+  }
+}
+
+@keyframes marquee-right {
+  from {
+    transform: translate3d(-33.3333%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.marquee-track {
+  will-change: transform;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.marquee-left {
+  animation-name: marquee-left;
+}
+
+.marquee-right {
+  animation-name: marquee-right;
+}
+
+.marquee-row:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ============================================
+   BADGES FLOTTANTS (transform uniquement)
+   ============================================ */
+
+@keyframes float-badge-a {
+  0%,
+  100% {
+    transform: translate3d(0, -6px, 0) rotate(-1deg);
+  }
+  50% {
+    transform: translate3d(0, 6px, 0) rotate(2deg);
+  }
+}
+
+@keyframes float-badge-b {
+  0%,
+  100% {
+    transform: translate3d(0, 6px, 0) rotate(1.5deg);
+  }
+  50% {
+    transform: translate3d(0, -6px, 0) rotate(-1.5deg);
+  }
+}
+
+.float-badge {
+  will-change: transform;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.float-badge-a {
+  animation-name: float-badge-a;
+  animation-duration: 4.5s;
+}
+
+.float-badge-b {
+  animation-name: float-badge-b;
+  animation-duration: 5.6s;
+  animation-delay: 0.5s;
+}
+
+/* ============================================
+   ACCESSIBILITÉ : mouvement réduit
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .float-badge,
+  .animate-ping,
+  .animate-pulse,
+  .animate-bounce {
+    animation: none !important;
+  }
 }

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyRestaurant } from "@/hooks/use-my-restaurant";
 import { toast } from "sonner";
+import { Palette } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { getTemplateForPlan, getReceiptTemplate, defaultColors } from "@/lib/invoice-templates";
@@ -58,8 +59,8 @@ function BillingPage() {
   if (loadingResto) return <p className="text-muted-foreground">Chargement...</p>;
   if (!isPremium) {
     return (
-      <div className="max-w-2xl p-8 rounded-3xl border border-gold/30 bg-gradient-to-br from-gold/10 to-transparent text-center">
-        <p className="text-[10px] uppercase tracking-[0.3em] text-gold font-bold">
+      <div className="max-w-2xl p-8 rounded-3xl border border-amber-brand/40 bg-gradient-to-br from-amber-tint to-transparent text-center">
+        <p className="text-[10px] uppercase tracking-[0.3em] text-amber-deep font-bold">
           Premium uniquement
         </p>
         <h2 className="mt-2 text-3xl font-black">Facturation professionnelle</h2>
@@ -75,19 +76,20 @@ function BillingPage() {
     <div className="max-w-6xl">
       <div className="flex items-start justify-between gap-4 mb-8 flex-wrap">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Facturation</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">Facturation</p>
           <h1 className="text-3xl font-black">Factures</h1>
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => setCustomizingColors(true)}
-            className="px-5 py-2.5 rounded-xl border border-gold/40 text-gold font-bold hover:bg-gold/10 transition-colors"
+            className="px-5 py-2.5 rounded-xl border border-terracotta/40 bg-terracotta-tint text-terracotta-deep font-bold hover:bg-terracotta/20 transition-colors flex items-center gap-2"
           >
-            🎨 Personnaliser
+            <Palette className="w-4 h-4" />
+            Personnaliser
           </button>
           <button
             onClick={() => setCreating(true)}
-            className="px-5 py-2.5 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold"
+            className="px-5 py-2.5 rounded-xl bg-terracotta text-white hover:bg-terracotta-deep transition-colors font-bold"
           >
             + Nouvelle facture
           </button>
@@ -97,13 +99,13 @@ function BillingPage() {
       {loading ? (
         <p className="text-muted-foreground">Chargement...</p>
       ) : invoices.length === 0 ? (
-        <div className="p-10 rounded-2xl border border-dashed border-white/15 text-center text-muted-foreground">
+        <div className="p-10 rounded-2xl border border-dashed border-border text-center text-muted-foreground">
           Aucune facture. Créez la première !
         </div>
       ) : (
-        <div className="rounded-2xl border border-white/8 bg-dark-card overflow-x-auto">
+        <div className="rounded-2xl border border-border bg-card overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-white/[0.03] text-xs uppercase tracking-wider text-muted-foreground">
+            <thead className="bg-surface-warm text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
                 <th className="text-left p-4">N°</th>
                 <th className="text-left p-4">Client</th>
@@ -115,8 +117,8 @@ function BillingPage() {
             </thead>
             <tbody>
               {invoices.map((inv) => (
-                <tr key={inv.id} className="border-t border-white/5">
-                  <td className="p-4 font-mono text-gold">{inv.invoice_number}</td>
+                <tr key={inv.id} className="border-t border-border">
+                  <td className="p-4 font-mono text-terracotta-deep">{inv.invoice_number}</td>
                   <td className="p-4">{inv.customer_name}</td>
                   <td className="p-4 text-muted-foreground">
                     {new Date(inv.issued_at).toLocaleDateString("fr-FR")}
@@ -136,14 +138,14 @@ function BillingPage() {
                   <td className="p-4 text-right">
                     <button
                       onClick={() => downloadPdf(inv, r!)}
-                      className="px-3 py-1.5 rounded-lg border border-gold/40 text-gold text-xs font-bold hover:bg-gold/10 transition-all"
+                      className="px-3 py-1.5 rounded-lg border border-terracotta/40 text-terracotta text-xs font-bold hover:bg-terracotta/10 transition-all"
                       title="Télécharger PDF"
                     >
                       PDF
                     </button>
                     <button
                       onClick={() => downloadReceipt(inv, r!)}
-                      className="ml-2 px-3 py-1.5 rounded-lg border border-white/10 text-xs font-bold hover:border-gold/40 hover:text-gold transition-all"
+                      className="ml-2 px-3 py-1.5 rounded-lg border border-border text-xs font-bold hover:border-terracotta/40 hover:text-terracotta transition-all"
                       title="Télécharger Reçu"
                     >
                       Reçu
@@ -154,7 +156,7 @@ function BillingPage() {
                         await supabase.from("invoices").delete().eq("id", inv.id);
                         load();
                       }}
-                      className="ml-2 px-3 py-1.5 rounded-lg border border-white/10 text-xs hover:border-destructive hover:text-destructive transition-all"
+                      className="ml-2 px-3 py-1.5 rounded-lg border border-border text-xs hover:border-destructive hover:text-destructive transition-all"
                       title="Supprimer"
                     >
                       ×
@@ -194,15 +196,15 @@ function BillingPage() {
 
 function StatusBadge({ status, onChange }: { status: string; onChange: (s: string) => void }) {
   const colors: Record<string, string> = {
-    paid: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-    unpaid: "bg-amber-500/15 text-amber-300 border-amber-500/30",
-    cancelled: "bg-red-500/15 text-red-300 border-red-500/30",
+    paid: "bg-emerald-tint text-emerald-deep border-emerald/30",
+    unpaid: "bg-amber-tint text-amber-deep border-amber-brand/40",
+    cancelled: "bg-destructive/10 text-destructive border-destructive/30",
   };
   return (
     <select
       value={status}
       onChange={(e) => onChange(e.target.value)}
-      className={`px-2 py-1 rounded-lg border text-xs font-bold uppercase tracking-wider ${colors[status] ?? "bg-white/5 border-white/10"}`}
+      className={`px-2 py-1 rounded-lg border text-xs font-bold uppercase tracking-wider ${colors[status] ?? "bg-surface-warm border-border"}`}
     >
       <option value="unpaid">Impayé</option>
       <option value="paid">Payé</option>
@@ -271,14 +273,14 @@ function InvoiceModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-[100] bg-charcoal/80 backdrop-blur-md flex items-center justify-center p-4"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/10 bg-[#0a0a0f]"
+        className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-border bg-card shadow-xl"
       >
-        <div className="p-6 border-b border-white/5 flex justify-between items-center">
+        <div className="p-6 border-b border-border flex justify-between items-center">
           <h3 className="text-xl font-black">Nouvelle facture</h3>
           <button
             onClick={onClose}
@@ -296,7 +298,7 @@ function InvoiceModal({
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 placeholder="Nom + prénom"
-                className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+                className="px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -307,7 +309,7 @@ function InvoiceModal({
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
                 placeholder="+226..."
-                className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+                className="px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -316,7 +318,7 @@ function InvoiceModal({
                 value={customerEmail}
                 onChange={(e) => setCustomerEmail(e.target.value)}
                 placeholder="client@email.com"
-                className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+                className="px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -327,7 +329,7 @@ function InvoiceModal({
                 value={customerAddress}
                 onChange={(e) => setCustomerAddress(e.target.value)}
                 placeholder="Adresse du client"
-                className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+                className="px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
               />
             </div>
           </div>
@@ -341,7 +343,7 @@ function InvoiceModal({
                 value={tableNumber}
                 onChange={(e) => setTableNumber(e.target.value)}
                 placeholder="ex: 12"
-                className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+                className="px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -352,7 +354,7 @@ function InvoiceModal({
                 value={waiter}
                 onChange={(e) => setWaiter(e.target.value)}
                 placeholder="Nom"
-                className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+                className="px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -362,7 +364,7 @@ function InvoiceModal({
               <select
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value)}
-                className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+                className="px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
               >
                 <option value="">--</option>
                 <option>Espèces</option>
@@ -381,7 +383,7 @@ function InvoiceModal({
                 onClick={() =>
                   setLines([...lines, { description: "", quantity: 1, unit_price: 0 }])
                 }
-                className="text-xs px-2 py-1 rounded-lg border border-gold/30 text-gold"
+                className="text-xs px-2 py-1 rounded-lg border border-terracotta/30 text-terracotta hover:bg-terracotta/10 transition-colors"
               >
                 + Ajouter
               </button>
@@ -397,7 +399,7 @@ function InvoiceModal({
                       x[i] = { ...l, description: e.target.value };
                       setLines(x);
                     }}
-                    className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+                    className="px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
                   />
                   <input
                     type="number"
@@ -408,7 +410,7 @@ function InvoiceModal({
                       x[i] = { ...l, quantity: +e.target.value };
                       setLines(x);
                     }}
-                    className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+                    className="px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
                   />
                   <input
                     type="number"
@@ -420,7 +422,7 @@ function InvoiceModal({
                       x[i] = { ...l, unit_price: +e.target.value };
                       setLines(x);
                     }}
-                    className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+                    className="px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
                   />
                   <button
                     type="button"
@@ -441,12 +443,12 @@ function InvoiceModal({
                 type="number"
                 value={taxRate}
                 onChange={(e) => setTaxRate(+e.target.value)}
-                className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+                className="px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
               />
             </div>
             <div className="flex flex-col gap-1">
               <span className="text-xs uppercase tracking-wider text-muted-foreground">Total</span>
-              <strong className="text-2xl text-gold">{total.toLocaleString("fr-FR")} F</strong>
+              <strong className="text-2xl text-terracotta-deep">{total.toLocaleString("fr-FR")} F</strong>
             </div>
           </div>
 
@@ -455,20 +457,20 @@ function InvoiceModal({
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={2}
-            className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm"
+            className="w-full px-3 py-2.5 rounded-xl bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
           />
 
           <div className="flex gap-2 justify-end">
             <button
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl border border-white/10 text-sm"
+              className="px-5 py-2.5 rounded-xl border border-border text-muted-foreground hover:text-foreground transition-colors text-sm"
             >
               Annuler
             </button>
             <button
               onClick={submit}
               disabled={saving}
-              className="px-5 py-2.5 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold text-sm"
+              className="px-5 py-2.5 rounded-xl bg-terracotta text-white hover:bg-terracotta-deep transition-colors font-bold text-sm"
             >
               {saving ? "..." : "Créer la facture"}
             </button>

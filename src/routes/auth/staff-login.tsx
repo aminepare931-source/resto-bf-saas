@@ -175,7 +175,7 @@ function StaffLoginPage() {
                 value={digit}
                 onChange={(e) => handlePinChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
-                className="w-14 h-16 rounded-2xl bg-[#0a0a0f] border-2 border-[#d4a853]/40 text-center text-3xl font-black text-[#f0d48a] focus:border-[#f0d48a] focus:ring-4 focus:ring-[#d4a853]/25 outline-none shadow-lg transition-all"
+                className="w-14 h-16 rounded-2xl bg-card border-2 border-input text-center text-3xl font-black text-foreground focus:border-terracotta focus:ring-4 focus:ring-terracotta/20 outline-none shadow-card transition-all"
               />
             ))}
           </div>
@@ -186,14 +186,14 @@ function StaffLoginPage() {
             variant="primary"
             size="lg"
             icon={<ArrowRight className="w-4 h-4" />}
-            className="w-full shadow-[0_0_25px_rgba(212,168,83,0.35)]"
+            className="w-full"
           >
             {loading ? "Vérification..." : "Accéder à ma session"}
           </Interactive3DButton>
 
           <button
             onClick={resetForm}
-            className="w-full py-2.5 rounded-xl border border-white/10 bg-white/5 text-xs font-bold text-muted-foreground hover:text-foreground flex items-center justify-center gap-2"
+            className="w-full py-2.5 rounded-xl border border-border bg-card text-xs font-bold text-muted-foreground hover:text-foreground hover:bg-muted flex items-center justify-center gap-2"
           >
             <ArrowLeft className="w-3.5 h-3.5" /> Changer d'utilisateur
           </button>
@@ -213,7 +213,7 @@ function StaffLoginPage() {
             Votre prénom ou identifiant staff
           </label>
           <div className="relative">
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#d4a853]">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-terracotta">
               <ChefHat className="w-4 h-4" />
             </span>
             <input
@@ -222,7 +222,7 @@ function StaffLoginPage() {
               value={searchName}
               onChange={(e) => setSearchName(e.target.value)}
               placeholder="Ex: Moussa, Kader, Mariam..."
-              className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/[0.03] border border-[#d4a853]/30 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-[#f0d48a] focus:ring-2 focus:ring-[#d4a853]/20 outline-none transition-all"
+              className="w-full pl-10 pr-4 py-3 rounded-xl bg-card border border-input text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 outline-none transition-all"
             />
           </div>
         </div>
@@ -233,17 +233,17 @@ function StaffLoginPage() {
           variant="primary"
           size="lg"
           icon={<ArrowRight className="w-4 h-4" />}
-          className="w-full mt-2 shadow-[0_0_25px_rgba(212,168,83,0.35)]"
+          className="w-full mt-2"
         >
           {loading ? "Recherche en cours..." : "Continuer vers la saisie PIN"}
         </Interactive3DButton>
       </form>
 
-      <div className="mt-6 p-4 rounded-2xl border border-[#d4a853]/30 bg-[#d4a853]/10 flex items-start gap-3">
-        <UserCheck className="w-4 h-4 text-[#f0d48a] shrink-0 mt-0.5" />
+      <div className="mt-6 p-4 rounded-2xl border border-terracotta/25 bg-terracotta-tint flex items-start gap-3">
+        <UserCheck className="w-4 h-4 text-terracotta shrink-0 mt-0.5" />
         <p className="text-xs text-foreground/80 leading-relaxed">
-          <strong className="text-[#f0d48a]">Info Staff :</strong> Demandez votre nom d'affichage et
-          votre code PIN à 4 chiffres à votre gérant de restaurant.
+          <strong className="text-terracotta-deep">Info Staff :</strong> Demandez votre nom
+          d'affichage et votre code PIN à 4 chiffres à votre gérant de restaurant.
         </p>
       </div>
     </AuthShell>

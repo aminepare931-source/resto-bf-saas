@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { WifiOff } from "lucide-react";
 
 export const Route = createFileRoute("/offline")({
   head: () => ({
@@ -17,16 +18,16 @@ function OfflinePage() {
         className="absolute inset-0 opacity-50 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse at 30% 30%, rgba(212,168,83,0.18) 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, rgba(212,168,83,0.10) 0%, transparent 60%)",
+            "radial-gradient(ellipse at 30% 30%, rgba(200,90,50,0.14) 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, rgba(229,169,60,0.10) 0%, transparent 60%)",
         }}
         aria-hidden="true"
       />
       <div className="absolute inset-0 grid-bg opacity-40 pointer-events-none" aria-hidden="true" />
 
       <div className="relative z-10 w-full max-w-md text-center">
-        <div className="rounded-3xl border border-white/10 bg-dark-card/90 backdrop-blur-2xl p-8 sm:p-10 shadow-[0_30px_80px_rgba(0,0,0,0.5)]">
-          <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-gold flex items-center justify-center text-4xl mb-6 shadow-gold">
-            📡
+        <div className="rounded-3xl border border-border bg-card p-8 sm:p-10 shadow-card">
+          <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-gold flex items-center justify-center mb-6 shadow-gold">
+            <WifiOff className="h-9 w-9 text-[#0a0a0f]" />
           </div>
           <h1 className="text-2xl font-black text-gradient-gold mb-3">Vous êtes hors ligne</h1>
           <p className="text-muted-foreground text-sm leading-relaxed mb-6">
@@ -34,9 +35,9 @@ function OfflinePage() {
             connexion reviendra, tout se synchronisera automatiquement.
           </p>
 
-          <div className="space-y-3 text-left bg-white/[0.03] rounded-2xl p-5 border border-white/5 mb-6">
+          <div className="space-y-3 text-left bg-surface-warm rounded-2xl p-5 border border-border/60 mb-6">
             <p className="text-xs font-bold text-gold uppercase tracking-wider">
-              ✅ Disponible hors ligne
+              Disponible hors ligne
             </p>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">

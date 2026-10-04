@@ -1,4 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { LayoutDashboard } from "lucide-react";
 
 interface BreadcrumbItem {
   label: string;
@@ -51,8 +52,12 @@ export function Breadcrumbs() {
 
   return (
     <nav className="flex items-center gap-1.5 mb-4 text-xs" aria-label="Fil d'Ariane">
-      <Link to="/dashboard" className="text-muted-foreground hover:text-gold transition-colors">
-        📊
+      <Link
+        to="/dashboard"
+        className="text-muted-foreground hover:text-terracotta transition-colors"
+        aria-label="Tableau de bord"
+      >
+        <LayoutDashboard className="w-3.5 h-3.5" />
       </Link>
       {items.map((item, index) => (
         <span key={item.path} className="flex items-center gap-1.5">
@@ -62,7 +67,7 @@ export function Breadcrumbs() {
           ) : (
             <Link
               to={item.path}
-              className="text-muted-foreground hover:text-gold transition-colors"
+              className="text-muted-foreground hover:text-terracotta transition-colors"
             >
               {item.label}
             </Link>

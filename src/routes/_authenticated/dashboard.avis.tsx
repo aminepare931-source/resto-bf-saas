@@ -51,7 +51,9 @@ function AvisPage() {
   return (
     <div className="max-w-4xl">
       <div className="mb-6">
-        <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Avis clients</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">
+          Avis clients
+        </p>
         <h1 className="text-3xl font-black">
           {avg.toFixed(1)} ★{" "}
           <span className="text-base text-muted-foreground font-normal">({list.length} avis)</span>
@@ -59,23 +61,23 @@ function AvisPage() {
       </div>
 
       {list.length === 0 ? (
-        <div className="p-10 rounded-2xl border border-dashed border-white/10 text-center text-muted-foreground">
+        <div className="p-10 rounded-2xl border border-dashed border-border text-center text-muted-foreground">
           Aucun avis pour le moment. Partagez votre lien public pour recevoir vos premiers retours.
         </div>
       ) : (
         <div className="space-y-3">
           {list.map((r) => (
-            <div key={r.id} className="p-5 rounded-2xl border border-white/8 bg-dark-card">
+            <div key={r.id} className="p-5 rounded-2xl border border-border bg-card">
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div>
                   <div className="flex items-center gap-3 flex-wrap">
                     <h3 className="font-bold">{r.author_name}</h3>
-                    <span className="text-gold">
+                    <span className="text-amber-brand">
                       {"★".repeat(r.rating)}
-                      <span className="text-white/20">{"★".repeat(5 - r.rating)}</span>
+                      <span className="text-charcoal/20">{"★".repeat(5 - r.rating)}</span>
                     </span>
                     {!r.approved && (
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase border border-amber-brand/40 bg-amber-tint text-amber-deep">
                         À modérer
                       </span>
                     )}
@@ -88,13 +90,17 @@ function AvisPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => toggle(r)}
-                    className={`px-3 py-1.5 rounded-lg border text-xs font-semibold ${r.approved ? "border-white/10" : "border-gold/30 text-gold"}`}
+                    className={`px-3 py-1.5 rounded-lg border text-xs font-semibold transition-colors ${
+                      r.approved
+                        ? "border-border text-muted-foreground hover:text-foreground hover:bg-surface-warm"
+                        : "border-terracotta/30 bg-terracotta-tint text-terracotta-deep"
+                    }`}
                   >
                     {r.approved ? "Masquer" : "Publier"}
                   </button>
                   <button
                     onClick={() => remove(r.id)}
-                    className="px-3 py-1.5 rounded-lg border border-destructive/30 text-destructive text-xs"
+                    className="px-3 py-1.5 rounded-lg border border-destructive/20 text-destructive/80 text-xs hover:bg-destructive/10 hover:border-destructive/40 hover:text-destructive transition-colors"
                   >
                     ✕
                   </button>

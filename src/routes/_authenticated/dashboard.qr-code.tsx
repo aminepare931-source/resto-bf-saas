@@ -5,6 +5,7 @@ import { useMyRestaurant } from "@/hooks/use-my-restaurant";
 import { toast } from "sonner";
 import { buildRestaurantUrl, getPublicSiteOrigin } from "@/lib/site-url";
 import { supabase } from "@/integrations/supabase/client";
+import { AlertTriangle, Download, Copy, Printer, Lightbulb } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard/qr-code")({
   component: QrCodePage,
@@ -68,8 +69,8 @@ function QrCodePage() {
   if (loading) return <p className="text-muted-foreground">Chargement...</p>;
   if (!r?.slug)
     return (
-      <div className="max-w-xl p-6 rounded-2xl border border-amber-400/30 bg-amber-400/5">
-        <strong className="text-amber-300">Choisissez un template d'abord</strong>
+      <div className="max-w-xl p-6 rounded-2xl border border-amber-brand/40 bg-amber-tint">
+        <strong className="text-amber-deep">Choisissez un template d'abord</strong>
         <p className="text-sm text-muted-foreground mt-2">
           Votre site doit être en ligne pour générer un QR Code.
         </p>
@@ -80,15 +81,15 @@ function QrCodePage() {
     return (
       <div className="max-w-5xl">
         <div className="mb-8">
-          <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">QR Code</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">QR Code</p>
           <h1 className="text-3xl font-black">QR Code professionnel</h1>
         </div>
 
-        <div className="max-w-2xl p-8 rounded-3xl border border-red-400/30 bg-red-400/5">
+        <div className="max-w-2xl p-8 rounded-3xl border border-destructive/30 bg-destructive/5">
           <div className="flex items-start gap-4">
-            <span className="text-4xl">⚠️</span>
+            <AlertTriangle className="w-8 h-8 text-destructive shrink-0" />
             <div>
-              <h2 className="text-xl font-bold text-red-300 mb-3">Mode développement détecté</h2>
+              <h2 className="text-xl font-bold text-destructive mb-3">Mode développement détecté</h2>
               <p className="text-sm text-muted-foreground mb-4">
                 Vous êtes en mode <strong>localhost</strong>. Les QR codes générés ne seront pas
                 accessibles depuis un téléphone externe.
@@ -97,15 +98,15 @@ function QrCodePage() {
               <div className="space-y-3 text-sm">
                 <p className="font-semibold text-foreground">Pour tester avec votre téléphone :</p>
 
-                <div className="p-4 rounded-xl bg-dark-card border border-white/8">
-                  <p className="font-semibold text-gold mb-2">
+                <div className="p-4 rounded-xl bg-surface-warm border border-border">
+                  <p className="font-semibold text-terracotta mb-2">
                     Option 1 : Utiliser un tunnel (Recommandé)
                   </p>
                   <p className="text-muted-foreground mb-2">
                     Utilisez <strong>ngrok</strong> ou <strong>Cloudflare Tunnel</strong> pour
                     exposer votre site local :
                   </p>
-                  <code className="block p-2 rounded bg-black/30 text-xs text-gold font-mono">
+                  <code className="block p-2 rounded bg-charcoal/5 border border-border text-xs text-terracotta-deep font-mono">
                     ngrok http 5173
                   </code>
                   <p className="text-xs text-muted-foreground mt-2">
@@ -114,16 +115,16 @@ function QrCodePage() {
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-dark-card border border-white/8">
-                  <p className="font-semibold text-gold mb-2">Option 2 : Déployer en production</p>
+                <div className="p-4 rounded-xl bg-surface-warm border border-border">
+                  <p className="font-semibold text-terracotta mb-2">Option 2 : Déployer en production</p>
                   <p className="text-muted-foreground">
                     Déployez votre site sur Vercel, Netlify, ou tout autre hébergeur. Le QR code
                     pointera automatiquement vers l'URL de production.
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-dark-card border border-white/8">
-                  <p className="font-semibold text-gold mb-2">
+                <div className="p-4 rounded-xl bg-surface-warm border border-border">
+                  <p className="font-semibold text-terracotta mb-2">
                     Option 3 : Configurer une URL personnalisée
                   </p>
                   <p className="text-muted-foreground mb-2">
@@ -133,8 +134,8 @@ function QrCodePage() {
                 </div>
               </div>
 
-              <div className="mt-6 p-4 rounded-xl bg-amber-400/10 border border-amber-400/20">
-                <p className="text-sm text-amber-200">
+              <div className="mt-6 p-4 rounded-xl bg-amber-tint border border-amber-brand/30">
+                <p className="text-sm text-amber-deep">
                   <strong>Note :</strong> Une fois votre site accessible publiquement, revenez sur
                   cette page pour générer un QR code fonctionnel.
                 </p>
@@ -148,19 +149,19 @@ function QrCodePage() {
   return (
     <div className="max-w-5xl">
       <div className="mb-8">
-        <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">QR Code</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">QR Code</p>
         <h1 className="text-3xl font-black">QR Code professionnel</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           À imprimer sur vos cartes de table, vitrines, flyers. Pointe vers{" "}
-          <strong className="text-gold">{getPublicSiteOrigin(override)}</strong>.
+          <strong className="text-terracotta-deep">{getPublicSiteOrigin(override)}</strong>.
         </p>
       </div>
 
       {!tableNum.trim() && (
-        <div className="mb-6 p-4 rounded-2xl border border-amber-400/40 bg-amber-400/10 flex items-start gap-3">
-          <span className="text-xl shrink-0">⚠️</span>
+        <div className="mb-6 p-4 rounded-2xl border border-amber-brand/40 bg-amber-tint flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 shrink-0 text-amber-deep" />
           <div className="text-sm">
-            <strong className="text-amber-300 block mb-1">
+            <strong className="text-amber-deep block mb-1">
               Ce QR est générique — vous ne saurez pas à quelle table s'assoit le client.
             </strong>
             <p className="text-muted-foreground">
@@ -173,7 +174,7 @@ function QrCodePage() {
       )}
 
       <div className="grid lg:grid-cols-[1fr_320px] gap-8">
-        <div className="p-8 rounded-3xl border border-white/8 bg-dark-card flex flex-col items-center justify-center">
+        <div className="p-8 rounded-3xl border border-border bg-card flex flex-col items-center justify-center">
           <div className="p-6 rounded-2xl shadow-2xl" style={{ background: bg }}>
             <canvas ref={canvasRef} className="block max-w-full h-auto" />
           </div>
@@ -183,33 +184,33 @@ function QrCodePage() {
           <div className="mt-6 flex flex-wrap gap-3 justify-center">
             <button
               onClick={() => pngUrl && download(pngUrl, "png")}
-              className="px-5 py-2.5 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold text-sm"
+              className="px-5 py-2.5 rounded-xl bg-terracotta text-white hover:bg-terracotta-deep transition-colors font-bold text-sm inline-flex items-center gap-2"
             >
-              ⬇ Télécharger PNG
+              <Download className="w-4 h-4" /> Télécharger PNG
             </button>
             <button
               onClick={() => {
                 const blob = new Blob([svgString], { type: "image/svg+xml" });
                 download(URL.createObjectURL(blob), "svg");
               }}
-              className="px-5 py-2.5 rounded-xl border border-gold/40 text-gold font-bold text-sm hover:bg-gold/10"
+              className="px-5 py-2.5 rounded-xl border border-terracotta/40 text-terracotta font-bold text-sm hover:bg-terracotta-tint transition-colors inline-flex items-center gap-2"
             >
-              ⬇ Télécharger SVG
+              <Download className="w-4 h-4" /> Télécharger SVG
             </button>
             <button
               onClick={() => {
                 navigator.clipboard.writeText(targetUrl);
                 toast.success("Lien copié");
               }}
-              className="px-5 py-2.5 rounded-xl border border-white/10 font-semibold text-sm"
+              className="px-5 py-2.5 rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-surface-warm transition-colors font-semibold text-sm inline-flex items-center gap-2"
             >
-              📋 Copier le lien
+              <Copy className="w-4 h-4" /> Copier le lien
             </button>
             <button
               onClick={() => printCard(targetUrl, r.name, pngUrl)}
-              className="px-5 py-2.5 rounded-xl border border-white/10 font-semibold text-sm"
+              className="px-5 py-2.5 rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-surface-warm transition-colors font-semibold text-sm inline-flex items-center gap-2"
             >
-              🖨️ Imprimer carte de table
+              <Printer className="w-4 h-4" /> Imprimer carte de table
             </button>
           </div>
         </div>
@@ -223,7 +224,7 @@ function QrCodePage() {
                 setTableNum(e.target.value.replace(/[^A-Za-z0-9-]/g, "").slice(0, 10))
               }
               placeholder="ex : 12"
-              className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+              className="w-full px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
             />
             {savedTables.length > 0 ? (
               <div className="flex flex-wrap gap-1.5 mt-2">
@@ -234,8 +235,8 @@ function QrCodePage() {
                     onClick={() => setTableNum(t.number)}
                     className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-colors ${
                       tableNum === t.number
-                        ? "bg-gold text-[#0a0a0f] border-gold"
-                        : "bg-white/5 border-white/10 text-muted-foreground hover:text-foreground"
+                        ? "bg-terracotta text-white border-terracotta"
+                        : "bg-surface-warm border-border text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     Table {t.number}
@@ -278,11 +279,16 @@ function QrCodePage() {
                 }
               }}
               disabled={bulkGenerating}
-              className="w-full px-4 py-3 rounded-2xl border border-gold/40 bg-gold/10 text-gold font-bold text-sm hover:bg-gold/20 transition-colors disabled:opacity-50"
+              className="w-full px-4 py-3 rounded-2xl border border-terracotta/40 bg-terracotta-tint text-terracotta-deep font-bold text-sm hover:bg-terracotta/20 transition-colors disabled:opacity-50"
             >
-              {bulkGenerating
-                ? "Génération en cours..."
-                : `📥 Télécharger les ${savedTables.length} QR (un par table)`}
+              {bulkGenerating ? (
+                "Génération en cours..."
+              ) : (
+                <span className="inline-flex items-center justify-center gap-2">
+                  <Download className="w-4 h-4" /> Télécharger les {savedTables.length} QR (un par
+                  table)
+                </span>
+              )}
             </button>
           )}
 
@@ -294,7 +300,7 @@ function QrCodePage() {
               step={64}
               value={size}
               onChange={(e) => setSize(+e.target.value)}
-              className="w-full accent-gold"
+              className="w-full accent-terracotta"
             />
             <p className="text-xs text-muted-foreground mt-1">
               {size}×{size} px
@@ -308,7 +314,7 @@ function QrCodePage() {
               max={8}
               value={margin}
               onChange={(e) => setMargin(+e.target.value)}
-              className="w-full accent-gold"
+              className="w-full accent-terracotta"
             />
             <p className="text-xs text-muted-foreground mt-1">{margin} blocs</p>
           </SettingCard>
@@ -331,8 +337,10 @@ function QrCodePage() {
             />
           </SettingCard>
 
-          <div className="p-4 rounded-2xl border border-gold/20 bg-gold/5">
-            <p className="text-xs uppercase tracking-widest text-gold font-bold mb-1">💡 Conseil</p>
+          <div className="p-4 rounded-2xl border border-terracotta/20 bg-terracotta-tint/40">
+            <p className="text-xs uppercase tracking-widest text-terracotta font-bold mb-1 inline-flex items-center gap-1.5">
+              <Lightbulb className="w-3.5 h-3.5" /> Conseil
+            </p>
             <p className="text-xs text-muted-foreground leading-relaxed">
               Pour l'impression, choisissez 1024×1024 et téléchargez en SVG pour
               <br />
@@ -347,7 +355,7 @@ function QrCodePage() {
 
 function SettingCard({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="p-4 rounded-2xl border border-white/8 bg-dark-card">
+    <div className="p-4 rounded-2xl border border-border bg-card">
       <p className="text-xs uppercase tracking-widest text-muted-foreground font-bold mb-2">
         {label}
       </p>
@@ -362,7 +370,7 @@ function printCard(url: string, name: string, png: string) {
   w.document.write(`<!doctype html><html><head><title>QR ${name}</title>
     <style>
       body{font-family:system-ui,-apple-system,sans-serif;margin:0;padding:40px;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#fff}
-      .card{text-align:center;padding:40px;border:2px dashed #c9a14a;border-radius:24px;max-width:480px}
+      .card{text-align:center;padding:40px;border:2px dashed #c85a32;border-radius:24px;max-width:480px}
       h1{font-size:28px;margin:0 0 8px;color:#1a1a1a}
       p{color:#666;margin:0 0 24px;font-size:14px;letter-spacing:.15em;text-transform:uppercase}
       img{width:340px;height:340px}

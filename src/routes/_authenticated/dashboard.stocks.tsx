@@ -3,7 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyRestaurant } from "@/hooks/use-my-restaurant";
 import { toast } from "sonner";
-import { Plus, AlertTriangle, Package, TrendingDown, RefreshCw, Search } from "lucide-react";
+import { Plus, AlertTriangle, Package, TrendingDown, RefreshCw, Search, Trash2 } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { StockCardSkeleton, KpiCardSkeleton } from "@/components/ui/skeleton";
@@ -100,7 +100,7 @@ function StocksPage() {
 
       if (error) throw error;
 
-      toast.success("✅ Article ajouté");
+      toast.success("Article ajouté");
       setShowAddModal(false);
       setNewItem({
         name: "",
@@ -133,9 +133,9 @@ function StocksPage() {
       if (error) throw error;
 
       if (newQty === 0) {
-        toast.warning(`⚠️ Stock épuisé : ${item.name}`);
+        toast.warning(`Stock épuisé : ${item.name}`);
       } else if (status === "low") {
-        toast.warning(`⚠️ Stock bas : ${item.name} (${newQty} ${item.unit})`);
+        toast.warning(`Stock bas : ${item.name} (${newQty} ${item.unit})`);
       }
 
       loadStocks();
@@ -202,27 +202,27 @@ function StocksPage() {
   return (
     <div className="max-w-6xl">
       <div className="mb-6">
-        <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Gestion</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">Gestion</p>
         <h1 className="text-3xl font-black">Stocks</h1>
       </div>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-        <div className="p-4 rounded-xl border border-white/8 bg-dark-card">
+        <div className="p-4 rounded-xl border border-border bg-card">
           <p className="text-xs text-muted-foreground mb-1">Total</p>
           <p className="text-2xl font-black">{stats.total}</p>
         </div>
-        <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5">
-          <p className="text-xs text-emerald-400 mb-1">OK</p>
-          <p className="text-2xl font-black text-emerald-400">{stats.ok}</p>
+        <div className="p-4 rounded-xl border border-emerald/30 bg-emerald-tint">
+          <p className="text-xs text-emerald-deep mb-1">OK</p>
+          <p className="text-2xl font-black text-emerald-deep">{stats.ok}</p>
         </div>
-        <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5">
-          <p className="text-xs text-amber-400 mb-1">Bas</p>
-          <p className="text-2xl font-black text-amber-400">{stats.low}</p>
+        <div className="p-4 rounded-xl border border-amber-brand/40 bg-amber-tint">
+          <p className="text-xs text-amber-deep mb-1">Bas</p>
+          <p className="text-2xl font-black text-amber-deep">{stats.low}</p>
         </div>
-        <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/5">
-          <p className="text-xs text-red-400 mb-1">Critique</p>
-          <p className="text-2xl font-black text-red-400">{stats.critical}</p>
+        <div className="p-4 rounded-xl border border-destructive/30 bg-destructive/5">
+          <p className="text-xs text-destructive mb-1">Critique</p>
+          <p className="text-2xl font-black text-destructive">{stats.critical}</p>
         </div>
       </div>
 
@@ -235,13 +235,13 @@ function StocksPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Rechercher un article..."
-            className="w-full pl-10 pr-4 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+            className="w-full pl-10 pr-4 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
           />
         </div>
         <select
           value={filterCategory}
           onChange={(e) => setFilterCategory(e.target.value)}
-          className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+          className="px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
         >
           <option value="all">Toutes catégories</option>
           {CATEGORIES.map((cat) => (
@@ -253,7 +253,7 @@ function StocksPage() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value as any)}
-          className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+          className="px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
         >
           <option value="all">Tous statuts</option>
           <option value="ok">OK</option>
@@ -262,7 +262,7 @@ function StocksPage() {
         </select>
         <button
           onClick={() => setShowAddModal(true)}
-          className="px-4 py-2 rounded-lg bg-gradient-gold text-[#0a0a0f] text-sm font-bold flex items-center gap-2"
+          className="px-4 py-2 rounded-lg bg-terracotta text-white hover:bg-terracotta-deep transition-colors text-sm font-bold flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
           Ajouter
@@ -277,7 +277,7 @@ function StocksPage() {
           ))}
         </div>
       ) : filteredItems.length === 0 ? (
-        <div className="p-10 rounded-2xl border border-dashed border-white/15 text-center text-muted-foreground">
+        <div className="p-10 rounded-2xl border border-dashed border-border text-center text-muted-foreground">
           <Package className="w-12 h-12 mx-auto mb-3 opacity-50" />
           <p>Aucun article en stock</p>
         </div>
@@ -294,10 +294,10 @@ function StocksPage() {
                 key={item.id}
                 className={`p-5 rounded-2xl border transition-all ${
                   isCritical
-                    ? "border-red-500/30 bg-red-500/5"
+                    ? "border-destructive/30 bg-destructive/5"
                     : isLow
-                      ? "border-amber-500/30 bg-amber-500/5"
-                      : "border-white/8 bg-dark-card"
+                      ? "border-amber-brand/40 bg-amber-tint"
+                      : "border-border bg-card"
                 }`}
               >
                 <div className="flex items-start justify-between mb-3">
@@ -309,7 +309,7 @@ function StocksPage() {
                   </div>
                   {isLow && (
                     <AlertTriangle
-                      className={`w-5 h-5 ${isCritical ? "text-red-400" : "text-amber-400"}`}
+                      className={`w-5 h-5 ${isCritical ? "text-destructive" : "text-amber-deep"}`}
                     />
                   )}
                 </div>
@@ -319,10 +319,10 @@ function StocksPage() {
                     <span className="text-2xl font-black">{item.current_quantity}</span>
                     <span className="text-xs text-muted-foreground">{item.unit}</span>
                   </div>
-                  <div className="h-2 rounded-full bg-white/5 overflow-hidden">
+                  <div className="h-2 rounded-full bg-surface-warm overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all ${
-                        isCritical ? "bg-red-500" : isLow ? "bg-amber-500" : "bg-emerald-500"
+                        isCritical ? "bg-destructive" : isLow ? "bg-amber-brand" : "bg-emerald"
                       }`}
                       style={{ width: `${Math.min(percentage, 100)}%` }}
                     />
@@ -335,21 +335,21 @@ function StocksPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => updateQuantity(item, -1)}
-                    className="flex-1 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-sm font-bold transition-colors"
+                    className="flex-1 px-3 py-2 rounded-lg bg-charcoal/5 text-charcoal hover:bg-charcoal/10 text-sm font-bold transition-colors"
                   >
                     -1
                   </button>
                   <button
                     onClick={() => updateQuantity(item, 1)}
-                    className="flex-1 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-sm font-bold transition-colors"
+                    className="flex-1 px-3 py-2 rounded-lg bg-charcoal/5 text-charcoal hover:bg-charcoal/10 text-sm font-bold transition-colors"
                   >
                     +1
                   </button>
                   <button
                     onClick={() => setDeleteTarget(item)}
-                    className="px-3 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs"
+                    className="px-3 py-2 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 text-xs"
                   >
-                    🗑️
+                    <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
@@ -369,7 +369,7 @@ function StocksPage() {
               type="text"
               value={newItem.name}
               onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+              className="w-full px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
               placeholder="Ex: Riz, Poulet, Huile..."
             />
           </div>
@@ -381,7 +381,7 @@ function StocksPage() {
             <select
               value={newItem.category}
               onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+              className="w-full px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
             >
               {CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
@@ -402,7 +402,7 @@ function StocksPage() {
                 onChange={(e) =>
                   setNewItem({ ...newItem, current_quantity: Number(e.target.value) })
                 }
-                className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+                className="w-full px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
                 min="0"
               />
             </div>
@@ -414,7 +414,7 @@ function StocksPage() {
                 type="number"
                 value={newItem.min_quantity}
                 onChange={(e) => setNewItem({ ...newItem, min_quantity: Number(e.target.value) })}
-                className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+                className="w-full px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
                 min="0"
               />
             </div>
@@ -427,7 +427,7 @@ function StocksPage() {
             <select
               value={newItem.unit}
               onChange={(e) => setNewItem({ ...newItem, unit: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+              className="w-full px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
             >
               {UNITS.map((unit) => (
                 <option key={unit} value={unit}>
@@ -441,13 +441,13 @@ function StocksPage() {
         <div className="flex gap-2 justify-end mt-6">
           <button
             onClick={() => setShowAddModal(false)}
-            className="px-5 py-2.5 rounded-xl border border-white/10 text-sm"
+            className="px-5 py-2.5 rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-surface-warm transition-colors text-sm"
           >
             Annuler
           </button>
           <button
             onClick={addStockItem}
-            className="px-5 py-2.5 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold text-sm"
+            className="px-5 py-2.5 rounded-xl bg-terracotta text-white hover:bg-terracotta-deep transition-colors font-bold text-sm"
           >
             Ajouter
           </button>

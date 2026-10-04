@@ -14,9 +14,8 @@ import {
   Phone,
   Mail,
   Lock,
-  Sparkles,
+  Gift,
   ArrowRight,
-  CheckCircle2,
 } from "lucide-react";
 
 const searchSchema = z.object({
@@ -135,15 +134,15 @@ function SignupPage() {
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {/* Banner trial highlight */}
-        <div className="p-4 rounded-2xl border border-[#d4a853]/40 bg-gradient-to-r from-[#d4a853]/15 via-[#f0d48a]/10 to-transparent flex items-start gap-3 shadow-sm">
-          <div className="w-8 h-8 rounded-xl bg-[#d4a853]/20 border border-[#d4a853]/40 flex items-center justify-center shrink-0 text-[#f0d48a]">
-            <Sparkles className="w-4 h-4" />
+        <div className="p-4 rounded-2xl border border-terracotta/25 bg-terracotta-tint flex items-start gap-3">
+          <div className="w-8 h-8 rounded-xl bg-white border border-terracotta/25 flex items-center justify-center shrink-0 text-terracotta">
+            <Gift className="w-4 h-4" />
           </div>
           <div>
-            <p className="text-xs font-black uppercase tracking-wider text-[#f0d48a]">
+            <p className="text-xs font-black uppercase tracking-wider text-terracotta-deep">
               Offre Spéciale Lancement Burkina
             </p>
-            <p className="text-xs text-foreground/90 mt-0.5 leading-relaxed">
+            <p className="text-xs text-foreground/80 mt-0.5 leading-relaxed">
               30 jours d'essai complets offerts avec accès à la gestion des commandes, menus QR
               code, et WhatsApp direct.
             </p>
@@ -151,7 +150,7 @@ function SignupPage() {
         </div>
 
         <div className="grid sm:grid-cols-2 gap-3">
-          <Field label="Nom du restaurant *" icon={<Store className="w-4 h-4 text-[#d4a853]" />}>
+          <Field label="Nom du restaurant *" icon={<Store className="w-4 h-4 text-terracotta" />}>
             <input
               required
               value={form.name}
@@ -161,7 +160,7 @@ function SignupPage() {
             />
           </Field>
 
-          <Field label="Ville *" icon={<MapPin className="w-4 h-4 text-[#d4a853]" />}>
+          <Field label="Ville *" icon={<MapPin className="w-4 h-4 text-terracotta" />}>
             <input
               required
               value={form.city}
@@ -172,14 +171,14 @@ function SignupPage() {
           </Field>
         </div>
 
-        <Field label="Type de cuisine *" icon={<Utensils className="w-4 h-4 text-[#d4a853]" />}>
+        <Field label="Type de cuisine *" icon={<Utensils className="w-4 h-4 text-terracotta" />}>
           <select
             value={form.cuisine}
             onChange={(e) => set("cuisine", e.target.value)}
-            className="auth-input appearance-none cursor-pointer bg-[#111118]"
+            className="auth-input appearance-none cursor-pointer"
           >
             {cuisines.map((c) => (
-              <option key={c} value={c} className="bg-[#1a1a24] text-foreground">
+              <option key={c} value={c}>
                 {c}
               </option>
             ))}
@@ -187,7 +186,7 @@ function SignupPage() {
         </Field>
 
         <div className="grid sm:grid-cols-2 gap-3">
-          <Field label="Nom du gérant *" icon={<User className="w-4 h-4 text-[#d4a853]" />}>
+          <Field label="Nom du gérant *" icon={<User className="w-4 h-4 text-terracotta" />}>
             <input
               required
               value={form.ownerName}
@@ -197,7 +196,7 @@ function SignupPage() {
             />
           </Field>
 
-          <Field label="Numéro WhatsApp *" icon={<Phone className="w-4 h-4 text-[#d4a853]" />}>
+          <Field label="Numéro WhatsApp *" icon={<Phone className="w-4 h-4 text-terracotta" />}>
             <input
               required
               type="tel"
@@ -209,7 +208,7 @@ function SignupPage() {
           </Field>
         </div>
 
-        <Field label="Adresse Email *" icon={<Mail className="w-4 h-4 text-[#d4a853]" />}>
+        <Field label="Adresse Email *" icon={<Mail className="w-4 h-4 text-terracotta" />}>
           <input
             required
             type="email"
@@ -221,7 +220,7 @@ function SignupPage() {
         </Field>
 
         <div className="grid sm:grid-cols-2 gap-3">
-          <Field label="Mot de passe *" icon={<Lock className="w-4 h-4 text-[#d4a853]" />}>
+          <Field label="Mot de passe *" icon={<Lock className="w-4 h-4 text-terracotta" />}>
             <input
               required
               type="password"
@@ -235,7 +234,7 @@ function SignupPage() {
 
           <Field
             label="Confirmer mot de passe *"
-            icon={<Lock className="w-4 h-4 text-[#d4a853]" />}
+            icon={<Lock className="w-4 h-4 text-terracotta" />}
           >
             <input
               required
@@ -254,11 +253,11 @@ function SignupPage() {
             type="checkbox"
             checked={form.accept}
             onChange={(e) => set("accept", e.target.checked)}
-            className="mt-0.5 w-4 h-4 accent-[#d4a853] rounded"
+            className="mt-0.5 w-4 h-4 accent-[#c85a32] rounded"
           />
           <span>
             J'accepte les{" "}
-            <a href="#contact" className="text-[#f0d48a] font-bold hover:underline">
+            <a href="#contact" className="text-terracotta-deep font-bold hover:underline">
               conditions d'utilisation
             </a>{" "}
             et confirme exercer au Burkina Faso.
@@ -268,20 +267,20 @@ function SignupPage() {
         <Interactive3DButton
           type="submit"
           disabled={loading}
-          variant="gold-glow"
+          variant="primary"
           size="lg"
           icon={<ArrowRight className="w-4 h-4" />}
-          className="w-full mt-2 shadow-[0_0_30px_rgba(212,168,83,0.4)]"
+          className="w-full mt-2"
         >
-          {loading ? "Création du compte..." : "✨ Démarrer mon essai gratuit 30 jours"}
+          {loading ? "Création du compte..." : "Démarrer mon essai gratuit 30 jours"}
         </Interactive3DButton>
 
         <div className="relative my-4">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-white/10"></div>
+            <div className="w-full border-t border-border"></div>
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-[#111118] px-3 text-muted-foreground font-semibold">
+            <span className="bg-card px-3 text-muted-foreground font-semibold">
               ou s'inscrire avec
             </span>
           </div>
@@ -291,7 +290,7 @@ function SignupPage() {
           type="button"
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="w-full py-3.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-[#d4a853]/40 font-bold text-xs text-foreground transition-all disabled:opacity-60 flex items-center justify-center gap-2.5 shadow-sm active:scale-95 cursor-pointer"
+          className="w-full py-3.5 rounded-xl border border-border bg-card hover:bg-muted hover:border-terracotta/40 font-bold text-xs text-foreground transition-all disabled:opacity-60 flex items-center justify-center gap-2.5 shadow-card active:scale-95 cursor-pointer"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path
@@ -316,32 +315,11 @@ function SignupPage() {
 
         <p className="text-center text-xs text-muted-foreground mt-2">
           Déjà un compte ?{" "}
-          <Link to="/auth/connexion" className="text-[#f0d48a] font-extrabold hover:underline">
+          <Link to="/auth/connexion" className="text-terracotta-deep font-extrabold hover:underline">
             Se connecter directement
           </Link>
         </p>
       </form>
-
-      <style>{`
-        .auth-input {
-          width: 100%;
-          padding: 12px 14px 12px 42px;
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(212,168,83,0.2);
-          border-radius: 12px;
-          color: #f3f3f3;
-          font-size: 14px;
-          font-weight: 500;
-          outline: none;
-          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .auth-input:focus {
-          border-color: #f0d48a;
-          background: rgba(255,255,255,0.06);
-          box-shadow: 0 0 15px rgba(212,168,83,0.25);
-        }
-        .auth-input::placeholder { color: rgba(255,255,255,0.3); }
-      `}</style>
     </AuthShell>
   );
 }

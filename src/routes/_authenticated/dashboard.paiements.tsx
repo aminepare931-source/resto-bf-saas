@@ -47,10 +47,10 @@ const METHOD_LABELS: Record<string, string> = {
 };
 
 const METHOD_COLORS: Record<string, string> = {
-  orange_money: "bg-orange-500/20 text-orange-300 border-orange-500/30",
-  moov_money: "bg-blue-500/20 text-blue-300 border-blue-500/30",
-  cash: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
-  wave: "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
+  orange_money: "bg-amber-tint text-amber-deep",
+  moov_money: "bg-charcoal/5 text-charcoal",
+  cash: "bg-emerald-tint text-emerald-deep",
+  wave: "bg-terracotta-tint text-terracotta-deep",
 };
 
 function PaiementsPage() {
@@ -175,8 +175,10 @@ function PaiementsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold">Paiements</h1>
-          <p className="text-sm text-muted-foreground mt-1">Historique des codes de paiement</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">
+            Paiements
+          </p>
+          <h1 className="text-3xl font-black">Historique des codes de paiement</h1>
         </div>
         <button
           onClick={() => setShowConfig(!showConfig)}
@@ -269,14 +271,14 @@ function PaiementsPage() {
         </div>
         <div className="p-4 rounded-xl border border-border bg-card">
           <p className="text-xs text-muted-foreground mb-1">Payé</p>
-          <p className="text-xl font-bold text-emerald-600">
+          <p className="text-xl font-bold text-emerald-deep">
             {usedAmount.toLocaleString("fr-FR")} F
           </p>
           <p className="text-xs text-muted-foreground">{usedCount} codes</p>
         </div>
         <div className="p-4 rounded-xl border border-border bg-card">
           <p className="text-xs text-muted-foreground mb-1">En attente</p>
-          <p className="text-xl font-bold text-amber-600">
+          <p className="text-xl font-bold text-amber-deep">
             {pendingAmount.toLocaleString("fr-FR")} F
           </p>
           <p className="text-xs text-muted-foreground">{pendingCount} codes</p>
@@ -386,9 +388,9 @@ function PaiementsPage() {
                   </td>
                   <td className="p-3">
                     {p.used ? (
-                      <span className="text-emerald-600 text-xs font-medium">Payé</span>
+                      <span className="text-emerald-deep text-xs font-medium">Payé</span>
                     ) : (
-                      <span className="text-amber-600 text-xs font-medium">En attente</span>
+                      <span className="text-amber-deep text-xs font-medium">En attente</span>
                     )}
                   </td>
                 </tr>

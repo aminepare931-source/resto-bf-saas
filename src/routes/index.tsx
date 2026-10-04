@@ -1,7 +1,6 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Topbar } from "@/components/landing/Topbar";
 import { Footer } from "@/components/landing/Footer";
-import { Particles } from "@/components/landing/Particles";
 import { Interactive3DButton } from "@/components/landing/Interactive3DButton";
 import { Motion3DTiltCard } from "@/components/landing/Motion3DTiltCard";
 import { InteractiveDashboard3D } from "@/components/landing/InteractiveDashboard3D";
@@ -9,24 +8,17 @@ import { TemplateCarousel3D } from "@/components/landing/3DTemplateCarousel";
 import { InfiniteFeaturesCarousel } from "@/components/landing/InfiniteFeaturesCarousel";
 import { PricingSection } from "@/components/landing/PricingSection";
 import { useState, useEffect, useRef } from "react";
-import { motion, useScroll, useSpring, useTransform, AnimatePresence } from "motion/react";
+import { motion, useScroll, useSpring, AnimatePresence } from "motion/react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  X,
-  CheckCircle2,
-  Sparkles,
   ArrowRight,
   ShieldCheck,
   Zap,
-  PhoneCall,
   ChevronDown,
   MessageCircle,
-  QrCode,
-  Utensils,
   Store,
   Star,
-  Users,
 } from "lucide-react";
 
 function AnimatedStat({ value }: { value: string }) {
@@ -70,7 +62,7 @@ function AnimatedStat({ value }: { value: string }) {
   }, [value]);
 
   return (
-    <div ref={ref} className="text-3xl sm:text-4xl font-extrabold text-[#f0d48a] tracking-tight">
+    <div ref={ref} className="text-3xl sm:text-4xl font-extrabold text-terracotta-deep tracking-tight tnum">
       {display}
     </div>
   );
@@ -111,43 +103,10 @@ export const Route = createFileRoute("/")({
   component: LandingPage,
 });
 
-const features = [
-  {
-    icon: "📱",
-    title: "Menu digital intelligent",
-    desc: "Photos de haute qualité, catégories clairvoyantes, prix en FCFA. Vos clients commandent directement sur leur téléphone.",
-  },
-  {
-    icon: "💬",
-    title: "Commandes WhatsApp instantanées",
-    desc: "Chaque plat inclut un bouton Commander. Le message part pré-rempli avec le détail exact de la commande.",
-  },
-  {
-    icon: "🛎️",
-    title: "Gestion de cuisine en direct",
-    desc: "Validez, préparez et suivez chaque bon de commande sur tablette ou téléphone sans aucun bruit parasite.",
-  },
-  {
-    icon: "📅",
-    title: "Réservations & plan de salle",
-    desc: "Plan de salle interactif, attribution automatique des tables, SMS et confirmations instantanées.",
-  },
-  {
-    icon: "📊",
-    title: "Tableau de bord & statistiques",
-    desc: "Suivez votre chiffre d'affaires, vos plats vedettes, vos heures de pointe et prévoyez vos approvisionnements.",
-  },
-  {
-    icon: "👥",
-    title: "Gestion du staff & stocks",
-    desc: "Inscrivez vos serveurs, cuisiniers et gérants avec des accès sécurisés. Alertes automatiques de stock bas.",
-  },
-];
-
 const stats = [
   { n: "50+", label: "Restaurants & Maquis inscrits" },
   { n: "5", label: "Templates 3D interactifs" },
-  { n: "4.9", label: "Note moyenne des clients ★" },
+  { n: "4.9", label: "Note moyenne des clients" },
   { n: "24/7", label: "Assistance WhatsApp dédiée" },
 ];
 
@@ -169,66 +128,6 @@ const testimonials = [
     role: "Cheffe de Cuisine — Koudougou",
     avatar: "FD",
     text: "L'écran cuisine est révolutionnaire. Les bons de commande arrivent en temps réel. La gestion des stocks m'a permis d'éliminer le gaspillage.",
-  },
-];
-
-const plans = [
-  {
-    name: "Basique",
-    price: "0",
-    unit: "FCFA",
-    period: "30 jours d'essai offerts",
-    popular: false,
-    cta: "Tester gratuitement 30 jours",
-    href: "/auth/inscription" as const,
-    plan: "basique" as const,
-    features: [
-      "Template basique unique",
-      "Menu jusqu'à 10 plats",
-      "Commande WhatsApp directe",
-      "QR Code restaurant à imprimer",
-      "Réservations basiques",
-      "Statistiques d'activité de base",
-      "Puis 2 500 FCFA/mois",
-    ],
-  },
-  {
-    name: "Standard",
-    price: "5 000",
-    unit: "FCFA",
-    period: "/ mois",
-    popular: true,
-    cta: "Choisir le Plan Standard",
-    href: "/auth/inscription" as const,
-    plan: "standard" as const,
-    features: [
-      "Menu jusqu'à 30 plats & boissons",
-      "Commandes WhatsApp illimitées",
-      "4 templates Standard personnalisables",
-      "QR Code de table personnalisé",
-      "Réservations de tables avancées",
-      "Statistiques de ventes détaillées",
-      "Galerie photo & avis clients",
-    ],
-  },
-  {
-    name: "Premium",
-    price: "7 500",
-    unit: "FCFA",
-    period: "/ mois",
-    popular: false,
-    cta: "Passer en Plan Premium",
-    href: "/auth/inscription" as const,
-    plan: "premium" as const,
-    features: [
-      "Menu illimité & déclinaisons",
-      "5 templates Premium animés en 3D",
-      "Facturation PDF avec logo personnalisé",
-      "Statistiques d'analyse avancées",
-      "Gestion d'équipe, rôles & stocks",
-      "Rapports mensuels de performance",
-      "Support prioritaire WhatsApp 7j/7",
-    ],
   },
 ];
 
@@ -269,33 +168,29 @@ function ScrollProgressBar({ isMobile }: { isMobile: boolean }) {
 
   return (
     <motion.div
-      className={`fixed top-0 left-0 right-0 h-[3.5px] z-[100] origin-left bg-gradient-to-r from-[#b08800] via-[#d4a853] to-[#f0d48a] ${isMobile ? "" : "shadow-[0_0_12px_rgba(212,168,83,0.8)]"}`}
+      className={`fixed top-0 left-0 right-0 h-[3.5px] z-[100] origin-left bg-gradient-to-r from-[#9f3c16] via-[#c85a32] to-[#e5a93c] ${isMobile ? "" : "shadow-[0_0_12px_rgba(200,90,50,0.5)]"}`}
       style={{ scaleX }}
     />
   );
 }
 
-function ParallaxAurora({ isMobile }: { isMobile: boolean }) {
-  const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 2000], [0, isMobile ? 0 : 250]);
-  const y2 = useTransform(scrollY, [0, 2000], [0, isMobile ? 0 : -200]);
-
-  // Sur mobile : pas de parallax lié au scroll (coûteux) et flou très réduit
+function AmbientBackground() {
+  // Fond statique : gradients pré-fondus (aucun filter blur, aucun repaint au scroll)
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none" aria-hidden="true">
-      <motion.div
+      <div
+        className="absolute -top-[15%] -left-[10%] w-[650px] h-[650px] rounded-full opacity-40"
         style={{
-          y: isMobile ? 0 : y1,
-          background: "radial-gradient(circle, rgba(212,168,83,0.4) 0%, transparent 70%)",
+          background:
+            "radial-gradient(circle, rgba(200,90,50,0.16) 0%, rgba(200,90,50,0.05) 45%, transparent 70%)",
         }}
-        className={`absolute -top-[15%] -left-[10%] w-[650px] h-[650px] rounded-full opacity-35 ${isMobile ? "blur-2xl" : "blur-[100px]"}`}
       />
-      <motion.div
+      <div
+        className="absolute top-[35%] -right-[15%] w-[700px] h-[700px] rounded-full opacity-35"
         style={{
-          y: isMobile ? 0 : y2,
-          background: "radial-gradient(circle, rgba(240,212,138,0.3) 0%, transparent 70%)",
+          background:
+            "radial-gradient(circle, rgba(229,169,60,0.14) 0%, rgba(229,169,60,0.04) 45%, transparent 70%)",
         }}
-        className={`absolute top-[35%] -right-[15%] w-[700px] h-[700px] rounded-full opacity-30 ${isMobile ? "blur-2xl" : "blur-[120px]"}`}
       />
       <div className="absolute inset-0 grid-bg opacity-30" />
     </div>
@@ -303,15 +198,13 @@ function ParallaxAurora({ isMobile }: { isMobile: boolean }) {
 }
 
 function LandingPage() {
-  const [selectedPlan, setSelectedPlan] = useState<(typeof plans)[0] | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const isMobile = useIsMobile();
 
   return (
-    <div className="relative min-h-screen text-foreground selection:bg-[#d4a853]/30 selection:text-white overflow-x-hidden">
+    <div className="relative min-h-screen text-foreground selection:bg-terracotta/25 selection:text-foreground overflow-x-hidden">
       <ScrollProgressBar isMobile={isMobile} />
-      <ParallaxAurora isMobile={isMobile} />
-      <Particles count={isMobile ? 3 : 10} />
+      <AmbientBackground />
 
       <Topbar />
 
@@ -329,38 +222,42 @@ function LandingPage() {
               {/* Badge */}
               <motion.div
                 whileHover={{ scale: 1.04 }}
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#d4a853]/40 bg-[#111118]/80 text-xs font-semibold text-[#f0d48a] shadow-lg backdrop-blur-md"
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-terracotta/25 bg-card text-xs font-semibold text-terracotta-deep shadow-card"
               >
-                <span className="w-2 h-2 rounded-full bg-[#d4a853] animate-ping" />
-                <Sparkles className="w-3.5 h-3.5 text-[#d4a853]" />
                 <span>N°1 des SaaS Restaurants au Burkina Faso</span>
               </motion.div>
 
               {/* Title */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight text-foreground">
                 Votre restaurant <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4a853] via-[#f0d48a] to-[#b08800] drop-shadow-sm">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#9f3c16] via-[#c85a32] to-[#996800] drop-shadow-sm">
                   en ligne en 5 minutes
                 </span>
               </h1>
 
               {/* Prominent Subtitle Card */}
-              <div className="relative p-5 sm:p-6 rounded-2xl border border-[#d4a853]/40 bg-[#111118]/80 backdrop-blur-xl shadow-[0_15px_35px_rgba(212,168,83,0.15)] max-w-xl group overflow-hidden">
-                <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#d4a853] via-[#f0d48a] to-[#b08800] rounded-l-2xl" />
-                <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-[#d4a853]/15 blur-2xl rounded-full pointer-events-none group-hover:scale-125 transition-transform" />
+              <div className="relative p-5 sm:p-6 rounded-2xl border border-terracotta/20 bg-card shadow-card max-w-xl group overflow-hidden">
+                <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#9f3c16] via-[#c85a32] to-[#e5a93c] rounded-l-2xl" />
+                <div
+                  className="absolute -right-10 -bottom-10 w-32 h-32 rounded-full pointer-events-none group-hover:scale-125 transition-transform"
+                  style={{
+                    background:
+                      "radial-gradient(circle, rgba(200,90,50,0.18) 0%, rgba(200,90,50,0.05) 50%, transparent 70%)",
+                  }}
+                />
 
                 <p className="text-base sm:text-lg text-foreground/90 leading-relaxed font-medium pl-2 sm:hidden">
-                  <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#d4a853] via-[#f0d48a] to-[#b08800]">
+                  <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#9f3c16] via-[#c85a32] to-[#996800]">
                     RestoBF
                   </span>{" "}
                   modernise et fait grandir votre maquis ou restaurant au Burkina Faso.
                 </p>
                 <p className="hidden sm:block text-base sm:text-lg text-foreground/90 leading-relaxed font-medium pl-2">
-                  <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#d4a853] via-[#f0d48a] to-[#b08800]">
+                  <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#9f3c16] via-[#c85a32] to-[#996800]">
                     RestoBF
                   </span>{" "}
                   est le{" "}
-                  <strong className="text-white font-bold underline decoration-[#d4a853]/50 underline-offset-4">
+                  <strong className="text-foreground font-bold underline decoration-terracotta/50 underline-offset-4">
                     système d'exploitation digital
                   </strong>{" "}
                   conçu pour moderniser, automatiser et faire grandir les maquis, restaurants et
@@ -380,21 +277,26 @@ function LandingPage() {
                   Créer ma page gratuite
                 </Interactive3DButton>
 
-                <Interactive3DButton href="#tarifs" variant="outline" size="lg">
-                  Voir les forfaits →
+                <Interactive3DButton
+                  href="#tarifs"
+                  variant="outline"
+                  size="lg"
+                  icon={<ArrowRight className="w-4 h-4" />}
+                >
+                  Voir les forfaits
                 </Interactive3DButton>
               </div>
 
               {/* Trust Badges */}
               <div className="pt-2 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-muted-foreground font-medium">
                 <span className="flex items-center gap-1.5 text-foreground/90">
-                  <ShieldCheck className="w-4 h-4 text-[#d4a853]" /> Sans carte bancaire
+                  <ShieldCheck className="w-4 h-4 text-terracotta" /> Sans carte bancaire
                 </span>
                 <span className="flex items-center gap-1.5 text-foreground/90">
-                  <Zap className="w-4 h-4 text-[#d4a853]" /> Installation instantanée
+                  <Zap className="w-4 h-4 text-terracotta" /> Installation instantanée
                 </span>
                 <span className="flex items-center gap-1.5 text-foreground/90">
-                  <Store className="w-4 h-4 text-[#d4a853]" /> Conçu pour le Burkina
+                  <Store className="w-4 h-4 text-terracotta" /> Conçu pour le Burkina
                 </span>
               </div>
             </motion.div>
@@ -412,7 +314,7 @@ function LandingPage() {
         </section>
 
         {/* STATS COUNTER BAR */}
-        <section className="py-12 px-4 sm:px-6 border-y border border-[#d4a853]/20 bg-[#111118]/80 backdrop-blur-md">
+        <section className="py-12 px-4 sm:px-6 border-y border-border bg-muted">
           <div className="max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((s, i) => (
               <motion.div
@@ -435,12 +337,12 @@ function LandingPage() {
         {/* TEMPLATES INTERACTIVE SHOWCASE 3D CAROUSEL */}
         <section id="templates" className="py-20 px-4 sm:px-6 relative overflow-hidden">
           <div className="max-w-6xl mx-auto text-center mb-10 space-y-3">
-            <span className="px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#d4a853]/15 text-[#f0d48a] border border-[#d4a853]/30">
+            <span className="px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-terracotta-tint text-terracotta-deep border border-terracotta/20">
               Défilé 3D interactif
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground">
               Les{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4a853] via-[#f0d48a] to-[#b08800]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#9f3c16] via-[#c85a32] to-[#996800]">
                 5 Templates
               </span>{" "}
               en rotation circulaire
@@ -457,14 +359,14 @@ function LandingPage() {
         {/* FONCTIONNALITÉS — AUTO-SCROLL HORIZONTAL INFINITE MARQUEE */}
         <section
           id="fonctionnalites"
-          className="py-20 bg-[#0a0a0f]/80 border-y border border-[#d4a853]/20 relative overflow-hidden"
+          className="py-20 bg-muted border-y border-border relative overflow-hidden"
         >
           <div className="max-w-6xl mx-auto text-center mb-10 px-4 space-y-3">
-            <span className="px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#d4a853]/15 text-[#f0d48a] border border-[#d4a853]/30">
+            <span className="px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-terracotta-tint text-terracotta-deep border border-terracotta/20">
               Défilement Automatique Continu
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground">
-              Une armada de <span className="text-[#f0d48a]">fonctionnalités puissantes</span>
+              Une armada de <span className="text-terracotta-deep">fonctionnalités puissantes</span>
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
               Survolez les cartes pour mettre en pause l'animation et explorer les détails.
@@ -477,11 +379,11 @@ function LandingPage() {
         {/* TESTIMONIALS */}
         <section id="avis" className="py-12 sm:py-24 px-4 sm:px-6 relative">
           <div className="max-w-6xl mx-auto text-center mb-8 sm:mb-16 space-y-3">
-            <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#d4a853]/15 text-[#f0d48a] border border-[#d4a853]/30">
+            <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-terracotta-tint text-terracotta-deep border border-terracotta/20">
               Témoignages
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground">
-              Approuvé par les <span className="text-[#f0d48a]">restaurateurs du Burkina</span>
+              Approuvé par les <span className="text-terracotta-deep">restaurateurs du Burkina</span>
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
               Découvrez les retours de ceux qui utilisent RestoBF tous les jours.
@@ -493,12 +395,12 @@ function LandingPage() {
             {testimonials.map((t) => (
               <div
                 key={t.name}
-                className="snap-center shrink-0 w-[82vw] rounded-xl border border-border bg-[#111118] p-5 flex flex-col justify-between space-y-3"
+                className="snap-center shrink-0 w-[82vw] rounded-xl border border-border bg-card shadow-card p-5 flex flex-col justify-between space-y-3"
               >
                 <div className="space-y-2">
-                  <div className="flex items-center gap-1 text-[#f0d48a]">
+                  <div className="flex items-center gap-1">
                     {[...Array(5)].map((_, idx) => (
-                      <Star key={idx} className="w-4 h-4 fill-current text-[#d4a853]" />
+                      <Star key={idx} className="w-4 h-4 fill-current text-amber-brand" />
                     ))}
                     <span className="text-xs text-muted-foreground ml-2 font-semibold">
                       Avis vérifié
@@ -507,7 +409,7 @@ function LandingPage() {
                   <p className="text-sm text-foreground/90 italic leading-relaxed">"{t.text}"</p>
                 </div>
                 <div className="pt-3 border-t border-border flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#d4a853]/20 border border-[#d4a853]/40 flex items-center justify-center font-bold text-sm text-[#f0d48a] shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-terracotta-tint border border-terracotta/25 flex items-center justify-center font-bold text-sm text-terracotta-deep shrink-0">
                     {t.avatar}
                   </div>
                   <div>
@@ -525,9 +427,9 @@ function LandingPage() {
               <Motion3DTiltCard key={t.name} delay={i * 0.12} maxRotate={8}>
                 <div className="p-6 h-full flex flex-col justify-between space-y-4">
                   <div className="space-y-3">
-                    <div className="flex items-center gap-1 text-[#f0d48a]">
+                    <div className="flex items-center gap-1">
                       {[...Array(5)].map((_, idx) => (
-                        <Star key={idx} className="w-4 h-4 fill-current text-[#d4a853]" />
+                        <Star key={idx} className="w-4 h-4 fill-current text-amber-brand" />
                       ))}
                       <span className="text-xs text-muted-foreground ml-2 font-semibold">
                         Avis vérifié
@@ -538,7 +440,7 @@ function LandingPage() {
                   </div>
 
                   <div className="pt-4 border-t border-border flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#d4a853]/20 border border-[#d4a853]/40 flex items-center justify-center font-bold text-sm text-[#f0d48a]">
+                    <div className="w-10 h-10 rounded-full bg-terracotta-tint border border-terracotta/25 flex items-center justify-center font-bold text-sm text-terracotta-deep">
                       {t.avatar}
                     </div>
                     <div>
@@ -558,11 +460,11 @@ function LandingPage() {
         {/* FAQ ACCORDION */}
         <section id="faq" className="py-24 px-4 sm:px-6 relative">
           <div className="max-w-4xl mx-auto text-center mb-16 space-y-3">
-            <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#d4a853]/15 text-[#f0d48a] border border-[#d4a853]/30">
+            <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-terracotta-tint text-terracotta-deep border border-terracotta/20">
               Questions Fréquentes
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground">
-              Tout ce que vous devez <span className="text-[#f0d48a]">savoir</span>
+              Tout ce que vous devez <span className="text-terracotta-deep">savoir</span>
             </h2>
           </div>
 
@@ -576,17 +478,17 @@ function LandingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08 }}
-                  className="rounded-xl border border-border bg-[#111118] overflow-hidden"
+                  className="rounded-xl border border-border bg-card shadow-card overflow-hidden"
                 >
                   <button
                     onClick={() => setOpenFaq(isOpen ? null : i)}
-                    className="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-foreground hover:text-[#f0d48a] transition-colors cursor-pointer"
+                    className="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-foreground hover:text-terracotta-deep transition-colors cursor-pointer"
                   >
                     <span>{f.q}</span>
                     <motion.div
                       animate={{ rotate: isOpen ? 180 : 0 }}
                       transition={{ duration: 0.3 }}
-                      className="shrink-0 text-[#d4a853]"
+                      className="shrink-0 text-terracotta"
                     >
                       <ChevronDown className="w-5 h-5" />
                     </motion.div>
@@ -614,19 +516,20 @@ function LandingPage() {
 
         {/* FINAL CTA BANNER */}
         <section id="contact" className="py-24 px-4 sm:px-6 relative overflow-hidden">
-          <div className="max-w-4xl mx-auto text-center p-10 sm:p-14 rounded-3xl border border-[#d4a853]/40 bg-gradient-to-b from-[#111118] to-[#1a1a24] shadow-2xl space-y-6 relative">
-            <div className="w-16 h-16 mx-auto rounded-2xl bg-[#d4a853]/20 border border-[#d4a853]/40 flex items-center justify-center text-[#f0d48a]">
-              <Sparkles className="w-8 h-8" />
+          <div
+            className="max-w-4xl mx-auto text-center p-10 sm:p-14 rounded-3xl border border-[#9f3c16]/40 shadow-overlay space-y-6 relative overflow-hidden"
+            style={{ backgroundImage: "var(--gradient-hero)" }}
+          >
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center text-white">
+              <Store className="w-8 h-8" />
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight">
               Prêt à propulser votre restaurant <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4a853] via-[#f0d48a] to-[#b08800]">
-                au Burkina Faso ?
-              </span>
+              <span className="text-[#ffe3b3]">au Burkina Faso ?</span>
             </h2>
 
-            <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto">
+            <p className="text-sm sm:text-base text-white/85 max-w-xl mx-auto">
               Rejoignez plus de 50 restaurateurs satisfaits. Lancez votre menu digital et commencez
               à recevoir vos commandes WhatsApp en 5 minutes.
             </p>
@@ -634,7 +537,7 @@ function LandingPage() {
             <div className="pt-4 flex flex-wrap justify-center gap-4">
               <Interactive3DButton
                 to="/auth/inscription"
-                variant="primary"
+                variant="secondary"
                 size="lg"
                 icon={<ArrowRight className="w-4 h-4" />}
               >
@@ -643,9 +546,9 @@ function LandingPage() {
 
               <Interactive3DButton
                 href="https://wa.me/22655300868"
-                variant="secondary"
+                variant="gold-glow"
                 size="lg"
-                icon={<MessageCircle className="w-4 h-4 text-emerald-400" />}
+                icon={<MessageCircle className="w-4 h-4" />}
               >
                 Nous écrire sur WhatsApp
               </Interactive3DButton>

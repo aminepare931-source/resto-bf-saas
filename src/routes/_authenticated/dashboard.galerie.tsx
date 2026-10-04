@@ -65,16 +65,18 @@ function GalleryPage() {
     <div className="max-w-5xl">
       <div className="mb-6 flex items-end justify-between gap-4 flex-wrap">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Galerie</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">
+            Galerie
+          </p>
           <h1 className="text-3xl font-black">Photos d'ambiance</h1>
           {!isPremium && (
-            <p className="mt-2 text-sm text-amber-400">
+            <p className="mt-2 text-sm text-amber-deep">
               La galerie est une fonctionnalité Premium. Vous pouvez ajouter quelques photos, elles
               apparaîtront si vous passez en Premium.
             </p>
           )}
         </div>
-        <label className="px-5 py-3 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold hover:shadow-gold transition-shadow cursor-pointer">
+        <label className="px-5 py-3 rounded-xl bg-terracotta text-white font-bold hover:bg-terracotta-deep transition-colors cursor-pointer">
           {busy ? "Envoi..." : "+ Ajouter des photos"}
           <input
             type="file"
@@ -88,7 +90,7 @@ function GalleryPage() {
       </div>
 
       {images.length === 0 ? (
-        <div className="p-10 rounded-2xl border border-dashed border-white/10 text-center text-muted-foreground">
+        <div className="p-10 rounded-2xl border border-dashed border-border text-center text-muted-foreground">
           Aucune photo. Ajoutez vos clichés de salle, terrasse, équipe...
         </div>
       ) : (
@@ -96,7 +98,7 @@ function GalleryPage() {
           {images.map((img) => (
             <div
               key={img.id}
-              className="group relative rounded-xl overflow-hidden aspect-square border border-white/10"
+              className="group relative rounded-xl overflow-hidden aspect-square border border-border"
             >
               <StorageImage
                 path={img.image_url}
@@ -105,7 +107,7 @@ function GalleryPage() {
               />
               <button
                 onClick={() => remove(img)}
-                className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/70 text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-2 right-2 w-8 h-8 rounded-full bg-charcoal/80 text-white hover:bg-destructive transition-colors opacity-0 group-hover:opacity-100"
               >
                 ✕
               </button>

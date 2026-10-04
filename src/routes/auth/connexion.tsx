@@ -71,7 +71,7 @@ function LoginPage() {
       subtitle="Saisissez vos identifiants pour gérer votre restaurant"
     >
       <form onSubmit={handleEmailLogin} className="flex flex-col gap-4">
-        <Field label="Adresse Email" icon={<Mail className="w-4 h-4 text-[#d4a853]" />}>
+        <Field label="Adresse Email" icon={<Mail className="w-4 h-4 text-terracotta" />}>
           <input
             type="email"
             required
@@ -82,7 +82,7 @@ function LoginPage() {
           />
         </Field>
 
-        <Field label="Mot de passe" icon={<Lock className="w-4 h-4 text-[#d4a853]" />}>
+        <Field label="Mot de passe" icon={<Lock className="w-4 h-4 text-terracotta" />}>
           <input
             type="password"
             required
@@ -99,11 +99,11 @@ function LoginPage() {
             <input
               type="checkbox"
               defaultChecked
-              className="rounded accent-[#d4a853] w-3.5 h-3.5"
+              className="rounded accent-[#c85a32] w-3.5 h-3.5"
             />
             <span>Rester connecté</span>
           </label>
-          <a href="#contact" className="text-[#f0d48a] hover:underline font-semibold">
+          <a href="#contact" className="text-terracotta-deep hover:underline font-semibold">
             Mot de passe oublié ?
           </a>
         </div>
@@ -114,7 +114,7 @@ function LoginPage() {
           variant="primary"
           size="lg"
           icon={<ArrowRight className="w-4 h-4" />}
-          className="w-full mt-2 shadow-[0_0_25px_rgba(212,168,83,0.35)]"
+          className="w-full mt-2"
         >
           {loading ? "Connexion en cours..." : "Se connecter à mon espace"}
         </Interactive3DButton>
@@ -122,10 +122,10 @@ function LoginPage() {
 
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-white/10"></div>
+          <div className="w-full border-t border-border"></div>
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-[#111118] px-3 text-muted-foreground font-semibold">
+          <span className="bg-card px-3 text-muted-foreground font-semibold">
             ou continuer avec
           </span>
         </div>
@@ -135,7 +135,7 @@ function LoginPage() {
         type="button"
         onClick={handleGoogleLogin}
         disabled={loading}
-        className="w-full py-3.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-[#d4a853]/40 font-bold text-xs text-foreground transition-all disabled:opacity-60 flex items-center justify-center gap-2.5 shadow-sm active:scale-95 cursor-pointer"
+        className="w-full py-3.5 rounded-xl border border-border bg-card hover:bg-muted hover:border-terracotta/40 font-bold text-xs text-foreground transition-all disabled:opacity-60 flex items-center justify-center gap-2.5 shadow-card active:scale-95 cursor-pointer"
       >
         <svg className="w-4 h-4" viewBox="0 0 24 24">
           <path
@@ -160,31 +160,10 @@ function LoginPage() {
 
       <p className="text-center mt-6 text-xs text-muted-foreground">
         Nouveau sur RestoBF ?{" "}
-        <Link to="/auth/inscription" className="text-[#f0d48a] font-extrabold hover:underline">
+        <Link to="/auth/inscription" className="text-terracotta-deep font-extrabold hover:underline">
           Créer un compte restaurant (30j gratuits)
         </Link>
       </p>
-
-      <style>{`
-        .auth-input {
-          width: 100%;
-          padding: 12px 14px 12px 42px;
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(212,168,83,0.2);
-          border-radius: 12px;
-          color: #f3f3f3;
-          font-size: 14px;
-          font-weight: 500;
-          outline: none;
-          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .auth-input:focus {
-          border-color: #f0d48a;
-          background: rgba(255,255,255,0.06);
-          box-shadow: 0 0 15px rgba(212,168,83,0.25);
-        }
-        .auth-input::placeholder { color: rgba(255,255,255,0.3); }
-      `}</style>
     </AuthShell>
   );
 }

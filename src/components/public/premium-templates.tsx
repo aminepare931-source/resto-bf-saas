@@ -16,7 +16,6 @@ import {
 import { useCart } from "./CartContext";
 import { Reveal } from "@/components/landing/Reveal";
 import {
-  Sparkles,
   Search,
   Calendar,
   Clock,
@@ -41,6 +40,14 @@ import {
   ShieldCheck,
   Download,
   Info,
+  QrCode,
+  Zap,
+  Images,
+  Martini,
+  Sunset,
+  Music,
+  Lamp,
+  Mail,
 } from "lucide-react";
 
 const PREMIUM_FEU_BG = "/premium-bgs/premium-feu-bg.png";
@@ -160,7 +167,7 @@ export function TplPremiumLuxe(props: TemplateProps) {
   return <PremiumRestaurantTemplate {...props} config={PREMIUM_CONFIGS.luxe} />;
 }
 
-/** 3D TILT CARD COMPONENT WITH SPECULAR LIGHT EFFECT */
+/** 3D TILT CARD — transform écrit directement dans le DOM (zéro re-render par mousemove) */
 function TiltCard3D({
   children,
   className = "",
@@ -172,45 +179,69 @@ function TiltCard3D({
   style?: CSSProperties;
   onClick?: () => void;
 }) {
-  const [transform, setTransform] = useState(
-    "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)",
-  );
-  const [gloss, setGloss] = useState(
-    "radial-gradient(circle at 50% 50%, rgba(255,255,255,0), transparent 70%)",
-  );
+  const cardRef = useRef<HTMLDivElement | null>(null);
+  const glossRef = useRef<HTMLDivElement | null>(null);
+  const rafId = useRef(0);
+  const pointer = useRef<{ x: number; y: number; w: number; h: number } | null>(null);
+  const noTilt = useRef(false);
+
+  useEffect(() => {
+    noTilt.current =
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      window.matchMedia("(pointer: coarse)").matches;
+    return () => {
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+    };
+  }, []);
+
+  const applyTilt = () => {
+    rafId.current = 0;
+    const el = cardRef.current;
+    const p = pointer.current;
+    if (!el || !p) return;
+    const rotateX = ((p.y - p.h / 2) / (p.h / 2)) * -10;
+    const rotateY = ((p.x - p.w / 2) / (p.w / 2)) * 10;
+    el.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`;
+    if (glossRef.current) {
+      glossRef.current.style.background = `radial-gradient(circle at ${((p.x / p.w) * 100).toFixed(1)}% ${((p.y / p.h) * 100).toFixed(1)}%, rgba(255,255,255,0.2), transparent 65%)`;
+    }
+  };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (noTilt.current) return;
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    const rotateX = ((y - centerY) / centerY) * -10;
-    const rotateY = ((x - centerX) / centerX) * 10;
-
-    const percentX = (x / rect.width) * 100;
-    const percentY = (y / rect.height) * 100;
-
-    setTransform(
-      `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`,
-    );
-    setGloss(
-      `radial-gradient(circle at ${percentX.toFixed(1)}% ${percentY.toFixed(1)}%, rgba(255,255,255,0.2), transparent 65%)`,
-    );
+    pointer.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+      w: rect.width,
+      h: rect.height,
+    };
+    if (!rafId.current) rafId.current = requestAnimationFrame(applyTilt);
   };
 
   const handleMouseLeave = () => {
-    setTransform("perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)");
-    setGloss("radial-gradient(circle at 50% 50%, rgba(255,255,255,0), transparent 70%)");
+    if (rafId.current) {
+      cancelAnimationFrame(rafId.current);
+      rafId.current = 0;
+    }
+    pointer.current = null;
+    if (cardRef.current) {
+      cardRef.current.style.transform =
+        "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+    }
+    if (glossRef.current) {
+      glossRef.current.style.background =
+        "radial-gradient(circle at 50% 50%, rgba(255,255,255,0), transparent 70%)";
+    }
   };
 
   return (
     <div
+      ref={cardRef}
       className={`relative transition-transform duration-200 ease-out cursor-pointer ${className}`}
       style={{
         ...style,
-        transform,
+        transform: "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)",
         transformStyle: "preserve-3d",
       }}
       onMouseMove={handleMouseMove}
@@ -219,14 +250,17 @@ function TiltCard3D({
     >
       {children}
       <div
+        ref={glossRef}
         className="absolute inset-0 pointer-events-none rounded-[inherit] transition-opacity duration-300 z-10"
-        style={{ background: gloss }}
+        style={{
+          background: "radial-gradient(circle at 50% 50%, rgba(255,255,255,0), transparent 70%)",
+        }}
       />
     </div>
   );
 }
 
-/** EMBER & STARDUST CANVAS PARTICLES */
+/** EMBER & STARDUST CANVAS PARTICLES — sprite pré-rendu, ~24fps, demi-résolution, pause hors écran / onglet caché */
 function EmberParticleCanvas({ color = "#f4c15d" }: { color?: string }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -235,76 +269,133 @@ function EmberParticleCanvas({ color = "#f4c15d" }: { color?: string }) {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    let animId: number;
-    let width = (canvas.width = canvas.offsetWidth);
-    let height = (canvas.height = canvas.offsetHeight);
+    let animId = 0;
+    let running = false;
+    let lastDraw = 0;
+    // Demi-résolution : les braises sont des halos flous, aucune perte visible,
+    // ~4× moins de pixels à remplir/composite par frame (crucial sur mobile bas de gamme)
+    const RENDER_SCALE = 0.5;
+    let width = 0;
+    let height = 0;
 
-    const handleResize = () => {
-      if (!canvas) return;
-      width = canvas.width = canvas.offsetWidth;
-      height = canvas.height = canvas.offsetHeight;
+    const applySize = () => {
+      width = canvas.offsetWidth;
+      height = canvas.offsetHeight;
+      canvas.width = Math.max(1, Math.round(width * RENDER_SCALE));
+      canvas.height = Math.max(1, Math.round(height * RENDER_SCALE));
+      ctx.setTransform(RENDER_SCALE, 0, 0, RENDER_SCALE, 0, 0);
     };
-    window.addEventListener("resize", handleResize);
+    applySize();
+    window.addEventListener("resize", applySize);
 
-    const particleCount = 42;
+    // Halo pré-rendu une seule fois : drawImage remplace shadowBlur (très coûteux en canvas 2D)
+    const sprite = document.createElement("canvas");
+    const spriteSize = 24;
+    sprite.width = sprite.height = spriteSize;
+    const sctx = sprite.getContext("2d");
+    if (sctx) {
+      const grad = sctx.createRadialGradient(
+        spriteSize / 2,
+        spriteSize / 2,
+        0,
+        spriteSize / 2,
+        spriteSize / 2,
+        spriteSize / 2,
+      );
+      grad.addColorStop(0, color);
+      grad.addColorStop(0.35, color);
+      grad.addColorStop(1, "rgba(0,0,0,0)");
+      sctx.fillStyle = grad;
+      sctx.fillRect(0, 0, spriteSize, spriteSize);
+    }
+
+    const particleCount = 30;
     const particles = Array.from({ length: particleCount }).map(() => ({
       x: Math.random() * width,
       y: Math.random() * height,
       size: Math.random() * 2.5 + 0.8,
-      speedY: Math.random() * 0.7 + 0.25,
-      speedX: (Math.random() - 0.5) * 0.4,
-      alpha: Math.random() * 0.6 + 0.2,
-      pulse: Math.random() * 0.02 + 0.008,
+      speedY: (Math.random() * 0.7 + 0.25) * 2,
+      speedX: (Math.random() - 0.5) * 0.8,
+      baseAlpha: Math.random() * 0.4 + 0.25,
+      pulse: Math.random() * 1.6 + 0.6,
+      phase: Math.random() * Math.PI * 2,
     }));
 
-    const render = () => {
+    const render = (now: number) => {
+      if (!running) return;
+      animId = requestAnimationFrame(render);
+      if (now - lastDraw < 42) return; // plafond ~24fps
+      lastDraw = now;
+
       ctx.clearRect(0, 0, width, height);
+      const t = now / 1000;
       particles.forEach((p) => {
         p.y -= p.speedY;
         p.x += p.speedX;
-        p.alpha += Math.sin(Date.now() * p.pulse) * 0.008;
-        if (p.alpha < 0.1) p.alpha = 0.2;
-        if (p.alpha > 0.8) p.alpha = 0.65;
 
-        if (p.y < -10) {
-          p.y = height + 10;
+        if (p.y < -14) {
+          p.y = height + 14;
           p.x = Math.random() * width;
         }
-        if (p.x < -10) p.x = width + 10;
-        if (p.x > width + 10) p.x = -10;
+        if (p.x < -14) p.x = width + 14;
+        if (p.x > width + 14) p.x = -14;
 
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = color;
-        ctx.globalAlpha = p.alpha;
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = color;
-        ctx.fill();
-        ctx.restore();
+        ctx.globalAlpha = Math.min(
+          0.85,
+          Math.max(0.12, p.baseAlpha + Math.sin(t * p.pulse + p.phase) * 0.18),
+        );
+        const s = p.size * 7;
+        ctx.drawImage(sprite, p.x - s / 2, p.y - s / 2, s, s);
       });
-
-      animId = requestAnimationFrame(render);
+      ctx.globalAlpha = 1;
     };
 
-    render();
+    const start = () => {
+      if (running) return;
+      running = true;
+      lastDraw = 0;
+      animId = requestAnimationFrame(render);
+    };
+    const stop = () => {
+      running = false;
+      cancelAnimationFrame(animId);
+    };
+
+    // Ne tourne que si l'onglet est visible ET le canvas à l'écran
+    const onVisibility = () => {
+      if (document.hidden) stop();
+      else start();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !document.hidden) start();
+        else stop();
+      },
+      { threshold: 0 },
+    );
+    io.observe(canvas);
 
     return () => {
-      window.removeEventListener("resize", handleResize);
-      cancelAnimationFrame(animId);
+      stop();
+      io.disconnect();
+      window.removeEventListener("resize", applySize);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [color]);
 
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none z-0 opacity-80"
+      className="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-80"
     />
   );
 }
 
-/** INTERACTIVE 3D PLATTER SHOWCASE */
+/** INTERACTIVE 3D PLATTER SHOWCASE — rotation écrite directement dans le DOM, throttlée par rAF */
 function Interactive3DPlatterHero({
   dish,
   config,
@@ -314,24 +405,57 @@ function Interactive3DPlatterHero({
   config: PremiumConfig;
   onClick: () => void;
 }) {
-  const [rotation, setRotation] = useState({ x: 10, y: -12 });
+  const platterRef = useRef<HTMLDivElement | null>(null);
+  const rafId = useRef(0);
+  const pointer = useRef<{ x: number; y: number; w: number; h: number } | null>(null);
+  const noTilt = useRef(false);
+
+  useEffect(() => {
+    noTilt.current =
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      window.matchMedia("(pointer: coarse)").matches;
+    return () => {
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+    };
+  }, []);
+
+  const applyTilt = () => {
+    rafId.current = 0;
+    const el = platterRef.current;
+    const p = pointer.current;
+    if (!el || !p) return;
+    const rotX = 15 - (p.y / p.h) * 30;
+    const rotY = -15 + (p.x / p.w) * 30;
+    el.style.transform = `perspective(1000px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) translateZ(30px)`;
+  };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (noTilt.current) return;
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const rotX = 15 - (y / rect.height) * 30;
-    const rotY = -15 + (x / rect.width) * 30;
-    setRotation({ x: rotX, y: rotY });
+    pointer.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+      w: rect.width,
+      h: rect.height,
+    };
+    if (!rafId.current) rafId.current = requestAnimationFrame(applyTilt);
   };
 
   const handleMouseLeave = () => {
-    setRotation({ x: 8, y: -10 });
+    if (rafId.current) {
+      cancelAnimationFrame(rafId.current);
+      rafId.current = 0;
+    }
+    pointer.current = null;
+    if (platterRef.current) {
+      platterRef.current.style.transform =
+        "perspective(1000px) rotateX(8deg) rotateY(-10deg) translateZ(30px)";
+    }
   };
 
   return (
     <div
-      className="relative w-full h-[380px] sm:h-[440px] flex items-center justify-center perspective-1000 cursor-pointer group"
+      className="relative w-full h-[380px] sm:h-[440px] flex items-center justify-center cursor-pointer group"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
@@ -344,15 +468,16 @@ function Interactive3DPlatterHero({
 
       {/* 3D Floating Platter Container */}
       <div
-        className="relative w-[300px] sm:w-[350px] h-[300px] sm:h-[350px] rounded-full p-4 transition-transform duration-300 ease-out border border-white/20 shadow-2xl backdrop-blur-xl bg-black/40 flex items-center justify-center"
+        ref={platterRef}
+        className="relative w-[300px] sm:w-[350px] h-[300px] sm:h-[350px] rounded-full p-4 transition-transform duration-300 ease-out border border-white/20 shadow-2xl bg-black/55 flex items-center justify-center"
         style={{
-          transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) translateZ(30px)`,
+          transform: "perspective(1000px) rotateX(10deg) rotateY(-12deg) translateZ(30px)",
           transformStyle: "preserve-3d",
           boxShadow: `0 30px 60px -15px ${config.accent}33`,
         }}
       >
         {/* Ring Orbit Animation */}
-        <div className="absolute inset-2 rounded-full border border-dashed border-[#f0d48a]/40 animate-spin-slow pointer-events-none" />
+        <div className="absolute inset-2 rounded-full border border-dashed border-[#f0d48a]/40 pointer-events-none" />
 
         {/* Dish Image */}
         <div className="w-full h-full rounded-full overflow-hidden border-2 border-[#f0d48a]/50 shadow-inner relative">
@@ -373,7 +498,7 @@ function Interactive3DPlatterHero({
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6 text-center">
             <span className="text-[10px] font-black uppercase tracking-widest text-[#f0d48a] mb-1">
-              👑 Plat Signature Interactive
+              Plat Signature Interactive
             </span>
             <h3 className="text-xl font-extrabold text-white line-clamp-1">
               {dish?.name ?? "Dégustation Prestige"}
@@ -389,7 +514,7 @@ function Interactive3DPlatterHero({
           className="absolute -top-4 -left-4 bg-black/80 border border-[#f0d48a]/60 px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-xl flex items-center gap-1.5 transition-transform duration-300 group-hover:translate-z-10"
           style={{ transform: "translateZ(40px)" }}
         >
-          <Flame className="w-3.5 h-3.5 text-orange-400 animate-pulse" />
+          <Flame className="w-3.5 h-3.5 text-orange-400" />
           <span>Fait Maison</span>
         </div>
 
@@ -398,7 +523,6 @@ function Interactive3DPlatterHero({
           className="absolute -bottom-2 -right-4 bg-[#f0d48a] text-black px-3.5 py-1.5 rounded-full text-xs font-black shadow-2xl flex items-center gap-1.5 transition-transform duration-300"
           style={{ transform: "translateZ(50px)" }}
         >
-          <Sparkles className="w-3.5 h-3.5" />
           <span>Cliquer pour Découvrir</span>
         </div>
       </div>
@@ -845,8 +969,7 @@ function PremiumRestaurantTemplate({
             {/* HERO SECTION WITH 3D PLATTER */}
             <section id="accueil" className="premium-hero">
               <div className="premium-hero-copy">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-[#f0d48a]/40 text-xs font-black text-[#f0d48a] mb-4 backdrop-blur-md">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 border border-[#f0d48a]/40 text-xs font-black text-[#f0d48a] mb-4">
                   <span>{restaurant.cuisine ?? config.capsule}</span>
                 </div>
 
@@ -908,18 +1031,20 @@ function PremiumRestaurantTemplate({
             {/* FEATURE HIGHLIGHT STRIP */}
             <section className="premium-strip" aria-label="Points forts">
               {[
-                ["📲", "Scan QR Code", "Lien partageable & QR table direct"],
-                ["📅", "Réservation VIP", "Formulaire fluide avec choix d'ambiance"],
-                ["⚡", "Commandes Directes", "Connexion temps réel cuisine & serveurs"],
-                ["⭐", "Avis Vérifiés", "Preuve sociale & notes garanties"],
-                ["🖼️", "Galerie HD", "Photos immersives de la salle"],
-                ["🥂", "Salons Privés", "Privatisation, anniversaire & business"],
-              ].map(([icon, title, text]) => (
-                <TiltCard3D key={title}>
+                { I: QrCode, t: "Scan QR Code", d: "Lien partageable & QR table direct" },
+                { I: Calendar, t: "Réservation VIP", d: "Formulaire fluide avec choix d'ambiance" },
+                { I: Zap, t: "Commandes Directes", d: "Connexion temps réel cuisine & serveurs" },
+                { I: Star, t: "Avis Vérifiés", d: "Preuve sociale & notes garanties" },
+                { I: Images, t: "Galerie HD", d: "Photos immersives de la salle" },
+                { I: Martini, t: "Salons Privés", d: "Privatisation, anniversaire & business" },
+              ].map((f) => (
+                <TiltCard3D key={f.t}>
                   <article style={{ height: "100%" }}>
-                    <b>{icon}</b>
-                    <strong>{title}</strong>
-                    <span>{text}</span>
+                    <b>
+                      <f.I className="w-6 h-6" style={{ color: "var(--pr-accent)" }} />
+                    </b>
+                    <strong>{f.t}</strong>
+                    <span>{f.d}</span>
                   </article>
                 </TiltCard3D>
               ))}
@@ -1135,9 +1260,15 @@ function PremiumRestaurantTemplate({
                       <div className="premium-qr-placeholder">QR</div>
                     )}
                     <div className="premium-contact-mini">
-                      <span>📞 {restaurant.phone}</span>
-                      <span>✉️ {restaurant.email}</span>
-                      <span>📍 {restaurant.address ?? restaurant.city}</span>
+                      <span className="flex items-center gap-2">
+                        <Phone className="w-3.5 h-3.5 shrink-0" /> {restaurant.phone}
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <Mail className="w-3.5 h-3.5 shrink-0" /> {restaurant.email}
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <MapPin className="w-3.5 h-3.5 shrink-0" /> {restaurant.address ?? restaurant.city}
+                      </span>
                     </div>
                   </aside>
                 </div>
@@ -1288,8 +1419,7 @@ function PremiumDishModal({
         alignItems: "center",
         justifyContent: "center",
         padding: 20,
-        background: "rgba(0,0,0,.85)",
-        backdropFilter: "blur(12px)",
+        background: "rgba(0,0,0,.9)",
       }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
@@ -1304,7 +1434,6 @@ function PremiumDishModal({
           background: "var(--pr-surface)",
           border: "1px solid var(--pr-border)",
           borderRadius: "var(--pr-radius)",
-          backdropFilter: "blur(24px)",
           boxShadow: "0 25px 60px -12px rgba(0, 0, 0, 0.8)",
         }}
       >
@@ -1529,7 +1658,7 @@ function PremiumLightbox({
 
   return (
     <div
-      className="fixed inset-0 z-[400] bg-black/92 backdrop-blur-xl flex items-center justify-center p-4 animate-in fade-in"
+      className="fixed inset-0 z-[400] bg-black/92 flex items-center justify-center p-4 animate-in fade-in"
       onClick={onClose}
     >
       <div
@@ -1582,7 +1711,7 @@ function PremiumLightbox({
         </div>
 
         {/* Caption & Counter */}
-        <div className="mt-4 flex items-center gap-4 bg-black/70 backdrop-blur-md px-5 py-2.5 rounded-full border border-white/10">
+        <div className="mt-4 flex items-center gap-4 bg-black/80 px-5 py-2.5 rounded-full border border-white/10">
           <span className="text-xs font-black text-[#f0d48a]">
             {index + 1} / {images.length}
           </span>
@@ -1625,25 +1754,25 @@ function PremiumReservationForm({
       id: "Terrasse Panoramique",
       label: "Terrasse Panoramique",
       desc: "Vue Coucher de Soleil",
-      icon: "🌅",
+      icon: Sunset,
     },
     {
       id: "Salon Climatisé VIP",
       label: "Salon VIP Climatisé",
       desc: "Ambiance Intimiste & Calme",
-      icon: "👑",
+      icon: Crown,
     },
     {
       id: "Table Proche Scène",
       label: "Scène & Animation",
       desc: "Ambiance Musique Live",
-      icon: "🎵",
+      icon: Music,
     },
     {
       id: "Coin Calme & Discret",
       label: "Coin Discret",
       desc: "Pour Affaires & Romantique",
-      icon: "🕯️",
+      icon: Lamp,
     },
   ];
 
@@ -1694,14 +1823,14 @@ function PremiumReservationForm({
     const whatsappPhone = restaurant.whatsapp?.replace(/\D/g, "");
     if (whatsappPhone) {
       const waText = encodeURIComponent(
-        `👑 *NOUVELLE RÉSERVATION TABLE VIP*\n\n` +
-          `• Nom : ${form.customer_name}\n` +
-          `• Tél : ${form.customer_phone}\n` +
-          `• Date : ${form.reservation_date} à ${form.reservation_time}\n` +
-          `• Personnes : ${form.party_size}\n` +
-          `• Emplacement : ${form.seating}\n` +
-          `• Occasion : ${form.occasion}\n` +
-          (form.notes ? `• Message : ${form.notes}` : ""),
+        `*NOUVELLE RÉSERVATION TABLE VIP*\n\n` +
+          `Nom : ${form.customer_name}\n` +
+          `Tél : ${form.customer_phone}\n` +
+          `Date : ${form.reservation_date} à ${form.reservation_time}\n` +
+          `Personnes : ${form.party_size}\n` +
+          `Emplacement : ${form.seating}\n` +
+          `Occasion : ${form.occasion}\n` +
+          (form.notes ? `Message : ${form.notes}` : ""),
       );
       window.open(`https://wa.me/${whatsappPhone}?text=${waText}`, "_blank");
     }
@@ -1785,7 +1914,9 @@ function PremiumReservationForm({
                   : "bg-black/30 border-white/10 text-white/70 hover:border-white/30"
               }`}
             >
-              <span className="text-2xl">{opt.icon}</span>
+              <span className="shrink-0 text-[#f0d48a]">
+                <opt.icon className="w-6 h-6" />
+              </span>
               <div>
                 <strong className="block text-xs font-bold text-white">{opt.label}</strong>
                 <span className="text-[10px] text-white/60">{opt.desc}</span>
@@ -1858,7 +1989,7 @@ function PremiumReservationForm({
           color: config.ink,
         }}
       >
-        {busy ? "Confirmation en cours..." : "👑 Confirmer la Réservation VIP"}
+        {busy ? "Confirmation en cours..." : "Confirmer la Réservation VIP"}
       </button>
     </form>
   );
@@ -1870,7 +2001,7 @@ const PREMIUM_CSS = `
 .premium-bg img{width:100%;height:100%;object-fit:cover;filter:saturate(1.1) contrast(1.15);transform:scale(1.08);animation:premium-bg-drift 22s ease-in-out infinite alternate;}
 .premium-bg span{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.88),rgba(0,0,0,.52),rgba(0,0,0,.9)),radial-gradient(circle at 50% 15%,color-mix(in oklab,var(--pr-accent) 24%,transparent),transparent 45%);}
 
-.premium-nav{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px clamp(18px,4vw,56px);background:color-mix(in oklab,var(--pr-bg) 80%,transparent);border-bottom:1px solid var(--pr-border);backdrop-filter:blur(20px);}
+.premium-nav{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px clamp(18px,4vw,56px);background:color-mix(in oklab,var(--pr-bg) 93%,transparent);border-bottom:1px solid var(--pr-border);}
 .premium-brand{display:grid;text-decoration:none;color:var(--pr-text);min-width:0}
 .premium-brand span{font-family:var(--pr-serif);font-size:clamp(22px,3vw,34px);line-height:1;font-weight:700}
 .premium-brand small{color:var(--pr-accent);font-size:10px;text-transform:uppercase;letter-spacing:.24em;margin-top:4px}
@@ -1890,7 +2021,7 @@ const PREMIUM_CSS = `
 .premium-hamburger-line.open:nth-child(2){opacity:0}
 .premium-hamburger-line.open:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
 
-.premium-mob-menu{display:flex;position:sticky;top:60px;background:color-mix(in oklab,var(--pr-bg) 95%,transparent);backdrop-filter:blur(22px);border-bottom:1px solid var(--pr-border);padding:16px;z-index:35;flex-direction:column;gap:8px}
+.premium-mob-menu{display:flex;position:sticky;top:60px;background:color-mix(in oklab,var(--pr-bg) 97%,transparent);border-bottom:1px solid var(--pr-border);padding:16px;z-index:35;flex-direction:column;gap:8px}
 .premium-mob-menu a{color:var(--pr-text);text-decoration:none;font-size:14px;font-weight:700;padding:12px 16px;border-radius:10px;transition:background .2s;border:1px solid transparent}
 .premium-mob-menu a:hover{background:rgba(255,255,255,.08);border-color:var(--pr-border)}
 
@@ -1913,7 +2044,7 @@ const PREMIUM_CSS = `
 .premium-hero-panel span{display:block;font-family:var(--pr-serif);font-size:32px;color:var(--pr-accent);line-height:1;font-weight:800}
 .premium-hero-panel small{color:var(--pr-muted);font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;margin-top:6px;display:block}
 
-.premium-strip{display:grid;grid-template-columns:repeat(6,1fr);border-top:1px solid var(--pr-border);border-bottom:1px solid var(--pr-border);background:color-mix(in oklab,var(--pr-bg) 80%,transparent);backdrop-filter:blur(18px);}
+.premium-strip{display:grid;grid-template-columns:repeat(6,1fr);border-top:1px solid var(--pr-border);border-bottom:1px solid var(--pr-border);background:color-mix(in oklab,var(--pr-bg) 93%,transparent);}
 .premium-strip article{padding:26px 20px;border-right:1px solid var(--pr-border);display:grid;gap:8px;transition:background .3s}
 .premium-strip article:hover{background:color-mix(in oklab,var(--pr-accent) 10%,transparent)}
 .premium-strip b{font-size:26px}
@@ -1928,7 +2059,7 @@ const PREMIUM_CSS = `
 
 .premium-search-box{position:relative;max-width:600px;margin-bottom:24px}
 .premium-search-icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--pr-accent)}
-.premium-search-box input{width:100%;padding:14px 48px 14px 48px;background:var(--pr-surface);border:1px solid var(--pr-border);border-radius:999px;color:var(--pr-text);font-size:13px;outline:none;backdrop-filter:blur(16px);transition:border-color .2s}
+.premium-search-box input{width:100%;padding:14px 48px 14px 48px;background:var(--pr-surface);border:1px solid var(--pr-border);border-radius:999px;color:var(--pr-text);font-size:13px;outline:none;transition:border-color .2s}
 .premium-search-box input:focus{border-color:var(--pr-accent)}
 .premium-search-clear{position:absolute;right:18px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--pr-muted);cursor:pointer}
 
@@ -1965,7 +2096,7 @@ const PREMIUM_CSS = `
 
 .premium-experience{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:40px;align-items:start;background:linear-gradient(180deg,transparent,rgba(0,0,0,.3),transparent)}
 .premium-experience-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.premium-experience-list article,.premium-chef-card,.premium-qr-card,.premium-form,.premium-review-form{background:var(--pr-surface);border:1px solid var(--pr-border);backdrop-filter:blur(18px);border-radius:var(--pr-radius)}
+.premium-experience-list article,.premium-chef-card,.premium-qr-card,.premium-form,.premium-review-form{background:var(--pr-surface);border:1px solid var(--pr-border);border-radius:var(--pr-radius)}
 .premium-experience-list article{padding:20px}
 .premium-experience-list span{display:block;color:var(--pr-accent);font-size:10px;text-transform:uppercase;letter-spacing:.22em;font-weight:900;margin-bottom:8px}
 .premium-experience-list strong{color:var(--pr-text);font-size:14px;line-height:1.5}
@@ -2011,18 +2142,14 @@ const PREMIUM_CSS = `
 .premium-footer strong{display:block;font-family:var(--pr-serif);font-size:32px;color:var(--pr-accent)}
 .premium-footer span,.premium-footer a{display:block;color:var(--pr-muted);text-decoration:none;margin-top:6px}
 
-.premium-mobile-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:50;background:color-mix(in oklab,var(--pr-bg) 92%,transparent);backdrop-filter:blur(20px);border-top:1px solid var(--pr-border);padding:10px 16px;justify-content:space-around;align-items:center}
+.premium-mobile-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:50;background:color-mix(in oklab,var(--pr-bg) 96%,transparent);border-top:1px solid var(--pr-border);padding:10px 16px;justify-content:space-around;align-items:center}
 .premium-mob-btn{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--pr-muted);text-decoration:none;font-size:10px;font-weight:800;position:relative}
 .premium-mob-btn.highlight{color:var(--pr-ink);background:var(--pr-accent);padding:8px 16px;border-radius:999px;flex-direction:row;gap:6px;font-size:11px}
 .premium-mob-btn.cart-badge .count{position:absolute;-top-8;right:-6px;background:#ef4444;color:#fff;font-size:9px;font-weight:900;width:16px;height:16px;border-radius:50%;display:grid;place-items:center}
 
-.premium-luxe .premium-hero h1{background:linear-gradient(115deg,var(--pr-text) 20%,var(--pr-accent) 42%,var(--pr-text) 58%,var(--pr-accent) 80%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:premium-luxe-shine 9s ease-in-out infinite}
-@keyframes premium-luxe-shine{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.premium-luxe .premium-hero h1{background:linear-gradient(115deg,var(--pr-text) 20%,var(--pr-accent) 42%,var(--pr-text) 58%,var(--pr-accent) 80%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
 @keyframes premium-bg-drift{0%{transform:scale(1.08) translate3d(-1.5%,0,0)}100%{transform:scale(1.18) translate3d(1.5%,-1.5%,0)}}
-
-@keyframes spin-slow{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-.animate-spin-slow{animation:spin-slow 28s linear infinite}
-.perspective-1000{perspective:1000px}
+@media(prefers-reduced-motion:reduce){.premium-bg img{animation:none;transition:none}}
 
 @media(max-width:980px){
   .premium-nav nav{display:none}

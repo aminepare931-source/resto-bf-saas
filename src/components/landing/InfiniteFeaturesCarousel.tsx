@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
   QrCode,
@@ -8,18 +6,8 @@ import {
   Smartphone,
   PieChart,
   ShieldCheck,
-  TrendingUp,
-  Receipt,
-  Users,
-  Wifi,
-  Sparkles,
-  Zap,
-  Globe,
-  Bell,
-  Sliders,
-  DollarSign,
   Printer,
-  Calendar,
+  Bell,
 } from "lucide-react";
 
 export const featuresList = [
@@ -28,7 +16,7 @@ export const featuresList = [
     title: "Menu Digital QR Code",
     desc: "Vos clients scannent et voient votre menu instantanément en HD sans télécharger d'application.",
     badge: "Essentiel",
-    color: "#d4a853",
+    color: "#c85a32",
   },
   {
     icon: MessageSquare,
@@ -82,96 +70,79 @@ export const featuresList = [
 ];
 
 export function InfiniteFeaturesCarousel() {
-  const [isPaused, setIsPaused] = useState(false);
   const isMobile = useIsMobile();
   const cardClass = isMobile
-    ? "w-[280px] sm:w-[340px] p-6 rounded-2xl border border-border/80 bg-[#111118] transition-colors duration-300 relative overflow-hidden"
-    : "w-[280px] sm:w-[340px] p-6 rounded-2xl border border-border/80 bg-[#111118]/90 backdrop-blur-xl hover:border-[#d4a853]/60 transition-all duration-300 hover:shadow-[0_10px_30px_rgba(212,168,83,0.25)] hover:-translate-y-1 group relative overflow-hidden";
+    ? "w-[280px] sm:w-[340px] p-6 rounded-2xl border border-border bg-card shadow-card transition-colors duration-300 relative overflow-hidden"
+    : "w-[280px] sm:w-[340px] p-6 rounded-2xl border border-border bg-card shadow-card hover:border-terracotta/40 transition-[border-color,box-shadow,transform] duration-300 hover:shadow-elevated hover:-translate-y-1 group relative overflow-hidden";
 
-  // Repeat items for seamless 360 continuous infinite scrolling marquee loop
+  // Répété 3× pour une boucle continue parfaitement raccordée (translation de -33.33%)
   const marqueeItems = [...featuresList, ...featuresList, ...featuresList];
 
   return (
     <div className="relative w-full py-10 overflow-hidden">
-      {/* Glow Auroras background — supprimé sur mobile (coûteux avec le flou) */}
+      {/* Glow Aurora background — pré-fondu, sans filter blur */}
       {!isMobile && (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-64 bg-[#d4a853]/10 blur-[100px] pointer-events-none rounded-full" />
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-64 pointer-events-none rounded-full"
+          style={{
+            background:
+              "radial-gradient(ellipse, rgba(200,90,50,0.10) 0%, rgba(200,90,50,0.04) 50%, transparent 75%)",
+          }}
+        />
       )}
 
       {/* Fade Gradients on edges for smooth blend */}
-      <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-background via-background/80 to-transparent z-20 pointer-events-none" />
-      <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-background via-background/80 to-transparent z-20 pointer-events-none" />
+      <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-r from-muted via-muted/80 to-transparent z-20 pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-32 bg-gradient-to-l from-muted via-muted/80 to-transparent z-20 pointer-events-none" />
 
-      {/* ROW 1: Auto-scrolling LEFT */}
-      <div
-        className="flex gap-4 sm:gap-6 w-max cursor-grab active:cursor-grabbing py-3"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-      >
-        <motion.div
-          animate={{ x: isPaused ? undefined : ["0%", "-33.33%"] }}
-          transition={{
-            x: {
-              repeat: Infinity,
-              repeatType: "loop",
-              duration: isMobile ? 55 : 35,
-              ease: "linear",
-            },
-          }}
-          className="flex gap-4 sm:gap-6"
+      {/* ROW 1 : défilement gauche (CSS keyframes → thread compositeur) */}
+      <div className="marquee-row flex w-max py-3">
+        <div
+          className="marquee-track marquee-left flex gap-4 sm:gap-6"
+          style={{ animationDuration: isMobile ? "55s" : "35s" }}
         >
           {marqueeItems.map((item, idx) => {
             const Icon = item.icon;
             return (
               <div key={`row1-${idx}`} className={cardClass}>
-                {/* Glowing subtle hover accent — désactivé sur mobile */}
+                {/* Halo discret par carte — dégradé pré-fondu */}
                 {!isMobile && (
                   <div
-                    className="absolute top-0 right-0 w-24 h-24 blur-2xl opacity-10 group-hover:opacity-30 transition-opacity pointer-events-none rounded-full"
-                    style={{ backgroundColor: item.color }}
+                    className="absolute top-0 right-0 w-24 h-24 opacity-10 group-hover:opacity-30 transition-opacity pointer-events-none rounded-full"
+                    style={{
+                      background: `radial-gradient(circle, ${item.color} 0%, transparent 70%)`,
+                    }}
                   />
                 )}
 
                 <div className="flex items-center justify-between mb-4">
                   <div
-                    className="w-11 h-11 rounded-xl flex items-center justify-center border border-white/10 shadow-inner group-hover:scale-110 transition-transform"
+                    className="w-11 h-11 rounded-xl flex items-center justify-center border border-black/5 shadow-inner group-hover:scale-110 transition-transform"
                     style={{ backgroundColor: `${item.color}20`, color: item.color }}
                   >
                     <Icon className="w-5 h-5" />
                   </div>
 
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#1a1a24] border border-border text-foreground/80 uppercase tracking-wider">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-muted border border-border text-muted-foreground uppercase tracking-wider">
                     {item.badge}
                   </span>
                 </div>
 
-                <h3 className="text-base font-bold text-foreground group-hover:text-[#f0d48a] transition-colors mb-1">
+                <h3 className="text-base font-bold text-foreground group-hover:text-terracotta-deep transition-colors mb-1">
                   {item.title}
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
               </div>
             );
           })}
-        </motion.div>
+        </div>
       </div>
 
-      {/* ROW 2: Auto-scrolling RIGHT (Reverse direction) */}
-      <div
-        className="flex gap-4 sm:gap-6 w-max cursor-grab active:cursor-grabbing py-3 mt-2"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-      >
-        <motion.div
-          animate={{ x: isPaused ? undefined : ["-33.33%", "0%"] }}
-          transition={{
-            x: {
-              repeat: Infinity,
-              repeatType: "loop",
-              duration: isMobile ? 60 : 40,
-              ease: "linear",
-            },
-          }}
-          className="flex gap-4 sm:gap-6"
+      {/* ROW 2 : défilement droite (inverse) */}
+      <div className="marquee-row flex w-max py-3 mt-2">
+        <div
+          className="marquee-track marquee-right flex gap-4 sm:gap-6"
+          style={{ animationDuration: isMobile ? "60s" : "40s" }}
         >
           {marqueeItems.map((item, idx) => {
             const Icon = item.icon;
@@ -179,32 +150,34 @@ export function InfiniteFeaturesCarousel() {
               <div key={`row2-${idx}`} className={cardClass}>
                 {!isMobile && (
                   <div
-                    className="absolute top-0 right-0 w-24 h-24 blur-2xl opacity-10 group-hover:opacity-30 transition-opacity pointer-events-none rounded-full"
-                    style={{ backgroundColor: item.color }}
+                    className="absolute top-0 right-0 w-24 h-24 opacity-10 group-hover:opacity-30 transition-opacity pointer-events-none rounded-full"
+                    style={{
+                      background: `radial-gradient(circle, ${item.color} 0%, transparent 70%)`,
+                    }}
                   />
                 )}
 
                 <div className="flex items-center justify-between mb-4">
                   <div
-                    className="w-11 h-11 rounded-xl flex items-center justify-center border border-white/10 shadow-inner group-hover:scale-110 transition-transform"
+                    className="w-11 h-11 rounded-xl flex items-center justify-center border border-black/5 shadow-inner group-hover:scale-110 transition-transform"
                     style={{ backgroundColor: `${item.color}20`, color: item.color }}
                   >
                     <Icon className="w-5 h-5" />
                   </div>
 
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#1a1a24] border border-border text-foreground/80 uppercase tracking-wider">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-muted border border-border text-muted-foreground uppercase tracking-wider">
                     {item.badge}
                   </span>
                 </div>
 
-                <h3 className="text-base font-bold text-foreground group-hover:text-[#f0d48a] transition-colors mb-1">
+                <h3 className="text-base font-bold text-foreground group-hover:text-terracotta-deep transition-colors mb-1">
                   {item.title}
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
               </div>
             );
           })}
-        </motion.div>
+        </div>
       </div>
     </div>
   );

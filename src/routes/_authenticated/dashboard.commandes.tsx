@@ -6,15 +6,23 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { toast } from "sonner";
 import {
   Search,
-  Filter,
   Clock,
   ArrowUpDown,
+  ArrowRight,
   ChevronDown,
   ChevronUp,
   Volume2,
   VolumeX,
   Trash2,
   X,
+  Armchair,
+  ShoppingBag,
+  MapPin,
+  CheckCircle2,
+  CreditCard,
+  Bell,
+  Printer,
+  ChefHat,
 } from "lucide-react";
 import { OrderCardSkeleton } from "@/components/ui/skeleton";
 import type { Order, OrderStatus } from "@/types";
@@ -52,7 +60,7 @@ function OrdersPage() {
   const [page, setPage] = useState(1);
   const PER_PAGE = 20;
   const lastSeenCount = useRef(0);
-  const [paymentModalOrder, setPaymentModalOrder] = useState(null);
+  const [paymentModalOrder, setPaymentModalOrder] = useState<Order | null>(null);
   const [voiceMutedState, setVoiceMutedState] = useState(() => isVoiceMuted());
   const [ticketOrder, setTicketOrder] = useState<Order | null>(null);
   const [selectMode, setSelectMode] = useState(false);
@@ -122,7 +130,7 @@ function OrdersPage() {
             const newOrder = payload.new as unknown as Order;
             setOrders((prev) => [newOrder, ...prev]);
             toast.success(
-              `🛎️ Nouvelle commande${newOrder.table_number ? ` · Table ${newOrder.table_number}` : ""}`,
+              `Nouvelle commande${newOrder.table_number ? ` · Table ${newOrder.table_number}` : ""}`,
             );
             try {
               const audio = new Audio(
@@ -184,7 +192,7 @@ function OrdersPage() {
     setOrders((prev) =>
       prev.map((o) => (o.id === orderId ? { ...o, payment_status: "paid" as any } : o)),
     );
-    toast.success("Paiement validé ✓");
+    toast.success("Paiement validé");
   };
 
   const deleteOrder = async (o: Order) => {
@@ -270,15 +278,15 @@ function OrdersPage() {
       .map((it) => `• ${it.qty}x ${it.name} - ${formatCurrency(it.price * it.qty)}`)
       .join("\n");
     const msg =
-      `🍳 Nouvelle commande pour la cuisine\n\n` +
+      `Nouvelle commande pour la cuisine\n\n` +
       `Commande #${order.id.slice(0, 8)}\n` +
-      (order.table_number ? `🪑 Table ${order.table_number}\n` : "🛍️ À emporter\n") +
-      (order.customer_name ? `👤 ${order.customer_name}\n` : "") +
-      (order.customer_phone ? `📱 ${order.customer_phone}\n` : "") +
-      `\n📋 Détails :\n${itemsList}\n` +
-      `\n💰 Total : ${formatCurrency(Number(order.total))}` +
-      (order.notes ? `\n\n📝 Notes : ${order.notes}` : "") +
-      `\n\n⏰ ${new Date(order.created_at).toLocaleString("fr-FR")}`;
+      (order.table_number ? `Table ${order.table_number}\n` : "À emporter\n") +
+      (order.customer_name ? `Client : ${order.customer_name}\n` : "") +
+      (order.customer_phone ? `Téléphone : ${order.customer_phone}\n` : "") +
+      `\nDétails :\n${itemsList}\n` +
+      `\nTotal : ${formatCurrency(Number(order.total))}` +
+      (order.notes ? `\n\nNotes : ${order.notes}` : "") +
+      `\n\n${new Date(order.created_at).toLocaleString("fr-FR")}`;
 
     if (channel === "whatsapp" || channel === "both") {
       const cleanPhone = r.whatsapp.replace(/\D/g, "");
@@ -364,7 +372,9 @@ function OrdersPage() {
     <div className="max-w-6xl">
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Commandes</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">
+            Commandes
+          </p>
           <h1 className="text-3xl font-black">Commandes en direct</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Les commandes des clients (QR code, WhatsApp, manuel) arrivent ici en temps réel.
@@ -377,7 +387,7 @@ function OrdersPage() {
               return !v;
             })
           }
-          className="shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs font-semibold text-muted-foreground hover:text-gold hover:border-gold/30 transition-colors"
+          className="shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl border border-border bg-card text-xs font-semibold text-muted-foreground hover:text-terracotta hover:border-terracotta/30 transition-colors"
           title={
             voiceMutedState
               ? "Activer l'annonce vocale des commandes"
@@ -402,7 +412,7 @@ function OrdersPage() {
             setPage(1);
           }}
           placeholder="Rechercher par table, client, plat, notes..."
-          className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm outline-none focus:border-gold/50 transition-colors"
+          className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-card border border-border text-sm outline-none focus:border-terracotta/50 transition-colors"
         />
         {search && (
           <button
@@ -423,8 +433,8 @@ function OrdersPage() {
               onClick={() => setFilter(s)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
                 filter === s
-                  ? "bg-gold/20 border-gold/40 text-gold"
-                  : "border-white/10 text-muted-foreground hover:text-foreground"
+                  ? "bg-terracotta-tint border-terracotta/40 text-terracotta-deep"
+                  : "border-border text-muted-foreground hover:text-foreground hover:bg-surface-warm"
               }`}
             >
               {s === "all" ? "Toutes" : ORDER_STATUS_LABEL[s as OrderStatus]} · {counts[s] ?? 0}
@@ -438,8 +448,8 @@ function OrdersPage() {
               onClick={() => setDateFilter(d)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
                 dateFilter === d
-                  ? "bg-blue-500/20 border-blue-500/40 text-blue-400"
-                  : "border-white/10 text-muted-foreground hover:text-foreground"
+                  ? "bg-emerald-tint border-emerald/40 text-emerald-deep"
+                  : "border-border text-muted-foreground hover:text-foreground hover:bg-surface-warm"
               }`}
             >
               {d === "all" ? "Tout" : d === "today" ? "Aujourd'hui" : "7 jours"}
@@ -463,8 +473,8 @@ function OrdersPage() {
             }}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
               selectMode
-                ? "bg-red-500/15 border-red-500/40 text-red-400"
-                : "border-white/10 text-muted-foreground hover:text-foreground"
+                ? "bg-destructive/10 border-destructive/30 text-destructive"
+                : "border-border text-muted-foreground hover:text-foreground hover:bg-surface-warm"
             }`}
           >
             {selectMode ? (
@@ -484,27 +494,27 @@ function OrdersPage() {
                 onClick={() => toggleSort(field)}
                 className={`flex items-center gap-1 px-2 py-1 rounded text-[10px] font-semibold transition-colors ${
                   sortField === field
-                    ? "text-gold bg-gold/10"
+                    ? "text-terracotta-deep bg-terracotta-tint"
                     : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <ArrowUpDown className="w-3 h-3" />
-              {field === "date" ? "Date" : field === "total" ? "Montant" : "Statut"}
-              {sortField === field &&
-                (sortDir === "asc" ? (
-                  <ChevronUp className="w-3 h-3" />
-                ) : (
-                  <ChevronDown className="w-3 h-3" />
-                ))}
-            </button>
-          ))}
+                }`}
+              >
+                <ArrowUpDown className="w-3 h-3" />
+                {field === "date" ? "Date" : field === "total" ? "Montant" : "Statut"}
+                {sortField === field &&
+                  (sortDir === "asc" ? (
+                    <ChevronUp className="w-3 h-3" />
+                  ) : (
+                    <ChevronDown className="w-3 h-3" />
+                  ))}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Barre d'action groupée (mode sélection) */}
       {selectMode && (
-        <div className="flex items-center justify-between gap-3 mb-3 p-3 rounded-xl border border-red-500/30 bg-red-500/10 flex-wrap">
+        <div className="flex items-center justify-between gap-3 mb-3 p-3 rounded-xl border border-destructive/30 bg-destructive/10 flex-wrap">
           <div className="flex items-center gap-3">
             <span className="text-xs font-bold text-foreground">
               {selectedIds.size} commande{selectedIds.size > 1 ? "s" : ""} sélectionnée
@@ -512,7 +522,7 @@ function OrdersPage() {
             </span>
             <button
               onClick={selectAllVisible}
-              className="text-xs font-bold text-[#f0d48a] hover:underline"
+              className="text-xs font-bold text-terracotta-deep hover:underline"
             >
               Tout sélectionner ({paginatedOrders.length})
             </button>
@@ -528,7 +538,7 @@ function OrdersPage() {
           <button
             onClick={deleteSelected}
             disabled={selectedIds.size === 0 || deleting}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-red-500 text-white text-xs font-bold hover:bg-red-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-destructive text-white text-xs font-bold hover:bg-destructive/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <Trash2 className="w-3.5 h-3.5" />
             {deleting ? "Suppression..." : `Supprimer (${selectedIds.size})`}
@@ -545,7 +555,7 @@ function OrdersPage() {
             ))}
           </>
         ) : paginatedOrders.length === 0 ? (
-          <div className="p-10 text-center rounded-2xl border border-dashed border-white/10 text-muted-foreground">
+          <div className="p-10 text-center rounded-2xl border border-dashed border-border text-muted-foreground">
             {debouncedSearch
               ? "Aucune commande trouvée pour cette recherche."
               : "Aucune commande pour le moment."}
@@ -560,8 +570,8 @@ function OrdersPage() {
                 key={o.id}
                 className={`p-5 rounded-2xl border transition-all ${
                   selectMode && selectedIds.has(o.id)
-                    ? "border-red-500/50 bg-red-500/5"
-                    : "border-white/8 bg-dark-card hover:border-white/15"
+                    ? "border-destructive/50 bg-destructive/5"
+                    : "border-border bg-card hover:border-terracotta/25"
                 }`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
@@ -571,42 +581,54 @@ function OrdersPage() {
                         type="checkbox"
                         checked={selectedIds.has(o.id)}
                         onChange={() => toggleSelected(o.id)}
-                        className="mt-1 w-4 h-4 shrink-0 accent-red-500 cursor-pointer"
+                        className="mt-1 w-4 h-4 shrink-0 accent-destructive cursor-pointer"
                       />
                     )}
                     <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <strong className="text-base">
-                        {o.table_number ? `🪑 Table ${o.table_number}` : "🛍️ À emporter"}
-                      </strong>
-                      <span
-                        className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider border ${ORDER_STATUS_COLOR[o.status]}`}
-                      >
-                        {ORDER_STATUS_LABEL[o.status]}
-                      </span>
-                      <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                        {o.source}
-                      </span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {formatDate(o.created_at)}
-                      {o.customer_name && ` · ${o.customer_name}`}
-                      {o.customer_phone && ` · ${o.customer_phone}`}
-                    </p>
-                    {o.delivery_lat != null && o.delivery_lng != null && (
-                      <a
-                        href={`https://www.google.com/maps?q=${o.delivery_lat},${o.delivery_lng}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 mt-1.5 px-2.5 py-1 rounded-lg bg-blue-500/15 border border-blue-500/30 text-blue-300 text-xs font-bold hover:bg-blue-500/25 transition-colors"
-                      >
-                        📍 Voir la position exacte sur Maps
-                      </a>
-                    )}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <strong className="text-base inline-flex items-center gap-1.5">
+                          {o.table_number ? (
+                            <>
+                              <Armchair className="w-4 h-4 text-terracotta" /> Table{" "}
+                              {o.table_number}
+                            </>
+                          ) : (
+                            <>
+                              <ShoppingBag className="w-4 h-4 text-terracotta" /> À emporter
+                            </>
+                          )}
+                        </strong>
+                        <span
+                          className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider border ${ORDER_STATUS_COLOR[o.status]}`}
+                        >
+                          {ORDER_STATUS_LABEL[o.status]}
+                        </span>
+                        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                          {o.source}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {formatDate(o.created_at)}
+                        {o.customer_name && ` · ${o.customer_name}`}
+                        {o.customer_phone && ` · ${o.customer_phone}`}
+                      </p>
+                      {o.delivery_lat != null && o.delivery_lng != null && (
+                        <a
+                          href={`https://www.google.com/maps?q=${o.delivery_lat},${o.delivery_lng}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 mt-1.5 px-2.5 py-1 rounded-lg border border-terracotta/30 bg-terracotta-tint text-terracotta-deep text-xs font-bold hover:bg-terracotta/15 transition-colors"
+                        >
+                          <MapPin className="w-3.5 h-3.5" />
+                          Voir la position exacte sur Maps
+                        </a>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <strong className="text-xl text-gold">{formatCurrency(Number(o.total))}</strong>
+                    <strong className="text-xl text-terracotta-deep">
+                      {formatCurrency(Number(o.total))}
+                    </strong>
                     <button
                       onClick={() => setExpandedId(isExpanded ? null : o.id)}
                       className="p-1 rounded-lg text-muted-foreground hover:text-foreground transition-colors"
@@ -640,8 +662,8 @@ function OrdersPage() {
                 </ul>
 
                 {o.notes && (
-                  <p className="text-xs italic text-muted-foreground p-3 rounded-lg bg-white/[0.02] border border-white/5 mb-3">
-                    📝 {o.notes}
+                  <p className="text-xs italic text-muted-foreground p-3 rounded-lg bg-surface-warm border border-border mb-3">
+                    {o.notes}
                   </p>
                 )}
 
@@ -649,65 +671,72 @@ function OrdersPage() {
                   {next && (
                     <button
                       onClick={() => setStatus(o, next)}
-                      className="px-4 py-2 rounded-lg bg-gradient-gold text-[#0a0a0f] font-bold text-xs"
+                      className="px-4 py-2 rounded-lg bg-terracotta text-white font-bold text-xs hover:bg-terracotta-deep transition-colors inline-flex items-center gap-1.5"
                     >
-                      → {ORDER_STATUS_LABEL[next]}
+                      <ArrowRight className="w-3.5 h-3.5" />
+                      {ORDER_STATUS_LABEL[next]}
                     </button>
                   )}
                   {o.status === "new" && (
                     <button
                       onClick={() => sendToKitchen(o)}
-                      className="px-4 py-2 rounded-lg bg-blue-500/20 text-blue-300 font-bold text-xs hover:bg-blue-500/30"
+                      className="px-4 py-2 rounded-lg border border-terracotta/30 bg-terracotta-tint text-terracotta-deep font-bold text-xs hover:bg-terracotta/15 transition-colors inline-flex items-center gap-1.5"
                     >
-                      🍳 Envoyer en cuisine
+                      <ChefHat className="w-3.5 h-3.5" />
+                      Envoyer en cuisine
                     </button>
                   )}
                   {o.status === "ready" && (
                     <button
                       onClick={() => setStatus(o, "served")}
-                      className="px-4 py-2 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold text-xs hover:bg-emerald-500/30"
+                      className="px-4 py-2 rounded-lg bg-emerald text-white font-bold text-xs hover:bg-emerald-deep transition-colors inline-flex items-center gap-1.5"
                     >
-                      ✓ Marquer servi
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      Marquer servi
                     </button>
                   )}
                   {o.status === "served" && o.payment_status !== "paid" && !paymentByOrder[o.id] && (
                     <button
                       onClick={() => setPaymentModalOrder(o)}
-                      className="px-4 py-2 rounded-lg bg-green-500/20 text-green-300 font-bold text-xs hover:bg-green-500/30"
+                      className="px-4 py-2 rounded-lg border border-emerald/30 bg-emerald-tint text-emerald-deep font-bold text-xs hover:bg-emerald/15 transition-colors inline-flex items-center gap-1.5"
                     >
-                      💳 Générer code paiement
+                      <CreditCard className="w-3.5 h-3.5" />
+                      Générer code paiement
                     </button>
                   )}
                   {paymentByOrder[o.id]?.status === "pending" && (
-                    <span className="px-3 py-2 rounded-lg bg-blue-500/15 border border-blue-500/30 text-blue-300 font-bold text-xs flex items-center gap-1.5">
-                      ⏳ En attente du client
+                    <span className="px-3 py-2 rounded-lg border border-amber-brand/40 bg-amber-tint text-amber-deep font-bold text-xs inline-flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5" />
+                      En attente du client
                     </span>
                   )}
                   {paymentByOrder[o.id]?.status === "claimed" && (
                     <button
                       onClick={() => confirmPayment(o.id)}
-                      className="px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold text-xs hover:bg-amber-500/30 animate-pulse"
+                      className="px-4 py-2 rounded-lg bg-amber-brand text-charcoal font-bold text-xs hover:bg-amber-brand/90 transition-colors inline-flex items-center gap-1.5"
                     >
-                      🔔 Valider le paiement client
+                      <Bell className="w-3.5 h-3.5" />
+                      Valider le paiement client
                     </button>
                   )}
                   {o.status !== "cancelled" && o.status !== "paid" && (
                     <button
                       onClick={() => setStatus(o, "cancelled")}
-                      className="px-4 py-2 rounded-lg border border-red-500/30 text-red-400 font-bold text-xs hover:bg-red-500/10"
+                      className="px-4 py-2 rounded-lg border border-destructive/30 text-destructive font-bold text-xs hover:bg-destructive/10 transition-colors"
                     >
                       Annuler
                     </button>
                   )}
                   <button
                     onClick={() => printOrder(o)}
-                    className="px-4 py-2 rounded-lg border border-white/10 text-muted-foreground font-bold text-xs hover:text-gold hover:border-gold/30 transition-colors flex items-center gap-1.5"
+                    className="px-4 py-2 rounded-lg border border-border text-muted-foreground font-bold text-xs hover:text-terracotta hover:border-terracotta/30 transition-colors flex items-center gap-1.5"
                   >
-                    🖨️ Imprimer le ticket
+                    <Printer className="w-3.5 h-3.5" />
+                    Imprimer le ticket
                   </button>
                   <button
                     onClick={() => deleteOrder(o)}
-                    className="px-4 py-2 rounded-lg border border-red-500/20 text-red-400/80 font-bold text-xs hover:bg-red-500/10 hover:border-red-500/40 hover:text-red-400 transition-colors flex items-center gap-1.5"
+                    className="px-4 py-2 rounded-lg border border-destructive/20 text-destructive/80 font-bold text-xs hover:bg-destructive/10 hover:border-destructive/40 hover:text-destructive transition-colors flex items-center gap-1.5"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     Supprimer
@@ -763,7 +792,7 @@ function OrdersPage() {
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-3 py-1.5 rounded-lg border border-white/10 text-xs font-semibold disabled:opacity-30 hover:bg-white/5 transition-colors"
+            className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold disabled:opacity-30 hover:bg-surface-warm transition-colors"
           >
             ← Précédent
           </button>
@@ -773,7 +802,7 @@ function OrdersPage() {
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page >= totalPages}
-            className="px-3 py-1.5 rounded-lg border border-white/10 text-xs font-semibold disabled:opacity-30 hover:bg-white/5 transition-colors"
+            className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold disabled:opacity-30 hover:bg-surface-warm transition-colors"
           >
             Suivant →
           </button>

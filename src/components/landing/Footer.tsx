@@ -109,7 +109,7 @@ export function Footer() {
             Mentions légales
           </Link>
         </div>
-        <p>Fait avec ❤️ au Burkina Faso 🇧🇫</p>
+        <p>Conçu et développé au Burkina Faso</p>
       </div>
     </footer>
   );

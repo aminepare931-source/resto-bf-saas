@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { CheckCircle2, CreditCard, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -58,23 +59,25 @@ export function PaymentCodeModal({ order, onClose }: { order: any; onClose: () =
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-3xl border border-white/10 bg-[#0a0a0f] p-6 shadow-2xl"
+        className="w-full max-w-md rounded-3xl border border-border bg-card p-6 shadow-level3"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-2xl font-black mb-2">💳 Encaisser le paiement</h3>
-        <p className="text-white/60 text-sm mb-6">Commande #{order.id.slice(0, 8)}</p>
-        <div className="p-4 rounded-xl bg-white/5 border border-white/10 mb-4">
-          <p className="text-xs text-white/60 mb-1">Montant</p>
-          <p className="text-3xl font-black text-amber-400">
+        <h3 className="inline-flex items-center gap-2 text-2xl font-black mb-2">
+          <CreditCard className="h-5 w-5 text-gold" /> Encaisser le paiement
+        </h3>
+        <p className="text-muted-foreground text-sm mb-6">Commande #{order.id.slice(0, 8)}</p>
+        <div className="p-4 rounded-xl bg-surface-warm border border-border/60 mb-4">
+          <p className="text-xs text-muted-foreground mb-1">Montant</p>
+          <p className="text-3xl font-black text-amber-deep">
             {Number(order.total).toLocaleString("fr-FR")} F
           </p>
         </div>
         <div className="space-y-3 mb-6">
-          <label className="text-xs font-bold text-white/60 uppercase tracking-wider block">
+          <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider block">
             Moyen de paiement
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -82,7 +85,7 @@ export function PaymentCodeModal({ order, onClose }: { order: any; onClose: () =
               <button
                 key={m}
                 onClick={() => setMethod(m)}
-                className={`p-3 rounded-lg border text-sm font-bold transition-all ${method === m ? "border-gold bg-gold/20 text-gold" : "border-white/10 text-white/60 hover:border-white/20"}`}
+                className={`p-3 rounded-lg border text-sm font-bold transition-all ${method === m ? "border-gold bg-accent text-accent-foreground" : "border-input text-muted-foreground hover:border-gold/40"}`}
               >
                 {METHOD_LABEL[m]}
               </button>
@@ -91,12 +94,12 @@ export function PaymentCodeModal({ order, onClose }: { order: any; onClose: () =
         </div>
 
         {isCash ? (
-          <p className="text-xs text-white/60 mb-6 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+          <p className="text-xs text-emerald-deep mb-6 p-3 rounded-xl bg-emerald-tint border border-emerald/30">
             Le client vous remet l'argent en main propre — confirmez directement, aucun code
             n'est nécessaire.
           </p>
         ) : method ? (
-          <p className="text-xs text-white/60 mb-6 p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
+          <p className="text-xs text-amber-deep mb-6 p-3 rounded-xl bg-amber-tint border border-amber-brand/30">
             Un code sera généré et affiché sur l'écran de suivi du client, avec les instructions
             de paiement. Une fois le client payé, il pourra cliquer "J'ai payé" — vous n'aurez
             plus qu'à valider en vérifiant votre SMS {METHOD_LABEL[method]}.
@@ -106,20 +109,26 @@ export function PaymentCodeModal({ order, onClose }: { order: any; onClose: () =
         <div className="flex gap-2">
           <button
             onClick={onClose}
-            className="flex-1 py-3 rounded-xl border border-white/10 font-bold"
+            className="flex-1 py-3 rounded-xl border border-input font-bold hover:bg-surface-warm transition-colors"
           >
             Annuler
           </button>
           <button
             onClick={isCash ? confirmCash : sendMobileMoneyCode}
             disabled={loading || !method}
-            className="flex-1 py-3 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold disabled:opacity-60"
+            className="flex-1 inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold disabled:opacity-60"
           >
-            {loading
-              ? "Enregistrement..."
-              : isCash
-                ? "✅ Confirmer le paiement"
-                : "📤 Envoyer le code au client"}
+            {loading ? (
+              "Enregistrement..."
+            ) : isCash ? (
+              <>
+                <CheckCircle2 className="h-4 w-4" /> Confirmer le paiement
+              </>
+            ) : (
+              <>
+                <Send className="h-4 w-4" /> Envoyer le code au client
+              </>
+            )}
           </button>
         </div>
       </div>

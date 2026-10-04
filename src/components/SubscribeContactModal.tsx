@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Mail, MessageCircle, Phone } from "lucide-react";
 
 const SUPPORT_PHONE = "+226 55 30 08 68";
 const SUPPORT_PHONE_TEL = "+22655300868";
@@ -29,14 +30,14 @@ export function SubscribeContactModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
+      className="fixed inset-0 z-[100] bg-black/40 flex items-center justify-center p-4 animate-fade-in"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md rounded-3xl border border-gold/30 bg-[#0a0a0f] shadow-[0_30px_80px_rgba(0,0,0,0.7)] overflow-hidden animate-scale-in"
+        className="w-full max-w-md rounded-3xl border border-gold/30 bg-card shadow-level3 overflow-hidden animate-scale-in"
       >
-        <div className="p-6 bg-gradient-to-br from-gold/15 to-transparent border-b border-white/5">
+        <div className="p-6 bg-gradient-to-br from-gold/10 to-transparent border-b border-border/60">
           <p className="text-[10px] uppercase tracking-[0.25em] text-gold font-bold mb-2">
             Activation d'abonnement
           </p>
@@ -51,7 +52,7 @@ export function SubscribeContactModal({
             équipe.
           </p>
 
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-1">
+          <div className="rounded-2xl border border-border/60 bg-surface-warm p-4 space-y-1">
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
               Responsable
             </p>
@@ -64,21 +65,21 @@ export function SubscribeContactModal({
               href={`https://wa.me/${SUPPORT_WA}?text=${waMsg}`}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#25D366] text-white font-bold text-sm hover:opacity-90 transition-opacity"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-emerald text-white font-bold text-sm hover:bg-emerald-deep transition-colors"
             >
-              💬 Contacter sur WhatsApp
+              <MessageCircle className="h-4 w-4" /> Contacter sur WhatsApp
             </a>
             <a
               href={`tel:${SUPPORT_PHONE_TEL}`}
               className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold text-sm hover:shadow-gold transition-shadow"
             >
-              📞 Appeler maintenant
+              <Phone className="h-4 w-4" /> Appeler maintenant
             </a>
             <a
               href={`mailto:${SUPPORT_EMAIL}?subject=Activation%20abonnement%20Resto%20BF`}
-              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-white/10 hover:border-gold/40 text-sm font-semibold transition-colors"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-input hover:border-gold/40 text-sm font-semibold transition-colors"
             >
-              ✉️ {SUPPORT_EMAIL}
+              <Mail className="h-4 w-4" /> {SUPPORT_EMAIL}
             </a>
           </div>
 

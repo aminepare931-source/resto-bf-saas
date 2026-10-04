@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
+import { Utensils } from "lucide-react";
 import { signedUrl } from "@/lib/storage";
 
 type Props = {
   path: string | null | undefined;
   alt: string;
   className?: string;
-  fallback?: string;
 };
 
-export function StorageImage({ path, alt, className, fallback }: Props) {
+export function StorageImage({ path, alt, className }: Props) {
   const [url, setUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -27,10 +27,8 @@ export function StorageImage({ path, alt, className, fallback }: Props) {
 
   if (!url) {
     return (
-      <div
-        className={`${className ?? ""} flex items-center justify-center bg-white/[0.04] text-3xl`}
-      >
-        {fallback ?? "🍽️"}
+      <div className={`${className ?? ""} flex items-center justify-center bg-surface-warm`}>
+        <Utensils className="h-8 w-8 text-muted-foreground/60" />
       </div>
     );
   }

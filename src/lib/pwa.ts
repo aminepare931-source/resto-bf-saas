@@ -43,27 +43,27 @@ function showUpdatePrompt(registration: ServiceWorkerRegistration) {
     bottom: 20px;
     right: 20px;
     z-index: 9999;
-    background: #1a1a2e;
-    border: 1px solid #d4a853;
+    background: #ffffff;
+    border: 1px solid #eae3d9;
     border-radius: 16px;
     padding: 16px 20px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    box-shadow: 0 16px 32px -8px rgba(28, 32, 36, 0.18), 0 0 0 1px rgba(28, 32, 36, 0.08);
     max-width: 320px;
-    color: #e8e6e3;
-    font-family: Arial, sans-serif;
+    color: #1c2024;
+    font-family: 'Inter', Arial, sans-serif;
   `;
 
   prompt.innerHTML = `
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-      <span style="font-size:20px;">🔄</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c85a32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
       <strong style="font-size:14px;">Nouvelle version disponible</strong>
     </div>
-    <p style="font-size:12px;color:#999;margin:0 0 12px 0;">
+    <p style="font-size:12px;color:#57423b;margin:0 0 12px 0;">
       Une mise à jour de RestoBF est disponible. Actualisez pour profiter des dernières améliorations.
     </p>
     <div style="display:flex;gap:8px;justify-content:flex-end;">
-      <button id="sw-update-ignore" style="padding:6px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#999;font-size:12px;cursor:pointer;">Plus tard</button>
-      <button id="sw-update-refresh" style="padding:6px 14px;border-radius:8px;border:none;background:linear-gradient(135deg,#d4a853,#b08800);color:#0a0a0f;font-size:12px;font-weight:bold;cursor:pointer;">Actualiser</button>
+      <button id="sw-update-ignore" style="padding:6px 14px;border-radius:8px;border:1px solid #d9d2c7;background:transparent;color:#57423b;font-size:12px;cursor:pointer;">Plus tard</button>
+      <button id="sw-update-refresh" style="padding:6px 14px;border-radius:8px;border:none;background:linear-gradient(135deg,#c85a32,#e5a93c);color:#0a0a0f;font-size:12px;font-weight:bold;cursor:pointer;">Actualiser</button>
     </div>
   `;
 

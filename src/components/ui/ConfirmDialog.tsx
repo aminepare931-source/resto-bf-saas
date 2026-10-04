@@ -30,16 +30,17 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   const variantStyles = {
     danger: {
-      icon: "text-red-400",
-      button: "bg-red-500/20 text-red-300 hover:bg-red-500/30 border-red-500/30",
+      icon: "text-destructive",
+      button:
+        "bg-destructive/10 text-destructive border-destructive/30 hover:bg-destructive/15",
     },
     warning: {
-      icon: "text-amber-400",
-      button: "bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border-amber-500/30",
+      icon: "text-amber-deep",
+      button: "bg-amber-tint text-amber-deep border-amber-brand/30 hover:bg-amber-brand/20",
     },
     info: {
-      icon: "text-blue-400",
-      button: "bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 border-blue-500/30",
+      icon: "text-gold",
+      button: "bg-accent text-accent-foreground border-gold/30 hover:bg-gold/15",
     },
   };
 
@@ -59,7 +60,7 @@ export function ConfirmDialog({
           <button
             onClick={onClose}
             disabled={loading}
-            className="px-5 py-2.5 rounded-xl border border-white/10 text-sm font-semibold disabled:opacity-50"
+            className="px-5 py-2.5 rounded-xl border border-input text-sm font-semibold hover:bg-surface-warm transition-colors disabled:opacity-50"
           >
             {cancelLabel}
           </button>

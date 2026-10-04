@@ -3,7 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyRestaurant } from "@/hooks/use-my-restaurant";
 import { toast } from "sonner";
-import { Plus, Users, Clock, CheckCircle, XCircle, RefreshCw } from "lucide-react";
+import { Plus, Users, Clock, CheckCircle, XCircle, RefreshCw, Trash2 } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { KpiCardSkeleton } from "@/components/ui/skeleton";
@@ -23,17 +23,17 @@ type TableForm = {
 const ZONES = ["Salle principale", "Terrasse", "VIP", "Privé"];
 
 const STATUS_COLORS: Record<TableStatus, string> = {
-  free: "border-emerald-500/30 bg-emerald-500/5",
-  occupied: "border-red-500/30 bg-red-500/5",
-  reserved: "border-amber-500/30 bg-amber-500/5",
-  cleaning: "border-blue-500/30 bg-blue-500/5",
+  free: "border-emerald/30 bg-emerald-tint",
+  occupied: "border-destructive/30 bg-destructive/5",
+  reserved: "border-amber-brand/40 bg-amber-tint",
+  cleaning: "border-charcoal/20 bg-charcoal/5",
 };
 
 const STATUS_ICONS: Record<TableStatus, React.ReactNode> = {
-  free: <CheckCircle className="w-4 h-4 text-emerald-400" />,
-  occupied: <Users className="w-4 h-4 text-red-400" />,
-  reserved: <Clock className="w-4 h-4 text-amber-400" />,
-  cleaning: <RefreshCw className="w-4 h-4 text-blue-400" />,
+  free: <CheckCircle className="w-4 h-4 text-emerald-deep" />,
+  occupied: <Users className="w-4 h-4 text-destructive" />,
+  reserved: <Clock className="w-4 h-4 text-amber-deep" />,
+  cleaning: <RefreshCw className="w-4 h-4 text-charcoal" />,
 };
 
 function TablesPage() {
@@ -96,7 +96,7 @@ function TablesPage() {
 
       if (error) throw error;
 
-      toast.success("✅ Table ajoutée");
+      toast.success("Table ajoutée");
       setShowAddModal(false);
       setNewTable({ number: "", capacity: 4, zone: "Salle principale" });
       loadTables();
@@ -174,31 +174,31 @@ function TablesPage() {
   return (
     <div className="max-w-6xl">
       <div className="mb-6">
-        <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Gestion</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">Gestion</p>
         <h1 className="text-3xl font-black">Tables</h1>
       </div>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
-        <div className="p-4 rounded-xl border border-white/8 bg-dark-card">
+        <div className="p-4 rounded-xl border border-border bg-card">
           <p className="text-xs text-muted-foreground mb-1">Total</p>
           <p className="text-2xl font-black">{stats.total}</p>
         </div>
-        <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5">
-          <p className="text-xs text-emerald-400 mb-1">Libres</p>
-          <p className="text-2xl font-black text-emerald-400">{stats.free}</p>
+        <div className="p-4 rounded-xl border border-emerald/30 bg-emerald-tint">
+          <p className="text-xs text-emerald-deep mb-1">Libres</p>
+          <p className="text-2xl font-black text-emerald-deep">{stats.free}</p>
         </div>
-        <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/5">
-          <p className="text-xs text-red-400 mb-1">Occupées</p>
-          <p className="text-2xl font-black text-red-400">{stats.occupied}</p>
+        <div className="p-4 rounded-xl border border-destructive/30 bg-destructive/5">
+          <p className="text-xs text-destructive mb-1">Occupées</p>
+          <p className="text-2xl font-black text-destructive">{stats.occupied}</p>
         </div>
-        <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5">
-          <p className="text-xs text-amber-400 mb-1">Réservées</p>
-          <p className="text-2xl font-black text-amber-400">{stats.reserved}</p>
+        <div className="p-4 rounded-xl border border-amber-brand/40 bg-amber-tint">
+          <p className="text-xs text-amber-deep mb-1">Réservées</p>
+          <p className="text-2xl font-black text-amber-deep">{stats.reserved}</p>
         </div>
-        <div className="p-4 rounded-xl border border-blue-500/30 bg-blue-500/5">
-          <p className="text-xs text-blue-400 mb-1">Nettoyage</p>
-          <p className="text-2xl font-black text-blue-400">{stats.cleaning}</p>
+        <div className="p-4 rounded-xl border border-charcoal/20 bg-charcoal/5">
+          <p className="text-xs text-charcoal mb-1">Nettoyage</p>
+          <p className="text-2xl font-black text-charcoal">{stats.cleaning}</p>
         </div>
       </div>
 
@@ -207,7 +207,7 @@ function TablesPage() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value as any)}
-          className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+          className="px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
         >
           <option value="all">Tous statuts</option>
           <option value="free">Libre</option>
@@ -218,7 +218,7 @@ function TablesPage() {
         <select
           value={filterZone}
           onChange={(e) => setFilterZone(e.target.value)}
-          className="px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+          className="px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
         >
           <option value="all">Toutes zones</option>
           {ZONES.map((zone) => (
@@ -229,7 +229,7 @@ function TablesPage() {
         </select>
         <button
           onClick={() => setShowAddModal(true)}
-          className="px-4 py-2 rounded-lg bg-gradient-gold text-[#0a0a0f] text-sm font-bold flex items-center gap-2"
+          className="px-4 py-2 rounded-lg bg-terracotta text-white hover:bg-terracotta-deep transition-colors text-sm font-bold flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
           Ajouter
@@ -244,7 +244,7 @@ function TablesPage() {
           ))}
         </div>
       ) : filteredTables.length === 0 ? (
-        <div className="p-10 rounded-2xl border border-dashed border-white/15 text-center text-muted-foreground">
+        <div className="p-10 rounded-2xl border border-dashed border-border text-center text-muted-foreground">
           <p>Aucune table</p>
         </div>
       ) : (
@@ -279,7 +279,7 @@ function TablesPage() {
                 {table.status === "free" && (
                   <button
                     onClick={() => updateTableStatus(table, "occupied")}
-                    className="flex-1 px-3 py-2 rounded-lg bg-red-500/20 text-red-300 text-xs font-bold hover:bg-red-500/30"
+                    className="flex-1 px-3 py-2 rounded-lg bg-destructive/10 text-destructive text-xs font-bold hover:bg-destructive/20 transition-colors"
                   >
                     Occuper
                   </button>
@@ -287,7 +287,7 @@ function TablesPage() {
                 {table.status === "free" && (
                   <button
                     onClick={() => updateTableStatus(table, "reserved")}
-                    className="flex-1 px-3 py-2 rounded-lg bg-amber-500/20 text-amber-300 text-xs font-bold hover:bg-amber-500/30"
+                    className="flex-1 px-3 py-2 rounded-lg bg-amber-tint text-amber-deep text-xs font-bold hover:bg-amber-brand/20 transition-colors"
                   >
                     Réserver
                   </button>
@@ -295,7 +295,7 @@ function TablesPage() {
                 {(table.status === "occupied" || table.status === "reserved") && (
                   <button
                     onClick={() => updateTableStatus(table, "free")}
-                    className="flex-1 px-3 py-2 rounded-lg bg-emerald-500/20 text-emerald-300 text-xs font-bold hover:bg-emerald-500/30"
+                    className="flex-1 px-3 py-2 rounded-lg bg-emerald-tint text-emerald-deep text-xs font-bold hover:bg-emerald/20 transition-colors"
                   >
                     Libérer
                   </button>
@@ -303,7 +303,7 @@ function TablesPage() {
                 {(table.status === "occupied" || table.status === "reserved") && (
                   <button
                     onClick={() => updateTableStatus(table, "cleaning")}
-                    className="flex-1 px-3 py-2 rounded-lg bg-blue-500/20 text-blue-300 text-xs font-bold hover:bg-blue-500/30"
+                    className="flex-1 px-3 py-2 rounded-lg bg-charcoal/5 text-charcoal text-xs font-bold hover:bg-charcoal/10 transition-colors"
                   >
                     Nettoyage
                   </button>
@@ -311,16 +311,16 @@ function TablesPage() {
                 {table.status === "cleaning" && (
                   <button
                     onClick={() => updateTableStatus(table, "free")}
-                    className="flex-1 px-3 py-2 rounded-lg bg-emerald-500/20 text-emerald-300 text-xs font-bold hover:bg-emerald-500/30"
+                    className="flex-1 px-3 py-2 rounded-lg bg-emerald-tint text-emerald-deep text-xs font-bold hover:bg-emerald/20 transition-colors"
                   >
                     Terminé
                   </button>
                 )}
                 <button
                   onClick={() => setDeleteTarget(table)}
-                  className="px-3 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs"
+                  className="px-3 py-2 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors text-xs inline-flex items-center"
                 >
-                  🗑️
+                  <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
@@ -339,7 +339,7 @@ function TablesPage() {
               type="text"
               value={newTable.number}
               onChange={(e) => setNewTable({ ...newTable, number: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+              className="w-full px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
               placeholder="Ex: 1, 2, 3..."
             />
           </div>
@@ -352,7 +352,7 @@ function TablesPage() {
               type="number"
               value={newTable.capacity}
               onChange={(e) => setNewTable({ ...newTable, capacity: Number(e.target.value) })}
-              className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+              className="w-full px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
               min="1"
             />
           </div>
@@ -364,7 +364,7 @@ function TablesPage() {
             <select
               value={newTable.zone}
               onChange={(e) => setNewTable({ ...newTable, zone: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+              className="w-full px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
             >
               {ZONES.map((zone) => (
                 <option key={zone} value={zone}>
@@ -378,13 +378,13 @@ function TablesPage() {
         <div className="flex gap-2 justify-end mt-6">
           <button
             onClick={() => setShowAddModal(false)}
-            className="px-5 py-2.5 rounded-xl border border-white/10 text-sm"
+            className="px-5 py-2.5 rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-surface-warm transition-colors text-sm"
           >
             Annuler
           </button>
           <button
             onClick={addTable}
-            className="px-5 py-2.5 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold text-sm"
+            className="px-5 py-2.5 rounded-xl bg-terracotta text-white hover:bg-terracotta-deep transition-colors font-bold text-sm"
           >
             Ajouter
           </button>

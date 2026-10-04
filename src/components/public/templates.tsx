@@ -29,6 +29,22 @@ import { TplNuit } from "./templates/tpl-nuit";
 import { TplSoleil } from "./templates/tpl-soleil";
 import { TplSavane } from "./templates/tpl-savane";
 import { TplModerne } from "./templates/tpl-moderne";
+import {
+  CalendarDays,
+  Check,
+  CheckCircle2,
+  Clock,
+  Flame,
+  Home,
+  MapPin,
+  Menu,
+  MessageCircle,
+  Phone,
+  ShoppingCart,
+  Star,
+  UtensilsCrossed,
+  type LucideIcon,
+} from "lucide-react";
 
 /* ============= Helpers ============= */
 
@@ -216,21 +232,6 @@ const BG_MODERNE = "/bg-moderne.jpg";
 const TPL_BG_CSS =
   "\n/* Standard template full-screen backgrounds */\n.tpl-page{position:relative;min-height:100vh;overflow:hidden;isolation:isolate;}\n.tpl-bg{position:fixed;inset:0;z-index:-2;overflow:hidden;background:transparent;}\n.tpl-bg img{width:100%;height:100%;object-fit:cover;filter:saturate(1.08) contrast(1.1);transform:scale(1.08);animation:tpl-bg-drift 22s ease-in-out infinite alternate;}\n.tpl-bg span{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.78),rgba(0,0,0,.40),rgba(0,0,0,.80));}\n@keyframes tpl-bg-drift{0%{transform:scale(1.08) translate3d(-1.5%,0,0)}100%{transform:scale(1.18) translate3d(1.5%,-1.5%,0)}}\n@media(prefers-reduced-motion:reduce){.tpl-bg img{animation:none;transition:none}}\n";
 
-function CategoryIcon({ name }: { name: string }) {
-  const n = name.toLowerCase();
-  if (/pizza/.test(n)) return <>🍕</>;
-  if (/burger|sandwich/.test(n)) return <>🍔</>;
-  if (/pasta|p[âa]tes|spaghet/.test(n)) return <>🍝</>;
-  if (/dessert|sucre|p[âa]tiss/.test(n)) return <>🍰</>;
-  if (/boisson|drink|jus|cocktail/.test(n)) return <>🥤</>;
-  if (/entr[ée]e|starter|salade/.test(n)) return <>🥗</>;
-  if (/grill|brochette|viande|bbq/.test(n)) return <>🍖</>;
-  if (/poisson|fish|fruits de mer/.test(n)) return <>🐟</>;
-  if (/riz|t[ôo]|plat/.test(n)) return <>🍛</>;
-  if (/petit|breakfast|d[ée]j/.test(n)) return <>🥐</>;
-  return <>🍽️</>;
-}
-
 /* ================================================================== */
 /*  4. MARCHE — Indian-inspired dark green + orange/gold              */
 /* ================================================================== */
@@ -296,7 +297,7 @@ export function TplMarche({ restaurant, menu, reviews, gallery, view }: Template
                 className="h-8 w-auto object-contain rounded"
               />
             ) : (
-              <span className="text-2xl shrink-0">🌶️</span>
+              <UtensilsCrossed className="w-6 h-6 shrink-0" style={{ color: theme.accent }} />
             )}
             <strong
               className="text-xl sm:text-2xl truncate"
@@ -522,8 +523,8 @@ export function TplMarche({ restaurant, menu, reviews, gallery, view }: Template
                     ["Service rapide", "Commande et livraison sans attente."],
                   ].map(([t, d]) => (
                     <li key={t} className="flex items-start gap-3">
-                      <span className="text-lg shrink-0 mt-0.5" style={{ color: theme.accent }}>
-                        ✦
+                      <span className="shrink-0 mt-0.5" style={{ color: theme.accent }}>
+                        <Check className="w-4 h-4" />
                       </span>
                       <div>
                         <strong>{t}</strong>
@@ -659,12 +660,12 @@ function ClassiqueGratuit({
     requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
   };
 
-  const navLinks: { id: typeof active; label: string; icon: string }[] = [
-    { id: "home", label: "Accueil", icon: "🏠" },
-    { id: "menu", label: "Menu", icon: "🍲" },
-    { id: "order", label: "Commander", icon: "🛒" },
-    { id: "reserve", label: "Réservation", icon: "📅" },
-    { id: "reviews", label: "Avis", icon: "⭐" },
+  const navLinks: { id: typeof active; label: string; icon: LucideIcon }[] = [
+    { id: "home", label: "Accueil", icon: Home },
+    { id: "menu", label: "Menu", icon: UtensilsCrossed },
+    { id: "order", label: "Commander", icon: ShoppingCart },
+    { id: "reserve", label: "Réservation", icon: CalendarDays },
+    { id: "reviews", label: "Avis", icon: Star },
   ];
 
   return (
@@ -696,18 +697,23 @@ function ClassiqueGratuit({
           ))}
         </div>
         <a className="cl-nav-cta" href={buildViewHref("reserve")}>
-          📅 Réserver
+          Réserver
         </a>
         <button className="cl-hamburger" onClick={() => setMobOpen((v) => !v)}>
-          ☰
+          <Menu className="w-6 h-6" />
         </button>
       </nav>
 
       {mobOpen && (
         <div className="cl-mob-menu">
           {navLinks.map((l) => (
-            <a key={l.id} href={buildViewHref(l.id as any)} onClick={() => setMobOpen(false)}>
-              {l.icon} {l.label}
+            <a
+              key={l.id}
+              className="flex items-center gap-2.5 text-sm font-semibold py-3 px-4 rounded-[10px]"
+              href={buildViewHref(l.id as any)}
+              onClick={() => setMobOpen(false)}
+            >
+              <l.icon className="w-4 h-4" /> {l.label}
             </a>
           ))}
         </div>
@@ -793,7 +799,7 @@ function ClassiqueGratuit({
           rel="noopener noreferrer"
           aria-label="WhatsApp"
         >
-          💬
+          <MessageCircle className="w-7 h-7" />
         </a>
       )}
     </div>
@@ -833,10 +839,10 @@ function HomeView({
             </p>
             <div className="cl-hero-btns">
               <a className="cl-btn cl-btn-wa" href={buildViewHref("menu")}>
-                🍲 Voir le menu
+                Voir le menu
               </a>
               <a className="cl-btn cl-btn-outline-light" href={buildViewHref("reserve")}>
-                📅 Réserver
+                Réserver
               </a>
             </div>
           </div>
@@ -848,7 +854,7 @@ function HomeView({
             <span className="cl-stat-lbl">Plats</span>
           </div>
           <div className="cl-hero-stat">
-            <span className="cl-stat-num">{ratingAvg ? `${ratingAvg}⭐` : "—"}</span>
+            <span className="cl-stat-num">{ratingAvg ? `${ratingAvg}★` : "—"}</span>
             <span className="cl-stat-lbl">Note</span>
           </div>
           <div className="cl-hero-stat">
@@ -861,13 +867,13 @@ function HomeView({
       <div className="cl-info-band">
         <div className="cl-info-band-inner">
           <div className="cl-info-item">
-            📞 <span>{restaurant.phone || "—"}</span>
+            <Phone className="w-4 h-4" /> <span>{restaurant.phone || "—"}</span>
           </div>
           <div className="cl-info-item">
-            📍 <span>{restaurant.address || restaurant.city}</span>
+            <MapPin className="w-4 h-4" /> <span>{restaurant.address || restaurant.city}</span>
           </div>
           <div className="cl-info-item">
-            🕐 <span>{restaurant.hours || "—"}</span>
+            <Clock className="w-4 h-4" /> <span>{restaurant.hours || "—"}</span>
           </div>
         </div>
       </div>
@@ -881,24 +887,26 @@ function HomeView({
           <div className="cl-features">
             {[
               {
-                i: "🔥",
+                I: Flame,
                 t: "Grillades au feu de bois",
                 d: "Nos viandes sont marinées et grillées à la commande.",
               },
               {
-                i: "🛒",
+                I: ShoppingCart,
                 t: "Commande en ligne",
                 d: "Commandez en ligne et suivez la préparation en direct.",
               },
               {
-                i: "📅",
+                I: CalendarDays,
                 t: "Réservation facile",
                 d: "Réservez votre table en quelques secondes, 7j/7.",
               },
-              { i: "⭐", t: "Clients satisfaits", d: "Plus de 95% de nos clients reviennent." },
+              { I: Star, t: "Clients satisfaits", d: "Plus de 95% de nos clients reviennent." },
             ].map((f) => (
               <div key={f.t} className="cl-card cl-feat">
-                <div className="cl-feat-icon">{f.i}</div>
+                <div className="cl-feat-icon">
+                  <f.I className="w-7 h-7 text-amber-600" />
+                </div>
                 <div className="cl-feat-title">{f.t}</div>
                 <div className="cl-feat-desc">{f.d}</div>
               </div>
@@ -924,7 +932,9 @@ function HomeView({
             {preview.length ? (
               preview.map((d) => (
                 <a key={d.id} className="cl-card cl-dish-mini" href={buildViewHref("menu")}>
-                  <div className="cl-dish-mini-icon">🍽️</div>
+                  <div className="cl-dish-mini-icon">
+                    <UtensilsCrossed className="w-7 h-7 text-amber-600" />
+                  </div>
                   <div style={{ textAlign: "left", flex: 1 }}>
                     <div className="cl-dish-mini-cat">{d.category}</div>
                     <div className="cl-dish-mini-name">{d.name}</div>
@@ -982,7 +992,7 @@ function HomeView({
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
             <a className="cl-btn cl-btn-green" href={buildViewHref("reserve")}>
-              📅 Réserver maintenant
+              Réserver maintenant
             </a>
             <a
               className="cl-btn cl-btn-wa"
@@ -990,7 +1000,7 @@ function HomeView({
               target="_blank"
               rel="noopener noreferrer"
             >
-              💬 WhatsApp
+              WhatsApp
             </a>
           </div>
         </div>
@@ -1050,9 +1060,11 @@ function MenuView({
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      "🍽️"
+                      <UtensilsCrossed className="w-10 h-10 text-amber-600/60" />
                     )}
-                    <span className="cl-dish-avail cl-badge cl-badge-green">✅</span>
+                    <span className="cl-dish-avail cl-badge cl-badge-green">
+                      <Check className="w-3.5 h-3.5" />
+                    </span>
                   </div>
                   <div className="cl-dish-body">
                     <div className="cl-dish-cat">{d.category}</div>
@@ -1067,10 +1079,8 @@ function MenuView({
             </div>
           ) : (
             <div className="cl-empty">
-              🍽️
-              <br />
-              <br />
-              Aucun plat ici.
+              <UtensilsCrossed className="w-12 h-12 text-amber-600/40 mx-auto mb-3" />
+              <div>Aucun plat ici.</div>
             </div>
           )}
         </div>
@@ -1092,7 +1102,7 @@ function MenuView({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                "🍽️"
+                <UtensilsCrossed className="w-12 h-12 text-amber-600/60" />
               )}
             </div>
             <div className="cl-dm-body">
@@ -1111,7 +1121,7 @@ function MenuView({
                     setOpen(null);
                   }}
                 >
-                  🛒 Commander maintenant
+                  Commander maintenant
                 </button>
                 <button className="cl-btn cl-btn-outline cl-btn-sm" onClick={() => setOpen(null)}>
                   Fermer
@@ -1278,9 +1288,9 @@ function OrderView({
           if (["served", "paid", "cancelled"].includes(newStatus)) {
             localStorage.removeItem(`resto-order-tracking:${restaurant.id}`);
           }
-          if (newStatus === "in_kitchen") toast.info("👨‍🍳 La cuisine prépare votre commande");
-          else if (newStatus === "ready") toast.success("✅ Votre commande est prête !");
-          else if (newStatus === "served") toast.success("🎉 Bon appétit !");
+          if (newStatus === "in_kitchen") toast.info("La cuisine prépare votre commande");
+          else if (newStatus === "ready") toast.success("Votre commande est prête !");
+          else if (newStatus === "served") toast.success("Bon appétit !");
         },
       )
       .subscribe();
@@ -1299,12 +1309,12 @@ function OrderView({
   };
 
   const STATUS_LABELS: Record<string, string> = {
-    new: "🆕 Commande reçue",
-    in_kitchen: "👨‍🍳 En préparation",
-    ready: "✅ Prête",
-    served: "🎉 Servie / Livrée",
-    paid: "💳 Payée",
-    cancelled: "❌ Annulée",
+    new: "Commande reçue",
+    in_kitchen: "En préparation",
+    ready: "Prête",
+    served: "Servie / Livrée",
+    paid: "Payée",
+    cancelled: "Annulée",
   };
 
   if (done) {
@@ -1319,7 +1329,7 @@ function OrderView({
           style={{ gridTemplateColumns: "1fr", maxWidth: 480, margin: "0 auto" }}
         >
           <div className="cl-card" style={{ padding: 26, textAlign: "center" }}>
-            <div style={{ fontSize: 44 }}>✅</div>
+            <CheckCircle2 className="w-11 h-11 mx-auto text-emerald-500" />
             <p style={{ color: "var(--cl-muted)", margin: "8px 0 20px" }}>
               Vous serez notifié à chaque étape.
             </p>
@@ -1341,7 +1351,7 @@ function OrderView({
                   marginBottom: 10,
                 }}
               >
-                📡 Suivi en direct
+                Suivi en direct
               </p>
               {statusHistory.map((h, i) => (
                 <div
@@ -1377,7 +1387,7 @@ function OrderView({
   return (
     <>
       <div className="cl-page-hero">
-        <h1>🛒 Passer une commande</h1>
+        <h1>Passer une commande</h1>
         <p>Choisissez vos plats et envoyez via WhatsApp</p>
       </div>
       <div className="cl-order-wrap">
@@ -1410,7 +1420,7 @@ function OrderView({
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      "🍽️"
+                      <UtensilsCrossed className="w-10 h-10 text-amber-600/60" />
                     )}
                   </div>
                   <div className="cl-cat-item-body">
@@ -1442,7 +1452,7 @@ function OrderView({
           <div className="cl-cart-sticky">
             <div className="cl-card cl-cart-box">
               <div className="cl-cart-head">
-                <h3>🛒 Mon panier</h3>
+                <h3>Mon panier</h3>
                 <span className="cl-cart-count">{count}</span>
               </div>
               <div className="cl-cart-body">
@@ -1489,18 +1499,18 @@ function OrderView({
                       className={`cl-del-opt ${delMode === "place" ? "active" : ""}`}
                       onClick={() => setDelMode("place")}
                     >
-                      🏠 Sur place
+                      Sur place
                     </div>
                     <div
                       className={`cl-del-opt ${delMode === "livraison" ? "active" : ""}`}
                       onClick={() => setDelMode("livraison")}
                     >
-                      🛵 Livraison
+                      Livraison
                     </div>
                   </div>
                 ) : (
                   <p style={{ fontSize: 13, color: "var(--cl-muted)", marginBottom: 14 }}>
-                    🏠 À consommer sur place
+                    À consommer sur place
                   </p>
                 )}
                 <div className="cl-form-group">
@@ -1543,7 +1553,7 @@ function OrderView({
                   onClick={submit}
                   disabled={busy}
                 >
-                  {busy ? "Envoi..." : "✅ Envoyer la commande"}
+                  {busy ? "Envoi..." : "Envoyer la commande"}
                 </button>
               </div>
             </div>
@@ -1602,9 +1612,9 @@ function ReserveView({
     });
     setBusy(false);
     if (error) return toast.error(error.message);
-    let wa = `📅 *Réservation — ${restaurant.name}*\n\n👤 ${form.name}\n📞 ${form.phone}\n📅 ${form.date} à ${time}\n👥 ${guests} personne(s)`;
-    if (form.occ) wa += `\n🎉 ${form.occ}`;
-    if (form.msg) wa += `\n💬 ${form.msg}`;
+    let wa = `*Réservation — ${restaurant.name}*\n\nNom : ${form.name}\nTéléphone : ${form.phone}\nDate : ${form.date} à ${time}\nPersonnes : ${guests}`;
+    if (form.occ) wa += `\nOccasion : ${form.occ}`;
+    if (form.msg) wa += `\nMessage : ${form.msg}`;
     window.open(waLink(wa), "_blank");
     setDone(true);
   };
@@ -1619,14 +1629,14 @@ function ReserveView({
   return (
     <>
       <div className="cl-page-hero">
-        <h1>📅 Réserver une table</h1>
+        <h1>Réserver une table</h1>
         <p>Réservez en ligne, confirmation rapide !</p>
       </div>
       <div className="cl-res-wrap">
         <div>
           {!done ? (
             <div className="cl-card cl-res-card">
-              <p className="cl-step-title">👤 Vos coordonnées</p>
+              <p className="cl-step-title">Vos coordonnées</p>
               <div className="cl-form-2col">
                 <div className="cl-form-group">
                   <label>Nom *</label>
@@ -1647,7 +1657,7 @@ function ReserveView({
                 </div>
               </div>
               <p className="cl-step-title" style={{ marginTop: 18 }}>
-                📅 Date & heure
+                Date & heure
               </p>
               <div className="cl-form-group" style={{ marginBottom: 14 }}>
                 <label>Date *</label>
@@ -1671,7 +1681,7 @@ function ReserveView({
                 ))}
               </div>
               <p className="cl-step-title" style={{ marginTop: 18 }}>
-                👥 Nombre de personnes *
+                Nombre de personnes *
               </p>
               <div className="cl-guests-row">
                 {guestList.map((g) => (
@@ -1685,7 +1695,7 @@ function ReserveView({
                 ))}
               </div>
               <p className="cl-step-title" style={{ marginTop: 18 }}>
-                🎉 Extras
+                Extras
               </p>
               <div className="cl-form-group">
                 <label>Occasion</label>
@@ -1704,12 +1714,14 @@ function ReserveView({
                 />
               </div>
               <button className="cl-btn cl-btn-green cl-btn-block" disabled={busy} onClick={submit}>
-                {busy ? "Envoi..." : "✅ Confirmer ma réservation"}
+                {busy ? "Envoi..." : "Confirmer ma réservation"}
               </button>
             </div>
           ) : (
             <div className="cl-card cl-success-box">
-              <div className="cl-success-icon">🎉</div>
+              <div className="cl-success-icon">
+                <CheckCircle2 className="w-14 h-14 mx-auto text-emerald-500" />
+              </div>
               <div className="cl-success-title">Réservation envoyée !</div>
               <div className="cl-success-sub">
                 Table pour {guests} personne(s) le {form.date} à {time}.
@@ -1734,21 +1746,27 @@ function ReserveView({
           <div className="cl-card cl-side-card">
             <div className="cl-side-title">Infos pratiques</div>
             <div className="cl-side-row">
-              <span className="cl-side-icon">📍</span>
+              <span className="cl-side-icon">
+                <MapPin className="w-5 h-5 text-amber-600" />
+              </span>
               <div>
                 <div className="cl-side-lbl">Adresse</div>
                 <div className="cl-side-val">{restaurant.address || "—"}</div>
               </div>
             </div>
             <div className="cl-side-row">
-              <span className="cl-side-icon">📞</span>
+              <span className="cl-side-icon">
+                <Phone className="w-5 h-5 text-amber-600" />
+              </span>
               <div>
                 <div className="cl-side-lbl">Téléphone</div>
                 <div className="cl-side-val">{restaurant.phone || "—"}</div>
               </div>
             </div>
             <div className="cl-side-row">
-              <span className="cl-side-icon">🕐</span>
+              <span className="cl-side-icon">
+                <Clock className="w-5 h-5 text-amber-600" />
+              </span>
               <div>
                 <div className="cl-side-lbl">Horaires</div>
                 <div className="cl-side-val">{restaurant.hours || "—"}</div>
@@ -1768,7 +1786,7 @@ function ReserveView({
               rel="noopener noreferrer"
               href={waLink(`Bonjour ${restaurant.name} ! Je voudrais réserver.`)}
             >
-              💬 WhatsApp
+              WhatsApp
             </a>
           </div>
         </div>
@@ -1816,7 +1834,7 @@ function ReviewsView({
     setBusy(false);
     if (error) return toast.error(error.message);
     if (data) onAdded(data as any);
-    toast.success("Merci pour votre avis ! ⭐ (en attente de validation)");
+    toast.success("Merci pour votre avis ! (en attente de validation)");
     setForm({ name: "", occ: "", text: "" });
     setPicked(0);
   };
@@ -1824,7 +1842,7 @@ function ReviewsView({
   return (
     <>
       <div className="cl-page-hero">
-        <h1>⭐ Avis clients</h1>
+        <h1>Avis clients</h1>
         <p>
           {reviews.length} avis · Note {avg || "—"}/5
         </p>
@@ -1868,7 +1886,7 @@ function ReviewsView({
                 className={`cl-filt-btn ${filterStar === n ? "active" : ""}`}
                 onClick={() => setFilterStar(n)}
               >
-                {"⭐".repeat(n)}
+                {"★".repeat(n)}
               </button>
             ))}
           </div>
@@ -1900,15 +1918,17 @@ function ReviewsView({
             </div>
           ) : (
             <div className="cl-empty-state">
-              <div className="cl-empty-icon">💬</div>
-              <p>{filterStar ? `Aucun avis ${filterStar}⭐` : "Soyez le premier !"}</p>
+              <div className="cl-empty-icon">
+                <MessageCircle className="w-12 h-12 mx-auto text-amber-600/40" />
+              </div>
+              <p>{filterStar ? `Aucun avis ${filterStar}★` : "Soyez le premier !"}</p>
             </div>
           )}
 
           <div className="cl-divider" style={{ margin: "40px 0" }} />
 
           <div className="cl-card cl-add-wrap">
-            <div className="cl-add-title">✍️ Donnez votre avis</div>
+            <div className="cl-add-title">Donnez votre avis</div>
             <div className="cl-stars-row">
               {[1, 2, 3, 4, 5].map((n) => (
                 <button
@@ -1916,7 +1936,7 @@ function ReviewsView({
                   className={`cl-star-pick ${n <= picked ? "on" : ""}`}
                   onClick={() => setPicked(n)}
                 >
-                  ⭐
+                  <Star className="w-8 h-8 text-amber-400" fill="currentColor" />
                 </button>
               ))}
             </div>
@@ -1947,7 +1967,7 @@ function ReviewsView({
               />
             </div>
             <button className="cl-btn cl-btn-green cl-btn-block" disabled={busy} onClick={submit}>
-              {busy ? "Envoi..." : "⭐ Publier mon avis"}
+              {busy ? "Envoi..." : "Publier mon avis"}
             </button>
           </div>
         </div>

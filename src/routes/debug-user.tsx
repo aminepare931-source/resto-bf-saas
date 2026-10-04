@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/debug-user")({
@@ -81,7 +82,7 @@ function DebugPage() {
       <div className="max-w-2xl mx-auto space-y-6">
         <h1 className="text-3xl font-black text-foreground">Debug — Infos Utilisateur</h1>
 
-        <div className="p-6 rounded-2xl border border-white/10 bg-dark-card space-y-4">
+        <div className="p-6 rounded-2xl border border-border bg-card shadow-card space-y-4">
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Email</p>
             <p className="text-lg font-mono text-foreground">{user.email}</p>
@@ -114,8 +115,10 @@ function DebugPage() {
           )}
 
           {user.role === "super_admin" && (
-            <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/30">
-              <p className="text-green-400 font-bold">✅ Tu es super admin !</p>
+            <div className="p-4 rounded-xl bg-emerald-tint border border-emerald/30">
+              <p className="inline-flex items-center gap-1.5 text-emerald-deep font-bold">
+                <CheckCircle2 className="h-4 w-4" /> Tu es super admin !
+              </p>
               <Link
                 to="/super-admin"
                 className="text-sm text-gold hover:underline mt-2 inline-block"
@@ -126,11 +129,11 @@ function DebugPage() {
           )}
         </div>
 
-        <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/30">
+        <div className="p-4 rounded-xl bg-amber-tint border border-amber-brand/30">
           <p className="text-sm text-foreground">
             <strong>Pour donner le rôle manuellement via SQL :</strong>
             <br />
-            <code className="block mt-2 p-2 bg-black/20 rounded text-xs">
+            <code className="block mt-2 p-2 bg-surface-warm border border-border/60 rounded text-xs">
               INSERT INTO public.user_roles (user_id, role) VALUES ('{user.id}', 'super_admin') ON
               CONFLICT (user_id, role) DO NOTHING;
             </code>

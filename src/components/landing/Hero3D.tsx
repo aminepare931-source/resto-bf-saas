@@ -57,7 +57,7 @@ function StaticFallback() {
       <div
         className="w-48 h-48 sm:w-64 sm:h-64 rounded-full animate-float-soft"
         style={{
-          background: "radial-gradient(circle, rgba(212,168,83,0.35) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(200, 90, 50, 0.35) 0%, transparent 70%)",
           filter: "blur(2px)",
         }}
       />

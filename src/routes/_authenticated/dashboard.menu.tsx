@@ -111,21 +111,21 @@ function MenuPage() {
     <div className="max-w-5xl">
       <div className="mb-6 flex items-end justify-between gap-4 flex-wrap">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Menu</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">Menu</p>
           <h1 className="text-3xl font-black">
             Vos plats ({items.length}/{max === 9999 ? "∞" : max})
           </h1>
         </div>
         <button
           onClick={startNew}
-          className="px-5 py-3 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold hover:shadow-gold transition-shadow"
+          className="px-5 py-3 rounded-xl bg-terracotta text-white font-bold hover:bg-terracotta-deep transition-colors"
         >
           + Ajouter un plat
         </button>
       </div>
 
       {items.length === 0 && !editing && (
-        <div className="p-10 rounded-2xl border border-dashed border-white/10 text-center text-muted-foreground">
+        <div className="p-10 rounded-2xl border border-dashed border-border text-center text-muted-foreground">
           Aucun plat pour le moment. Cliquez sur « Ajouter un plat ».
         </div>
       )}
@@ -134,7 +134,7 @@ function MenuPage() {
         {items.map((it) => (
           <div
             key={it.id}
-            className="rounded-2xl border border-white/8 bg-dark-card overflow-hidden"
+            className="rounded-2xl border border-border bg-card overflow-hidden"
           >
             <StorageImage
               path={it.image_url}
@@ -144,10 +144,10 @@ function MenuPage() {
             <div className="p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-gold">{it.category}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-terracotta">{it.category}</p>
                   <h3 className="font-bold mt-1">{it.name}</h3>
                 </div>
-                <span className="font-black text-gold whitespace-nowrap">{it.price} F</span>
+                <span className="font-black text-terracotta-deep whitespace-nowrap">{it.price} F</span>
               </div>
               {it.description && (
                 <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{it.description}</p>
@@ -158,19 +158,19 @@ function MenuPage() {
                     setEditing(it);
                     setFile(null);
                   }}
-                  className="flex-1 px-3 py-2 rounded-lg border border-white/10 hover:border-gold/40 font-semibold"
+                  className="flex-1 px-3 py-2 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-surface-warm font-semibold transition-colors"
                 >
                   Modifier
                 </button>
                 <button
                   onClick={() => toggle(it)}
-                  className={`px-3 py-2 rounded-lg border font-semibold ${it.available ? "border-green-500/30 text-green-400" : "border-white/10 text-muted-foreground"}`}
+                  className={`px-3 py-2 rounded-lg border font-semibold transition-colors ${it.available ? "border-emerald/30 bg-emerald-tint text-emerald-deep" : "border-border text-muted-foreground hover:bg-surface-warm"}`}
                 >
                   {it.available ? "Visible" : "Masqué"}
                 </button>
                 <button
                   onClick={() => remove(it)}
-                  className="px-3 py-2 rounded-lg border border-destructive/30 text-destructive hover:bg-destructive/10"
+                  className="px-3 py-2 rounded-lg border border-destructive/20 text-destructive/80 hover:bg-destructive/10 hover:border-destructive/40 hover:text-destructive transition-colors"
                 >
                   ✕
                 </button>
@@ -182,11 +182,11 @@ function MenuPage() {
 
       {editing && (
         <div
-          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-charcoal/60 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setEditing(null)}
         >
           <div
-            className="w-full max-w-lg rounded-2xl border border-white/10 bg-[#111118] p-6 max-h-[90vh] overflow-y-auto"
+            className="w-full max-w-lg rounded-2xl border border-border bg-card shadow-xl p-6 max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-xl font-black mb-4">
@@ -213,7 +213,7 @@ function MenuPage() {
                   value={editing.description ?? ""}
                   onChange={(e) => setEditing({ ...editing, description: e.target.value })}
                   rows={2}
-                  className="mt-1.5 w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/8 focus:border-gold focus:outline-none text-sm"
+                  className="mt-1.5 w-full px-4 py-3 rounded-xl bg-card border border-border focus:border-terracotta/50 focus:outline-none text-sm"
                   placeholder="Poulet entier mariné, frites, sauce maison"
                 />
               </div>
@@ -231,7 +231,7 @@ function MenuPage() {
                   type="file"
                   accept="image/*"
                   onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-                  className="mt-1.5 w-full text-sm text-muted-foreground file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gold/20 file:text-gold file:font-semibold"
+                  className="mt-1.5 w-full text-sm text-muted-foreground file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-terracotta-tint file:text-terracotta-deep file:font-semibold"
                 />
                 {(file || editing.image_url) && (
                   <p className="text-[11px] text-muted-foreground mt-1">
@@ -243,14 +243,14 @@ function MenuPage() {
             <div className="mt-5 flex gap-2 justify-end">
               <button
                 onClick={() => setEditing(null)}
-                className="px-4 py-2.5 rounded-xl border border-white/10 text-sm font-semibold"
+                className="px-4 py-2.5 rounded-xl border border-border text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-surface-warm transition-colors"
               >
                 Annuler
               </button>
               <button
                 onClick={save}
                 disabled={busy}
-                className="px-5 py-2.5 rounded-xl bg-gradient-gold text-[#0a0a0f] text-sm font-bold disabled:opacity-60"
+                className="px-5 py-2.5 rounded-xl bg-terracotta text-white text-sm font-bold hover:bg-terracotta-deep transition-colors disabled:opacity-60"
               >
                 {busy ? "Enregistrement..." : "Enregistrer"}
               </button>
@@ -285,7 +285,7 @@ function Input({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="mt-1.5 w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/8 focus:border-gold focus:outline-none text-sm"
+        className="mt-1.5 w-full px-4 py-3 rounded-xl bg-card border border-border focus:border-terracotta/50 focus:outline-none text-sm"
       />
     </div>
   );

@@ -17,6 +17,7 @@ import {
 } from "../shared";
 import { StorageImage } from "@/components/StorageImage";
 import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
+import { Landmark, Leaf, UtensilsCrossed } from "lucide-react";
 
 function pickCover(gallery: PublicGalleryImage[], menu: PublicMenuItem[]) {
   return gallery[0]?.image_url ?? menu.find((m) => m.image_url)?.image_url ?? null;
@@ -277,7 +278,7 @@ export function TplModerne(props: TemplateProps) {
                 className="h-8 w-auto object-contain rounded"
               />
             ) : (
-              <span className="text-2xl shrink-0">🌿</span>
+              <Leaf className="w-6 h-6 shrink-0" style={{ color: theme.accent }} />
             )}
             <strong
               className="text-xl sm:text-2xl truncate"
@@ -469,22 +470,30 @@ export function TplModerne(props: TemplateProps) {
               </p>
               <div className="grid sm:grid-cols-2 gap-6 mb-6">
                 {[
-                  ["🍴", "Spécialiste", "Une équipe formée aux meilleures techniques."],
-                  ["🏛️", "Restaurant", "Un cadre élégant pour vos moments précieux."],
-                ].map(([icon, t, d]) => (
-                  <div key={t}>
+                  {
+                    I: UtensilsCrossed,
+                    t: "Spécialiste",
+                    d: "Une équipe formée aux meilleures techniques.",
+                  },
+                  {
+                    I: Landmark,
+                    t: "Restaurant",
+                    d: "Un cadre élégant pour vos moments précieux.",
+                  },
+                ].map((f) => (
+                  <div key={f.t}>
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xl" style={{ color: theme.accent }}>
-                        {icon}
+                      <span style={{ color: theme.accent }}>
+                        <f.I className="w-5 h-5" />
                       </span>
                       <strong
                         style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.2rem" }}
                       >
-                        {t}
+                        {f.t}
                       </strong>
                     </div>
                     <p className="text-sm" style={{ color: theme.textMuted }}>
-                      {d}
+                      {f.d}
                     </p>
                   </div>
                 ))}

@@ -52,10 +52,10 @@ export function OfflineBanner() {
     <div
       className={`fixed bottom-0 left-0 right-0 z-[200] px-4 py-3 text-center text-sm font-bold transition-all duration-500 ${
         isReconnecting
-          ? "bg-blue-600 text-white"
+          ? "bg-charcoal text-white"
           : isOnline
-            ? "bg-emerald-600 text-white"
-            : "bg-amber-600 text-white"
+            ? "bg-emerald text-white"
+            : "bg-amber-brand text-charcoal"
       }`}
     >
       <div className="flex items-center justify-center gap-2">
@@ -66,13 +66,14 @@ export function OfflineBanner() {
           </>
         ) : isOnline ? (
           <>
-            <Wifi className="w-4 h-4" />✅ Connexion rétablie
+            <Wifi className="w-4 h-4" />
+            Connexion rétablie
           </>
         ) : (
           <>
             <WifiOff className="w-4 h-4" />
             <span>
-              📡 Vous êtes hors ligne
+              Vous êtes hors ligne
               {pendingCount > 0 && (
                 <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/20 text-[10px]">
                   <Clock className="w-3 h-3" />

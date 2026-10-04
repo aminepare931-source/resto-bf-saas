@@ -18,6 +18,7 @@ import {
 } from "../shared";
 import { StorageImage } from "@/components/StorageImage";
 import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
+import { CupSoda, Sandwich } from "lucide-react";
 
 function pickCover(gallery: PublicGalleryImage[], menu: PublicMenuItem[]) {
   return gallery[0]?.image_url ?? menu.find((m) => m.image_url)?.image_url ?? null;
@@ -34,21 +35,6 @@ function FontImport() {
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700;800;900&family=Archivo+Black&display=swap"
     />
   );
-}
-
-function CategoryIcon({ name }: { name: string }) {
-  const n = name.toLowerCase();
-  if (/pizza/.test(n)) return <>🍕</>;
-  if (/burger|sandwich/.test(n)) return <>🍔</>;
-  if (/pasta|p[âa]tes|spaghet/.test(n)) return <>🍝</>;
-  if (/dessert|sucre|p[âa]tiss/.test(n)) return <>🍰</>;
-  if (/boisson|drink|jus|cocktail/.test(n)) return <>🥤</>;
-  if (/entr[ée]e|starter|salade/.test(n)) return <>🥗</>;
-  if (/grill|brochette|viande|bbq/.test(n)) return <>🍖</>;
-  if (/poisson|fish|fruits de mer/.test(n)) return <>🐟</>;
-  if (/riz|t[ôo]|plat/.test(n)) return <>🍛</>;
-  if (/petit|breakfast|d[ée]j/.test(n)) return <>🥐</>;
-  return <>🍽️</>;
 }
 
 function MetaStrip({
@@ -293,7 +279,7 @@ export function TplSavane(props: TemplateProps) {
                   className="h-8 w-auto object-contain rounded"
                 />
               ) : (
-                <span className="text-2xl shrink-0">🍔</span>
+                <Sandwich className="w-6 h-6 shrink-0" style={{ color: theme.accent }} />
               )}
               <strong
                 className="text-xl sm:text-2xl truncate text-white"
@@ -459,8 +445,6 @@ export function TplSavane(props: TemplateProps) {
                   />
                 </div>
               )}
-              <span className="absolute -top-2 -right-2 text-5xl rotate-12">✨</span>
-              <span className="absolute bottom-4 -left-4 text-4xl">⚡</span>
             </div>
           </div>
         )}
@@ -582,7 +566,7 @@ export function TplSavane(props: TemplateProps) {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-3xl">🥤</span>
+                <CupSoda size={28} style={{ color: theme.accent }} />
                 <div>
                   <strong className="text-sm block">Combos & boissons</strong>
                   <span className="text-xs" style={{ color: theme.textMuted }}>
@@ -634,7 +618,9 @@ export function TplSavane(props: TemplateProps) {
                 COMMANDER MAINTENANT
               </a>
             </div>
-            <div className="text-7xl sm:text-8xl text-center">🍔</div>
+            <div className="text-center">
+              <Sandwich className="w-20 h-20 sm:w-24 sm:h-24 mx-auto text-white/90" />
+            </div>
           </div>
         </section>
       )}

@@ -7,15 +7,11 @@ import { useRealtimeSubscription } from "@/hooks/use-realtime";
 import { toast } from "sonner";
 import {
   Send,
-  Users,
-  User,
   ChefHat,
   Utensils,
   Pin,
-  Bell,
   Search,
   Sparkles,
-  Check,
   CheckCircle2,
   Volume2,
   VolumeX,
@@ -27,12 +23,20 @@ import {
   ThumbsUp,
   Heart,
   AlertTriangle,
-  Smile,
   Hash,
   Crown,
-  Share2,
   ChevronDown,
+  Megaphone,
+  Fish,
+  Receipt,
+  Zap,
+  Smartphone,
+  Banknote,
+  Beer,
+  Clock,
+  LifeBuoy,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { ChatMessage, StaffRole } from "@/types";
 
 export const Route = createFileRoute("/_authenticated/dashboard/chat")({
@@ -44,7 +48,7 @@ type ChannelId = "general" | "cuisine" | "service" | "caisse" | "urgences";
 interface ChannelInfo {
   id: ChannelId;
   name: string;
-  icon: any;
+  icon: LucideIcon;
   badge: string;
   desc: string;
 }
@@ -89,10 +93,10 @@ const CHANNELS: ChannelInfo[] = [
 
 // Couleurs d'avatar par rôle (le nom réel vient de la base de données)
 const ROLE_AVATAR_BG: Record<string, string> = {
-  admin: "bg-amber-500/20 text-amber-300 border-amber-500/40",
-  cuisinier: "bg-blue-500/20 text-blue-300 border-blue-500/40",
-  serveur: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
-  manager: "bg-purple-500/20 text-purple-300 border-purple-500/40",
+  admin: "bg-amber-tint text-amber-deep border-amber-brand/40",
+  cuisinier: "bg-terracotta-tint text-terracotta-deep border-terracotta/40",
+  serveur: "bg-emerald-tint text-emerald-deep border-emerald/40",
+  manager: "bg-charcoal/5 text-charcoal border-charcoal/20",
 };
 const ROLE_TITLE: Record<string, string> = {
   admin: "Administrateur",
@@ -101,66 +105,76 @@ const ROLE_TITLE: Record<string, string> = {
   manager: "Manager",
 };
 
-const QUICK_PINGS: Record<ChannelId, { label: string; text: string; icon: string }[]> = {
+const REACTIONS: { key: string; label: string; Icon: LucideIcon }[] = [
+  { key: "thumbsup", label: "Pouce levé", Icon: ThumbsUp },
+  { key: "fire", label: "Au feu", Icon: Flame },
+  { key: "check", label: "Validé", Icon: CheckCircle2 },
+  { key: "heart", label: "Coeur", Icon: Heart },
+];
+const REACTION_MAP: Record<string, LucideIcon> = Object.fromEntries(
+  REACTIONS.map((r) => [r.key, r.Icon] as [string, LucideIcon]),
+);
+
+const QUICK_PINGS: Record<ChannelId, { label: string; text: string; icon: LucideIcon }[]> = {
   general: [
     {
       label: "Briefing",
-      text: "📢 Briefing d'équipe à 18h30 avant le grand service du soir !",
-      icon: "📢",
+      text: "Briefing d'équipe à 18h30 avant le grand service du soir !",
+      icon: Megaphone,
     },
     {
       label: "Bravo",
-      text: "👏 Excellent travail de toute l'équipe sur le service de ce midi !",
-      icon: "👏",
+      text: "Excellent travail de toute l'équipe sur le service de ce midi !",
+      icon: ThumbsUp,
     },
-    { label: "VIP", text: "👑 Groupe VIP de 10 personnes réservé pour 20h00.", icon: "👑" },
+    { label: "VIP", text: "Groupe VIP de 10 personnes réservé pour 20h00.", icon: Crown },
   ],
   cuisine: [
     {
       label: "CMD Prête",
-      text: "🔥 Commande #108 (Poulet Bicyclette) prête au passe !",
-      icon: "🔥",
+      text: "Commande #108 (Poulet Bicyclette) prête au passe !",
+      icon: Flame,
     },
     {
       label: "Capitaine",
-      text: "🐟 Stock de Capitaine grillé au feu de bois réapprovisionné.",
-      icon: "🐟",
+      text: "Stock de Capitaine grillé au feu de bois réapprovisionné.",
+      icon: Fish,
     },
-    { label: "Rupture", text: "⚠️ Rupture temporaire sur les frites d'alloco.", icon: "⚠️" },
+    { label: "Rupture", text: "Rupture temporaire sur les frites d'alloco.", icon: AlertTriangle },
   ],
   service: [
-    { label: "Addition", text: "🧾 Addition demandée Table N° 4 (Orange Money).", icon: "🧾" },
+    { label: "Addition", text: "Addition demandée Table N° 4 (Orange Money).", icon: Receipt },
     {
       label: "Table N°2",
-      text: "⚡ Client Table N° 2 demande de l'eau fraîche et des verres.",
-      icon: "⚡",
+      text: "Client Table N° 2 demande de l'eau fraîche et des verres.",
+      icon: Zap,
     },
     {
       label: "Nettoyée",
-      text: "✅ Table N° 5 nettoyée, libre et prête pour le prochain client.",
-      icon: "✅",
+      text: "Table N° 5 nettoyée, libre et prête pour le prochain client.",
+      icon: CheckCircle2,
     },
   ],
   caisse: [
     {
       label: "OM Reçu",
-      text: "💳 Paiement Orange Money de 14.500 FCFA validé pour CMD-107.",
-      icon: "💳",
+      text: "Paiement Orange Money de 14.500 FCFA validé pour CMD-107.",
+      icon: CreditCard,
     },
-    { label: "Moov Reçu", text: "📱 Paiement Moov Money de 8.500 FCFA confirmé.", icon: "📱" },
-    { label: "Espèces", text: "💵 Encaissement espèces effectué Table N° 3.", icon: "💵" },
+    { label: "Moov Reçu", text: "Paiement Moov Money de 8.500 FCFA confirmé.", icon: Smartphone },
+    { label: "Espèces", text: "Encaissement espèces effectué Table N° 3.", icon: Banknote },
   ],
   urgences: [
     {
       label: "Alerte Stock",
-      text: "🧊 Urgence : Plus de bière Brakina 65cl fraîche en réserve !",
-      icon: "🧊",
+      text: "Urgence : plus de bière Brakina 65cl fraîche en réserve !",
+      icon: Beer,
     },
-    { label: "Retard", text: "⏱️ Retard de 15 min sur la commande de la Table N° 1.", icon: "⏱️" },
+    { label: "Retard", text: "Retard de 15 min sur la commande de la Table N° 1.", icon: Clock },
     {
       label: "Assistance",
-      text: "🆘 Besoin d'aide renforcée en salle au niveau de la terrasse !",
-      icon: "🆘",
+      text: "Besoin d'aide renforcée en salle au niveau de la terrasse !",
+      icon: LifeBuoy,
     },
   ],
 };
@@ -219,7 +233,7 @@ export function ChatPage() {
 
   // Pinned Notice Board
   const [noticeBoard, setNoticeBoard] = useState(
-    "📌 Aucune note épinglée pour le moment. Cliquez sur « Éditer la note » pour en ajouter une pour votre équipe.",
+    "Aucune note épinglée pour le moment. Cliquez sur « Éditer la note » pour en ajouter une pour votre équipe.",
   );
   const [editingNotice, setEditingNotice] = useState(false);
   const [noticeDraft, setNoticeDraft] = useState(noticeBoard);
@@ -402,16 +416,16 @@ export function ChatPage() {
     }
   };
 
-  const handleAddReaction = (msgId: string, emoji: string) => {
+  const handleAddReaction = (msgId: string, key: string) => {
     setMessages((prev) =>
       prev.map((m) => {
         if (m.id !== msgId) return m;
         const reactions = { ...(m.reactions || {}) };
-        reactions[emoji] = (reactions[emoji] || 0) + 1;
+        reactions[key] = (reactions[key] || 0) + 1;
         return { ...m, reactions };
       }),
     );
-    toast.success(`Réaction ${emoji} ajoutée !`);
+    toast.success("Réaction ajoutée");
   };
 
   const handleSaveNotice = () => {
@@ -453,16 +467,16 @@ export function ChatPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-12 overflow-x-hidden">
       {/* PAGE HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-6 rounded-3xl border border-[#d4a853]/30 bg-gradient-to-r from-[#111118] via-[#111118] to-[#1a160d] shadow-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-6 rounded-3xl border border-terracotta/30 bg-gradient-to-r from-terracotta-tint via-card to-card shadow-sm">
         <div className="space-y-1 min-w-0">
-          <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d4a853]/15 border border-[#d4a853]/30 text-xs font-bold text-[#f0d48a]">
-            <Sparkles className="w-3.5 h-3.5 text-[#d4a853]" />
+          <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-terracotta-tint border border-terracotta/30 text-xs font-bold text-terracotta-deep">
+            <Sparkles className="w-3.5 h-3.5 text-terracotta" />
             <span>Messagerie Équipe Temps Réel</span>
           </div>
 
           <h1 className="text-xl sm:text-3xl font-black text-foreground truncate">
             Chat Interne —{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4a853] via-[#f0d48a] to-[#ffffff]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-terracotta via-amber-brand to-terracotta-deep">
               {r?.name || "Votre Restaurant"}
             </span>
           </h1>
@@ -470,8 +484,8 @@ export function ChatPage() {
           <p className="text-xs text-muted-foreground flex items-center gap-2">
             <span className="hidden sm:inline">Communication Cuisine, Salle, Caisse & Direction</span>
             <span className="hidden sm:inline">•</span>
-            <span className="text-emerald-400 font-bold inline-flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-emerald-deep font-bold inline-flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-emerald animate-pulse" />
               Direct Connecté
             </span>
           </p>
@@ -483,8 +497,8 @@ export function ChatPage() {
             onClick={() => setSoundEnabled((prev) => !prev)}
             className={`p-2.5 rounded-xl border text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
               soundEnabled
-                ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
-                : "border-white/10 bg-[#0a0a0f] text-muted-foreground"
+                ? "border-emerald/40 bg-emerald-tint text-emerald-deep"
+                : "border-border bg-surface-warm text-muted-foreground hover:text-foreground"
             }`}
             title={soundEnabled ? "Sons activés" : "Sons désactivés"}
           >
@@ -495,13 +509,13 @@ export function ChatPage() {
       </div>
 
       {/* STAFF PROFILE SWITCHER (SIMULATE WHO IS SENDING) */}
-      <div className="p-3 sm:p-4 rounded-2xl border border-white/10 bg-[#111118]/90 backdrop-blur-xl shadow-lg space-y-2">
+      <div className="p-3 sm:p-4 rounded-2xl border border-border bg-card shadow-sm space-y-2">
         <div className="flex items-center justify-between text-xs gap-2">
           <span className="font-extrabold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 min-w-0">
-            <Crown className="w-3.5 h-3.5 text-[#d4a853] shrink-0" />
+            <Crown className="w-3.5 h-3.5 text-terracotta shrink-0" />
             <span className="truncate">Vous émettez en tant que :</span>
           </span>
-          <span className="hidden sm:inline text-[11px] text-[#f0d48a] italic shrink-0">
+          <span className="hidden sm:inline text-[11px] text-terracotta-deep italic shrink-0">
             Cliquez pour basculer de rôle
           </span>
         </div>
@@ -515,8 +529,8 @@ export function ChatPage() {
                 onClick={() => setActiveProfileIndex(idx)}
                 className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-2.5 min-w-0 ${
                   isActive
-                    ? "border-[#d4a853] bg-[#d4a853]/15 text-foreground shadow-lg scale-[1.02]"
-                    : "border-white/5 bg-[#0a0a0f] text-muted-foreground hover:border-white/20"
+                    ? "border-terracotta bg-terracotta-tint text-foreground shadow-sm scale-[1.02]"
+                    : "border-border bg-surface-warm text-muted-foreground hover:border-terracotta/40"
                 }`}
               >
                 <div
@@ -539,9 +553,9 @@ export function ChatPage() {
       </div>
 
       {/* PINNED NOTICE BOARD */}
-      <div className="p-4 rounded-2xl border border-[#d4a853]/40 bg-gradient-to-r from-[#d4a853]/15 via-[#111118] to-[#111118] shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div className="p-4 rounded-2xl border border-amber-brand/40 bg-gradient-to-r from-amber-tint via-card to-card shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="flex items-start gap-3 flex-1 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-[#d4a853]/20 border border-[#d4a853]/40 text-[#f0d48a] flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
+          <div className="w-8 h-8 rounded-lg bg-amber-tint border border-amber-brand/40 text-amber-deep flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
             <Pin className="w-4 h-4" />
           </div>
 
@@ -551,19 +565,19 @@ export function ChatPage() {
                 <textarea
                   value={noticeDraft}
                   onChange={(e) => setNoticeDraft(e.target.value)}
-                  className="w-full p-2.5 rounded-xl bg-[#0a0a0f] border border-[#d4a853]/50 text-xs text-foreground focus:outline-none"
+                  className="w-full p-2.5 rounded-xl bg-card border border-border text-xs text-foreground focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
                   rows={2}
                 />
                 <div className="flex items-center gap-2 justify-end">
                   <button
                     onClick={() => setEditingNotice(false)}
-                    className="px-3 py-1 rounded-lg border border-white/10 text-xs text-muted-foreground"
+                    className="px-3 py-1 rounded-lg border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-surface-warm transition-colors"
                   >
                     Annuler
                   </button>
                   <button
                     onClick={handleSaveNotice}
-                    className="px-3 py-1 rounded-lg bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] text-xs font-black"
+                    className="px-3 py-1 rounded-lg bg-terracotta text-white hover:bg-terracotta-deep transition-colors text-xs font-bold"
                   >
                     Enregistrer Note
                   </button>
@@ -583,7 +597,7 @@ export function ChatPage() {
               setNoticeDraft(noticeBoard);
               setEditingNotice(true);
             }}
-            className="text-[11px] text-[#f0d48a] hover:underline shrink-0 font-bold self-end sm:self-center"
+            className="text-[11px] text-terracotta-deep hover:underline shrink-0 font-bold self-end sm:self-center"
           >
             Éditer la note
           </button>
@@ -606,14 +620,14 @@ export function ChatPage() {
                   onClick={() => setActiveChannel(ch.id)}
                   className={`shrink-0 px-3 py-2 rounded-xl border flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer ${
                     isActive
-                      ? "border-[#d4a853]/60 bg-[#d4a853]/15 text-foreground"
-                      : "border-white/10 text-muted-foreground"
+                      ? "border-terracotta/60 bg-terracotta-tint text-foreground"
+                      : "border-border text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
                   <span>{ch.name}</span>
                   {unread > 0 && !isActive && (
-                    <span className="px-1.5 py-0.5 rounded-full bg-emerald-500 text-[#0a0a0f] text-[9px] font-black">
+                    <span className="px-1.5 py-0.5 rounded-full bg-emerald text-white text-[9px] font-bold">
                       +{unread}
                     </span>
                   )}
@@ -623,13 +637,13 @@ export function ChatPage() {
           </div>
 
           {/* Desktop: liste complète avec description */}
-          <div className="hidden lg:block p-4 rounded-2xl border border-white/10 bg-[#111118]/90 backdrop-blur-2xl shadow-xl space-y-2">
-            <div className="flex items-center justify-between pb-2 border-b border-white/10">
+          <div className="hidden lg:block p-4 rounded-2xl border border-border bg-card shadow-sm space-y-2">
+            <div className="flex items-center justify-between pb-2 border-b border-border">
               <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                <Hash className="w-3.5 h-3.5 text-[#d4a853]" />
+                <Hash className="w-3.5 h-3.5 text-terracotta" />
                 <span>Canaux de Discussion</span>
               </h3>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-white/10 text-muted-foreground font-bold">
+              <span className="text-[10px] px-2 py-0.5 rounded bg-surface-warm text-muted-foreground font-bold">
                 5 Salles
               </span>
             </div>
@@ -646,13 +660,13 @@ export function ChatPage() {
                     onClick={() => setActiveChannel(ch.id)}
                     className={`w-full p-3 rounded-xl border text-left transition-all flex items-center justify-between gap-3 cursor-pointer ${
                       isActive
-                        ? "border-[#d4a853]/60 bg-[#d4a853]/15 text-foreground shadow-md"
-                        : "border-transparent hover:bg-white/5 text-muted-foreground hover:text-foreground"
+                        ? "border-terracotta/60 bg-terracotta-tint text-foreground shadow-sm"
+                        : "border-transparent hover:bg-surface-warm text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div
-                        className={`p-2 rounded-lg ${isActive ? "bg-[#d4a853] text-[#0a0a0f]" : "bg-white/10 text-muted-foreground"}`}
+                        className={`p-2 rounded-lg ${isActive ? "bg-terracotta text-white" : "bg-surface-warm text-muted-foreground"}`}
                       >
                         <Icon className="w-4 h-4" />
                       </div>
@@ -667,7 +681,7 @@ export function ChatPage() {
                     </div>
 
                     {unread > 0 && !isActive && (
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-[#0a0a0f] text-[10px] font-black animate-bounce">
+                      <span className="px-2 py-0.5 rounded-full bg-emerald text-white text-[10px] font-bold">
                         +{unread}
                       </span>
                     )}
@@ -678,70 +692,74 @@ export function ChatPage() {
           </div>
 
           {/* QUICK PINGS / MACROS BOX — repliable sur mobile */}
-          <details className="lg:hidden group rounded-2xl border border-white/10 bg-[#111118]/90 backdrop-blur-2xl shadow-xl overflow-hidden">
-            <summary className="p-3.5 cursor-pointer list-none flex items-center justify-between text-xs font-extrabold text-[#f0d48a] uppercase tracking-wider">
+          <details className="lg:hidden group rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
+            <summary className="p-3.5 cursor-pointer list-none flex items-center justify-between text-xs font-extrabold text-terracotta-deep uppercase tracking-wider">
               <span className="flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-[#d4a853]" />
+                <Sparkles className="w-3.5 h-3.5 text-terracotta" />
                 <span>Réponses rapides</span>
               </span>
               <ChevronDown className="w-3.5 h-3.5 transition-transform group-open:rotate-180" />
             </summary>
             <div className="px-3.5 pb-3.5 flex flex-col gap-1.5">
-              {QUICK_PINGS[activeChannel]?.map((ping) => (
-                <button
-                  key={ping.label}
-                  onClick={() => handleSendMessage(ping.text)}
-                  className="p-2.5 rounded-xl border border-white/10 bg-[#0a0a0f] hover:border-[#d4a853]/50 transition-all text-left flex items-center gap-2 text-xs text-foreground cursor-pointer"
-                >
-                  <span className="text-base">{ping.icon}</span>
-                  <div className="min-w-0 flex-1">
-                    <strong className="block font-bold text-[11px] text-[#f0d48a]">
-                      {ping.label}
-                    </strong>
-                  </div>
-                </button>
-              ))}
+              {QUICK_PINGS[activeChannel]?.map((ping) => {
+                const PingIcon = ping.icon;
+                return (
+                  <button
+                    key={ping.label}
+                    onClick={() => handleSendMessage(ping.text)}
+                    className="p-2.5 rounded-xl border border-border bg-surface-warm hover:border-terracotta/50 transition-colors text-left flex items-center gap-2 text-xs text-foreground cursor-pointer"
+                  >
+                    <PingIcon className="w-4 h-4 text-terracotta shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <strong className="block font-bold text-[11px] text-terracotta-deep">
+                        {ping.label}
+                      </strong>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </details>
 
           {/* Desktop: liste toujours visible */}
-          <div className="hidden lg:block p-4 rounded-2xl border border-white/10 bg-[#111118]/90 backdrop-blur-2xl shadow-xl space-y-3">
-            <h4 className="text-xs font-extrabold text-[#f0d48a] uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#d4a853]" />
+          <div className="hidden lg:block p-4 rounded-2xl border border-border bg-card shadow-sm space-y-3">
+            <h4 className="text-xs font-extrabold text-terracotta-deep uppercase tracking-wider flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-terracotta" />
               <span>Envoi Rapide (Pings 1-Clic)</span>
             </h4>
 
             <div className="flex flex-col gap-1.5">
-              {QUICK_PINGS[activeChannel]?.map((ping) => (
-                <button
-                  key={ping.label}
-                  onClick={() => handleSendMessage(ping.text)}
-                  className="p-2.5 rounded-xl border border-white/10 bg-[#0a0a0f] hover:border-[#d4a853]/50 hover:bg-[#1a1a24] transition-all text-left flex items-center gap-2 text-xs text-foreground cursor-pointer group"
-                >
-                  <span className="text-base group-hover:scale-125 transition-transform">
-                    {ping.icon}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <strong className="block font-bold text-[11px] text-[#f0d48a]">
-                      {ping.label}
-                    </strong>
-                    <span className="text-[10px] text-muted-foreground truncate block">
-                      {ping.text}
-                    </span>
-                  </div>
-                </button>
-              ))}
+              {QUICK_PINGS[activeChannel]?.map((ping) => {
+                const PingIcon = ping.icon;
+                return (
+                  <button
+                    key={ping.label}
+                    onClick={() => handleSendMessage(ping.text)}
+                    className="p-2.5 rounded-xl border border-border bg-surface-warm hover:border-terracotta/50 hover:bg-terracotta-tint transition-colors text-left flex items-center gap-2 text-xs text-foreground cursor-pointer group"
+                  >
+                    <PingIcon className="w-4 h-4 text-terracotta group-hover:scale-110 transition-transform shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <strong className="block font-bold text-[11px] text-terracotta-deep">
+                        {ping.label}
+                      </strong>
+                      <span className="text-[10px] text-muted-foreground truncate block">
+                        {ping.text}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
 
         {/* RIGHT COLUMN: CHAT CONVERSATION VIEW (8 COLS) — en premier sur mobile */}
         <div className="order-1 lg:order-2 lg:col-span-8 space-y-4 min-w-0 w-full">
-          <div className="rounded-3xl border border-white/10 bg-[#111118]/90 backdrop-blur-2xl shadow-2xl overflow-hidden flex flex-col h-[75vh] max-h-[560px] lg:h-[620px] lg:max-h-none">
+          <div className="rounded-3xl border border-border bg-card shadow-sm overflow-hidden flex flex-col h-[75vh] max-h-[560px] lg:h-[620px] lg:max-h-none">
             {/* CHAT HEADER */}
-            <div className="p-3 sm:p-4 border-b border-white/10 bg-[#0a0a0f]/80 flex items-center justify-between gap-2">
+            <div className="p-3 sm:p-4 border-b border-border bg-surface-warm flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#d4a853]/20 border border-[#d4a853]/40 text-[#f0d48a] flex items-center justify-center font-bold shrink-0">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-terracotta-tint border border-terracotta/40 text-terracotta-deep flex items-center justify-center font-bold shrink-0">
                   #
                 </div>
                 <div className="min-w-0">
@@ -762,22 +780,22 @@ export function ChatPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Rechercher..."
-                  className="w-full pl-7 sm:pl-8 pr-2 sm:pr-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-[11px] sm:text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#d4a853]"
+                  className="w-full pl-7 sm:pl-8 pr-2 sm:pr-3 py-1.5 rounded-xl bg-card border border-border text-[11px] sm:text-xs text-foreground placeholder:text-muted-foreground focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
                 />
               </div>
             </div>
 
             {/* MESSAGES LIST AREA */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-[#0a0a0f]/40 to-[#111118]">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-surface-warm">
               {loading ? (
                 <div className="flex items-center justify-center h-full text-muted-foreground text-xs">
-                  <RefreshCw className="w-5 h-5 animate-spin mr-2 text-[#d4a853]" />
+                  <RefreshCw className="w-5 h-5 animate-spin mr-2 text-terracotta" />
                   Chargement des discussions...
                 </div>
               ) : channelMessages.length === 0 ? (
                 <div className="flex items-center justify-center h-full text-muted-foreground text-center p-6">
                   <div className="space-y-2">
-                    <MessageSquare className="w-10 h-10 mx-auto opacity-40 text-[#d4a853]" />
+                    <MessageSquare className="w-10 h-10 mx-auto opacity-40 text-terracotta" />
                     <p className="text-sm font-bold text-foreground">Aucun message dans ce canal</p>
                     <p className="text-xs text-muted-foreground max-w-xs mx-auto">
                       Soyez le premier à envoyer une information ou cliquez sur les pings rapides
@@ -807,7 +825,7 @@ export function ChatPage() {
                       <div className={`space-y-1 ${isMe ? "text-right" : ""}`}>
                         <div className="flex items-center gap-2 flex-wrap text-[11px]">
                           <span className="font-extrabold text-foreground">{msg.sender_name}</span>
-                          <span className="px-1.5 py-0.2 rounded bg-white/10 text-[9px] text-muted-foreground font-semibold">
+                          <span className="px-1.5 py-0.2 rounded bg-charcoal/5 text-[9px] text-muted-foreground font-semibold">
                             {msg.sender_role}
                           </span>
                           <span className="text-[10px] text-muted-foreground">
@@ -821,23 +839,23 @@ export function ChatPage() {
                         <div
                           className={`p-3.5 rounded-2xl text-xs leading-relaxed shadow-md relative group ${
                             isMe
-                              ? "bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] font-medium rounded-tr-none"
-                              : "bg-[#1a1a24] border border-white/10 text-foreground rounded-tl-none"
+                              ? "bg-terracotta text-white font-medium rounded-tr-none"
+                              : "bg-card border border-border text-foreground rounded-tl-none"
                           }`}
                         >
                           {msg.message}
 
                           {/* Quick Reactions bar hover */}
                           <div
-                            className={`absolute top-1/2 -translate-y-1/2 hidden group-hover:flex items-center gap-1 bg-[#0a0a0f] border border-white/20 p-1 rounded-full shadow-xl z-20 ${isMe ? "-left-24" : "-right-24"}`}
+                            className={`absolute top-1/2 -translate-y-1/2 hidden group-hover:flex items-center gap-1 bg-card border border-border p-1 rounded-full shadow-lg z-20 ${isMe ? "-left-24" : "-right-24"}`}
                           >
-                            {["👍", "🔥", "✅", "❤️"].map((emoji) => (
+                            {REACTIONS.map(({ key, Icon }) => (
                               <button
-                                key={emoji}
-                                onClick={() => handleAddReaction(msg.id, emoji)}
-                                className="hover:scale-125 transition-transform text-xs p-1"
+                                key={key}
+                                onClick={() => handleAddReaction(msg.id, key)}
+                                className="p-1 text-muted-foreground hover:text-terracotta hover:scale-110 transition-transform"
                               >
-                                {emoji}
+                                <Icon className="w-3.5 h-3.5" />
                               </button>
                             ))}
                           </div>
@@ -848,15 +866,19 @@ export function ChatPage() {
                           <div
                             className={`flex items-center gap-1 pt-1 ${isMe ? "justify-end" : "justify-start"}`}
                           >
-                            {Object.entries(msg.reactions).map(([emoji, cnt]) => (
-                              <span
-                                key={emoji}
-                                className="px-2 py-0.5 rounded-full bg-white/10 border border-white/10 text-[10px] text-foreground flex items-center gap-1"
-                              >
-                                <span>{emoji}</span>
-                                <span className="font-bold">{cnt}</span>
-                              </span>
-                            ))}
+                            {Object.entries(msg.reactions).map(([key, cnt]) => {
+                              const Icon = REACTION_MAP[key];
+                              if (!Icon) return null;
+                              return (
+                                <span
+                                  key={key}
+                                  className="px-2 py-0.5 rounded-full bg-card border border-border text-[10px] text-foreground flex items-center gap-1"
+                                >
+                                  <Icon className="w-3 h-3 text-terracotta" />
+                                  <span className="font-bold">{cnt}</span>
+                                </span>
+                              );
+                            })}
                           </div>
                         )}
                       </div>
@@ -868,7 +890,7 @@ export function ChatPage() {
             </div>
 
             {/* INPUT INPUT FOOTER */}
-            <div className="p-3 sm:p-4 border-t border-white/10 bg-[#0a0a0f]">
+            <div className="p-3 sm:p-4 border-t border-border bg-card">
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -876,14 +898,14 @@ export function ChatPage() {
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyDown={handleKeyPress}
                   placeholder="Écrire un message..."
-                  className="flex-1 min-w-0 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-[#d4a853] transition-colors"
+                  className="flex-1 min-w-0 px-4 py-3 rounded-xl bg-surface-warm border border-border text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 transition-all"
                   disabled={sending}
                 />
 
                 <button
                   onClick={() => handleSendMessage()}
                   disabled={!newMessage.trim() || sending}
-                  className="px-4 sm:px-5 py-3 rounded-xl bg-gradient-to-r from-[#d4a853] to-[#f0d48a] text-[#0a0a0f] font-black text-xs disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:brightness-110 transition-all shrink-0 cursor-pointer"
+                  className="px-4 sm:px-5 py-3 rounded-xl bg-terracotta text-white hover:bg-terracotta-deep font-bold text-xs disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm transition-colors shrink-0 cursor-pointer"
                 >
                   <Send className="w-4 h-4" />
                   <span className="hidden sm:inline">Envoyer</span>

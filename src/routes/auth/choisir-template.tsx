@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { renderTemplate } from "@/components/public/templates";
 import { demoData } from "@/components/public/demo-data";
+import { Lock, Check, Eye, X } from "lucide-react";
 
 const PREMIUM_FEU_BG = "/premium-bgs/premium-feu-bg.png";
 const PREMIUM_GRILL_BG = "/premium-bgs/premium-grill-bg.jpg";
@@ -166,12 +167,12 @@ function ChooseTemplate() {
             <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">
               Forfait actif
             </span>
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold bg-gradient-gold text-[#0a0a0f]">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold bg-terracotta text-white">
               {userPlan === "premium"
-                ? "⭐ Premium"
+                ? "Premium"
                 : userPlan === "standard"
-                  ? "📣 Standard"
-                  : "🎁 Gratuit / Essai"}
+                  ? "Standard"
+                  : "Gratuit / Essai"}
             </span>
             {userPlan !== "premium" && (
               <span className="text-xs text-muted-foreground">
@@ -181,12 +182,8 @@ function ChooseTemplate() {
           </div>
           {(["gratuit", "standard", "premium"] as const).map((plan) => (
             <div key={plan}>
-              <h3 className="text-sm font-black uppercase tracking-widest text-gold mb-3">
-                {plan === "gratuit"
-                  ? "🎁 Gratuit"
-                  : plan === "standard"
-                    ? "📦 Standard"
-                    : "⭐ Premium"}
+              <h3 className="text-sm font-black uppercase tracking-widest text-terracotta-deep mb-3">
+                {plan === "gratuit" ? "Gratuit" : plan === "standard" ? "Standard" : "Premium"}
                 {!canPick(plan) && (
                   <span className="ml-3 text-xs text-muted-foreground normal-case tracking-normal">
                     (aperçu seulement — upgrade requis pour activer)
@@ -204,25 +201,25 @@ function ChooseTemplate() {
                         onClick={() => setPreviewId(t.id)}
                         className={`relative aspect-[4/5] w-full rounded-2xl border-2 overflow-hidden text-left transition-all ${
                           active
-                            ? "border-gold shadow-gold scale-[1.02]"
-                            : "border-white/10 hover:border-gold/40 hover:-translate-y-0.5"
+                            ? "border-terracotta shadow-elevated scale-[1.02]"
+                            : "border-border hover:border-terracotta/40 hover:-translate-y-0.5"
                         }`}
                       >
                         <div className="absolute inset-0" style={{ background: t.vibe }} />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                         {locked && (
-                          <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/70 text-[10px] font-bold text-gold/90 backdrop-blur-sm border border-gold/30">
-                            🔒 {t.plan}
+                          <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/70 text-[10px] font-bold text-white/90 border border-white/20 flex items-center gap-1">
+                            <Lock className="w-3 h-3" /> {t.plan}
                           </div>
                         )}
                         {active && (
-                          <div className="absolute top-2 left-2 w-7 h-7 rounded-full bg-gradient-gold flex items-center justify-center text-[#0a0a0f] font-black text-sm">
-                            ✓
+                          <div className="absolute top-2 left-2 w-7 h-7 rounded-full bg-terracotta text-white flex items-center justify-center">
+                            <Check className="w-4 h-4" />
                           </div>
                         )}
                         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
-                          <span className="px-3 py-1.5 rounded-lg bg-gold text-[#0a0a0f] text-xs font-bold">
-                            👁️ Aperçu
+                          <span className="px-3 py-1.5 rounded-lg bg-white text-foreground text-xs font-bold flex items-center gap-1.5">
+                            <Eye className="w-3.5 h-3.5" /> Aperçu
                           </span>
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 p-4">
@@ -237,11 +234,11 @@ function ChooseTemplate() {
             </div>
           ))}
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+          <div className="flex justify-end gap-3 pt-4 border-t border-border">
             <button
               type="button"
               onClick={() => navigate({ to: "/dashboard" })}
-              className="px-5 py-3 rounded-xl border border-white/10 text-sm font-semibold hover:border-gold/40 transition-colors"
+              className="px-5 py-3 rounded-xl border border-border text-sm font-semibold hover:border-terracotta/40 transition-colors"
             >
               Plus tard
             </button>
@@ -249,7 +246,7 @@ function ChooseTemplate() {
               type="button"
               disabled={!selected || saving}
               onClick={save}
-              className="px-7 py-3 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold hover:shadow-gold transition-all disabled:opacity-50"
+              className="px-7 py-3 rounded-xl bg-terracotta hover:bg-terracotta-deep text-white font-bold shadow-card transition-all disabled:opacity-50"
             >
               {saving ? "Enregistrement..." : "Valider mon template"}
             </button>
@@ -287,10 +284,10 @@ function PreviewModal({
   onSelect: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex flex-col">
-      <header className="flex items-center justify-between px-5 py-3 border-b border-white/10 bg-[#0a0a0f]">
+    <div className="fixed inset-0 z-50 bg-black/90 flex flex-col">
+      <header className="flex items-center justify-between px-5 py-3 border-b border-white/10 bg-[#0a0a0f] text-white">
         <div>
-          <p className="text-[10px] uppercase tracking-widest text-gold font-bold">
+          <p className="text-[10px] uppercase tracking-widest text-[#e5a93c] font-bold">
             Aperçu — {tpl.plan}
           </p>
           <strong>{tpl.name}</strong>
@@ -299,25 +296,26 @@ function PreviewModal({
           {canActivate ? (
             <button
               onClick={onSelect}
-              className="px-5 py-2 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold text-sm"
+              className="px-5 py-2 rounded-xl bg-terracotta hover:bg-terracotta-deep text-white font-bold text-sm flex items-center gap-1.5"
             >
-              {isCurrent ? "✓ Sélectionné" : "Choisir ce template"}
+              {isCurrent && <Check className="w-4 h-4" />}
+              {isCurrent ? "Sélectionné" : "Choisir ce template"}
             </button>
           ) : (
             <a
               href="https://wa.me/22600000000?text=Je%20veux%20passer%20en%20Premium%20pour%20le%20template%20"
               target="_blank"
               rel="noopener"
-              className="px-5 py-2 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold text-sm"
+              className="px-5 py-2 rounded-xl bg-terracotta hover:bg-terracotta-deep text-white font-bold text-sm"
             >
-              💎 Passer en Premium
+              Passer en Premium
             </a>
           )}
           <button
             onClick={onClose}
-            className="w-10 h-10 rounded-xl border border-white/10 hover:border-gold/40"
+            className="w-10 h-10 rounded-xl border border-white/10 hover:border-terracotta/50 text-white flex items-center justify-center"
           >
-            ✕
+            <X className="w-4 h-4" />
           </button>
         </div>
       </header>

@@ -15,7 +15,6 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { registerSW } from "@/lib/pwa";
 import { OfflineBanner } from "@/components/OfflineBanner";
-import { ThemeProviderWrapper } from "@/hooks/use-theme";
 
 function NotFoundComponent() {
   return (
@@ -157,11 +156,9 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProviderWrapper>
-        <Outlet />
-        <OfflineBanner />
-        <Toaster position="top-right" theme="dark" richColors closeButton />
-      </ThemeProviderWrapper>
+      <Outlet />
+      <OfflineBanner />
+      <Toaster position="top-right" richColors closeButton />
     </QueryClientProvider>
   );
 }

@@ -99,7 +99,7 @@ function StaffPage() {
 
       if (insertError) throw insertError;
 
-      toast.success(`✅ Membre ajouté ! PIN: ${pin}`, { duration: 10000 });
+      toast.success(`Membre ajouté ! PIN: ${pin}`, { duration: 10000 });
       setShowAddModal(false);
       setNewStaff({
         name: "",
@@ -132,7 +132,7 @@ function StaffPage() {
 
       if (error) throw error;
 
-      toast.success("✅ Membre modifié avec succès");
+      toast.success("Membre modifié avec succès");
       setShowEditModal(false);
       setEditingMember(null);
       loadStaff();
@@ -187,8 +187,8 @@ function StaffPage() {
   if (roleLoading) return <p className="text-muted-foreground">Chargement...</p>;
   if (!isAdmin) {
     return (
-      <div className="max-w-2xl p-8 rounded-3xl border border-red-500/30 bg-red-500/5 text-center">
-        <Shield className="w-12 h-12 mx-auto mb-3 text-red-400" />
+      <div className="max-w-2xl p-8 rounded-3xl border border-destructive/30 bg-destructive/5 text-center">
+        <Shield className="w-12 h-12 mx-auto mb-3 text-destructive" />
         <h2 className="text-2xl font-black mb-2">Accès refusé</h2>
         <p className="text-sm text-muted-foreground">
           Cette page est réservée à l'administrateur du restaurant.
@@ -200,31 +200,31 @@ function StaffPage() {
   return (
     <div className="max-w-6xl">
       <div className="mb-8">
-        <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Gestion</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">Gestion</p>
         <h1 className="text-3xl font-black">Personnel</h1>
       </div>
 
       {/* Stats */}
       <div className="grid sm:grid-cols-4 gap-4 mb-8">
-        <div className="p-4 rounded-xl border border-white/8 bg-dark-card">
+        <div className="p-4 rounded-xl border border-border bg-card">
           <p className="text-xs text-muted-foreground mb-1">Total</p>
           <p className="text-2xl font-black">{staff.length}</p>
         </div>
-        <div className="p-4 rounded-xl border border-white/8 bg-dark-card">
+        <div className="p-4 rounded-xl border border-border bg-card">
           <p className="text-xs text-muted-foreground mb-1">Actifs</p>
-          <p className="text-2xl font-black text-emerald-400">
+          <p className="text-2xl font-black text-emerald-deep">
             {staff.filter((s) => s.is_active).length}
           </p>
         </div>
-        <div className="p-4 rounded-xl border border-white/8 bg-dark-card">
+        <div className="p-4 rounded-xl border border-border bg-card">
           <p className="text-xs text-muted-foreground mb-1">Cuisiniers</p>
-          <p className="text-2xl font-black text-blue-400">
+          <p className="text-2xl font-black text-charcoal">
             {staff.filter((s) => s.role === "cuisinier").length}
           </p>
         </div>
-        <div className="p-4 rounded-xl border border-white/8 bg-dark-card">
+        <div className="p-4 rounded-xl border border-border bg-card">
           <p className="text-xs text-muted-foreground mb-1">Serveurs</p>
-          <p className="text-2xl font-black text-gold">
+          <p className="text-2xl font-black text-terracotta-deep">
             {staff.filter((s) => s.role === "serveur").length}
           </p>
         </div>
@@ -235,7 +235,7 @@ function StaffPage() {
         <h3 className="text-lg font-bold">Membres de l'équipe</h3>
         <button
           onClick={() => setShowAddModal(true)}
-          className="px-4 py-2 rounded-lg bg-gradient-gold text-[#0a0a0f] text-sm font-bold flex items-center gap-2"
+          className="px-4 py-2 rounded-lg bg-terracotta text-white hover:bg-terracotta-deep transition-colors text-sm font-bold flex items-center gap-2"
         >
           <UserPlus className="w-4 h-4" />
           Ajouter
@@ -249,7 +249,7 @@ function StaffPage() {
           ))}
         </div>
       ) : staff.length === 0 ? (
-        <div className="p-10 rounded-2xl border border-dashed border-white/15 text-center text-muted-foreground">
+        <div className="p-10 rounded-2xl border border-dashed border-border text-center text-muted-foreground">
           <User className="w-12 h-12 mx-auto mb-3 opacity-50" />
           <p>Aucun membre dans l'équipe</p>
           <p className="text-xs mt-1">Commencez par ajouter des membres</p>
@@ -261,13 +261,13 @@ function StaffPage() {
               key={member.id}
               className={`p-5 rounded-2xl border transition-all ${
                 member.is_active
-                  ? "border-white/8 bg-dark-card"
-                  : "border-white/5 bg-white/[0.02] opacity-60"
+                  ? "border-border bg-card"
+                  : "border-border bg-surface-warm opacity-60"
               }`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gold/20 text-gold flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-terracotta-tint text-terracotta-deep flex items-center justify-center">
                     {ROLE_ICONS[member.role] || <User className="w-4 h-4" />}
                   </div>
                   <div>
@@ -277,11 +277,11 @@ function StaffPage() {
                       <p className="text-xs text-muted-foreground">{member.phone}</p>
                     )}
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="px-2 py-0.5 rounded-md bg-gold/10 text-gold text-xs font-semibold">
+                      <span className="px-2 py-0.5 rounded-md bg-terracotta-tint text-terracotta-deep text-xs font-semibold">
                         {ROLE_LABELS[member.role] || member.role}
                       </span>
                       {member.pin && (
-                        <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 text-xs font-mono">
+                        <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-charcoal/5 text-charcoal text-xs font-mono">
                           PIN: {visiblePins[member.id] ? member.pin : "••••"}
                           <button
                             onClick={() =>
@@ -290,7 +290,7 @@ function StaffPage() {
                                 [member.id]: !visiblePins[member.id],
                               })
                             }
-                            className="hover:text-blue-300"
+                            className="hover:text-charcoal/70"
                           >
                             {visiblePins[member.id] ? (
                               <EyeOff className="w-3 h-3" />
@@ -300,7 +300,7 @@ function StaffPage() {
                           </button>
                           <button
                             onClick={() => copyToClipboard(member.pin!)}
-                            className="hover:text-blue-300"
+                            className="hover:text-charcoal/70"
                           >
                             <Copy className="w-3 h-3" />
                           </button>
@@ -316,7 +316,7 @@ function StaffPage() {
                       setEditingMember({ ...member });
                       setShowEditModal(true);
                     }}
-                    className="px-3 py-1.5 rounded-lg bg-white/5 text-muted-foreground hover:text-foreground text-xs font-semibold"
+                    className="px-3 py-1.5 rounded-lg bg-surface-warm text-muted-foreground hover:text-foreground text-xs font-semibold"
                     title="Modifier"
                   >
                     <Pencil className="w-3 h-3" />
@@ -325,15 +325,15 @@ function StaffPage() {
                     onClick={() => toggleStaffStatus(member.id, member.is_active)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${
                       member.is_active
-                        ? "bg-amber-500/10 text-amber-400 hover:bg-amber-500/20"
-                        : "bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
+                        ? "bg-amber-tint text-amber-deep hover:bg-amber-brand/20"
+                        : "bg-emerald-tint text-emerald-deep hover:bg-emerald/20"
                     }`}
                   >
                     {member.is_active ? "Désactiver" : "Activer"}
                   </button>
                   <button
                     onClick={() => setDeleteTarget(member)}
-                    className="px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs font-semibold"
+                    className="px-3 py-1.5 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 text-xs font-semibold"
                     title="Supprimer"
                   >
                     <Trash2 className="w-3 h-3" />
@@ -356,7 +356,7 @@ function StaffPage() {
               type="text"
               value={newStaff.name}
               onChange={(e) => setNewStaff({ ...newStaff, name: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+              className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
               placeholder="Jean Dupont"
             />
           </div>
@@ -369,7 +369,7 @@ function StaffPage() {
               type="email"
               value={newStaff.email}
               onChange={(e) => setNewStaff({ ...newStaff, email: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+              className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
               placeholder="jean@restaurant.com"
             />
           </div>
@@ -382,7 +382,7 @@ function StaffPage() {
               type="tel"
               value={newStaff.phone}
               onChange={(e) => setNewStaff({ ...newStaff, phone: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+              className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
               placeholder="+226 01 02 03 04"
             />
           </div>
@@ -394,7 +394,7 @@ function StaffPage() {
             <select
               value={newStaff.role}
               onChange={(e) => setNewStaff({ ...newStaff, role: e.target.value as StaffRole })}
-              className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+              className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
             >
               <option value="cuisinier">Cuisinier</option>
               <option value="serveur">Serveur</option>
@@ -415,13 +415,13 @@ function StaffPage() {
                   setNewStaff({ ...newStaff, pin: e.target.value.replace(/\D/g, "").slice(0, 4) })
                 }
                 maxLength={4}
-                className="flex-1 px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm text-center text-lg tracking-widest"
+                className="flex-1 px-3 py-2 rounded-lg bg-card border border-border text-sm text-center text-lg tracking-widest focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
                 placeholder="Auto"
               />
               <button
                 type="button"
                 onClick={() => setNewStaff({ ...newStaff, pin: generatePin() })}
-                className="px-3 py-2 rounded-lg border border-white/10 text-xs font-semibold hover:bg-white/5"
+                className="px-3 py-2 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-surface-warm transition-colors text-xs font-semibold"
               >
                 Générer
               </button>
@@ -435,13 +435,13 @@ function StaffPage() {
         <div className="flex gap-2 justify-end mt-6">
           <button
             onClick={() => setShowAddModal(false)}
-            className="px-5 py-2.5 rounded-xl border border-white/10 text-sm"
+            className="px-5 py-2.5 rounded-xl border border-border text-muted-foreground hover:text-foreground transition-colors text-sm"
           >
             Annuler
           </button>
           <button
             onClick={addStaffMember}
-            className="px-5 py-2.5 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold text-sm"
+            className="px-5 py-2.5 rounded-xl bg-terracotta text-white hover:bg-terracotta-deep transition-colors font-bold text-sm"
           >
             Ajouter
           </button>
@@ -468,7 +468,7 @@ function StaffPage() {
               onChange={(e) =>
                 setEditingMember((prev) => (prev ? { ...prev, name: e.target.value } : null))
               }
-              className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+              className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
             />
           </div>
 
@@ -482,7 +482,7 @@ function StaffPage() {
               onChange={(e) =>
                 setEditingMember((prev) => (prev ? { ...prev, email: e.target.value } : null))
               }
-              className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+              className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
             />
           </div>
 
@@ -496,7 +496,7 @@ function StaffPage() {
               onChange={(e) =>
                 setEditingMember((prev) => (prev ? { ...prev, phone: e.target.value } : null))
               }
-              className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+              className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
             />
           </div>
 
@@ -511,7 +511,7 @@ function StaffPage() {
                   prev ? { ...prev, role: e.target.value as StaffRole } : null,
                 )
               }
-              className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm"
+              className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
             >
               <option value="cuisinier">Cuisinier</option>
               <option value="serveur">Serveur</option>
@@ -534,7 +534,7 @@ function StaffPage() {
                   )
                 }
                 maxLength={4}
-                className="flex-1 px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm text-center text-lg tracking-widest"
+                className="flex-1 px-3 py-2 rounded-lg bg-card border border-border text-sm text-center text-lg tracking-widest focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all"
                 placeholder={editingMember?.pin || "Nouveau PIN"}
               />
               <button
@@ -542,7 +542,7 @@ function StaffPage() {
                 onClick={() =>
                   setEditingMember((prev) => (prev ? { ...prev, pin: generatePin() } : null))
                 }
-                className="px-3 py-2 rounded-lg border border-white/10 text-xs font-semibold hover:bg-white/5"
+                className="px-3 py-2 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-surface-warm transition-colors text-xs font-semibold"
               >
                 Générer
               </button>
@@ -559,13 +559,13 @@ function StaffPage() {
               setShowEditModal(false);
               setEditingMember(null);
             }}
-            className="px-5 py-2.5 rounded-xl border border-white/10 text-sm"
+            className="px-5 py-2.5 rounded-xl border border-border text-muted-foreground hover:text-foreground transition-colors text-sm"
           >
             Annuler
           </button>
           <button
             onClick={updateStaffMember}
-            className="px-5 py-2.5 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold text-sm"
+            className="px-5 py-2.5 rounded-xl bg-terracotta text-white hover:bg-terracotta-deep transition-colors font-bold text-sm"
           >
             Enregistrer
           </button>

@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Store, ChefHat } from "lucide-react";
 
 export const Route = createFileRoute("/auth/")({
   head: () => ({
@@ -18,7 +19,7 @@ function AuthHomePage() {
           <img
             src="/restobf-logo.png"
             alt="RestoBF"
-            className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-white object-contain p-2 shadow-gold"
+            className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-white object-contain p-2 shadow-card"
           />
           <h1 className="text-4xl font-black mb-2">Bienvenue sur RestoBF</h1>
           <p className="text-muted-foreground">Choisissez votre espace pour continuer</p>
@@ -27,12 +28,14 @@ function AuthHomePage() {
         <div className="space-y-4">
           <Link
             to="/auth/inscription"
-            className="block p-6 rounded-2xl border-2 border-gold/30 bg-gradient-to-br from-gold/10 to-transparent hover:border-gold/50 hover:shadow-gold transition-all group"
+            className="block p-6 rounded-2xl border-2 border-terracotta/30 bg-gradient-to-br from-terracotta-tint to-transparent hover:border-terracotta/50 hover:shadow-elevated transition-all group"
           >
             <div className="flex items-start gap-4">
-              <div className="text-4xl">👨‍💼</div>
+              <div className="w-12 h-12 rounded-xl bg-terracotta-tint border border-terracotta/25 flex items-center justify-center text-terracotta shrink-0">
+                <Store className="w-6 h-6" />
+              </div>
               <div className="flex-1">
-                <h2 className="text-xl font-black mb-1 group-hover:text-gold transition-colors">
+                <h2 className="text-xl font-black mb-1 group-hover:text-terracotta-deep transition-colors">
                   Je suis restaurateur
                 </h2>
                 <p className="text-sm text-muted-foreground">
@@ -44,10 +47,12 @@ function AuthHomePage() {
 
           <Link
             to="/auth/staff-login"
-            className="block p-6 rounded-2xl border border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04] transition-all group"
+            className="block p-6 rounded-2xl border border-border bg-card hover:border-terracotta/40 hover:bg-muted transition-all group"
           >
             <div className="flex items-start gap-4">
-              <div className="text-4xl">👨‍🍳</div>
+              <div className="w-12 h-12 rounded-xl bg-emerald-tint border border-emerald/25 flex items-center justify-center text-emerald-deep shrink-0">
+                <ChefHat className="w-6 h-6" />
+              </div>
               <div className="flex-1">
                 <h2 className="text-xl font-black mb-1 group-hover:text-foreground transition-colors">
                   Je suis cuisinier / staff
@@ -60,14 +65,14 @@ function AuthHomePage() {
           </Link>
         </div>
 
-        <div className="mt-8 p-4 rounded-xl border border-white/8 bg-white/[0.02]">
+        <div className="mt-8 p-4 rounded-xl border border-border bg-card">
           <p className="text-xs text-center text-muted-foreground">
             En vous connectant, vous acceptez nos{" "}
-            <a href="#contact" className="text-gold font-bold">
+            <a href="#contact" className="text-terracotta-deep font-bold">
               conditions générales
             </a>{" "}
             et notre{" "}
-            <a href="#contact" className="text-gold font-bold">
+            <a href="#contact" className="text-terracotta-deep font-bold">
               politique de confidentialité
             </a>
           </p>

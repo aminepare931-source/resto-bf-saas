@@ -5,14 +5,34 @@ import type { PublicMenuItem, PublicRestaurant } from "./shared";
 import { orderSchema, firstZodError, type OrderItem } from "@/lib/validation";
 import { fmtPrice } from "./shared";
 import { useCart } from "./CartContext";
+import {
+  Banknote,
+  CheckCircle2,
+  ChefHat,
+  PackageCheck,
+  PartyPopper,
+  Receipt,
+  ShoppingCart,
+  XCircle,
+  type LucideIcon,
+} from "lucide-react";
 
 const STATUS_LABELS: Record<string, string> = {
-  new: "🆕 Reçue",
-  in_kitchen: "👨‍🍳 En préparation",
-  ready: "✅ Prête",
-  served: "🎉 Servie / Livrée",
-  paid: "💳 Payée",
-  cancelled: "❌ Annulée",
+  new: "Reçue",
+  in_kitchen: "En préparation",
+  ready: "Prête",
+  served: "Servie / Livrée",
+  paid: "Payée",
+  cancelled: "Annulée",
+};
+
+const STATUS_ICONS: Record<string, LucideIcon> = {
+  new: Receipt,
+  in_kitchen: ChefHat,
+  ready: PackageCheck,
+  served: PartyPopper,
+  paid: Banknote,
+  cancelled: XCircle,
 };
 
 const TERMINAL_STATUSES = new Set(["served", "paid", "cancelled"]);
@@ -213,7 +233,7 @@ export function OrderCartFab({
     const effectiveTable = tableNumber || (effectiveMode === "sur_place" ? tableInput.trim() : null);
     const locationNote =
       effectiveMode === "livraison" && !tableNumber
-        ? `🛵 Livraison — ${customer.address.trim()}`
+        ? `Livraison — ${customer.address.trim()}`
         : null;
     const notes = [locationNote, customer.notes.trim() || null].filter(Boolean).join(" — ");
     const payload = {
@@ -296,11 +316,11 @@ export function OrderCartFab({
 
           // Notification selon le statut
           if (newStatus === "in_kitchen") {
-            toast.info("👨‍🍳 La cuisine prépare votre commande");
+            toast.info("La cuisine prépare votre commande");
           } else if (newStatus === "ready") {
-            toast.success("✅ Votre commande est prête !");
+            toast.success("Votre commande est prête !");
           } else if (newStatus === "served") {
-            toast.success("🎉 Bon appétit !");
+            toast.success("Bon appétit !");
           }
         },
       )
@@ -317,12 +337,18 @@ export function OrderCartFab({
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-24 sm:bottom-5 left-5 z-40 px-5 py-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold text-sm shadow-2xl hover:scale-105 transition"
+        className="fixed bottom-24 sm:bottom-5 left-5 z-40 px-5 py-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold text-sm shadow-2xl hover:scale-105 transition flex items-center gap-2"
       >
         {done && lastOrderId ? (
-          <>📦 Ma commande · {STATUS_LABELS[orderStatus]?.split(" ")[0] ?? "🆕"}</>
+          <>
+            <Receipt className="w-4 h-4 shrink-0" />
+            Ma commande · {STATUS_LABELS[orderStatus] ?? "Reçue"}
+          </>
         ) : (
-          <>🛒 Commander{count > 0 ? ` · ${count}` : ""}</>
+          <>
+            <ShoppingCart className="w-4 h-4 shrink-0" />
+            Commander{count > 0 ? ` · ${count}` : ""}
+          </>
         )}
         {tableNumber && !done && (
           <span className="ml-2 px-2 py-0.5 rounded-full bg-black/20 text-[10px]">
@@ -358,7 +384,7 @@ export function OrderCartFab({
 
             {done ? (
               <div className="flex-1 flex flex-col items-center justify-center p-10 text-center gap-3">
-                <div className="text-5xl">✅</div>
+                <CheckCircle2 className="w-12 h-12 text-emerald-400" />
                 <strong className="text-xl">Commande envoyée !</strong>
                 <p className="text-sm text-white/60">La cuisine prépare votre commande.</p>
 
@@ -367,25 +393,26 @@ export function OrderCartFab({
                   <div className="mt-6 w-full max-w-sm">
                     <div className="p-4 rounded-xl bg-white/5 border border-white/10">
                       <p className="text-xs uppercase tracking-widest text-amber-400 font-bold mb-3">
-                        📡 Suivi en direct
+                        Suivi en direct
                       </p>
                       <div className="space-y-2">
-                        {statusHistory.map((h, i) => (
-                          <div key={i} className="flex items-center gap-2 text-sm">
-                            <span className="text-lg">
-                              {STATUS_LABELS[h.status]?.split(" ")[0] || "•"}
-                            </span>
-                            <span className="flex-1 text-white/80">
-                              {STATUS_LABELS[h.status] || h.status}
-                            </span>
-                            <span className="text-[10px] text-white/40">
-                              {h.time.toLocaleTimeString("fr-FR", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </span>
-                          </div>
-                        ))}
+                        {statusHistory.map((h, i) => {
+                          const StatusIcon = STATUS_ICONS[h.status] ?? Receipt;
+                          return (
+                            <div key={i} className="flex items-center gap-2 text-sm">
+                              <StatusIcon className="w-4 h-4 shrink-0 text-amber-400" />
+                              <span className="flex-1 text-white/80">
+                                {STATUS_LABELS[h.status] || h.status}
+                              </span>
+                              <span className="text-[10px] text-white/40">
+                                {h.time.toLocaleTimeString("fr-FR", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })}
+                              </span>
+                            </div>
+                          );
+                        })}
                       </div>
                       {orderStatus && (
                         <div className="mt-3 pt-3 border-t border-white/10">
@@ -408,7 +435,7 @@ export function OrderCartFab({
                       {paymentInfo.status === "pending" && (
                         <>
                           <p className="text-xs uppercase tracking-widest text-amber-400 font-bold mb-2">
-                            💳 Paiement à effectuer
+                            Paiement à effectuer
                           </p>
                           <p className="text-sm text-white/80 mb-1">
                             Payez{" "}
@@ -435,14 +462,14 @@ export function OrderCartFab({
                             disabled={claimingPayment}
                             className="w-full py-2.5 rounded-xl bg-amber-500 text-black font-bold text-sm disabled:opacity-60"
                           >
-                            {claimingPayment ? "..." : "✅ J'ai payé"}
+                            {claimingPayment ? "..." : "J'ai payé"}
                           </button>
                         </>
                       )}
                       {paymentInfo.status === "claimed" && (
                         <>
-                          <p className="text-xs uppercase tracking-widest text-blue-400 font-bold mb-1">
-                            ⏳ En attente de validation
+                          <p className="text-xs uppercase tracking-widest text-amber-400 font-bold mb-1">
+                            En attente de validation
                           </p>
                           <p className="text-sm text-white/70">
                             Le restaurant vérifie votre paiement, ça ne devrait pas tarder.
@@ -454,7 +481,10 @@ export function OrderCartFab({
                 )}
                 {paymentInfo?.status === "confirmed" && (
                   <div className="mt-4 w-full max-w-sm p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center">
-                    <p className="text-emerald-400 font-bold text-sm">✅ Paiement confirmé</p>
+                    <p className="text-emerald-400 font-bold text-sm inline-flex items-center gap-1.5">
+                      <CheckCircle2 className="w-4 h-4" />
+                      Paiement confirmé
+                    </p>
                   </div>
                 )}
               </div>
@@ -504,14 +534,14 @@ export function OrderCartFab({
                           onClick={() => setMode("sur_place")}
                           className={`py-2.5 rounded-xl text-sm font-bold border ${mode === "sur_place" ? "bg-amber-500 text-black border-amber-500" : "bg-white/5 border-white/10 text-white/70"}`}
                         >
-                          🍽️ Sur place
+                          Sur place
                         </button>
                         <button
                           type="button"
                           onClick={() => setMode("livraison")}
                           className={`py-2.5 rounded-xl text-sm font-bold border ${mode === "livraison" ? "bg-amber-500 text-black border-amber-500" : "bg-white/5 border-white/10 text-white/70"}`}
                         >
-                          🛵 Livraison
+                          Livraison
                         </button>
                       </div>
                     )}
@@ -566,7 +596,7 @@ export function OrderCartFab({
                             ? "Détection en cours..."
                             : geoStatus === "done"
                               ? "✓ Position précise partagée"
-                              : "📍 Partager ma position exacte (recommandé)"}
+                              : "Partager ma position exacte (recommandé)"}
                         </button>
                       </>
                     )}
@@ -588,7 +618,7 @@ export function OrderCartFab({
                       disabled={busy}
                       className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-black font-black disabled:opacity-60"
                     >
-                      {busy ? "Envoi..." : "✅ Envoyer la commande"}
+                      {busy ? "Envoi..." : "Envoyer la commande"}
                     </button>
                   </div>
                 )}

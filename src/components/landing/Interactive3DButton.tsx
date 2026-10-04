@@ -78,16 +78,16 @@ export function Interactive3DButton({
     if (onClick) onClick();
   };
 
-  // Variant styling
+  // Variant styling — thème clair Sahelian
   const variantStyles = {
     primary:
-      "bg-gradient-to-r from-[#d4a853] via-[#f0d48a] to-[#b08800] text-[#0a0a0f] font-bold shadow-[0_10px_25px_rgba(212,168,83,0.35)] border border-[#f0d48a]/40",
+      "bg-gradient-to-b from-[#c85a32] to-[#9f3c16] text-white font-bold shadow-[0_10px_25px_rgba(159,60,22,0.28)] border border-[#9f3c16]/60",
     "gold-glow":
-      "bg-[#d4a853] text-[#0a0a0f] font-bold shadow-[0_0_30px_rgba(212,168,83,0.6)] border border-white/20",
+      "bg-gradient-to-b from-[#1b8354] to-[#13633f] text-white font-bold shadow-[0_10px_30px_rgba(19,99,63,0.3)] border border-[#13633f]/60",
     secondary:
-      "bg-[#111118]/90 text-foreground border border-[#d4a853]/40 shadow-lg hover:border-[#d4a853]",
+      "bg-card text-foreground border border-border shadow-card hover:border-terracotta/50 hover:bg-accent",
     outline:
-      "bg-transparent text-foreground border border-border hover:border-[#d4a853]/60 hover:bg-muted/50",
+      "bg-transparent text-foreground border border-border hover:border-terracotta/50 hover:bg-terracotta-tint",
   };
 
   const sizeStyles = {
@@ -114,20 +114,6 @@ export function Interactive3DButton({
         }}
       />
 
-      {/* Light sheen bar motion animation */}
-      <motion.div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full"
-        animate={{
-          translateX: ["-100%", "200%"],
-        }}
-        transition={{
-          repeat: Infinity,
-          repeatDelay: 4,
-          duration: 1.8,
-          ease: "easeInOut",
-        }}
-      />
-
       {/* Ripple effects on click */}
       {ripples.map((r) => (
         <motion.span
@@ -149,13 +135,9 @@ export function Interactive3DButton({
       <span className="relative z-10 flex items-center justify-center gap-2 whitespace-nowrap">
         {children}
         {icon && (
-          <motion.span
-            animate={{ x: [0, 4, 0] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-            className="inline-block"
-          >
+          <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">
             {icon}
-          </motion.span>
+          </span>
         )}
       </span>
     </>

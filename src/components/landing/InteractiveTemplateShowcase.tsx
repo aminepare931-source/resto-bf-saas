@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Motion3DTiltCard } from "./Motion3DTiltCard";
 import { Interactive3DButton } from "./Interactive3DButton";
-import { Sparkles, Eye, Check, Palette } from "lucide-react";
+import { Sparkles, Eye, Palette, Moon, Sun, Wheat, Store } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 const templatesData = [
   {
     id: "TplNuit",
     name: "Night Club & Maquis Lounge",
-    emoji: "🌙",
+    icon: Moon,
     tagline: "Ambiance nocturne ultra-chic",
     colorGradient: "from-purple-900/80 via-slate-900 to-amber-900/40",
     accentColor: "#d4a853",
@@ -25,7 +25,7 @@ const templatesData = [
   {
     id: "TplSoleil",
     name: "Restaurant Soleil & Terrasse",
-    emoji: "☀️",
+    icon: Sun,
     tagline: "Style lumineux et chaleureux",
     colorGradient: "from-amber-600/80 via-orange-900/60 to-yellow-900/40",
     accentColor: "#f59e0b",
@@ -41,7 +41,7 @@ const templatesData = [
   {
     id: "TplSavane",
     name: "Savane & Authenticité",
-    emoji: "🌾",
+    icon: Wheat,
     tagline: "Inspiration terre & tradition",
     colorGradient: "from-emerald-950/80 via-amber-950 to-stone-900",
     accentColor: "#10b981",
@@ -56,7 +56,7 @@ const templatesData = [
   {
     id: "TplMarché",
     name: "Fast-Food & Marché Gourmand",
-    emoji: "🏪",
+    icon: Store,
     tagline: "Design vivace et vendeurs rapides",
     colorGradient: "from-red-950/80 via-orange-950 to-yellow-950",
     accentColor: "#ef4444",
@@ -72,7 +72,7 @@ const templatesData = [
   {
     id: "TplModerne",
     name: "Minimaliste & Haute Gastronomie",
-    emoji: "✨",
+    icon: Sparkles,
     tagline: "Élégance épurée et contemporaine",
     colorGradient: "from-zinc-900 via-neutral-900 to-black",
     accentColor: "#38bdf8",
@@ -104,11 +104,11 @@ export function InteractiveTemplateShowcase() {
               whileTap={{ scale: 0.95 }}
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all cursor-pointer ${
                 isSelected
-                  ? "bg-[#d4a853] text-[#0a0a0f] shadow-[0_0_20px_rgba(212,168,83,0.5)] font-bold"
-                  : "bg-[#111118] text-muted-foreground hover:text-foreground border border-border hover:border-[#d4a853]/40"
+                  ? "bg-gold text-[#0a0a0f] shadow-gold font-bold"
+                  : "bg-card text-muted-foreground hover:text-foreground border border-border hover:border-gold/40"
               }`}
             >
-              <span>{tpl.emoji}</span>
+              <tpl.icon className="h-3.5 w-3.5" />
               <span>{tpl.name.split("&")[0]}</span>
             </motion.button>
           );
@@ -123,7 +123,7 @@ export function InteractiveTemplateShowcase() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -20, scale: 0.98 }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="max-w-4xl mx-auto rounded-2xl border border-[#d4a853]/40 bg-[#111118] overflow-hidden shadow-2xl grid md:grid-cols-12 gap-0"
+          className="max-w-4xl mx-auto rounded-2xl border border-gold/40 bg-card overflow-hidden shadow-2xl grid md:grid-cols-12 gap-0"
         >
           {/* Visual Preview Side */}
           <div
@@ -134,9 +134,10 @@ export function InteractiveTemplateShowcase() {
 
             <div className="relative z-10 flex items-center justify-between">
               <span className="px-3 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-xs font-semibold text-white flex items-center gap-1.5">
-                <Palette className="w-3.5 h-3.5 text-[#d4a853]" /> Template {selectedTemplate.id}
+                <Palette className="w-3.5 h-3.5 text-amber-brand" /> Template{" "}
+                {selectedTemplate.id}
               </span>
-              <span className="text-3xl animate-bounce">{selectedTemplate.emoji}</span>
+              <selectedTemplate.icon className="h-7 w-7 text-white" />
             </div>
 
             <div className="relative z-10 my-6">
@@ -151,16 +152,16 @@ export function InteractiveTemplateShowcase() {
             {/* Mock Header Menu Bar inside preview */}
             <div className="relative z-10 p-3 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-between text-xs text-white">
               <span className="font-bold tracking-wide">Mon Restaurant</span>
-              <span className="px-2.5 py-1 rounded bg-[#d4a853] text-[#0a0a0f] font-bold text-[10px]">
+              <span className="px-2.5 py-1 rounded bg-gradient-gold text-[#0a0a0f] font-bold text-[10px]">
                 Commander WhatsApp
               </span>
             </div>
           </div>
 
           {/* Details & Features Side */}
-          <div className="md:col-span-5 p-6 sm:p-8 flex flex-col justify-between bg-[#111118] space-y-6">
+          <div className="md:col-span-5 p-6 sm:p-8 flex flex-col justify-between bg-card space-y-6">
             <div>
-              <div className="text-xs font-bold text-[#f0d48a] uppercase tracking-wider mb-2 flex items-center gap-1">
+              <div className="text-xs font-bold text-gold uppercase tracking-wider mb-2 flex items-center gap-1">
                 <Sparkles className="w-3.5 h-3.5" /> Points Forts Du Template
               </div>
               <h4 className="text-lg font-bold text-foreground mb-4">{selectedTemplate.tagline}</h4>
@@ -168,7 +169,7 @@ export function InteractiveTemplateShowcase() {
               <ul className="space-y-3">
                 {selectedTemplate.features.map((feat) => (
                   <li key={feat} className="flex items-start gap-2.5 text-xs text-muted-foreground">
-                    <span className="w-4 h-4 rounded-full bg-[#d4a853]/20 text-[#f0d48a] flex items-center justify-center shrink-0 mt-0.5 text-[10px]">
+                    <span className="w-4 h-4 rounded-full bg-gold/15 text-gold flex items-center justify-center shrink-0 mt-0.5 text-[10px]">
                       ✓
                     </span>
                     <span className="text-foreground/90 font-medium">{feat}</span>
@@ -202,20 +203,20 @@ export function InteractiveTemplateShowcase() {
           <Motion3DTiltCard key={t.id} delay={idx * 0.1} maxRotate={8}>
             <div
               onClick={() => setSelectedTemplate(t)}
-              className="p-4 flex flex-col justify-between h-full cursor-pointer hover:bg-muted/30 transition-colors"
+              className="p-4 flex flex-col justify-between h-full cursor-pointer hover:bg-surface-warm transition-colors"
             >
               <div>
-                <div className="text-2xl mb-2">{t.emoji}</div>
+                <t.icon className="h-6 w-6 text-gold mb-2" />
                 <h4 className="text-xs font-bold text-foreground leading-tight">{t.id}</h4>
                 <p className="text-[10px] text-muted-foreground line-clamp-2 mt-1">{t.tagline}</p>
               </div>
 
               <div className="mt-3 pt-2 border-t border-border/60 flex items-center justify-between text-[10px]">
-                <span className="text-[#f0d48a] font-medium flex items-center gap-1">
+                <span className="text-gold font-medium flex items-center gap-1">
                   <Eye className="w-3 h-3" /> Aperçu
                 </span>
                 {selectedTemplate.id === t.id && (
-                  <span className="w-2 h-2 rounded-full bg-[#d4a853] animate-ping" />
+                  <span className="w-2 h-2 rounded-full bg-gold" />
                 )}
               </div>
             </div>

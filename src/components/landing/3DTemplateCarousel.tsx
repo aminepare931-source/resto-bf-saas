@@ -1,25 +1,25 @@
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { Interactive3DButton } from "./Interactive3DButton";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
-  Sparkles,
-  Eye,
   ChevronLeft,
   ChevronRight,
+  CheckCircle2,
   Pause,
   Play,
-  Palette,
-  CheckCircle2,
-  QrCode,
-  ArrowRight,
+  Gem,
+  MoonStar,
+  Store,
+  Sun,
+  Wheat,
 } from "lucide-react";
 
 export const templatesData = [
   {
     id: "TplNuit",
     name: "Night Club & Maquis Lounge",
-    emoji: "🌙",
+    icon: MoonStar,
     tagline: "Ambiance nocturne ultra-chic & néons dorés",
     colorGradient: "from-purple-950/90 via-slate-900 to-amber-950/60",
     borderColor: "#d4a853",
@@ -36,7 +36,7 @@ export const templatesData = [
   {
     id: "TplSoleil",
     name: "Restaurant Soleil & Terrasse",
-    emoji: "☀️",
+    icon: Sun,
     tagline: "Style lumineux, solaire et chaleureux",
     colorGradient: "from-amber-900/90 via-orange-950 to-yellow-950/60",
     borderColor: "#f59e0b",
@@ -53,7 +53,7 @@ export const templatesData = [
   {
     id: "TplSavane",
     name: "Savane & Authenticité",
-    emoji: "🌾",
+    icon: Wheat,
     tagline: "Inspiration terre, tradition & saveurs locales",
     colorGradient: "from-emerald-950/90 via-amber-950 to-stone-900/80",
     borderColor: "#10b981",
@@ -70,7 +70,7 @@ export const templatesData = [
   {
     id: "TplMarché",
     name: "Fast-Food & Marché Gourmand",
-    emoji: "🏪",
+    icon: Store,
     tagline: "Design dynamique & commandes express",
     colorGradient: "from-red-950/90 via-orange-950 to-yellow-950/70",
     borderColor: "#ef4444",
@@ -87,7 +87,7 @@ export const templatesData = [
   {
     id: "TplModerne",
     name: "Minimaliste & Gastronomie",
-    emoji: "✨",
+    icon: Gem,
     tagline: "Élégance épurée & haute gastronomie",
     colorGradient: "from-zinc-900 via-neutral-900 to-black",
     borderColor: "#38bdf8",
@@ -107,7 +107,9 @@ export function TemplateCarousel3D() {
   const isMobile = useIsMobile();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(!isMobile);
+  const [inView, setInView] = useState(true);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
   // Le hook useIsMobile ne connaît la taille d'écran qu'après le montage,
   // donc on désactive l'autoplay dès que mobile est détecté.
@@ -115,9 +117,23 @@ export function TemplateCarousel3D() {
     if (isMobile) setIsAutoPlaying(false);
   }, [isMobile]);
 
+  // Pause l'autoplay quand le carrousel est hors écran (économie CPU)
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => setInView(e.isIntersecting));
+      },
+      { threshold: 0.15 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   // Auto-play infinite rotation loop
   useEffect(() => {
-    if (isAutoPlaying) {
+    if (isAutoPlaying && inView) {
       autoPlayRef.current = setInterval(() => {
         setActiveIndex((prev) => (prev + 1) % templatesData.length);
       }, 3500);
@@ -125,7 +141,7 @@ export function TemplateCarousel3D() {
     return () => {
       if (autoPlayRef.current) clearInterval(autoPlayRef.current);
     };
-  }, [isAutoPlaying]);
+  }, [isAutoPlaying, inView]);
 
   const handlePrev = () => {
     setActiveIndex((prev) => (prev - 1 + templatesData.length) % templatesData.length);
@@ -139,15 +155,19 @@ export function TemplateCarousel3D() {
 
   return (
     <div
+      ref={rootRef}
       className="relative w-full max-w-6xl mx-auto py-8"
-      onMouseEnter={() => setIsAutoPlaying(false)}
-      onMouseLeave={() => setIsAutoPlaying(true)}
+      onMouseEnter={() => {
+        if (!isMobile) setIsAutoPlaying(false);
+      }}
+      onMouseLeave={() => {
+        if (!isMobile) setIsAutoPlaying(true);
+      }}
     >
       {/* Top Controls Bar */}
       <div className="flex items-center justify-between px-4 mb-6">
         <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#d4a853] animate-ping" />
-          <span className="text-xs font-bold text-[#f0d48a] uppercase tracking-wider">
+          <span className="text-xs font-bold text-terracotta-deep uppercase tracking-wider">
             Sélecteur 3D Interactif ({activeIndex + 1}/{templatesData.length})
           </span>
         </div>
@@ -155,31 +175,31 @@ export function TemplateCarousel3D() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-            className="p-2 rounded-xl bg-[#111118] border border-border text-muted-foreground hover:text-foreground text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+            className="p-2 rounded-xl bg-card border border-border text-muted-foreground hover:text-foreground text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
             title={
               isAutoPlaying ? "Mettre en pause le défilement" : "Lancer le défilement automatique"
             }
           >
             {isAutoPlaying ? (
-              <Pause className="w-3.5 h-3.5 text-[#d4a853]" />
+              <Pause className="w-3.5 h-3.5 text-terracotta" />
             ) : (
-              <Play className="w-3.5 h-3.5 text-emerald-400" />
+              <Play className="w-3.5 h-3.5 text-emerald-deep" />
             )}
             <span className="hidden sm:inline">
               {isAutoPlaying ? "Défilement Auto Active" : "Lecture Auto"}
             </span>
           </button>
 
-          <div className="flex items-center gap-1 bg-[#111118] p-1 rounded-xl border border-border">
+          <div className="flex items-center gap-1 bg-card p-1 rounded-xl border border-border">
             <button
               onClick={handlePrev}
-              className="p-1.5 rounded-lg hover:bg-[#1a1a24] text-foreground transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg hover:bg-muted text-foreground transition-colors cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={handleNext}
-              className="p-1.5 rounded-lg hover:bg-[#1a1a24] text-foreground transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg hover:bg-muted text-foreground transition-colors cursor-pointer"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -190,6 +210,7 @@ export function TemplateCarousel3D() {
       {/* 3D Circular Coverflow Stage */}
       <div className="relative h-[380px] sm:h-[420px] flex items-center justify-center perspective-1200 overflow-hidden px-4">
         {templatesData.map((tpl, index) => {
+          const TplIcon = tpl.icon;
           // Calculate offset relative to active card
           let offset = index - activeIndex;
 
@@ -231,13 +252,13 @@ export function TemplateCarousel3D() {
                 zIndex,
                 transformStyle: "preserve-3d",
               }}
-              className={`absolute w-[290px] sm:w-[350px] h-[340px] sm:h-[370px] rounded-2xl border bg-[#111118] overflow-hidden cursor-pointer shadow-2xl transition-all duration-300 ${
+              className={`absolute w-[290px] sm:w-[350px] h-[340px] sm:h-[370px] rounded-2xl border bg-[#111118] overflow-hidden cursor-pointer shadow-2xl transition-[border-color,box-shadow] duration-300 ${
                 isCurrent
-                  ? "border-[#d4a853] ring-2 ring-[#d4a853]/40 shadow-[0_20px_60px_rgba(212,168,83,0.3)]"
-                  : "border-border hover:border-[#d4a853]/40"
+                  ? "border-terracotta ring-2 ring-terracotta/40 shadow-[0_20px_60px_rgba(200,90,50,0.25)]"
+                  : "border-border hover:border-terracotta/40"
               }`}
             >
-              {/* Card Gradient Header */}
+              {/* Card Gradient Header — les vignettes restent sombres (aperçu immersif du produit) */}
               <div
                 className={`h-full p-6 bg-gradient-to-br ${tpl.colorGradient} flex flex-col justify-between relative`}
               >
@@ -245,17 +266,15 @@ export function TemplateCarousel3D() {
 
                 {/* Top Badge */}
                 <div className="relative z-10 flex items-center justify-between">
-                  <span
-                    className={`px-3 py-1 rounded-full bg-black/60 border border-white/20 text-[11px] font-bold text-white flex items-center gap-1.5 ${isMobile ? "" : "backdrop-blur-md"}`}
-                  >
-                    <Sparkles className="w-3 h-3 text-[#d4a853]" /> {tpl.badge}
+                  <span className="px-3 py-1 rounded-full bg-black/60 border border-white/20 text-[11px] font-bold text-white flex items-center gap-1.5">
+                    {tpl.badge}
                   </span>
-                  <span className="text-3xl">{tpl.emoji}</span>
+                  <TplIcon className="w-7 h-7 text-white/85" />
                 </div>
 
                 {/* Center Content */}
                 <div className="relative z-10 my-auto">
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#f0d48a] block mb-1">
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#e5a93c] block mb-1">
                     Template {tpl.id}
                   </span>
                   <h3 className="text-xl sm:text-2xl font-black text-white leading-tight drop-shadow-md">
@@ -267,9 +286,7 @@ export function TemplateCarousel3D() {
                 </div>
 
                 {/* Bottom Mock Preview Bar */}
-                <div
-                  className={`relative z-10 p-2.5 rounded-xl bg-black/70 border border-white/10 flex items-center justify-between text-xs text-white ${isMobile ? "" : "backdrop-blur-md"}`}
-                >
+                <div className="relative z-10 p-2.5 rounded-xl bg-black/70 border border-white/10 flex items-center justify-between text-xs text-white">
                   <span className="font-bold text-[11px] truncate">Menu QR & WhatsApp</span>
                   <span
                     className="px-2.5 py-1 rounded font-bold text-[10px] shrink-0"
@@ -290,10 +307,10 @@ export function TemplateCarousel3D() {
           <button
             key={t.id}
             onClick={() => setActiveIndex(idx)}
-            className={`h-2.5 rounded-full transition-all cursor-pointer ${
+            className={`h-2.5 rounded-full transition-[width,background-color] cursor-pointer ${
               activeIndex === idx
-                ? "w-8 bg-[#d4a853] shadow-[0_0_12px_rgba(212,168,83,0.8)]"
-                : "w-2.5 bg-border hover:bg-[#d4a853]/50"
+                ? "w-8 bg-terracotta shadow-[0_0_12px_rgba(200,90,50,0.6)]"
+                : "w-2.5 bg-border hover:bg-terracotta/50"
             }`}
           />
         ))}
@@ -307,11 +324,11 @@ export function TemplateCarousel3D() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.4 }}
-          className={`mt-8 p-6 sm:p-8 rounded-2xl border border-[#d4a853]/40 bg-[#111118]/95 shadow-2xl grid md:grid-cols-12 gap-6 items-center ${isMobile ? "" : "backdrop-blur-xl"}`}
+          className="mt-8 p-6 sm:p-8 rounded-2xl border border-terracotta/20 bg-card shadow-elevated grid md:grid-cols-12 gap-6 items-center"
         >
           <div className="md:col-span-8 space-y-3">
             <div className="flex items-center gap-2">
-              <span className="text-2xl">{activeTpl.emoji}</span>
+              <activeTpl.icon className="w-6 h-6 text-terracotta" />
               <h4 className="text-xl font-bold text-foreground">{activeTpl.name}</h4>
             </div>
             <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
@@ -322,9 +339,9 @@ export function TemplateCarousel3D() {
               {activeTpl.features.map((feat) => (
                 <span
                   key={feat}
-                  className="px-3 py-1 rounded-lg bg-[#1a1a24] border border-border text-xs text-foreground/90 font-medium flex items-center gap-1.5"
+                  className="px-3 py-1 rounded-lg bg-muted border border-border text-xs text-foreground/90 font-medium flex items-center gap-1.5"
                 >
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-deep" />
                   {feat}
                 </span>
               ))}

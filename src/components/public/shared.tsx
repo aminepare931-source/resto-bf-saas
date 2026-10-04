@@ -4,6 +4,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { StorageImage } from "@/components/StorageImage";
 import { useCart } from "./CartContext";
+import {
+  Camera,
+  CalendarDays,
+  MessageCircle,
+  PartyPopper,
+  Search,
+  ShoppingCart,
+  User,
+  Users,
+  UtensilsCrossed,
+  ZoomIn,
+} from "lucide-react";
 
 /* ---------- Types ---------- */
 
@@ -293,7 +305,9 @@ export function MenuGrid({ menu, theme }: { menu: PublicMenuItem[]; theme: Theme
         className="text-center py-16 px-6 rounded-2xl border-2 border-dashed"
         style={{ borderColor: theme.border, color: theme.textMuted }}
       >
-        <p className="text-2xl mb-2">🍽️</p>
+        <div className="mb-2">
+          <UtensilsCrossed className="w-10 h-10 mx-auto opacity-50" />
+        </div>
         <p className="italic">Le menu sera très bientôt disponible.</p>
       </div>
     );
@@ -316,7 +330,9 @@ export function MenuGrid({ menu, theme }: { menu: PublicMenuItem[]; theme: Theme
               color: theme.text,
             }}
           />
-          <span className="absolute left-3.5 top-3 text-base opacity-50">🔍</span>
+          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 opacity-50">
+            <Search className="w-4 h-4" />
+          </span>
           {search && (
             <button
               onClick={() => setSearch("")}
@@ -372,7 +388,9 @@ export function MenuGrid({ menu, theme }: { menu: PublicMenuItem[]; theme: Theme
           className="text-center py-12 px-6 rounded-2xl border border-dashed"
           style={{ borderColor: theme.border, color: theme.textMuted }}
         >
-          <p className="text-xl mb-1">🔍</p>
+          <div className="mb-1">
+            <Search className="w-8 h-8 mx-auto opacity-50" />
+          </div>
           <p className="text-sm italic">Aucun plat ne correspond à votre recherche.</p>
         </div>
       ) : (
@@ -415,10 +433,10 @@ export function MenuGrid({ menu, theme }: { menu: PublicMenuItem[]; theme: Theme
                       </div>
                     ) : (
                       <div
-                        className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl grid place-items-center text-2xl"
+                        className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl grid place-items-center"
                         style={{ background: theme.surfaceAlt, color: theme.accent }}
                       >
-                        🍽️
+                        <UtensilsCrossed className="w-7 h-7" />
                       </div>
                     )}
                     <div className="flex-1 min-w-0 flex flex-col justify-between">
@@ -488,7 +506,9 @@ export function GalleryGrid({ gallery, theme }: { gallery: PublicGalleryImage[];
         className="text-center py-16 rounded-2xl border-2 border-dashed"
         style={{ borderColor: theme.border, color: theme.textMuted }}
       >
-        <p className="text-2xl mb-2">📷</p>
+        <div className="mb-2">
+          <Camera className="w-10 h-10 mx-auto opacity-50" />
+        </div>
         <p className="italic">Les photos arrivent bientôt.</p>
       </div>
     );
@@ -514,8 +534,8 @@ export function GalleryGrid({ gallery, theme }: { gallery: PublicGalleryImage[];
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <span className="text-white text-xs font-bold px-3 py-1.5 rounded-full bg-black/60 backdrop-blur">
-                🔍 Agrandir
+              <span className="text-white text-xs font-bold px-3 py-1.5 rounded-full bg-black/60 backdrop-blur inline-flex items-center gap-1.5">
+                <ZoomIn className="w-3.5 h-3.5" /> Agrandir
               </span>
             </div>
           </div>
@@ -579,7 +599,7 @@ export function StandardMobileBar({
         className="flex flex-col items-center gap-0.5 text-[11px] font-bold"
         style={{ color: theme.text }}
       >
-        <span className="text-lg">🍽️</span>
+        <UtensilsCrossed className="w-5 h-5" />
         Menu
       </a>
 
@@ -589,7 +609,7 @@ export function StandardMobileBar({
           className="flex flex-col items-center gap-0.5 text-[11px] font-bold"
           style={{ color: theme.accent }}
         >
-          <span className="text-lg">📅</span>
+          <CalendarDays className="w-5 h-5" />
           Réserver
         </a>
       )}
@@ -601,7 +621,7 @@ export function StandardMobileBar({
           rel="noopener noreferrer"
           className="flex flex-col items-center gap-0.5 text-[11px] font-bold text-emerald-400"
         >
-          <span className="text-lg">💬</span>
+          <MessageCircle className="w-5 h-5" />
           WhatsApp
         </a>
       )}
@@ -613,7 +633,7 @@ export function StandardMobileBar({
           style={{ color: theme.text }}
         >
           <div className="relative">
-            <span className="text-lg">🛒</span>
+            <ShoppingCart className="w-5 h-5" />
             {totalCount > 0 && (
               <span
                 className="absolute -top-1 -right-2 text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center text-black"
@@ -921,18 +941,9 @@ export function AdvancedReservationForm({
     setBusy(false);
     if (error) return toast.error(error.message);
     if (waLink) {
-      let wa = `📅 *Réservation — ${restaurantName}*
-
-👤 ${form.name}
-📞 ${form.phone}
-📅 ${form.date} à ${time}
-👥 ${guests} personne(s)`;
-      if (form.occ)
-        wa += `
-🎉 ${form.occ}`;
-      if (form.msg)
-        wa += `
-💬 ${form.msg}`;
+      let wa = `*Réservation — ${restaurantName}*\n\nNom : ${form.name}\nTéléphone : ${form.phone}\nDate : ${form.date} à ${time}\nPersonnes : ${guests}`;
+      if (form.occ) wa += `\nOccasion : ${form.occ}`;
+      if (form.msg) wa += `\nMessage : ${form.msg}`;
       window.open(`${waLink}?text=${encodeURIComponent(wa)}`, "_blank");
     }
     setDone(true);
@@ -959,7 +970,9 @@ export function AdvancedReservationForm({
             textAlign: "center",
           }}
         >
-          <p style={{ fontSize: 40, marginBottom: 12 }}>🎉</p>
+          <p style={{ marginBottom: 12 }}>
+            <PartyPopper className="w-12 h-12 mx-auto" style={{ color: theme.accent }} />
+          </p>
           <h3
             style={{
               fontFamily: "'Cormorant Garamond', serif",
@@ -1006,8 +1019,9 @@ export function AdvancedReservationForm({
               color: theme.accent,
               marginBottom: 4,
             }}
+            className="flex items-center gap-2"
           >
-            👤 Vos coordonnées
+            <User className="w-3.5 h-3.5" /> Vos coordonnées
           </p>
           <div className="grid sm:grid-cols-2 gap-3">
             <input
@@ -1038,8 +1052,9 @@ export function AdvancedReservationForm({
               marginTop: 12,
               marginBottom: 4,
             }}
+            className="flex items-center gap-2"
           >
-            📅 Date & heure
+            <CalendarDays className="w-3.5 h-3.5" /> Date & heure
           </p>
           <input
             required
@@ -1081,8 +1096,9 @@ export function AdvancedReservationForm({
               marginTop: 12,
               marginBottom: 4,
             }}
+            className="flex items-center gap-2"
           >
-            👥 Nombre de personnes
+            <Users className="w-3.5 h-3.5" /> Nombre de personnes
           </p>
           <div className="flex flex-wrap gap-2">
             {guestList.map((g) => (
@@ -1115,8 +1131,9 @@ export function AdvancedReservationForm({
               marginTop: 12,
               marginBottom: 4,
             }}
+            className="flex items-center gap-2"
           >
-            🎉 Occasion (optionnel)
+            <PartyPopper className="w-3.5 h-3.5" /> Occasion (optionnel)
           </p>
           <div className="flex flex-wrap gap-2">
             {occasions.filter(Boolean).map((o) => (
@@ -1149,8 +1166,9 @@ export function AdvancedReservationForm({
               marginTop: 12,
               marginBottom: 4,
             }}
+            className="flex items-center gap-2"
           >
-            💬 Message (optionnel)
+            <MessageCircle className="w-3.5 h-3.5" /> Message (optionnel)
           </p>
           <textarea
             placeholder="Un message pour le restaurant..."
@@ -1176,7 +1194,7 @@ export function AdvancedReservationForm({
               opacity: busy ? 0.6 : 1,
             }}
           >
-            {busy ? "Envoi..." : "📅 Confirmer la réservation"}
+            {busy ? "Envoi..." : "Confirmer la réservation"}
           </button>
         </form>
       )}

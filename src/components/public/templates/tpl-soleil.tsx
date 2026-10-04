@@ -18,6 +18,19 @@ import {
 } from "../shared";
 import { StorageImage } from "@/components/StorageImage";
 import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
+import {
+  Beef,
+  CakeSlice,
+  CookingPot,
+  Croissant,
+  CupSoda,
+  Fish,
+  Pizza,
+  Salad,
+  Sandwich,
+  Soup,
+  UtensilsCrossed,
+} from "lucide-react";
 
 function pickCover(gallery: PublicGalleryImage[], menu: PublicMenuItem[]) {
   return gallery[0]?.image_url ?? menu.find((m) => m.image_url)?.image_url ?? null;
@@ -36,19 +49,28 @@ function FontImport() {
   );
 }
 
-function CategoryIcon({ name }: { name: string }) {
+function CategoryIcon({
+  name,
+  className,
+  style,
+}: {
+  name: string;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   const n = name.toLowerCase();
-  if (/pizza/.test(n)) return <>🍕</>;
-  if (/burger|sandwich/.test(n)) return <>🍔</>;
-  if (/pasta|p[âa]tes|spaghet/.test(n)) return <>🍝</>;
-  if (/dessert|sucre|p[âa]tiss/.test(n)) return <>🍰</>;
-  if (/boisson|drink|jus|cocktail/.test(n)) return <>🥤</>;
-  if (/entr[ée]e|starter|salade/.test(n)) return <>🥗</>;
-  if (/grill|brochette|viande|bbq/.test(n)) return <>🍖</>;
-  if (/poisson|fish|fruits de mer/.test(n)) return <>🐟</>;
-  if (/riz|t[ôo]|plat/.test(n)) return <>🍛</>;
-  if (/petit|breakfast|d[ée]j/.test(n)) return <>🥐</>;
-  return <>🍽️</>;
+  let I: React.ElementType = UtensilsCrossed;
+  if (/pizza/.test(n)) I = Pizza;
+  else if (/burger|sandwich/.test(n)) I = Sandwich;
+  else if (/pasta|p[âa]tes|spaghet/.test(n)) I = CookingPot;
+  else if (/dessert|sucre|p[âa]tiss/.test(n)) I = CakeSlice;
+  else if (/boisson|drink|jus|cocktail/.test(n)) I = CupSoda;
+  else if (/entr[ée]e|starter|salade/.test(n)) I = Salad;
+  else if (/grill|brochette|viande|bbq/.test(n)) I = Beef;
+  else if (/poisson|fish|fruits de mer/.test(n)) I = Fish;
+  else if (/riz|t[ôo]|plat/.test(n)) I = Soup;
+  else if (/petit|breakfast|d[ée]j/.test(n)) I = Croissant;
+  return <I className={className} style={style} />;
 }
 
 function MetaStrip({
@@ -550,13 +572,14 @@ export function TplSoleil(props: TemplateProps) {
                       className="group flex flex-col items-center gap-3"
                     >
                       <div
-                        className="w-20 h-20 sm:w-24 sm:h-24 rounded-full grid place-items-center text-4xl sm:text-5xl group-hover:scale-110 transition"
+                        className="w-20 h-20 sm:w-24 sm:h-24 rounded-full grid place-items-center group-hover:scale-110 transition"
                         style={{
                           background: theme.surface,
+                          color: theme.text,
                           boxShadow: "0 4px 20px rgba(30,19,8,0.08)",
                         }}
                       >
-                        <CategoryIcon name={c} />
+                        <CategoryIcon name={c} className="w-9 h-9 sm:w-10 sm:h-10" />
                       </div>
                       <span className="text-sm font-medium" style={{ color: theme.text }}>
                         {c}
@@ -632,8 +655,11 @@ export function TplSoleil(props: TemplateProps) {
                             className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                           />
                         ) : (
-                          <div className="w-full h-full grid place-items-center text-4xl">
-                            <CategoryIcon name={d.category} />
+                          <div
+                            className="w-full h-full grid place-items-center"
+                            style={{ color: theme.text }}
+                          >
+                            <CategoryIcon name={d.category} className="w-10 h-10 opacity-40" />
                           </div>
                         )}
                         <span

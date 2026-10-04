@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { uploadRestaurantFile, signedUrl } from "@/lib/storage";
 import { toast } from "sonner";
+import { UtensilsCrossed } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard/contenu")({
   component: ContentPage,
@@ -108,7 +109,7 @@ function ContentPage() {
   return (
     <div className="max-w-4xl">
       <div className="mb-8">
-        <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">
+        <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">
           Contenu & Branding
         </p>
         <h1 className="text-3xl font-black">Personnalisez votre site</h1>
@@ -124,7 +125,7 @@ function ContentPage() {
               <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
                 Logo
               </p>
-              <div className="aspect-square rounded-2xl border-2 border-dashed border-white/15 bg-white/[0.03] flex items-center justify-center overflow-hidden">
+              <div className="aspect-square rounded-2xl border-2 border-dashed border-border bg-surface-warm flex items-center justify-center overflow-hidden">
                 {form.logo_url ? (
                   <img
                     src={form.logo_url}
@@ -132,10 +133,10 @@ function ContentPage() {
                     className="w-full h-full object-contain p-4"
                   />
                 ) : (
-                  <span className="text-4xl text-muted-foreground">🍽️</span>
+                  <UtensilsCrossed className="w-10 h-10 text-muted-foreground" />
                 )}
               </div>
-              <label className="block mt-3 px-4 py-2.5 rounded-xl border border-gold/30 text-gold text-center text-sm font-bold cursor-pointer hover:bg-gold/10 transition-colors">
+              <label className="block mt-3 px-4 py-2.5 rounded-xl border border-terracotta/30 text-terracotta text-center text-sm font-bold cursor-pointer hover:bg-terracotta-tint transition-colors">
                 {uploading ? "Envoi..." : form.logo_url ? "Changer" : "Téléverser"}
                 <input
                   type="file"
@@ -171,7 +172,7 @@ function ContentPage() {
                     type="text"
                     value={form.primary_color}
                     onChange={(e) => setForm((f) => ({ ...f, primary_color: e.target.value }))}
-                    className="flex-1 px-3 py-2 rounded-lg bg-white/[0.04] border border-white/8 font-mono text-sm"
+                    className="flex-1 px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all font-mono text-sm"
                   />
                 </div>
               </div>
@@ -182,7 +183,7 @@ function ContentPage() {
                 <select
                   value={form.font_family}
                   onChange={(e) => setForm((f) => ({ ...f, font_family: e.target.value }))}
-                  className="mt-2 w-full px-3 py-2.5 rounded-lg bg-white/[0.04] border border-white/8 text-sm"
+                  className="mt-2 w-full px-3 py-2.5 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
                 >
                   {FONTS.map((f) => (
                     <option key={f} value={f}>
@@ -267,7 +268,7 @@ function ContentPage() {
         <button
           type="submit"
           disabled={saving}
-          className="px-7 py-3 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold disabled:opacity-60"
+          className="px-7 py-3 rounded-xl bg-terracotta text-white hover:bg-terracotta-deep transition-colors font-bold disabled:opacity-60"
         >
           {saving ? "Enregistrement..." : "Enregistrer tout"}
         </button>
@@ -278,8 +279,8 @@ function ContentPage() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="p-6 rounded-2xl border border-white/8 bg-dark-card">
-      <h3 className="text-sm font-black uppercase tracking-widest text-gold mb-5">{title}</h3>
+    <div className="p-6 rounded-2xl border border-border bg-card">
+      <h3 className="text-sm font-black uppercase tracking-widest text-terracotta mb-5">{title}</h3>
       <div className="space-y-4">{children}</div>
     </div>
   );
@@ -305,7 +306,7 @@ function Field({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/8 focus:border-gold focus:outline-none text-sm"
+        className="px-4 py-2.5 rounded-xl bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
       />
     </div>
   );
@@ -334,7 +335,7 @@ function TextArea({
         onChange={(e) => onChange(e.target.value)}
         rows={rows}
         placeholder={placeholder}
-        className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/8 focus:border-gold focus:outline-none text-sm resize-y"
+        className="px-4 py-2.5 rounded-xl bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm resize-y"
       />
     </div>
   );

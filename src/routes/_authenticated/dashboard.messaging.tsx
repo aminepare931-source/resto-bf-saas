@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyRestaurant } from "@/hooks/use-my-restaurant";
 import { toast } from "sonner";
-import { Phone, User, Calendar, DollarSign } from "lucide-react";
+import { Phone, User, Calendar, DollarSign, Bell, FileText, MessageSquare } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard/messaging")({
   component: MessagingPage,
@@ -126,13 +126,13 @@ function MessagingPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "confirmed":
-        return "bg-emerald-500/15 text-emerald-300";
+        return "bg-emerald-tint text-emerald-deep";
       case "pending":
-        return "bg-amber-500/15 text-amber-300";
+        return "bg-amber-tint text-amber-deep";
       case "cancelled":
-        return "bg-red-500/15 text-red-300";
+        return "bg-destructive/10 text-destructive";
       default:
-        return "bg-white/5 text-muted-foreground";
+        return "bg-surface-warm text-muted-foreground";
     }
   };
 
@@ -151,8 +151,8 @@ function MessagingPage() {
 
   if (!r?.whatsapp) {
     return (
-      <div className="max-w-2xl p-8 rounded-3xl border border-amber-500/30 bg-amber-500/5 text-center">
-        <Phone className="w-12 h-12 mx-auto mb-3 text-amber-400" />
+      <div className="max-w-2xl p-8 rounded-3xl border border-amber-brand/40 bg-amber-tint text-center">
+        <Phone className="w-12 h-12 mx-auto mb-3 text-amber-deep" />
         <h2 className="text-2xl font-black mb-2">WhatsApp non configuré</h2>
         <p className="text-sm text-muted-foreground">
           Configurez votre numéro WhatsApp dans Paramètres pour utiliser la messagerie.
@@ -164,7 +164,7 @@ function MessagingPage() {
   return (
     <div className="max-w-6xl">
       <div className="mb-8">
-        <p className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-2">Communication</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">Communication</p>
         <h1 className="text-3xl font-black">Messagerie WhatsApp</h1>
       </div>
 
@@ -173,8 +173,8 @@ function MessagingPage() {
           onClick={() => setActiveTab("reservations")}
           className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
             activeTab === "reservations"
-              ? "bg-gold text-[#0a0a0f]"
-              : "bg-white/5 text-muted-foreground hover:text-foreground"
+              ? "bg-terracotta text-white"
+              : "bg-surface-warm text-muted-foreground hover:text-foreground"
           }`}
         >
           <Calendar className="w-4 h-4 inline mr-2" />
@@ -184,8 +184,8 @@ function MessagingPage() {
           onClick={() => setActiveTab("orders")}
           className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
             activeTab === "orders"
-              ? "bg-gold text-[#0a0a0f]"
-              : "bg-white/5 text-muted-foreground hover:text-foreground"
+              ? "bg-terracotta text-white"
+              : "bg-surface-warm text-muted-foreground hover:text-foreground"
           }`}
         >
           <DollarSign className="w-4 h-4 inline mr-2" />
@@ -199,17 +199,17 @@ function MessagingPage() {
       ) : activeTab === "reservations" ? (
         <div className="space-y-4">
           {reservations.length === 0 ? (
-            <div className="p-10 rounded-2xl border border-dashed border-white/15 text-center text-muted-foreground">
+            <div className="p-10 rounded-2xl border border-dashed border-border text-center text-muted-foreground">
               <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
               <p>Aucune réservation</p>
             </div>
           ) : (
             reservations.map((res) => (
-              <div key={res.id} className="p-5 rounded-2xl border border-white/8 bg-dark-card">
+              <div key={res.id} className="p-5 rounded-2xl border border-border bg-card">
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <User className="w-4 h-4 text-gold" />
+                      <User className="w-4 h-4 text-terracotta" />
                       <strong className="text-sm">{res.customer_name}</strong>
                       <span
                         className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${getStatusColor(res.status)}`}
@@ -223,7 +223,9 @@ function MessagingPage() {
                       {res.reservation_time} · {res.party_size} personnes
                     </p>
                     {res.notes && (
-                      <p className="text-xs text-muted-foreground mt-1">📝 {res.notes}</p>
+                      <p className="text-xs text-muted-foreground mt-1 flex items-start gap-1.5">
+                        <FileText className="w-3.5 h-3.5 mt-0.5 shrink-0" /> {res.notes}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -231,24 +233,24 @@ function MessagingPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => sendConfirmation(res)}
-                    className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-semibold hover:bg-emerald-500/20"
+                    className="px-3 py-1.5 rounded-lg bg-emerald text-white text-xs font-semibold hover:bg-emerald-deep transition-colors"
                   >
                     ✓ Confirmer
                   </button>
                   <button
                     onClick={() => sendReminder(res)}
-                    className="px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 text-xs font-semibold hover:bg-blue-500/20"
+                    className="px-3 py-1.5 rounded-lg bg-terracotta-tint text-terracotta-deep text-xs font-semibold hover:bg-terracotta/20 transition-colors inline-flex items-center gap-1.5"
                   >
-                    🔔 Rappel
+                    <Bell className="w-3.5 h-3.5" /> Rappel
                   </button>
                   <button
                     onClick={() => {
                       setSelectedPhone(res.customer_phone);
                       setSelectedName(res.customer_name);
                     }}
-                    className="px-3 py-1.5 rounded-lg bg-gold/10 text-gold text-xs font-semibold hover:bg-gold/20"
+                    className="px-3 py-1.5 rounded-lg bg-surface-warm text-charcoal text-xs font-semibold hover:bg-border transition-colors inline-flex items-center gap-1.5"
                   >
-                    💬 Message personnalisé
+                    <MessageSquare className="w-3.5 h-3.5" /> Message personnalisé
                   </button>
                 </div>
               </div>
@@ -258,7 +260,7 @@ function MessagingPage() {
       ) : (
         <div className="space-y-4">
           {orders.filter((o) => o.status !== "paid" && o.status !== "cancelled").length === 0 ? (
-            <div className="p-10 rounded-2xl border border-dashed border-white/15 text-center text-muted-foreground">
+            <div className="p-10 rounded-2xl border border-dashed border-border text-center text-muted-foreground">
               <DollarSign className="w-12 h-12 mx-auto mb-3 opacity-50" />
               <p>Aucune commande impayée</p>
             </div>
@@ -266,7 +268,7 @@ function MessagingPage() {
             orders
               .filter((o) => o.status !== "paid" && o.status !== "cancelled")
               .map((order) => (
-                <div key={order.id} className="p-5 rounded-2xl border border-white/8 bg-dark-card">
+                <div key={order.id} className="p-5 rounded-2xl border border-border bg-card">
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <strong className="text-sm">Commande</strong>
@@ -277,16 +279,16 @@ function MessagingPage() {
                         {new Date(order.created_at).toLocaleString("fr-FR")}
                       </p>
                     </div>
-                    <strong className="text-lg text-gold">
+                    <strong className="text-lg text-terracotta-deep">
                       {order.total.toLocaleString("fr-FR")} F
                     </strong>
                   </div>
 
                   <button
                     onClick={() => sendPaymentReminder(order)}
-                    className="px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 text-xs font-semibold hover:bg-amber-500/20"
+                    className="px-3 py-1.5 rounded-lg bg-amber-tint text-amber-deep text-xs font-semibold hover:bg-amber-brand/20 transition-colors inline-flex items-center gap-1.5"
                   >
-                    💬 Rappel paiement
+                    <MessageSquare className="w-3.5 h-3.5" /> Rappel paiement
                   </button>
                 </div>
               ))
@@ -296,7 +298,7 @@ function MessagingPage() {
 
       {selectedPhone && (
         <div
-          className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-[100] bg-charcoal/60 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => {
             setSelectedPhone("");
             setSelectedName("");
@@ -304,7 +306,7 @@ function MessagingPage() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md rounded-2xl border border-white/10 bg-[#0a0a0f] p-6"
+            className="w-full max-w-md rounded-2xl border border-border bg-card shadow-xl p-6"
           >
             <h3 className="text-xl font-black mb-2">Message à {selectedName}</h3>
             <p className="text-xs text-muted-foreground mb-4">{selectedPhone}</p>
@@ -314,7 +316,7 @@ function MessagingPage() {
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Votre message..."
               rows={5}
-              className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm mb-4"
+              className="w-full px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm mb-4"
             />
 
             <div className="flex gap-2 justify-end">
@@ -324,13 +326,13 @@ function MessagingPage() {
                   setSelectedName("");
                   setMessage("");
                 }}
-                className="px-5 py-2.5 rounded-xl border border-white/10 text-sm"
+                className="px-5 py-2.5 rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-surface-warm transition-colors text-sm"
               >
                 Annuler
               </button>
               <button
                 onClick={sendCustomMessage}
-                className="px-5 py-2.5 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold text-sm flex items-center gap-2"
+                className="px-5 py-2.5 rounded-xl bg-terracotta text-white hover:bg-terracotta-deep transition-colors font-bold text-sm flex items-center gap-2"
               >
                 Envoyer
               </button>

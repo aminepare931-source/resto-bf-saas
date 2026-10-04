@@ -14,7 +14,7 @@ interface Motion3DTiltCardProps {
 export function Motion3DTiltCard({
   children,
   className = "",
-  glowColor = "rgba(212,168,83,0.3)",
+  glowColor = "rgba(200,90,50,0.22)",
   maxRotate = 10,
   scaleOnHover = 1.02,
   delay = 0,
@@ -64,7 +64,7 @@ export function Motion3DTiltCard({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-50px" }}
         transition={{ duration: 0.4, delay: Math.min(delay, 0.2) }}
-        className={`relative rounded-xl border border-border bg-[#111118] overflow-hidden ${className}`}
+        className={`relative rounded-xl border border-border bg-card overflow-hidden ${className}`}
       >
         <div className="relative z-20 h-full">{children}</div>
       </motion.div>
@@ -90,7 +90,7 @@ export function Motion3DTiltCard({
         scale: scaleOnHover,
         translateZ: 15,
       }}
-      className={`relative group rounded-xl border border-border bg-[#111118]/90 backdrop-blur-md overflow-hidden transition-all duration-300 ${className}`}
+      className={`relative group rounded-xl border border-border bg-card overflow-hidden transition-[border-color,box-shadow] duration-300 ${className}`}
     >
       {/* Specular spotlight following cursor */}
       <motion.div
@@ -100,8 +100,8 @@ export function Motion3DTiltCard({
         }}
       />
 
-      {/* Golden top border accent line */}
-      <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#d4a853]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      {/* Terracotta top border accent line */}
+      <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-terracotta/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       {/* Card Content with 3D Z translation */}
       <div className="relative z-20 h-full" style={{ transform: "translateZ(10px)" }}>

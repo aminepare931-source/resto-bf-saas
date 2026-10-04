@@ -3,8 +3,8 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, Sparkles, Line } from "@react-three/drei";
 import * as THREE from "three";
 
-const GOLD = "#d4a853";
-const GOLD_LIGHT = "#f0d48a";
+const GOLD = "#c85a32";
+const GOLD_LIGHT = "#e5a93c";
 
 /** Petits nœuds lumineux représentant menu / commandes / stock / factures / stats, reliés au cœur central. */
 function Nodes({ groupRef }: { groupRef: React.RefObject<THREE.Group | null> }) {

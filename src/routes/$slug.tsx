@@ -245,10 +245,10 @@ function PublicRestaurantPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#09070b] text-[#f4c15d]">
+      <div className="min-h-screen flex items-center justify-center bg-[#fdfbf7] text-[#c85a32]">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-[#f4c15d] border-t-transparent rounded-full animate-spin" />
-          <span className="text-xs font-bold uppercase tracking-widest text-[#fff3d3]">
+          <div className="w-8 h-8 border-2 border-[#c85a32] border-t-transparent rounded-full animate-spin" />
+          <span className="text-xs font-bold uppercase tracking-widest text-[#57423b]">
             Chargement du restaurant...
           </span>
         </div>
@@ -258,16 +258,16 @@ function PublicRestaurantPage() {
 
   if (!restaurant) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#09070b] text-white text-center px-4">
+      <div className="min-h-screen flex items-center justify-center bg-[#fdfbf7] text-[#2b211c] text-center px-4">
         <div>
-          <h1 className="text-3xl font-black text-[#f4c15d] mb-2">Restaurant non disponible</h1>
-          <p className="text-white/60">
-            Le restaurant <code className="text-[#f4c15d]">{slug}</code> n'est pas accessible
+          <h1 className="text-3xl font-black text-[#9f3c16] mb-2">Restaurant non disponible</h1>
+          <p className="text-[#57423b]">
+            Le restaurant <code className="text-[#9f3c16]">{slug}</code> n'est pas accessible
             actuellement.
           </p>
           <a
             href="/dashboard"
-            className="mt-6 inline-block px-6 py-3 rounded-xl bg-gradient-to-r from-[#f4c15d] to-[#e4b25f] text-[#0a0a0f] font-black shadow-lg"
+            className="mt-6 inline-block px-6 py-3 rounded-xl bg-gradient-to-r from-[#c85a32] to-[#9f3c16] text-white font-black shadow-lg"
           >
             Retour au tableau de bord
           </a>

@@ -39,12 +39,12 @@ export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
 };
 
 export const ORDER_STATUS_COLOR: Record<OrderStatus, string> = {
-  new: "bg-amber-500/15 text-amber-300 border-amber-500/30",
-  in_kitchen: "bg-blue-500/15 text-blue-300 border-blue-500/30",
-  ready: "bg-green-500/15 text-green-300 border-green-500/30",
-  served: "bg-purple-500/15 text-purple-300 border-purple-500/30",
-  paid: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-  cancelled: "bg-red-500/15 text-red-300 border-red-500/30",
+  new: "border-amber-brand/40 bg-amber-tint text-amber-deep",
+  in_kitchen: "border-terracotta/30 bg-terracotta-tint text-terracotta-deep",
+  ready: "border-emerald/30 bg-emerald-tint text-emerald-deep",
+  served: "border-charcoal/20 bg-charcoal/10 text-charcoal",
+  paid: "border-emerald/40 bg-emerald/15 text-emerald-deep",
+  cancelled: "border-destructive/30 bg-destructive/10 text-destructive",
 };
 
 export const ORDER_NEXT_STATUS: Record<OrderStatus, OrderStatus | null> = {
