@@ -247,9 +247,9 @@ export function TplMarche({ restaurant, menu, reviews, gallery, view }: Template
     surfaceAlt: "#0a1f12",
     text: "#f0e9d6",
     textMuted: "rgba(240,233,214,0.7)",
-    accent: "#ed8023",
+    accent: "#49eb7b",
     accentInk: "#0d2818",
-    border: "rgba(237,128,35,0.2)",
+    border: "rgba(73,235,123,0.2)",
     radius: "10px",
   };
 
@@ -313,19 +313,19 @@ export function TplMarche({ restaurant, menu, reviews, gallery, view }: Template
             >
               <a
                 href={buildViewHref("home")}
-                className={`hover:text-[#ed8023] ${activeView === "home" ? "text-[#ed8023] border-b border-[#ed8023]" : ""}`}
+                className={`hover:text-[#49eb7b] ${activeView === "home" ? "text-[#49eb7b] border-b border-[#49eb7b]" : ""}`}
               >
                 Accueil
               </a>
               <a
                 href={buildViewHref("about")}
-                className={`hover:text-[#ed8023] ${activeView === "about" ? "text-[#ed8023] border-b border-[#ed8023]" : ""}`}
+                className={`hover:text-[#49eb7b] ${activeView === "about" ? "text-[#49eb7b] border-b border-[#49eb7b]" : ""}`}
               >
                 À propos
               </a>
               <a
                 href={buildViewHref("menu")}
-                className={`hover:text-[#ed8023] ${activeView === "menu" ? "text-[#ed8023] border-b border-[#ed8023]" : ""}`}
+                className={`hover:text-[#49eb7b] ${activeView === "menu" ? "text-[#49eb7b] border-b border-[#49eb7b]" : ""}`}
               >
                 Menu
               </a>
@@ -333,7 +333,7 @@ export function TplMarche({ restaurant, menu, reviews, gallery, view }: Template
             {restaurant.plan !== "gratuit" && (
               <a
                 href={buildViewHref("reserve")}
-                className="hidden md:inline-flex px-5 py-2 rounded-full border text-xs font-semibold hover:bg-[#ed8023] hover:text-[#0d2818] transition"
+                className="hidden md:inline-flex px-5 py-2 rounded-full border text-xs font-semibold hover:bg-[#49eb7b] hover:text-[#0d2818] transition"
                 style={{ borderColor: theme.accent, color: theme.accent }}
               >
                 Réserver
@@ -456,7 +456,7 @@ export function TplMarche({ restaurant, menu, reviews, gallery, view }: Template
               ) : (
                 <div
                   className="w-full aspect-square rounded-full"
-                  style={{ background: "radial-gradient(circle,#ed8023,#7a3a0e)" }}
+                  style={{ background: "radial-gradient(circle,#1ace62,#005322)" }}
                 >
                   <CoverPlaceholder
                     background="transparent"

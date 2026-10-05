@@ -219,15 +219,15 @@ export function TplSavane(props: TemplateProps) {
     surfaceAlt: "#e2ece5",
     text: "#062319",
     textMuted: "rgba(6,35,25,0.72)",
-    accent: "#f59e0b",
-    accentInk: "#062319",
+    accent: "#e5a93c",
+    accentInk: "#432c00",
     border: "rgba(6,35,25,0.12)",
     radius: "20px",
   };
 
-  const RED = "#15803d";
+  const RED = "#504535";
   const heroOverlay =
-    "linear-gradient(135deg, rgba(20,83,45,0.95) 0%, rgba(15,118,110,0.90) 50%, rgba(6,78,59,0.95) 100%)";
+    "linear-gradient(135deg, rgba(80,69,53,0.95) 0%, rgba(96,65,0,0.90) 50%, rgba(66,44,10,0.95) 100%)";
 
   const [mobOpen, setMobOpen] = React.useState(false);
   const [openDish, setOpenDish] = React.useState<PublicMenuItem | null>(null);
@@ -436,7 +436,7 @@ export function TplSavane(props: TemplateProps) {
               ) : (
                 <div
                   className="w-full aspect-square rounded-full"
-                  style={{ background: "radial-gradient(circle,#f5b921,#c8281e)" }}
+                  style={{ background: "radial-gradient(circle,#e5a93c,#5e4000)" }}
                 >
                   <CoverPlaceholder
                     background="transparent"

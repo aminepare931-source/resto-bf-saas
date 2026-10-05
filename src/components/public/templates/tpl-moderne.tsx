@@ -218,9 +218,9 @@ export function TplModerne(props: TemplateProps) {
     surfaceAlt: "#1e293b",
     text: "#f8fafc",
     textMuted: "#94a3b8",
-    accent: "#6366f1",
-    accentInk: "#ffffff",
-    border: "rgba(99,102,241,0.25)",
+    accent: "#d4c4b0",
+    accentInk: "#131315",
+    border: "rgba(212,196,176,0.25)",
     radius: "12px",
   };
 
@@ -301,19 +301,19 @@ export function TplModerne(props: TemplateProps) {
             >
               <a
                 href={buildViewHref("home")}
-                className={`hover:text-[#c9a35a] ${activeView === "home" ? "text-[#c9a35a]" : ""}`}
+                className={`hover:text-[#d4c4b0] ${activeView === "home" ? "text-[#d4c4b0]" : ""}`}
               >
                 Accueil
               </a>
               <a
                 href={buildViewHref("about")}
-                className={`hover:text-[#c9a35a] ${activeView === "about" ? "text-[#c9a35a]" : ""}`}
+                className={`hover:text-[#d4c4b0] ${activeView === "about" ? "text-[#d4c4b0]" : ""}`}
               >
                 À propos
               </a>
               <a
                 href={buildViewHref("menu")}
-                className={`hover:text-[#c9a35a] ${activeView === "menu" ? "text-[#c9a35a]" : ""}`}
+                className={`hover:text-[#d4c4b0] ${activeView === "menu" ? "text-[#d4c4b0]" : ""}`}
               >
                 Menu
               </a>
@@ -321,7 +321,7 @@ export function TplModerne(props: TemplateProps) {
             {restaurant.plan !== "gratuit" && (
               <a
                 href={buildViewHref("reserve")}
-                className="hidden md:inline-flex px-5 py-2.5 border text-xs font-semibold hover:bg-[#c9a35a] hover:text-[#0e0e10] transition rounded-full"
+                className="hidden md:inline-flex px-5 py-2.5 border text-xs font-semibold hover:bg-[#d4c4b0] hover:text-[#0e0e10] transition rounded-full"
                 style={{ borderColor: theme.accent, color: theme.accent }}
               >
                 Réserver une table →
@@ -415,7 +415,7 @@ export function TplModerne(props: TemplateProps) {
             </p>
             <a
               href={buildViewHref("menu")}
-              className="mt-8 inline-block px-7 py-3 border font-medium text-sm hover:bg-[#c9a35a] hover:text-[#0e0e10] transition"
+              className="mt-8 inline-block px-7 py-3 border font-medium text-sm hover:bg-[#d4c4b0] hover:text-[#0e0e10] transition"
               style={{ borderColor: theme.accent, color: theme.accent }}
             >
               Découvrir →
@@ -516,7 +516,7 @@ export function TplModerne(props: TemplateProps) {
               </ul>
               <a
                 href={buildViewHref("menu")}
-                className="inline-block px-7 py-3 border text-sm hover:bg-[#c9a35a] hover:text-[#0e0e10] transition"
+                className="inline-block px-7 py-3 border text-sm hover:bg-[#d4c4b0] hover:text-[#0e0e10] transition"
                 style={{ borderColor: theme.accent, color: theme.accent }}
               >
                 En savoir plus →

@@ -275,8 +275,8 @@ export function TplSoleil(props: TemplateProps) {
     surfaceAlt: "#f0e3cd",
     text: "#1e1308",
     textMuted: "#6b5440",
-    accent: "#c7522a",
-    accentInk: "#ffffff",
+    accent: "#7e5700",
+    accentInk: "#ffdead",
     border: "rgba(30,19,8,0.12)",
     radius: "14px",
   };
@@ -350,19 +350,19 @@ export function TplSoleil(props: TemplateProps) {
             <nav className="hidden md:flex gap-5 text-sm font-medium" style={{ color: theme.text }}>
               <a
                 href={buildViewHref("home")}
-                className={`hover:text-[#c7522a] transition ${activeView === "home" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}
+                className={`hover:text-[#7e5700] transition ${activeView === "home" ? "text-[#7e5700] border-b-2 border-[#7e5700]" : ""}`}
               >
                 Accueil
               </a>
               <a
                 href={buildViewHref("menu")}
-                className={`hover:text-[#c7522a] transition ${activeView === "menu" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}
+                className={`hover:text-[#7e5700] transition ${activeView === "menu" ? "text-[#7e5700] border-b-2 border-[#7e5700]" : ""}`}
               >
                 Menu
               </a>
               <a
                 href={buildViewHref("about")}
-                className={`hover:text-[#c7522a] transition ${activeView === "about" ? "text-[#c7522a] border-b-2 border-[#c7522a]" : ""}`}
+                className={`hover:text-[#7e5700] transition ${activeView === "about" ? "text-[#7e5700] border-b-2 border-[#7e5700]" : ""}`}
               >
                 À propos
               </a>
@@ -464,7 +464,7 @@ export function TplSoleil(props: TemplateProps) {
               ) : (
                 <div
                   className="absolute inset-0"
-                  style={{ background: "linear-gradient(135deg,#e5c89a,#c7522a)" }}
+                  style={{ background: "linear-gradient(135deg,#fabc4d,#7e5700)" }}
                 >
                   <CoverPlaceholder
                     background="transparent"
@@ -494,7 +494,7 @@ export function TplSoleil(props: TemplateProps) {
                 >
                   Une destination.
                   <br />
-                  Des saveurs <span style={{ color: "#ffd166" }}>infinies</span>
+                  Des saveurs <span style={{ color: "#fabc4d" }}>infinies</span>
                 </h1>
                 <p className="mt-5 max-w-lg leading-relaxed text-white/90 text-sm sm:text-base">
                   {restaurant.description ??
@@ -676,7 +676,7 @@ export function TplSoleil(props: TemplateProps) {
                             {fmtPrice(d.price)}
                           </span>
                           <span className="text-xs flex items-center gap-1">
-                            <span style={{ color: "#e8b400" }}>★</span> 4.8
+                            <span style={{ color: "#e5a93c" }}>★</span> 4.8
                           </span>
                         </div>
                       </div>
@@ -861,7 +861,7 @@ export function TplSoleil(props: TemplateProps) {
 
       {/* CTA BAND */}
       {activeView === "home" && (
-        <div className="px-5 py-7" style={{ background: "#8b3a1c" }}>
+        <div className="px-5 py-7" style={{ background: "#5e4000" }}>
           <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-6">
             <strong
               className="text-white text-xl sm:text-2xl"
@@ -874,7 +874,7 @@ export function TplSoleil(props: TemplateProps) {
               target={wa ? "_blank" : undefined}
               rel="noopener noreferrer"
               className="px-7 py-3 rounded-full bg-white font-bold text-sm hover:bg-[#fbf3e6] transition"
-              style={{ color: "#8b3a1c" }}
+              style={{ color: "#5e4000" }}
             >
               Commander en ligne
             </a>
@@ -980,7 +980,7 @@ export function TplSoleil(props: TemplateProps) {
           surfaceAlt: "#1e1308",
           text: "#fbf3e6",
           textMuted: "rgba(251,243,230,0.65)",
-          accent: "#f0a878",
+          accent: "#ffc665",
           border: "rgba(255,255,255,0.1)",
         }}
       />
