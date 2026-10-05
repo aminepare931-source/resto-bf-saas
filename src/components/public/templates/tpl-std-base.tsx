@@ -20,7 +20,6 @@ import {
   Clock,
   Home,
   MapPin,
-  MessageCircle,
   Phone,
   Star,
   UtensilsCrossed,
@@ -111,6 +110,12 @@ export function StdTemplate({ palette: p, ...props }: TemplateProps & { palette:
   ].slice(0, 6);
 
   const serif: React.CSSProperties = { fontFamily: "'Playfair Display', serif" };
+  const categoryTiles = groupByCategory(available).map(([name, items]) => ({
+    name,
+    count: items.length,
+    image: items.find((i) => i.image_url)?.image_url ?? null,
+  }));
+  const aboutImage = gallery[1]?.image_url ?? gallery[0]?.image_url ?? null;
   const hours = restaurant.hours?.trim() || null;
   const hoursShort = hours ? hours.split("\n")[0] : null;
 
@@ -179,18 +184,6 @@ export function StdTemplate({ palette: p, ...props }: TemplateProps & { palette:
               )}
             </div>
           </div>
-          {wa && (
-            <a
-              href={wa}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="WhatsApp"
-              className="std-press w-10 h-10 rounded-full grid place-items-center shrink-0"
-              style={{ background: p.surfaceHigh, color: p.primary }}
-            >
-              <MessageCircle className="w-5 h-5" />
-            </a>
-          )}
         </div>
       </header>
 
@@ -391,41 +384,246 @@ export function StdTemplate({ palette: p, ...props }: TemplateProps & { palette:
               </section>
             )}
 
-            {/* Carte WhatsApp */}
-            {wa && (
-              <section
-                className="rounded-2xl p-6 shadow-xl flex flex-col gap-3"
-                style={{ background: p.surfaceHigh }}
-              >
-                <div className="flex items-center gap-2">
-                  <span
-                    className="w-8 h-8 rounded-full grid place-items-center"
-                    style={{ background: "rgba(37,211,102,0.18)", color: "#25D366" }}
-                  >
-                    <MessageCircle className="w-[18px] h-[18px]" />
-                  </span>
-                  <span
-                    className="text-[11px] font-bold uppercase tracking-widest"
-                    style={{ color: "#25D366" }}
-                  >
-                    WhatsApp
+            {/* Catégories */}
+            {categoryTiles.length > 0 && (
+              <section className="flex flex-col gap-4">
+                <SectionTitle
+                  p={p}
+                  serif={serif}
+                  kicker="Explorer"
+                  title="La carte en un coup d'œil"
+                />
+                <div className="grid grid-cols-2 gap-3">
+                  {categoryTiles.map((c) => (
+                    <a
+                      key={c.name}
+                      href={buildViewHref("menu")}
+                      className="std-press relative h-28 rounded-2xl overflow-hidden flex items-end p-3.5 shadow-md"
+                      style={{ background: p.surfaceHigh }}
+                    >
+                      {c.image && (
+                        <StorageImage
+                          path={c.image}
+                          alt={c.name}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                      )}
+                      <span
+                        className="absolute inset-0"
+                        style={{
+                          background: `linear-gradient(to top, rgba(${p.scrim},0.88), rgba(${p.scrim},0.15))`,
+                        }}
+                      />
+                      <span className="relative leading-tight">
+                        <span className="block text-[15px] font-semibold text-white">{c.name}</span>
+                        <span
+                          className="block text-[11px]"
+                          style={{ color: "rgba(255,255,255,0.75)" }}
+                        >
+                          {c.count} {c.count > 1 ? "plats" : "plat"}
+                        </span>
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* L'esprit du lieu */}
+            <section
+              className="flex flex-col gap-4 rounded-2xl p-5 shadow-md"
+              style={{ background: p.surface }}
+            >
+              <SectionTitle
+                p={p}
+                serif={serif}
+                kicker="L'esprit du lieu"
+                title={`Bienvenue chez ${restaurant.name}`}
+              />
+              {aboutImage && (
+                <div
+                  className="relative w-full h-52 rounded-xl overflow-hidden"
+                  style={{ background: p.surfaceHigh }}
+                >
+                  <StorageImage
+                    path={aboutImage}
+                    alt={restaurant.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <p className="text-[15px] leading-6" style={{ color: p.textMuted }}>
+                {restaurant.description ??
+                  `${restaurant.name} vous accueille à ${restaurant.city}${
+                    restaurant.cuisine ? ` pour une cuisine ${restaurant.cuisine}` : ""
+                  }. Venez partager un bon moment, sur place ou à emporter.`}
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <div
+                  className="rounded-xl p-3.5 flex flex-col gap-1"
+                  style={{ background: p.surfaceHigh }}
+                >
+                  <UtensilsCrossed className="w-6 h-6" style={{ color: p.primary }} />
+                  <span className="text-[17px] font-semibold">{available.length} plats</span>
+                  <span className="text-[12px]" style={{ color: p.textMuted }}>
+                    {categoryTiles.length} {categoryTiles.length > 1 ? "catégories" : "catégorie"}
                   </span>
                 </div>
-                <h3 className="text-[22px] leading-[30px] font-medium" style={serif}>
-                  Une question ou une commande ?
-                </h3>
-                <p className="text-[13px] leading-5" style={{ color: p.textMuted }}>
-                  Écrivez-nous directement, nous vous répondons rapidement.
-                </p>
-                <a
-                  href={wa}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="std-press mt-1 min-h-[48px] px-6 rounded-full font-semibold text-[15px] flex items-center justify-center gap-2 text-white"
-                  style={{ background: "#25D366", boxShadow: "0 4px 16px rgba(37,211,102,0.3)" }}
+                <div
+                  className="rounded-xl p-3.5 flex flex-col gap-1"
+                  style={{ background: p.surfaceHigh }}
                 >
-                  <MessageCircle className="w-5 h-5" />
-                  Discuter sur WhatsApp
+                  <Star className="w-6 h-6" style={{ color: p.primary }} fill="currentColor" />
+                  <span className="text-[17px] font-semibold">
+                    {rating ? `${rating.toFixed(1)} / 5` : "Nouveau"}
+                  </span>
+                  <span className="text-[12px]" style={{ color: p.textMuted }}>
+                    {reviews.length > 0
+                      ? `${reviews.length} avis clients`
+                      : "Aucun avis pour l'instant"}
+                  </span>
+                </div>
+              </div>
+            </section>
+
+            {/* Galerie */}
+            {gallery.length > 0 && (
+              <section className="flex flex-col gap-4">
+                <div className="flex items-end justify-between">
+                  <SectionTitle p={p} serif={serif} kicker="Galerie" title="Notre univers" />
+                  <a
+                    href={buildViewHref("reviews")}
+                    className="text-[12px] font-semibold flex items-center gap-1 pb-1"
+                    style={{ color: p.primary }}
+                  >
+                    Voir tout <ArrowRight className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {gallery.slice(0, 6).map((g, i) => (
+                    <div
+                      key={g.id}
+                      className={`overflow-hidden rounded-xl ${i === 0 ? "col-span-2 row-span-2" : ""}`}
+                      style={{ background: p.surfaceHigh, aspectRatio: "1 / 1" }}
+                    >
+                      <StorageImage
+                        path={g.image_url}
+                        alt={g.caption ?? restaurant.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Avis */}
+            {reviews.length > 0 && (
+              <section className="flex flex-col gap-4">
+                <div className="flex items-end justify-between">
+                  <SectionTitle
+                    p={p}
+                    serif={serif}
+                    kicker="Ils en parlent"
+                    title="Avis de nos clients"
+                  />
+                  <a
+                    href={buildViewHref("reviews")}
+                    className="text-[12px] font-semibold flex items-center gap-1 pb-1"
+                    style={{ color: p.primary }}
+                  >
+                    Tous les avis <ArrowRight className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+                <div className="std-snap flex gap-3 overflow-x-auto -mx-5 px-5 pb-2 snap-x snap-mandatory">
+                  {reviews.slice(0, 5).map((r) => (
+                    <article
+                      key={r.id}
+                      className="snap-start shrink-0 w-[260px] rounded-2xl p-4 flex flex-col gap-2.5 shadow-md"
+                      style={{ background: p.surface }}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <span
+                          className="w-9 h-9 rounded-full grid place-items-center font-bold"
+                          style={{ background: p.container, color: p.containerInk }}
+                        >
+                          {r.author_name.charAt(0).toUpperCase()}
+                        </span>
+                        <div className="min-w-0">
+                          <div className="text-[14px] font-semibold truncate">{r.author_name}</div>
+                          <div className="text-[12px]" style={{ color: p.primary }}>
+                            {"★".repeat(r.rating)}
+                            <span style={{ opacity: 0.25 }}>{"★".repeat(5 - r.rating)}</span>
+                          </div>
+                        </div>
+                      </div>
+                      {r.comment && (
+                        <p
+                          className="text-[13px] leading-5 line-clamp-4"
+                          style={{ color: p.textMuted }}
+                        >
+                          « {r.comment} »
+                        </p>
+                      )}
+                    </article>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Infos pratiques */}
+            <section
+              className="flex flex-col gap-4 rounded-2xl p-5 shadow-md"
+              style={{ background: p.surface }}
+            >
+              <SectionTitle p={p} serif={serif} kicker="Infos pratiques" title="Nous trouver" />
+              <div className="flex flex-col gap-4">
+                {(restaurant.address || restaurant.city) && (
+                  <InfoRow p={p} icon={<MapPin className="w-[18px] h-[18px]" />} label="Adresse">
+                    {[restaurant.address, restaurant.city].filter(Boolean).join(", ")}
+                  </InfoRow>
+                )}
+                {hours && (
+                  <InfoRow p={p} icon={<Clock className="w-[18px] h-[18px]" />} label="Horaires">
+                    <span className="whitespace-pre-line">{hours}</span>
+                  </InfoRow>
+                )}
+                <InfoRow p={p} icon={<Phone className="w-[18px] h-[18px]" />} label="Téléphone">
+                  <a href={`tel:${restaurant.phone}`} className="underline underline-offset-2">
+                    {restaurant.phone}
+                  </a>
+                </InfoRow>
+              </div>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                  [restaurant.name, restaurant.address, restaurant.city].filter(Boolean).join(" "),
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="std-press min-h-[46px] rounded-full font-semibold text-[14px] flex items-center justify-center gap-2"
+                style={{ background: p.surfaceHigh, color: p.primary }}
+              >
+                <MapPin className="w-[18px] h-[18px]" />
+                Voir l'itinéraire
+              </a>
+            </section>
+
+            {/* Bannière réservation */}
+            {canReserve && (
+              <section
+                className="rounded-2xl p-6 flex flex-col gap-3 items-start shadow-xl"
+                style={{ background: p.container, color: p.containerInk }}
+              >
+                <CalendarDays className="w-7 h-7" />
+                <h3 className="text-[24px] leading-8 font-semibold" style={serif}>
+                  Une table vous attend
+                </h3>
+                <a
+                  href={buildViewHref("reserve")}
+                  className="std-press min-h-[46px] px-6 rounded-full font-semibold text-[14px] flex items-center gap-2"
+                  style={{ background: p.containerInk, color: p.container }}
+                >
+                  Réserver maintenant <ArrowRight className="w-4 h-4" />
                 </a>
               </section>
             )}
@@ -535,18 +733,6 @@ export function StdTemplate({ palette: p, ...props }: TemplateProps & { palette:
                 </a>
               </InfoRow>
             </div>
-            {wa && (
-              <a
-                href={wa}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="std-press min-h-[48px] px-6 rounded-full font-semibold text-[15px] flex items-center justify-center gap-2 text-white"
-                style={{ background: "#25D366", boxShadow: "0 4px 16px rgba(37,211,102,0.3)" }}
-              >
-                <MessageCircle className="w-5 h-5" />
-                Commander sur WhatsApp
-              </a>
-            )}
           </section>
         )}
 
@@ -567,6 +753,20 @@ export function StdTemplate({ palette: p, ...props }: TemplateProps & { palette:
         </footer>
       </main>
 
+      {wa && (
+        <a
+          href={wa}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Écrire sur WhatsApp"
+          className="fixed right-4 bottom-24 z-50 w-14 h-14 rounded-full grid place-items-center text-white shadow-2xl hover:scale-105 active:scale-95 transition"
+          style={{ background: "#25D366", boxShadow: "0 6px 20px rgba(37,211,102,0.4)" }}
+        >
+          <svg viewBox="0 0 24 24" className="w-7 h-7" fill="currentColor" aria-hidden="true">
+            <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.71.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z" />
+          </svg>
+        </a>
+      )}
       <BottomNav p={p} active={activeView} canReserve={canReserve} />
       {openDish && <DishModal dish={openDish} theme={theme} onClose={() => setOpenDish(null)} />}
     </div>
@@ -574,6 +774,32 @@ export function StdTemplate({ palette: p, ...props }: TemplateProps & { palette:
 }
 
 /* ---------- Sous-composants ---------- */
+
+function SectionTitle({
+  p,
+  serif,
+  kicker,
+  title,
+}: {
+  p: StdPalette;
+  serif: React.CSSProperties;
+  kicker: string;
+  title: string;
+}) {
+  return (
+    <div>
+      <span
+        className="text-[11px] font-semibold uppercase tracking-widest"
+        style={{ color: p.primary }}
+      >
+        {kicker}
+      </span>
+      <h2 className="text-[26px] leading-8 font-medium" style={serif}>
+        {title}
+      </h2>
+    </div>
+  );
+}
 
 function InfoRow({
   p,
