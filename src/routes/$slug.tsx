@@ -11,6 +11,7 @@ import type {
 import { OrderCartFab } from "@/components/public/OrderCart";
 import { CartProvider } from "@/components/public/CartContext";
 import { demoData } from "@/components/public/demo-data";
+import { effectiveTemplate, isSiteOffline } from "@/lib/plans";
 
 export const Route = createFileRoute("/$slug")({
   ssr: false,
@@ -44,109 +45,67 @@ function PublicRestaurantPage() {
   const { table, view, tpl } = Route.useSearch();
   const navigate = useNavigate();
 
-  const [restaurant, setRestaurant] = useState<PublicRestaurant | null>(() => {
-    // Check local storage for instant initial render
-    if (typeof window !== "undefined") {
-      const selectedTpl = tpl || localStorage.getItem("restobf_selected_template");
-      const cached = localStorage.getItem("restobf_current_restaurant");
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached);
-          if (parsed) {
-            return {
-              ...parsed,
-              template: selectedTpl || parsed.template || "prem-royal",
-              plan: "premium",
-            };
-          }
-        } catch (e) {
-          // ignore
-        }
-      }
-    }
-    return null;
-  });
-
-  const [menu, setMenu] = useState<PublicMenuItem[]>(demoData.menu);
-  const [reviews, setReviews] = useState<PublicReview[]>(demoData.reviews);
-  const [gallery, setGallery] = useState<PublicGalleryImage[]>(demoData.gallery);
-  const [loading, setLoading] = useState(!restaurant);
-
-  // Sync template changes from localStorage & custom events instantly
-  useEffect(() => {
-    const syncLocal = () => {
-      const selectedTpl = tpl || localStorage.getItem("restobf_selected_template");
-      const cached = localStorage.getItem("restobf_current_restaurant");
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached);
-          if (parsed) {
-            setRestaurant((prev) => ({
-              ...(prev || parsed),
-              ...parsed,
-              template: selectedTpl || parsed.template || prev?.template || "prem-royal",
-              plan: "premium",
-            }));
-            return;
-          }
-        } catch (e) {
-          // ignore
-        }
-      }
-      if (selectedTpl) {
-        setRestaurant((prev) => prev ? { ...prev, template: selectedTpl } : prev);
-      }
-    };
-
-    window.addEventListener("storage", syncLocal);
-    window.addEventListener("template-changed", syncLocal);
-    return () => {
-      window.removeEventListener("storage", syncLocal);
-      window.removeEventListener("template-changed", syncLocal);
-    };
-  }, [tpl]);
+  const [restaurant, setRestaurant] = useState<PublicRestaurant | null>(null);
+  const [menu, setMenu] = useState<PublicMenuItem[]>([]);
+  const [reviews, setReviews] = useState<PublicReview[]>([]);
+  const [gallery, setGallery] = useState<PublicGalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
+  // Site coupé pour le public (abonnement expiré / suspendu / annulé)
+  const [offlineStatus, setOfflineStatus] = useState<string | null>(null);
+  // Le propriétaire / super admin peut voir son site même coupé
+  const [viewerBypass, setViewerBypass] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
 
     async function loadData() {
+      setLoading(true);
+      setOfflineStatus(null);
+      setViewerBypass(false);
+
+      // Mode démo : uniquement pour /demo
+      if (slug === "demo") {
+        const name = humanizeSlug(slug);
+        setRestaurant({
+          id: "demo",
+          name,
+          city: "Ouagadougou",
+          cuisine: "Cuisine burkinabè & grillades au feu de bois",
+          description: `Bienvenue chez ${name} ! Découvrez notre carte, nos spécialités grillées au feu de bois et notre service traiteur.`,
+          address: "Secteur 4, Avenue Kwame N'Krumah, Ouagadougou",
+          hours: "Lundi — Dimanche · 11h00 — 23h30",
+          phone: "+226 70 00 00 00",
+          whatsapp: "22670000000",
+          email: "contact@restobf.com",
+          logo_url: null,
+          plan: "premium",
+          template: tpl || "prem-royal",
+        });
+        setMenu(demoData.menu);
+        setReviews(demoData.reviews);
+        setGallery(demoData.gallery);
+        setLoading(false);
+        return;
+      }
+
+      const cols =
+        "id, name, city, cuisine, description, address, hours, phone, whatsapp, email, plan, logo_url, template, subscription_status, offers_delivery";
+
       let rRaw: any = null;
-
-      // Timeout wrapper to guarantee page renders under 1 second
-      const withTimeout = <T,>(
-        promise: Promise<T> | PromiseLike<T>,
-        timeoutMs = 800,
-      ): Promise<T | null> => {
-        return Promise.race([
-          promise,
-          new Promise<null>((resolve) => setTimeout(() => resolve(null), timeoutMs)),
-        ]);
-      };
-
+      let fromPublicView = true;
       try {
-        const queryPromise = supabase
+        const res = await supabase
           .from("public_restaurants" as never)
-          .select(
-            "id, name, city, cuisine, description, address, hours, phone, whatsapp, logo_url, template, subscription_status, offers_delivery",
-          )
+          .select(cols)
           .eq("slug", slug)
-          .maybeSingle()
-          .then((res) => res.data);
-
-        rRaw = await withTimeout(queryPromise, 900);
+          .maybeSingle();
+        rRaw = res.data;
 
         if (!rRaw) {
-          // Retry directly on restaurants table
-          const fallbackQuery = supabase
-            .from("restaurants")
-            .select(
-              "id, name, city, cuisine, description, address, hours, phone, whatsapp, logo_url, template",
-            )
-            .eq("slug", slug)
-            .maybeSingle()
-            .then((res) => res.data);
-
-          rRaw = await withTimeout(fallbackQuery, 700);
+          // Le propriétaire / super admin lit directement la table (RLS)
+          fromPublicView = false;
+          const fb = await supabase.from("restaurants").select(cols).eq("slug", slug).maybeSingle();
+          rRaw = fb.data;
         }
       } catch (err) {
         console.warn("Supabase query error:", err);
@@ -154,86 +113,71 @@ function PublicRestaurantPage() {
 
       if (!isMounted) return;
 
-      const storedTpl = typeof window !== "undefined" ? localStorage.getItem("restobf_selected_template") : null;
-      const activeTpl = tpl || storedTpl || rRaw?.template || "prem-royal";
+      if (!rRaw) {
+        setRestaurant(null);
+        setLoading(false);
+        return;
+      }
 
-      if (rRaw) {
-        setRestaurant((prev) => ({
-          ...rRaw,
-          template: activeTpl,
-          email: prev?.email || "",
-          plan: "premium",
-        }));
-
-        // Fetch menu, reviews, gallery in parallel with timeout
-        try {
-          const fetchDetails = Promise.all([
-            supabase
-              .from("menu_items")
-              .select("id, category, name, description, price, image_url, available")
-              .eq("restaurant_id", rRaw.id)
-              .eq("available", true)
-              .order("category")
-              .order("position"),
-            supabase
-              .from("reviews")
-              .select("id, author_name, rating, comment, created_at")
-              .eq("restaurant_id", rRaw.id)
-              .eq("approved", true)
-              .order("created_at", { ascending: false })
-              .limit(12),
-            supabase
-              .from("gallery_images")
-              .select("id, image_url, caption")
-              .eq("restaurant_id", rRaw.id)
-              .order("position"),
-          ]);
-
-          const res = await withTimeout(fetchDetails, 1000);
-          if (res && isMounted) {
-            const [m, rev, g] = res;
-            const menuItems = (m.data ?? []) as PublicMenuItem[];
-            const reviewItems = (rev.data ?? []) as PublicReview[];
-            const galleryItems = (g.data ?? []) as PublicGalleryImage[];
-
-            if (menuItems.length > 0) {
-              setMenu(menuItems);
-            } else {
-              setMenu([]);
-            }
-            if (reviewItems.length > 0) {
-              setReviews(reviewItems);
-            } else {
-              setReviews([]);
-            }
-            if (galleryItems.length > 0) {
-              setGallery(galleryItems);
-            } else {
-              setGallery([]);
-            }
-          }
-        } catch (e) {
-          console.warn("Details fetch error:", e);
+      const status: string | null = rRaw.subscription_status ?? null;
+      if (isSiteOffline(status)) {
+        setOfflineStatus(status);
+        // lecture directe de la table = propriétaire ou super admin
+        setViewerBypass(!fromPublicView);
+        if (fromPublicView) {
+          setRestaurant(null);
+          setLoading(false);
+          return;
         }
-      } else {
-        // Fallback: Generate a rich, authentic demo site for this slug with activeTpl
-        const fallbackName = humanizeSlug(slug);
+      }
 
-        setRestaurant((prev) => ({
-          id: prev?.id || `demo-${slug}`,
-          name: prev?.name || fallbackName,
-          city: prev?.city || "Ouagadougou",
-          cuisine: prev?.cuisine || "Cuisine burkinabè & grillades au feu de bois",
-          description: prev?.description || `Bienvenue chez ${fallbackName} ! Découvrez notre carte gastronomique, nos spécialités grillées au feu de bois, notre service traiteur et nos espaces événements.`,
-          address: prev?.address || "Secteur 4, Avenue Kwame N'Krumah, Ouagadougou",
-          hours: prev?.hours || "Lundi — Dimanche · 11h00 — 23h30",
-          phone: prev?.phone || "+226 70 00 00 00",
-          whatsapp: prev?.whatsapp || "22670000000",
-          email: prev?.email || "contact@restobf.com",
-          logo_url: prev?.logo_url ?? null,
-          plan: "premium",
-          template: activeTpl,
-        }));
+      setRestaurant({
+        id: rRaw.id,
+        name: rRaw.name,
+        city: rRaw.city,
+        cuisine: rRaw.cuisine ?? null,
+        description: rRaw.description ?? null,
+        address: rRaw.address ?? null,
+        hours: rRaw.hours ?? null,
+        phone: rRaw.phone,
+        whatsapp: rRaw.whatsapp ?? null,
+        email: rRaw.email ?? "",
+        logo_url: rRaw.logo_url ?? null,
+        offers_delivery: rRaw.offers_delivery ?? false,
+        // Le vrai forfait, plus de "premium" forcé
+        plan: rRaw.plan ?? "basique",
+        // ?tpl= = aperçu explicite ; sinon template de la base, borné au forfait
+        template: tpl || effectiveTemplate(rRaw.plan, rRaw.template),
+      });
+
+      try {
+        const [m, rev, g] = await Promise.all([
+          supabase
+            .from("menu_items")
+            .select("id, category, name, description, price, image_url, available")
+            .eq("restaurant_id", rRaw.id)
+            .eq("available", true)
+            .order("category")
+            .order("position"),
+          supabase
+            .from("reviews")
+            .select("id, author_name, rating, comment, created_at")
+            .eq("restaurant_id", rRaw.id)
+            .eq("approved", true)
+            .order("created_at", { ascending: false })
+            .limit(12),
+          supabase
+            .from("gallery_images")
+            .select("id, image_url, caption")
+            .eq("restaurant_id", rRaw.id)
+            .order("position"),
+        ]);
+        if (!isMounted) return;
+        setMenu((m.data ?? []) as PublicMenuItem[]);
+        setReviews((rev.data ?? []) as PublicReview[]);
+        setGallery((g.data ?? []) as PublicGalleryImage[]);
+      } catch (e) {
+        console.warn("Details fetch error:", e);
       }
 
       setLoading(false);
@@ -259,20 +203,35 @@ function PublicRestaurantPage() {
     );
   }
 
+  if (!restaurant && offlineStatus) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#fdfbf7] text-[#2b211c] text-center px-4">
+        <div className="max-w-md">
+          <h1 className="text-3xl font-black text-[#9f3c16] mb-2">
+            Site temporairement indisponible
+          </h1>
+          <p className="text-[#57423b]">
+            Ce restaurant n'est pas accessible pour le moment. Merci de revenir plus tard.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (!restaurant) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#fdfbf7] text-[#2b211c] text-center px-4">
         <div>
-          <h1 className="text-3xl font-black text-[#9f3c16] mb-2">Restaurant non disponible</h1>
+          <h1 className="text-3xl font-black text-[#9f3c16] mb-2">Restaurant introuvable</h1>
           <p className="text-[#57423b]">
-            Le restaurant <code className="text-[#9f3c16]">{slug}</code> n'est pas accessible
-            actuellement.
+            Le restaurant <code className="text-[#9f3c16]">{slug}</code> n'existe pas ou n'est pas
+            accessible actuellement.
           </p>
           <a
-            href="/dashboard"
+            href="/"
             className="mt-6 inline-block px-6 py-3 rounded-xl bg-gradient-to-r from-[#c85a32] to-[#9f3c16] text-white font-black shadow-lg"
           >
-            Retour au tableau de bord
+            Retour à l'accueil
           </a>
         </div>
       </div>
@@ -306,6 +265,11 @@ function PublicRestaurantPage() {
           }
         }}
       >
+        {viewerBypass && offlineStatus && (
+          <div className="fixed top-0 inset-x-0 z-[60] bg-red-600 text-white text-center text-xs font-bold py-1.5 px-3">
+            Site hors ligne pour le public — abonnement « {offlineStatus} ». Vous seul le voyez.
+          </div>
+        )}
         {renderTemplate(restaurant.template, { restaurant, menu, reviews, gallery, view })}
         <OrderCartFab restaurant={restaurant} menu={menu} tableNumber={table ?? null} />
       </div>

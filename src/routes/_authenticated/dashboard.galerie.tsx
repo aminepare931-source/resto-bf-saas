@@ -1,3 +1,4 @@
+import { usePlanAccess } from "@/lib/plans";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,7 +18,8 @@ function GalleryPage() {
   const [images, setImages] = useState<Img[]>([]);
   const [busy, setBusy] = useState(false);
 
-  const isPremium = restaurant?.plan === "premium";
+  const { hasAny } = usePlanAccess(restaurant?.plan);
+  const isPremium = hasAny(["galerie-photos", "galerie-illimitee"]);
 
   const load = async () => {
     if (!restaurant) return;
@@ -71,8 +73,8 @@ function GalleryPage() {
           <h1 className="text-3xl font-black">Photos d'ambiance</h1>
           {!isPremium && (
             <p className="mt-2 text-sm text-amber-deep">
-              La galerie est une fonctionnalité Premium. Vous pouvez ajouter quelques photos, elles
-              apparaîtront si vous passez en Premium.
+              La galerie n'est pas incluse dans votre forfait. Vous pouvez ajouter quelques photos, elles
+              apparaîtront si vous passez à un forfait supérieur.
             </p>
           )}
         </div>

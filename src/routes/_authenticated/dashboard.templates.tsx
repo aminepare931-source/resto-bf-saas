@@ -132,12 +132,12 @@ function DashboardTemplates() {
   const navigate = useNavigate();
   const { restaurant: r } = useMyRestaurant();
 
-  const [userPlan, setUserPlan] = useState<PlanTier>("premium");
+  const [userPlan, setUserPlan] = useState<PlanTier>("basique");
   const [selected, setSelected] = useState<string>(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("restobf_selected_template") || "prem-royal";
+      return "";
     }
-    return "prem-royal";
+    return "";
   });
   const [previewId, setPreviewId] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<TplCategory>("tout");
@@ -146,7 +146,7 @@ function DashboardTemplates() {
 
   useEffect(() => {
     if (!r) return;
-    setUserPlan("premium"); // Ensure user has full testing access
+    setUserPlan(planToTier(r.plan));
     if (r.template) {
       setSelected(r.template);
       setLastSaved(r.template);
@@ -158,7 +158,7 @@ function DashboardTemplates() {
     window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
   };
 
-  const canPick = (_p: PlanTier) => true; // Allow picking any template for full testing access
+  const canPick = (p: PlanTier) => planRank[p] <= planRank[userPlan];
 
   const handleSave = async () => {
     if (!selected) return;

@@ -85,7 +85,6 @@ export function useMyRestaurant() {
     }
 
     // Try fetching from Supabase
-    const savedTemplate = typeof window !== "undefined" ? localStorage.getItem("restobf_selected_template") : null;
 
     try {
       const { data } = await supabase
@@ -99,7 +98,7 @@ export function useMyRestaurant() {
       if (data) {
         const restData = {
           ...data,
-          template: (savedTemplate || data.template || "prem-royal") as string,
+          template: (data.template || null) as string | null,
         };
         setRestaurant(restData as MyRestaurant);
         localStorage.setItem("restobf_current_restaurant", JSON.stringify(restData));
@@ -118,8 +117,8 @@ export function useMyRestaurant() {
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-|-$/g, ""),
-      plan: userMeta.plan || "standard",
-      template: savedTemplate || userMeta.template || "prem-royal",
+      plan: "trial", // le forfait payant est activé par le super admin uniquement
+      template: null,
       city: userMeta.city || "Ouagadougou",
       cuisine: userMeta.cuisine || "Maquis & Grillades Burkinabè",
       phone: userMeta.phone || "+226 70 00 00 00",

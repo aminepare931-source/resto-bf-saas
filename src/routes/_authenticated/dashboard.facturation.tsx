@@ -1,3 +1,4 @@
+import { usePlanAccess } from "@/lib/plans";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -35,7 +36,8 @@ type Invoice = {
 
 function BillingPage() {
   const { restaurant: r, loading: loadingResto } = useMyRestaurant();
-  const isPremium = r?.plan === "premium" || r?.plan === "sur_mesure";
+  const { hasAny } = usePlanAccess(r?.plan);
+  const isPremium = hasAny(["facturation-pdf", "facturation-logo", "facture-auto", "devis"]);
 
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);

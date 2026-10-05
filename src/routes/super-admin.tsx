@@ -50,7 +50,6 @@ import {
   Save,
   Send,
   Settings,
-  ShieldCheck,
   ShoppingCart,
   Smartphone,
   Sparkles,
@@ -67,6 +66,10 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { invalidatePlanFeatures } from "@/lib/plans";
+import { RestaurantsManager } from "@/components/super-admin/RestaurantsManager";
+import { DataManager } from "@/components/super-admin/DataManager";
+import { UsersManager } from "@/components/super-admin/UsersManager";
 
 export const Route = createFileRoute("/super-admin")({
   ssr: false,
@@ -145,6 +148,7 @@ type CustomOrder = {
 
 type PlanFeature = {
   id: string;
+  slug?: string | null;
   name: string;
   description: string | null;
   category: string;
@@ -967,39 +971,9 @@ const DEFAULT_FEATURES: PlanFeature[] = [
   },
 ];
 
-const SUPER_ADMIN_PASSWORD = "admin-1-2-3";
-
-const generate2FAPIN = (): string => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-};
-
-const sendPINByEmail = async (email: string, pin: string): Promise<boolean> => {
-  try {
-    console.log(`Tentative d'envoi d'email à ${email}`);
-    const { data, error } = await supabase.functions.invoke("send-2fa-email", {
-      body: { email, pin },
-    });
-    console.log("Réponse Edge Function:", { data, error });
-    if (error) {
-      console.error("Erreur Edge Function:", error);
-      toast.error(`Erreur: ${error.message || "Impossible d'envoyer l'email"}`);
-      return false;
-    }
-    if (data?.error) {
-      console.error("Erreur dans la réponse:", data.error);
-      toast.error(`Erreur: ${data.error}`);
-      return false;
-    }
-    return data?.success || false;
-  } catch (error) {
-    console.error("Exception lors de l'envoi d'email:", error);
-    return false;
-  }
-};
-
 function SuperAdminPage() {
   const [tab, setTab] = useState<
-    "overview" | "restaurants" | "subscriptions" | "features" | "leads"
+    "overview" | "restaurants" | "subscriptions" | "features" | "leads" | "data" | "users"
   >("overview");
   const [restos, setRestos] = useState<Resto[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -1008,13 +982,6 @@ function SuperAdminPage() {
   const [featuresLoading, setFeaturesLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [passwordInput, setPasswordInput] = useState("");
-  const [authError, setAuthError] = useState(false);
-  const [authStep, setAuthStep] = useState<"password" | "pin">("password");
-  const [generatedPIN, setGeneratedPIN] = useState<string>("");
-  const [pinInput, setPinInput] = useState("");
-  const [pinError, setPinError] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -1048,14 +1015,12 @@ function SuperAdminPage() {
     setLeads(((l as { data: CustomOrder[] | null }).data ?? []) as CustomOrder[]);
     const featuresData = ((f as { data: PlanFeature[] | null }).data ?? []) as PlanFeature[];
     if (featuresData.length > 0) {
-      const merged = DEFAULT_FEATURES.map((df) => {
-        const dbFeature = featuresData.find((fd) => fd.id === df.id || fd.name === df.name);
-        return dbFeature ? { ...df, plans: dbFeature.plans } : df;
+      const merged: PlanFeature[] = DEFAULT_FEATURES.map((df) => {
+        const db = featuresData.find((fd) => fd.slug === df.id || fd.name === df.name);
+        return db ? { ...df, id: db.id, slug: df.id, plans: db.plans } : { ...df, slug: df.id };
       });
       featuresData.forEach((fd) => {
-        if (!merged.find((m) => m.id === fd.id || m.name === fd.name)) {
-          merged.push(fd);
-        }
+        if (!merged.find((m) => m.id === fd.id)) merged.push(fd);
       });
       setFeatures(merged);
     } else {
@@ -1066,64 +1031,8 @@ function SuperAdminPage() {
   };
 
   useEffect(() => {
-    const sessionAuth = sessionStorage.getItem("super_admin_auth");
-    if (sessionAuth === "true") {
-      setIsAuthenticated(true);
-    }
+    load();
   }, []);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      load();
-    }
-  }, [isAuthenticated]);
-
-  const handlePasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (passwordInput === SUPER_ADMIN_PASSWORD) {
-      const pin = generate2FAPIN();
-      setGeneratedPIN(pin);
-      setAuthStep("pin");
-      setAuthError(false);
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user?.email) {
-        try {
-          const result = await sendPINByEmail(user.email, pin);
-          if (result) {
-            toast.success(`Code envoyé à ${user.email}`, { duration: 5000 });
-          } else {
-            toast.error("Impossible d'envoyer l'email.", { duration: 5000 });
-            toast.info(`Code de sécurité : ${pin}`, { duration: 15000 });
-            toast.warning("Configurez RESEND_API_KEY", { duration: 8000 });
-          }
-        } catch (error) {
-          toast.error("Erreur lors de l'envoi.", { duration: 5000 });
-          toast.info(`Code de sécurité : ${pin}`, { duration: 15000 });
-        }
-      } else {
-        toast.info(`Code de sécurité : ${pin}`, { duration: 15000 });
-      }
-    } else {
-      setAuthError(true);
-      toast.error("Mot de passe incorrect");
-    }
-  };
-
-  const handlePINSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (pinInput === generatedPIN) {
-      setIsAuthenticated(true);
-      sessionStorage.setItem("super_admin_auth", "true");
-      setPinError(false);
-      toast.success("Authentification réussie");
-    } else {
-      setPinError(true);
-      toast.error("Code PIN incorrect");
-      setPinInput("");
-    }
-  };
 
   const activate = async (id: string, plan: string) => {
     const ends = new Date();
@@ -1175,16 +1084,32 @@ function SuperAdminPage() {
   };
 
   const updateFeaturePlans = async (featureId: string, plans: string[]) => {
-    setFeatures((prev) => prev.map((f) => (f.id === featureId ? { ...f, plans } : f)));
-    const { error } = await supabase
-      .from("plan_features" as never)
-      .update({ plans } as never)
-      .eq("id", featureId);
+    const f = features.find((x) => x.id === featureId);
+    if (!f) return;
+    setFeatures((prev) => prev.map((x) => (x.id === featureId ? { ...x, plans } : x)));
+    const { error } = f.slug
+      ? await supabase.from("plan_features" as never).upsert(
+          {
+            slug: f.slug,
+            name: f.name,
+            description: f.description,
+            category: f.category,
+            icon: f.icon,
+            plans,
+          } as never,
+          { onConflict: "slug" },
+        )
+      : await supabase
+          .from("plan_features" as never)
+          .update({ plans } as never)
+          .eq("id", featureId);
     if (error) {
-      console.warn("Table plan_features non disponible");
-    } else {
-      toast.success("Fonctionnalité mise à jour");
+      toast.error(`Non enregistré : ${error.message}`);
+      load();
+      return;
     }
+    invalidatePlanFeatures();
+    toast.success("Fonctionnalité mise à jour — appliquée aux sites");
   };
 
   const addFeature = async () => {
@@ -1194,33 +1119,32 @@ function SuperAdminPage() {
     const category = prompt("Catégorie :") || "other";
     const icon =
       prompt("Icône (menu, qr, stats, users, card, clock, star, bell, settings…) :") || "package";
-    const newFeature: PlanFeature = {
-      id: `local-${Date.now()}`,
-      name,
-      description,
-      category,
-      icon,
-      plans: ["basique"],
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-    setFeatures((prev) => [...prev, newFeature]);
+    const slug = `custom-${name
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")}`;
     const { error } = await supabase
       .from("plan_features" as never)
-      .insert({ name, description, category, icon, plans: ["basique"] } as never);
-    if (error) console.warn("Table plan_features non disponible");
+      .insert({ slug, name, description, category, icon, plans: ["basique"] } as never);
+    if (error) return toast.error(`Non ajouté : ${error.message}`);
+    invalidatePlanFeatures();
     toast.success("Fonctionnalité ajoutée");
+    load();
   };
 
   const deleteFeature = async (id: string) => {
     if (!confirm("Supprimer cette fonctionnalité ?")) return;
-    setFeatures((prev) => prev.filter((f) => f.id !== id));
+    const f = features.find((x) => x.id === id);
     const { error } = await supabase
       .from("plan_features" as never)
       .delete()
-      .eq("id", id);
-    if (error) console.warn("Table plan_features non disponible");
+      .eq(f?.slug ? "slug" : "id", (f?.slug ?? id) as never);
+    if (error) return toast.error(`Non supprimé : ${error.message}`);
+    invalidatePlanFeatures();
     toast.success("Fonctionnalité supprimée");
+    load();
   };
 
   const filtered = restos.filter(
@@ -1249,108 +1173,6 @@ function SuperAdminPage() {
     leads: leads.filter((l) => l.status === "new").length,
   };
   const restoName = (id: string) => restos.find((r) => r.id === id)?.name ?? "—";
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
-        <div className="max-w-md w-full">
-          <div className="p-8 rounded-2xl border border-border bg-card shadow-card">
-            <div className="flex items-center justify-center mb-6">
-              <div className="w-16 h-16 rounded-xl bg-gradient-gold flex items-center justify-center text-[#0a0a0f]">
-                <ShieldCheck className="h-8 w-8" />
-              </div>
-            </div>
-            <h1 className="text-2xl font-black text-center mb-2">Super Administration</h1>
-            <p className="text-sm text-muted-foreground text-center mb-6">
-              Authentification à deux facteurs requise
-            </p>
-            {authStep === "password" && (
-              <form onSubmit={handlePasswordSubmit} className="space-y-4">
-                <div>
-                  <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-2">
-                    Étape 1/2 - Mot de passe
-                  </label>
-                  <input
-                    type="password"
-                    value={passwordInput}
-                    onChange={(e) => {
-                      setPasswordInput(e.target.value);
-                      setAuthError(false);
-                    }}
-                    placeholder="Entrez le mot de passe"
-                    className={`w-full px-4 py-3 rounded-xl bg-surface-warm border text-sm outline-none focus:border-gold/50 transition-colors ${authError ? "border-destructive/50" : "border-input"}`}
-                    autoFocus
-                  />
-                  {authError && (
-                    <p className="text-xs text-destructive mt-2">
-                      Mot de passe incorrect. Veuillez réessayer.
-                    </p>
-                  )}
-                </div>
-                <button
-                  type="submit"
-                  className="w-full px-5 py-3 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold hover:shadow-gold transition-all"
-                >
-                  Continuer →
-                </button>
-              </form>
-            )}
-            {authStep === "pin" && (
-              <form onSubmit={handlePINSubmit} className="space-y-4">
-                <div>
-                  <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-2">
-                    Étape 2/2 - Code de sécurité
-                  </label>
-                  <p className="text-xs text-muted-foreground mb-3">
-                    Un code PIN à 6 chiffres a été envoyé à votre adresse email.
-                  </p>
-                  <input
-                    type="text"
-                    value={pinInput}
-                    onChange={(e) => {
-                      setPinInput(e.target.value.replace(/\D/g, "").slice(0, 6));
-                      setPinError(false);
-                    }}
-                    placeholder="000000"
-                    maxLength={6}
-                    className={`w-full px-4 py-3 rounded-xl bg-surface-warm border text-sm outline-none focus:border-gold/50 transition-colors text-center text-2xl tracking-widest ${pinError ? "border-destructive/50" : "border-input"}`}
-                    autoFocus
-                  />
-                  {pinError && (
-                    <p className="text-xs text-destructive mt-2">
-                      Code PIN incorrect. Veuillez réessayer.
-                    </p>
-                  )}
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAuthStep("password");
-                      setPinInput("");
-                      setGeneratedPIN("");
-                    }}
-                    className="flex-1 px-5 py-3 rounded-xl border border-border text-sm font-semibold hover:border-gold/40 transition-colors"
-                  >
-                    ← Retour
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 px-5 py-3 rounded-xl bg-gradient-gold text-[#0a0a0f] font-bold hover:shadow-gold transition-all"
-                  >
-                    Vérifier
-                  </button>
-                </div>
-              </form>
-            )}
-            <p className="text-xs text-muted-foreground text-center mt-4">
-              Accès réservé aux super administrateurs uniquement
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -1383,7 +1205,17 @@ function SuperAdminPage() {
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-6 flex gap-1 border-t border-border/60 overflow-x-auto">
-          {(["overview", "restaurants", "subscriptions", "features", "leads"] as const).map((t) => (
+          {(
+            [
+              "overview",
+              "restaurants",
+              "subscriptions",
+              "features",
+              "leads",
+              "data",
+              "users",
+            ] as const
+          ).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
@@ -1397,7 +1229,11 @@ function SuperAdminPage() {
                     ? "Abonnements"
                     : t === "features"
                       ? "Fonctionnalités"
-                      : `Demandes (${leads.length})`}
+                      : t === "leads"
+                        ? `Demandes (${leads.length})`
+                        : t === "data"
+                          ? "Données"
+                          : "Comptes"}
             </button>
           ))}
         </div>
@@ -1433,70 +1269,7 @@ function SuperAdminPage() {
         )}
 
         {!loading && tab === "restaurants" && (
-          <div>
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Rechercher (nom, ville, email, gérant)..."
-              className="w-full max-w-md mb-5 px-4 py-2.5 rounded-xl bg-surface-warm border border-input text-sm focus:border-gold/40 outline-none"
-            />
-            <div className="overflow-x-auto rounded-2xl border border-border bg-card shadow-card">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-left text-[10px] uppercase tracking-widest text-muted-foreground border-b border-border">
-                    <th className="px-4 py-3">Restaurant</th>
-                    <th className="px-4 py-3">Gérant</th>
-                    <th className="px-4 py-3">Forfait</th>
-                    <th className="px-4 py-3">Statut</th>
-                    <th className="px-4 py-3">Inscrit</th>
-                    <th className="px-4 py-3 text-right">Site</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filtered.map((r) => (
-                    <tr key={r.id} className="border-b border-border/60 hover:bg-surface-warm">
-                      <td className="px-4 py-3">
-                        <strong>{r.name}</strong>
-                        <div className="text-xs text-muted-foreground">
-                          {r.city} · {r.email}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        {r.owner_name}
-                        <div className="text-xs text-muted-foreground">{r.phone}</div>
-                      </td>
-                      <td className="px-4 py-3">{PLAN_LABEL[r.plan] ?? r.plan}</td>
-                      <td className="px-4 py-3">
-                        <StatusBadge status={r.subscription_status} />
-                      </td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground">
-                        {new Date(r.created_at).toLocaleDateString("fr-FR")}
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        {r.slug && (
-                          <a
-                            href={`/${r.slug}`}
-                            target="_blank"
-                            rel="noopener"
-                            className="text-xs text-gold hover:underline"
-                          >
-                            Voir →
-                          </a>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                  {filtered.length === 0 && (
-                    <tr>
-                      <td colSpan={6} className="text-center py-10 text-muted-foreground">
-                        Aucun restaurant.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <RestaurantsManager restos={restos} onChange={load} />
         )}
 
         {!loading && tab === "subscriptions" && (
@@ -1846,6 +1619,9 @@ function SuperAdminPage() {
           </div>
         )}
 
+        {!loading && tab === "data" && <DataManager restos={restos} />}
+        {!loading && tab === "users" && <UsersManager />}
+
         {!loading && tab === "overview" && reservations.length > 0 && (
           <div className="mt-8 p-6 rounded-2xl border border-border bg-card shadow-card">
             <h3 className="text-sm font-black uppercase tracking-widest text-gold mb-4">
@@ -1929,6 +1705,7 @@ function StatusBadge({ status }: { status: string | null }) {
     trial: "bg-amber-tint text-amber-deep border-amber-brand/30",
     active: "bg-emerald-tint text-emerald-deep border-emerald/30",
     expired: "bg-destructive/10 text-destructive border-destructive/30",
+    suspended: "bg-destructive/10 text-destructive border-destructive/30",
     cancelled: "bg-muted text-muted-foreground border-border",
   };
   const cls = map[status ?? ""] ?? "bg-muted text-muted-foreground border-border";

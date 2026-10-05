@@ -12,6 +12,7 @@ import {
   fmtPrice,
   groupByCategory,
 } from "../shared";
+import { usePlanAccess } from "@/lib/plans";
 import { StorageImage } from "@/components/StorageImage";
 import {
   ArrowRight,
@@ -93,7 +94,8 @@ export function StdTemplate({ palette: p, ...props }: TemplateProps & { palette:
   const { restaurant, menu, reviews, gallery } = props;
   const theme = toTheme(p);
   const wa = buildWhatsAppLink(restaurant.whatsapp, restaurant.name);
-  const canReserve = restaurant.plan !== "gratuit";
+  const { hasAny } = usePlanAccess(restaurant.plan);
+  const canReserve = hasAny(["reservations-basiques", "reservations-avancees"]);
   const activeView = resolveView(props.view);
   const cover = pickCover(props);
   const rating = avgRating(reviews);

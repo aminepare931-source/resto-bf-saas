@@ -14,7 +14,6 @@ import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as ConditionsRouteImport } from './routes/conditions'
 import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
-import { Route as DebugUserRouteImport } from './routes/debug-user'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as OfflineRouteImport } from './routes/offline'
 import { Route as SuperAdminRouteImport } from './routes/super-admin'
@@ -68,11 +67,6 @@ const ConditionsRoute = ConditionsRouteImport.update({
 const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
   id: '/confidentialite',
   path: '/confidentialite',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DebugUserRoute = DebugUserRouteImport.update({
-  id: '/debug-user',
-  path: '/debug-user',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
@@ -250,7 +244,6 @@ export interface FileRoutesByFullPath {
   '/$slug': typeof SlugRoute
   '/conditions': typeof ConditionsRoute
   '/confidentialite': typeof ConfidentialiteRoute
-  '/debug-user': typeof DebugUserRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/offline': typeof OfflineRoute
   '/super-admin': typeof SuperAdminRoute
@@ -287,7 +280,6 @@ export interface FileRoutesByTo {
   '/$slug': typeof SlugRoute
   '/conditions': typeof ConditionsRoute
   '/confidentialite': typeof ConfidentialiteRoute
-  '/debug-user': typeof DebugUserRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/offline': typeof OfflineRoute
   '/super-admin': typeof SuperAdminRoute
@@ -325,7 +317,6 @@ export interface FileRoutesById {
   '/$slug': typeof SlugRoute
   '/conditions': typeof ConditionsRoute
   '/confidentialite': typeof ConfidentialiteRoute
-  '/debug-user': typeof DebugUserRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/offline': typeof OfflineRoute
   '/super-admin': typeof SuperAdminRoute
@@ -364,7 +355,6 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/conditions'
     | '/confidentialite'
-    | '/debug-user'
     | '/mentions-legales'
     | '/offline'
     | '/super-admin'
@@ -401,7 +391,6 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/conditions'
     | '/confidentialite'
-    | '/debug-user'
     | '/mentions-legales'
     | '/offline'
     | '/super-admin'
@@ -438,7 +427,6 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/conditions'
     | '/confidentialite'
-    | '/debug-user'
     | '/mentions-legales'
     | '/offline'
     | '/super-admin'
@@ -477,7 +465,6 @@ export interface RootRouteChildren {
   SlugRoute: typeof SlugRoute
   ConditionsRoute: typeof ConditionsRoute
   ConfidentialiteRoute: typeof ConfidentialiteRoute
-  DebugUserRoute: typeof DebugUserRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
   OfflineRoute: typeof OfflineRoute
   SuperAdminRoute: typeof SuperAdminRoute
@@ -525,13 +512,6 @@ declare module '@tanstack/react-router' {
       path: '/confidentialite'
       fullPath: '/confidentialite'
       preLoaderRoute: typeof ConfidentialiteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/debug-user': {
-      id: '/debug-user'
-      path: '/debug-user'
-      fullPath: '/debug-user'
-      preLoaderRoute: typeof DebugUserRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mentions-legales': {
@@ -818,7 +798,6 @@ const rootRouteChildren: RootRouteChildren = {
   SlugRoute: SlugRoute,
   ConditionsRoute: ConditionsRoute,
   ConfidentialiteRoute: ConfidentialiteRoute,
-  DebugUserRoute: DebugUserRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
   OfflineRoute: OfflineRoute,
   SuperAdminRoute: SuperAdminRoute,
