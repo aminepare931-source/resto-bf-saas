@@ -3,7 +3,9 @@
 Branche : `super-admin` (à fusionner dans `main` après les étapes 1 à 3).
 
 ## 1. Base de données (Supabase → SQL Editor)
-1. Ouvrir `supabase/migrations/20260810000000_super_admin_full_control.sql`, tout copier, coller dans le SQL Editor, **Run**.
+1. Exécuter **dans l'ordre** (copier / coller dans le SQL Editor, **Run**) :
+   1. `supabase/migrations/20260810000000_super_admin_full_control.sql`
+   2. `supabase/migrations/20260810000001_features_media_reviews.sql` (colonne vidéo en galerie + réponses aux avis)
    Le script peut être rejoué sans risque. Il fait :
    - droits complets du super admin sur toutes les tables ;
    - fonctions `admin_list_users`, `admin_set_super_admin`, `admin_delete_user` ;
@@ -46,3 +48,9 @@ Ne jamais mettre `SUPABASE_SERVICE_ROLE_KEY` côté navigateur (pas de préfixe 
 
 ## Activer un client payant
 Super admin → Abonnements → choisir le forfait → « Activer » (1 mois). À la fin, le site se coupe tout seul.
+
+## Fonctionnalités par forfait (important)
+Onglet **Fonctionnalités** du super admin : chaque ligne a un statut.
+- **Appliquée** : cocher / décocher change vraiment ce que voient les clients (menu, galerie, vidéos, avis, QR, stats, exports, rapports, templates, branding…).
+- **Non reliée / À développer / Service manuel** : case grisée, car elle n'aurait aucun effet.
+Le tableau de bord verrouille les pages non incluses dans le forfait (cadenas dans le menu) et le site public masque les sections non incluses.

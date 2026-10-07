@@ -67,6 +67,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { invalidatePlanFeatures } from "@/lib/plans";
+import { FEATURE_REGISTRY, FEATURE_BY_ID, type FeatureStatus } from "@/lib/features";
 import { RestaurantsManager } from "@/components/super-admin/RestaurantsManager";
 import { DataManager } from "@/components/super-admin/DataManager";
 import { UsersManager } from "@/components/super-admin/UsersManager";
@@ -238,738 +239,45 @@ const FEATURE_ICONS: Record<string, LucideIcon> = {
 const featureIcon = (icon: string | null | undefined): LucideIcon =>
   (icon && FEATURE_ICONS[icon]) || Package;
 
-const DEFAULT_FEATURES: PlanFeature[] = [
-  {
-    id: "menu-digital",
-    name: "Menu digital",
-    description: "Menu en ligne avec photos et prix",
-    category: "menu",
-    icon: "📱",
-    plans: ["basique", "standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "menu-10-plats",
-    name: "Jusqu'à 10 plats",
-    description: "Limite de 10 plats dans le menu",
-    category: "menu",
-    icon: "🍽️",
-    plans: ["basique"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "menu-30-plats",
-    name: "Jusqu'à 30 plats",
-    description: "Limite de 30 plats dans le menu",
-    category: "menu",
-    icon: "🍽️",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "menu-illimite",
-    name: "Menu illimité",
-    description: "Nombre de plats illimité",
-    category: "menu",
-    icon: "🍽️",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "categories-plats",
-    name: "Catégories de plats",
-    description: "Organiser les plats par catégories",
-    category: "menu",
-    icon: "📂",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "plats-saisonniers",
-    name: "Plats saisonniers",
-    description: "Ajouter des plats temporaires",
-    category: "menu",
-    icon: "🌿",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "commande-whatsapp",
-    name: "Commande WhatsApp",
-    description: "Bouton de commande directe",
-    category: "order",
-    icon: "💬",
-    plans: ["basique", "standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "panier-commande",
-    name: "Panier de commande",
-    description: "Système de panier multi-plats",
-    category: "order",
-    icon: "🛒",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "historique-commandes",
-    name: "Historique des commandes",
-    description: "Voir l'historique complet",
-    category: "order",
-    icon: "📋",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "notifications-commandes",
-    name: "Notifications commandes",
-    description: "Notification à chaque commande",
-    category: "order",
-    icon: "🔔",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "qr-code",
-    name: "QR Code restaurant",
-    description: "QR code pour accéder au menu",
-    category: "qr",
-    icon: "📲",
-    plans: ["basique", "standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "qr-code-table",
-    name: "QR Code par table",
-    description: "QR code unique par table",
-    category: "qr",
-    icon: "🪑",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "qr-code-personnalise",
-    name: "QR Code personnalisé",
-    description: "QR code avec logo et couleurs",
-    category: "qr",
-    icon: "🎨",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "reservations-basiques",
-    name: "Réservations basiques",
-    description: "Formulaire de réservation simple",
-    category: "reservation",
-    icon: "📅",
-    plans: ["basique"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "reservations-avancees",
-    name: "Réservations avancées",
-    description: "Réservations avec choix de table",
-    category: "reservation",
-    icon: "📅",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "calendrier-reservations",
-    name: "Calendrier des réservations",
-    description: "Vue calendrier",
-    category: "reservation",
-    icon: "🗓️",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "confirmation-auto",
-    name: "Confirmation automatique",
-    description: "Confirmation auto des réservations",
-    category: "reservation",
-    icon: "✅",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "rappel-reservation",
-    name: "Rappel de réservation",
-    description: "Rappel SMS/WhatsApp",
-    category: "reservation",
-    icon: "⏰",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "template-basique",
-    name: "1 Template basique",
-    description: "Template Classique uniquement",
-    category: "template",
-    icon: "🎨",
-    plans: ["basique"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "template-standard",
-    name: "4 Templates Standard",
-    description: "Soleil, Savane, Vert, Épuré",
-    category: "template",
-    icon: "🎨",
-    plans: ["standard"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "template-premium",
-    name: "4 Templates Premium",
-    description: "Templates avec animations",
-    category: "template",
-    icon: "✨",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "personnalisation-couleurs",
-    name: "Personnalisation couleurs",
-    description: "Changer les couleurs",
-    category: "template",
-    icon: "🎨",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "personnalisation-police",
-    name: "Personnalisation police",
-    description: "Changer la police",
-    category: "template",
-    icon: "✏️",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "stats-essentielles",
-    name: "Statistiques essentielles",
-    description: "Vues et commandes de base",
-    category: "stats",
-    icon: "📊",
-    plans: ["basique"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "stats-basiques",
-    name: "Statistiques basiques",
-    description: "Statistiques détaillées",
-    category: "stats",
-    icon: "📊",
-    plans: ["standard"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "stats-avancees",
-    name: "Statistiques avancées",
-    description: "Analytics complets",
-    category: "stats",
-    icon: "📈",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "stats-ventes",
-    name: "Statistiques des ventes",
-    description: "Analyse des ventes",
-    category: "stats",
-    icon: "💰",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "stats-clients",
-    name: "Statistiques clients",
-    description: "Analyse comportement clients",
-    category: "stats",
-    icon: "👥",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "export-statistiques",
-    name: "Export statistiques",
-    description: "Exporter PDF/Excel",
-    category: "stats",
-    icon: "📥",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "galerie-photos",
-    name: "Galerie photos",
-    description: "Jusqu'à 10 photos",
-    category: "gallery",
-    icon: "🖼️",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "galerie-illimitee",
-    name: "Galerie illimitée",
-    description: "Photos illimitées",
-    category: "gallery",
-    icon: "🖼️",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "galerie-videos",
-    name: "Galerie vidéos",
-    description: "Ajouter des vidéos",
-    category: "gallery",
-    icon: "🎬",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "avis-clients",
-    name: "Avis clients",
-    description: "Système d'avis et témoignages",
-    category: "reviews",
-    icon: "⭐",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "repondre-avis",
-    name: "Répondre aux avis",
-    description: "Répondre aux avis clients",
-    category: "reviews",
-    icon: "💬",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "avis-google",
-    name: "Avis Google intégrés",
-    description: "Afficher les avis Google",
-    category: "reviews",
-    icon: "🔗",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "facturation-pdf",
-    name: "Facturation PDF basique",
-    description: "Factures simples",
-    category: "billing",
-    icon: "🧾",
-    plans: ["standard"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "facturation-logo",
-    name: "Facturation PDF + logo",
-    description: "Factures avec logo",
-    category: "billing",
-    icon: "🧾",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "facture-auto",
-    name: "Facturation automatique",
-    description: "Génération automatique",
-    category: "billing",
-    icon: "⚡",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "devis",
-    name: "Devis en ligne",
-    description: "Créer et envoyer des devis",
-    category: "billing",
-    icon: "📄",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "gestion-employes",
-    name: "Gestion employés",
-    description: "Ajout de staff avec rôles",
-    category: "staff",
-    icon: "👥",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "login-staff-pin",
-    name: "Connexion staff par PIN",
-    description: "Employés se connectent par PIN",
-    category: "staff",
-    icon: "🔑",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "espace-cuisine",
-    name: "Espace cuisine",
-    description: "Interface cuisine avec minuteur",
-    category: "staff",
-    icon: "👨‍🍳",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "planning-staff",
-    name: "Planning du staff",
-    description: "Gérer les horaires",
-    category: "staff",
-    icon: "📋",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "plan-salle",
-    name: "Plan de salle interactif",
-    description: "Gérer les tables",
-    category: "tables",
-    icon: "🪑",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "etat-tables",
-    name: "État des tables",
-    description: "Tables libres/occupées en temps réel",
-    category: "tables",
-    icon: "🟢",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "reservation-table",
-    name: "Réservation par table",
-    description: "Assigner une table",
-    category: "tables",
-    icon: "📌",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "chat-interne",
-    name: "Chat interne",
-    description: "Communication cuisinier ↔ serveur",
-    category: "chat",
-    icon: "💬",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "notifications-chat",
-    name: "Notifications chat",
-    description: "Notifications sonores",
-    category: "chat",
-    icon: "🔔",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "chat-fichiers",
-    name: "Partage de fichiers",
-    description: "Envoyer photos et fichiers",
-    category: "chat",
-    icon: "📎",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "promotions",
-    name: "Promotions",
-    description: "Codes promo et réductions",
-    category: "marketing",
-    icon: "🏷️",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "campagnes-whatsapp",
-    name: "Campagnes WhatsApp",
-    description: "Envoyer des offres",
-    category: "marketing",
-    icon: "📢",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "fidelite",
-    name: "Programme de fidélité",
-    description: "Carte de fidélité digitale",
-    category: "marketing",
-    icon: "💎",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "reseaux-sociaux",
-    name: "Liens réseaux sociaux",
-    description: "Facebook, Instagram",
-    category: "marketing",
-    icon: "🌐",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "gestion-stocks",
-    name: "Gestion des stocks",
-    description: "Suivi des ingrédients",
-    category: "stock",
-    icon: "📦",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "alertes-stocks",
-    name: "Alertes stocks bas",
-    description: "Notification stock faible",
-    category: "stock",
-    icon: "⚠️",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "fournisseurs",
-    name: "Gestion fournisseurs",
-    description: "Liste des fournisseurs",
-    category: "stock",
-    icon: "🚚",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "messagerie-whatsapp",
-    name: "Messagerie WhatsApp",
-    description: "Gérer les conversations",
-    category: "messaging",
-    icon: "💬",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "reponses-rapides",
-    name: "Réponses rapides",
-    description: "Modèles de messages",
-    category: "messaging",
-    icon: "⚡",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "broadcast",
-    name: "Diffusion groupée",
-    description: "Envoyer à tous les clients",
-    category: "messaging",
-    icon: "📨",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "parametres-site",
-    name: "Paramètres du site",
-    description: "Modifier les infos",
-    category: "settings",
-    icon: "⚙️",
-    plans: ["basique", "standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "logo-personnalise",
-    name: "Logo personnalisé",
-    description: "Ajouter le logo",
-    category: "settings",
-    icon: "🖼️",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "domaine-personnalise",
-    name: "Nom de domaine",
-    description: "Domaine personnalisé",
-    category: "settings",
-    icon: "🌐",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "mode-sombre",
-    name: "Mode sombre",
-    description: "Thème sombre",
-    category: "settings",
-    icon: "🌙",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "theme-neon",
-    name: "Thème Néon",
-    description: "Mode néon",
-    category: "settings",
-    icon: "💡",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "theme-jour",
-    name: "Thème Jour",
-    description: "Mode clair",
-    category: "settings",
-    icon: "☀️",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "contenu-branding",
-    name: "Contenu & branding",
-    description: "Personnaliser le contenu",
-    category: "settings",
-    icon: "🖌️",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "apercu-dashboard",
-    name: "Aperçu du dashboard",
-    description: "Page d'accueil",
-    category: "settings",
-    icon: "📊",
-    plans: ["basique", "standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "support-prioritaire",
-    name: "Support prioritaire",
-    description: "Support WhatsApp dédié",
-    category: "support",
-    icon: "🎧",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "support-standard",
-    name: "Support standard",
-    description: "Support par email",
-    category: "support",
-    icon: "📧",
-    plans: ["standard"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "formation",
-    name: "Formation en ligne",
-    description: "Guide et tutoriels",
-    category: "support",
-    icon: "📚",
-    plans: ["standard", "premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "rapports-mensuels",
-    name: "Rapports mensuels",
-    description: "Rapports PDF automatiques",
-    category: "reports",
-    icon: "📄",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "rapports-ventes",
-    name: "Rapports de ventes",
-    description: "Analyse des ventes",
-    category: "reports",
-    icon: "📊",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-  {
-    id: "export-donnees",
-    name: "Export des données",
-    description: "Exporter en CSV",
-    category: "reports",
-    icon: "💾",
-    plans: ["premium"],
-    created_at: "",
-    updated_at: "",
-  },
-];
+const DEFAULT_FEATURES: PlanFeature[] = FEATURE_REGISTRY.map((f) => ({
+  id: f.id,
+  slug: f.id,
+  name: f.name,
+  description: f.description,
+  category: f.category,
+  icon: f.icon,
+  plans: f.defaultPlans,
+  created_at: "",
+  updated_at: "",
+}));
+
+const STATUS_UI: Record<FeatureStatus, { label: string; cls: string; help: string }> = {
+  live: {
+    label: "Appliquée",
+    cls: "bg-emerald-tint text-emerald-deep border-emerald/30",
+    help: "Cocher / décocher change vraiment ce que voient les clients.",
+  },
+  core: {
+    label: "Toujours active",
+    cls: "bg-muted text-muted-foreground border-border",
+    help: "Fonction de base, non désactivable.",
+  },
+  unlinked: {
+    label: "Non reliée",
+    cls: "bg-amber-tint text-amber-deep border-amber-brand/30",
+    help: "La fonction existe, mais la case ne la contrôle pas encore.",
+  },
+  soon: {
+    label: "À développer",
+    cls: "bg-destructive/10 text-destructive border-destructive/30",
+    help: "Pas encore développée : la case n'a aucun effet.",
+  },
+  manual: {
+    label: "Service manuel",
+    cls: "bg-muted text-muted-foreground border-border",
+    help: "Service humain ou infrastructure, pas du code.",
+  },
+};
 
 function SuperAdminPage() {
   const [tab, setTab] = useState<
@@ -1483,8 +791,22 @@ function SuperAdminPage() {
                   Gérez les fonctionnalités disponibles pour chaque plan d'abonnement.
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Cochez les plans qui doivent avoir accès à chaque fonctionnalité.
+                  Une case n'a d'effet réel que si la fonctionnalité est{" "}
+                  <strong>« Appliquée »</strong>. Les autres sont grisées pour ne pas vous induire
+                  en erreur.
                 </p>
+                <div className="flex flex-wrap gap-1.5 mt-2 text-[10px] font-bold uppercase">
+                  {(["live", "unlinked", "soon", "manual", "core"] as FeatureStatus[]).map((st) => (
+                    <span
+                      key={st}
+                      title={STATUS_UI[st].help}
+                      className={`px-2 py-0.5 rounded border ${STATUS_UI[st].cls}`}
+                    >
+                      {STATUS_UI[st].label} (
+                      {FEATURE_REGISTRY.filter((x) => x.status === st).length})
+                    </span>
+                  ))}
+                </div>
               </div>
               <button
                 onClick={addFeature}
@@ -1519,7 +841,26 @@ function SuperAdminPage() {
                             <div className="flex items-start gap-3 flex-1 min-w-0">
                               <FeatureGlyph icon={feature.icon} />
                               <div>
-                                <strong className="text-sm block">{feature.name}</strong>
+                                <strong className="text-sm flex items-center gap-2 flex-wrap">
+                                  {feature.name}
+                                  {(() => {
+                                    const st =
+                                      FEATURE_BY_ID[feature.slug ?? feature.id]?.status ?? "live";
+                                    return (
+                                      <span
+                                        title={STATUS_UI[st].help}
+                                        className={`px-1.5 py-0.5 rounded border text-[9px] font-black uppercase ${STATUS_UI[st].cls}`}
+                                      >
+                                        {STATUS_UI[st].label}
+                                      </span>
+                                    );
+                                  })()}
+                                </strong>
+                                {FEATURE_BY_ID[feature.slug ?? feature.id]?.note && (
+                                  <p className="text-[11px] text-gold mt-0.5">
+                                    {FEATURE_BY_ID[feature.slug ?? feature.id]?.note}
+                                  </p>
+                                )}
                                 {feature.description && (
                                   <p className="text-xs text-muted-foreground mt-1">
                                     {feature.description}
@@ -1535,6 +876,11 @@ function SuperAdminPage() {
                                 >
                                   <input
                                     type="checkbox"
+                                    disabled={
+                                      !["live"].includes(
+                                        FEATURE_BY_ID[feature.slug ?? feature.id]?.status ?? "live",
+                                      )
+                                    }
                                     checked={feature.plans.includes(plan)}
                                     onChange={(e) => {
                                       const newPlans = e.target.checked
@@ -1542,7 +888,7 @@ function SuperAdminPage() {
                                         : feature.plans.filter((p) => p !== plan);
                                       updateFeaturePlans(feature.id, newPlans);
                                     }}
-                                    className="w-4 h-4 accent-gold"
+                                    className="w-4 h-4 accent-gold disabled:opacity-40 disabled:cursor-not-allowed"
                                   />
                                   <span className="text-xs font-semibold text-muted-foreground capitalize">
                                     {plan}

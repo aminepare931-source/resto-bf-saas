@@ -1,3 +1,5 @@
+import { usePlanAccess } from "@/lib/plans";
+import { useMyRestaurant } from "@/hooks/use-my-restaurant";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +13,9 @@ export const Route = createFileRoute("/_authenticated/dashboard/parametres")({
 function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const { restaurant: myResto } = useMyRestaurant();
+  const { has } = usePlanAccess(myResto?.plan);
+  const canOrderNotif = has("notifications-commandes");
   const [form, setForm] = useState({
     name: "",
     city: "",
@@ -152,23 +157,25 @@ function SettingsPage() {
           </h3>
 
           <div className="space-y-4">
-            <div className="flex flex-col gap-2">
-              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                Réception des commandes
-              </label>
-              <select
-                value={form.notification_orders_channel || "both"}
-                onChange={(e) => set("notification_orders_channel", e.target.value)}
-                className="px-4 py-2.5 rounded-xl bg-card border border-border focus:border-terracotta/50 focus:outline-none text-sm"
-              >
-                <option value="admin">Panneau admin uniquement</option>
-                <option value="whatsapp">WhatsApp uniquement</option>
-                <option value="both">Les deux (admin + WhatsApp)</option>
-              </select>
-              <p className="text-[11px] text-muted-foreground">
-                Où souhaitez-vous recevoir les notifications de nouvelles commandes ?
-              </p>
-            </div>
+            {canOrderNotif && (
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                  Réception des commandes
+                </label>
+                <select
+                  value={form.notification_orders_channel || "both"}
+                  onChange={(e) => set("notification_orders_channel", e.target.value)}
+                  className="px-4 py-2.5 rounded-xl bg-card border border-border focus:border-terracotta/50 focus:outline-none text-sm"
+                >
+                  <option value="admin">Panneau admin uniquement</option>
+                  <option value="whatsapp">WhatsApp uniquement</option>
+                  <option value="both">Les deux (admin + WhatsApp)</option>
+                </select>
+                <p className="text-[11px] text-muted-foreground">
+                  Où souhaitez-vous recevoir les notifications de nouvelles commandes ?
+                </p>
+              </div>
+            )}
 
             <div className="flex flex-col gap-2">
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">

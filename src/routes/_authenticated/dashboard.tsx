@@ -4,6 +4,9 @@ import { OfflineBanner } from "@/components/OfflineBanner";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Lock } from "lucide-react";
+import { usePlanAccess } from "@/lib/plans";
+import { UpgradeCard } from "@/components/UpgradeCard";
 import {
   LayoutDashboard,
   UtensilsCrossed,
@@ -65,12 +68,12 @@ const adminNav: NavItem[] = [
   { to: "/dashboard/qr-code", label: "QR Code", icon: QrCode },
   { to: "/dashboard/staff", label: "Staff", icon: Users },
   { to: "/dashboard/chat", label: "Chat interne", icon: MessagesSquare, badge: "Nouveau" },
-  { to: "/dashboard/messaging", label: "WhatsApp", icon: MessageCircle, badge: "Premium" },
-  { to: "/dashboard/templates", label: "Templates", icon: Palette, badge: "Premium" },
+  { to: "/dashboard/messaging", label: "WhatsApp", icon: MessageCircle },
+  { to: "/dashboard/templates", label: "Templates", icon: Palette },
   { to: "/dashboard/statistiques", label: "Statistiques", icon: BarChart3 },
   { to: "/dashboard/stocks", label: "Stocks", icon: Package },
   { to: "/dashboard/contenu", label: "Contenu & branding", icon: Brush },
-  { to: "/dashboard/facturation", label: "Facturation", icon: ReceiptText, badge: "Premium" },
+  { to: "/dashboard/facturation", label: "Facturation", icon: ReceiptText },
   { to: "/dashboard/paiements", label: "Paiements", icon: CreditCard },
   { to: "/dashboard/parametres", label: "Paramètres", icon: Settings },
 ];
@@ -95,6 +98,53 @@ const staffNav: Record<string, NavItem[]> = {
     { to: "/dashboard/statistiques", label: "Statistiques", icon: BarChart3 },
     { to: "/dashboard/chat", label: "Chat", icon: MessagesSquare },
   ],
+};
+
+/** Pour chaque page : le client y accède si AU MOINS UNE de ces fonctionnalités est cochée pour son forfait. */
+const ROUTE_FEATURES: Record<string, { label: string; features: string[] }> = {
+  "/dashboard/menu": { label: "Menu", features: ["menu-digital"] },
+  "/dashboard/commandes": {
+    label: "Commandes",
+    features: ["panier-commande", "historique-commandes"],
+  },
+  "/dashboard/cuisine": { label: "Espace cuisine", features: ["espace-cuisine"] },
+  "/dashboard/tables": { label: "Tables", features: ["plan-salle", "etat-tables"] },
+  "/dashboard/reservations": {
+    label: "Réservations",
+    features: ["reservations-basiques", "reservations-avancees"],
+  },
+  "/dashboard/galerie": {
+    label: "Galerie",
+    features: ["galerie-photos", "galerie-illimitee", "galerie-videos"],
+  },
+  "/dashboard/avis": { label: "Avis clients", features: ["avis-clients"] },
+  "/dashboard/qr-code": { label: "QR Code", features: ["qr-code"] },
+  "/dashboard/staff": { label: "Gestion des employés", features: ["gestion-employes"] },
+  "/dashboard/chat": { label: "Chat interne", features: ["chat-interne"] },
+  "/dashboard/messaging": { label: "Messagerie WhatsApp", features: ["messagerie-whatsapp"] },
+  "/dashboard/templates": {
+    label: "Templates",
+    features: ["template-basique", "template-standard", "template-premium"],
+  },
+  "/dashboard/statistiques": {
+    label: "Statistiques",
+    features: ["stats-essentielles", "stats-basiques", "stats-avancees"],
+  },
+  "/dashboard/stocks": { label: "Gestion des stocks", features: ["gestion-stocks"] },
+  "/dashboard/contenu": {
+    label: "Contenu & branding",
+    features: [
+      "contenu-branding",
+      "logo-personnalise",
+      "personnalisation-couleurs",
+      "personnalisation-police",
+      "reseaux-sociaux",
+    ],
+  },
+  "/dashboard/facturation": {
+    label: "Facturation",
+    features: ["facturation-pdf", "facturation-logo", "facture-auto", "devis"],
+  },
 };
 
 const badgeStyle: Record<string, string> = {
@@ -152,13 +202,25 @@ function DashboardLayout() {
 
   // Determine which nav to show
   const isStaff = !!staffRole;
+  const access = usePlanAccess(resto?.plan);
+  // Un client (pas un membre du staff) ne voit/ouvre que ce que son forfait autorise
+  const isLocked = (to: string) => {
+    if (isStaff || !resto || access.loading) return false;
+    const rule = ROUTE_FEATURES[to];
+    return !!rule && !access.hasAny(rule.features);
+  };
+  const currentRule = ROUTE_FEATURES[pathname.replace(/\/$/, "")];
+  const currentLocked = currentRule ? isLocked(pathname.replace(/\/$/, "")) : false;
   const nav = isStaff && staffRole ? staffNav[staffRole] || [] : adminNav;
 
   return (
     <div className="min-h-screen flex bg-background">
       {/* Mobile overlay */}
       {open && (
-        <div className="lg:hidden fixed inset-0 bg-charcoal/45 z-30" onClick={() => setOpen(false)} />
+        <div
+          className="lg:hidden fixed inset-0 bg-charcoal/45 z-30"
+          onClick={() => setOpen(false)}
+        />
       )}
 
       {/* Sidebar */}
@@ -222,7 +284,11 @@ function DashboardLayout() {
             >
               <n.icon className="w-[18px] h-[18px] shrink-0" />
               <span className="flex-1">{n.label}</span>
-              {n.badge && (
+              {isLocked(n.to) ? (
+                <span className="px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider font-black bg-muted text-muted-foreground inline-flex items-center gap-1">
+                  <Lock className="w-3 h-3" /> Forfait sup.
+                </span>
+              ) : n.badge ? (
                 <span
                   className={`px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider font-black ${
                     badgeStyle[n.badge] || "bg-muted text-muted-foreground"
@@ -230,7 +296,7 @@ function DashboardLayout() {
                 >
                   {n.badge}
                 </span>
-              )}
+              ) : null}
             </Link>
           ))}
         </nav>
@@ -272,7 +338,11 @@ function DashboardLayout() {
         <main className="flex-1 p-4 sm:p-6 lg:p-10 overflow-x-hidden">
           <OfflineBanner />
           <Breadcrumbs />
-          <Outlet />
+          {currentLocked && currentRule ? (
+            <UpgradeCard title={currentRule.label} plan={resto?.plan} />
+          ) : (
+            <Outlet />
+          )}
         </main>
       </div>
     </div>

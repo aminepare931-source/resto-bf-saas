@@ -85,6 +85,7 @@ export type Database = {
           image_url: string;
           position: number;
           restaurant_id: string;
+          media_type: string;
         };
         Insert: {
           caption?: string | null;
@@ -93,6 +94,7 @@ export type Database = {
           image_url: string;
           position?: number;
           restaurant_id: string;
+          media_type?: string;
         };
         Update: {
           caption?: string | null;
@@ -101,6 +103,7 @@ export type Database = {
           image_url?: string;
           position?: number;
           restaurant_id?: string;
+          media_type?: string;
         };
         Relationships: [
           {
@@ -615,6 +618,8 @@ export type Database = {
           id: string;
           rating: number;
           restaurant_id: string;
+          owner_reply: string | null;
+          owner_replied_at: string | null;
         };
         Insert: {
           approved?: boolean;
@@ -624,6 +629,8 @@ export type Database = {
           id?: string;
           rating: number;
           restaurant_id: string;
+          owner_reply?: string | null;
+          owner_replied_at?: string | null;
         };
         Update: {
           approved?: boolean;
@@ -633,6 +640,8 @@ export type Database = {
           id?: string;
           rating?: number;
           restaurant_id?: string;
+          owner_reply?: string | null;
+          owner_replied_at?: string | null;
         };
         Relationships: [
           {

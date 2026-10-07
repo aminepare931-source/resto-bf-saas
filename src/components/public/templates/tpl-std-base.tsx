@@ -14,6 +14,7 @@ import {
 } from "../shared";
 import { usePlanAccess } from "@/lib/plans";
 import { StorageImage } from "@/components/StorageImage";
+import { StorageVideo } from "@/components/StorageVideo";
 import {
   ArrowRight,
   CalendarDays,
@@ -90,8 +91,34 @@ function toTheme(p: StdPalette): Theme {
   };
 }
 
-export function StdTemplate({ palette: p, ...props }: TemplateProps & { palette: StdPalette }) {
+function inkFor(hex: string): string {
+  const h = hex.replace("#", "");
+  const n = parseInt(h.length === 3 ? h.replace(/(.)/g, "$1$1") : h, 16);
+  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  return (r * 299 + g * 587 + b * 114) / 1000 > 150 ? "#1b1b1b" : "#ffffff";
+}
+
+const HEX = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
+
+export function StdTemplate({
+  palette: basePalette,
+  ...props
+}: TemplateProps & { palette: StdPalette }) {
+  // Couleur principale choisie par le restaurant (si son forfait l'autorise)
+  const brand = props.restaurant.primary_color;
+  const p: StdPalette =
+    brand && HEX.test(brand)
+      ? {
+          ...basePalette,
+          primary: brand,
+          primaryInk: inkFor(brand),
+          container: brand,
+          containerInk: inkFor(brand),
+        }
+      : basePalette;
+  const brandFont = props.restaurant.font_family?.trim() || null;
   const { restaurant, menu, reviews, gallery } = props;
+  const videos = props.videos ?? [];
   const theme = toTheme(p);
   const wa = buildWhatsAppLink(restaurant.whatsapp, restaurant.name);
   const { hasAny } = usePlanAccess(restaurant.plan);
@@ -111,13 +138,22 @@ export function StdTemplate({ palette: p, ...props }: TemplateProps & { palette:
     ...available.filter((m) => !m.image_url),
   ].slice(0, 6);
 
-  const serif: React.CSSProperties = { fontFamily: "'Playfair Display', serif" };
+  const serif: React.CSSProperties = {
+    fontFamily: brandFont ? `'${brandFont}', serif` : "'Playfair Display', serif",
+  };
   const categoryTiles = groupByCategory(available).map(([name, items]) => ({
     name,
     count: items.length,
     image: items.find((i) => i.image_url)?.image_url ?? null,
   }));
   const aboutImage = gallery[1]?.image_url ?? gallery[0]?.image_url ?? null;
+  const socials = (
+    [
+      ["Facebook", restaurant.social_links?.facebook],
+      ["Instagram", restaurant.social_links?.instagram],
+      ["TikTok", restaurant.social_links?.tiktok],
+    ] as [string, string | undefined][]
+  ).filter(([, url]) => !!url && /^https?:\/\//.test(url as string)) as [string, string][];
   const hours = restaurant.hours?.trim() || null;
   const hoursShort = hours ? hours.split("\n")[0] : null;
 
@@ -127,11 +163,19 @@ export function StdTemplate({ palette: p, ...props }: TemplateProps & { palette:
       style={{
         background: p.bg,
         color: p.text,
-        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        fontFamily: brandFont
+          ? `'${brandFont}', 'Plus Jakarta Sans', sans-serif`
+          : "'Plus Jakarta Sans', sans-serif",
         isolation: "isolate",
       }}
     >
       <link rel="stylesheet" href={FONTS} />
+      {brandFont && (
+        <link
+          rel="stylesheet"
+          href={`https://fonts.googleapis.com/css2?family=${encodeURIComponent(brandFont).replace(/%20/g, "+")}:wght@400;500;600;700&display=swap`}
+        />
+      )}
       <style>{`
         .std-snap::-webkit-scrollbar{display:none}
         .std-snap{scrollbar-width:none}
@@ -231,13 +275,14 @@ export function StdTemplate({ palette: p, ...props }: TemplateProps & { palette:
                     className="text-[34px] leading-tight font-semibold drop-shadow-md"
                     style={{ ...serif, color: "#fff" }}
                   >
-                    {restaurant.name}
+                    {restaurant.hero_title?.trim() || restaurant.name}
                   </h1>
                   <p
                     className="text-[15px] leading-relaxed max-w-xs"
                     style={{ color: "rgba(255,255,255,0.82)" }}
                   >
-                    {restaurant.description ?? `Cuisine à découvrir à ${restaurant.city}.`}
+                    {restaurant.hero_subtitle?.trim() ||
+                      (restaurant.description ?? `Cuisine à découvrir à ${restaurant.city}.`)}
                   </p>
                   <div className="flex items-center gap-2.5 pt-1">
                     {canReserve && (
@@ -455,7 +500,8 @@ export function StdTemplate({ palette: p, ...props }: TemplateProps & { palette:
                 </div>
               )}
               <p className="text-[15px] leading-6" style={{ color: p.textMuted }}>
-                {restaurant.description ??
+                {restaurant.about_text?.trim() ||
+                  restaurant.description ||
                   `${restaurant.name} vous accueille à ${restaurant.city}${
                     restaurant.cuisine ? ` pour une cuisine ${restaurant.cuisine}` : ""
                   }. Venez partager un bon moment, sur place ou à emporter.`}
@@ -519,6 +565,22 @@ export function StdTemplate({ palette: p, ...props }: TemplateProps & { palette:
               </section>
             )}
 
+            {/* Vidéos */}
+            {videos.length > 0 && (
+              <section className="flex flex-col gap-4">
+                <SectionTitle p={p} serif={serif} kicker="En vidéo" title="Découvrez-nous" />
+                <div className="flex flex-col gap-3">
+                  {videos.slice(0, 3).map((v) => (
+                    <StorageVideo
+                      key={v.id}
+                      path={v.image_url}
+                      className="w-full aspect-video rounded-2xl bg-black"
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* Avis */}
             {reviews.length > 0 && (
               <section className="flex flex-col gap-4">
@@ -565,6 +627,15 @@ export function StdTemplate({ palette: p, ...props }: TemplateProps & { palette:
                           style={{ color: p.textMuted }}
                         >
                           « {r.comment} »
+                        </p>
+                      )}
+                      {r.owner_reply && (
+                        <p
+                          className="text-[12px] leading-5 pl-2.5 line-clamp-3"
+                          style={{ borderLeft: `2px solid ${p.primary}`, color: p.textMuted }}
+                        >
+                          <strong style={{ color: p.primary }}>Réponse : </strong>
+                          {r.owner_reply}
                         </p>
                       )}
                     </article>
@@ -681,6 +752,17 @@ export function StdTemplate({ palette: p, ...props }: TemplateProps & { palette:
               </h1>
             </div>
             {gallery.length > 0 && <GalleryGrid gallery={gallery} theme={theme} />}
+            {videos.length > 0 && (
+              <div className="grid sm:grid-cols-2 gap-3">
+                {videos.map((v) => (
+                  <StorageVideo
+                    key={v.id}
+                    path={v.image_url}
+                    className="w-full aspect-video rounded-2xl bg-black"
+                  />
+                ))}
+              </div>
+            )}
             <ReviewList reviews={reviews} theme={theme} />
             <div className="rounded-2xl p-4 sm:p-5" style={{ background: p.surface }}>
               <h3 className="text-[20px] font-medium mb-4" style={serif}>
@@ -743,6 +825,21 @@ export function StdTemplate({ palette: p, ...props }: TemplateProps & { palette:
           className="rounded-2xl p-5 text-center text-[11px] flex flex-col gap-1"
           style={{ background: p.surface, color: p.textMuted }}
         >
+          {socials.length > 0 && (
+            <div className="flex justify-center gap-4 mb-1 text-[12px] font-semibold">
+              {socials.map(([label, url]) => (
+                <a
+                  key={label}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: p.primary }}
+                >
+                  {label}
+                </a>
+              ))}
+            </div>
+          )}
           <span>
             © {new Date().getFullYear()} {restaurant.name}. Tous droits réservés.
           </span>

@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyRestaurant } from "@/hooks/use-my-restaurant";
+import { usePlanAccess } from "@/lib/plans";
+import { ReportsPanel } from "@/components/dashboard/ReportsPanel";
 import { toast } from "sonner";
 import {
   TrendingUp,
@@ -66,6 +68,11 @@ const CHART_COLORS = ["#c85a32", "#1b8354", "#e5a93c", "#1c2024", "#9f3c16", "#1
 
 function StatisticsPage() {
   const { restaurant: r, loading: loadingResto } = useMyRestaurant();
+  const { has } = usePlanAccess(r?.plan);
+  const showCharts = has("stats-basiques") || has("stats-avancees") || has("stats-ventes");
+  const showTop = has("stats-ventes") || has("stats-avancees");
+  const showHours = has("stats-clients") || has("stats-avancees");
+  const showAdvanced = has("stats-avancees");
   const [period, setPeriod] = useState<"week" | "month" | "year">("week");
 
   const [stats, setStats] = useState<{
@@ -331,7 +338,9 @@ function StatisticsPage() {
   return (
     <div className="max-w-6xl">
       <div className="mb-8">
-        <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">Analytics</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">
+          Analytics
+        </p>
         <h1 className="text-3xl font-black">Statistiques</h1>
       </div>
 
@@ -400,272 +409,128 @@ function StatisticsPage() {
             </div>
           </div>
 
-          {/* Période selector et tabs graphiques */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
-            <div className="flex gap-2">
-              <button
-                onClick={() => setActiveChart("revenue")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                  activeChart === "revenue"
-                    ? "bg-terracotta text-white shadow-sm"
-                    : "bg-surface-warm text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Revenus
-              </button>
-              <button
-                onClick={() => setActiveChart("orders")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                  activeChart === "orders"
-                    ? "bg-terracotta text-white shadow-sm"
-                    : "bg-surface-warm text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Commandes
-              </button>
-              <button
-                onClick={() => setActiveChart("comparison")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                  activeChart === "comparison"
-                    ? "bg-terracotta text-white shadow-sm"
-                    : "bg-surface-warm text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Comparaison
-              </button>
-            </div>
-
-            <div className="flex gap-2">
-              {(["week", "month", "year"] as const).map((p) => (
-                <button
-                  key={p}
-                  onClick={() => setPeriod(p)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                    period === p
-                      ? "bg-charcoal text-white"
-                      : "bg-surface-warm text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {p === "week" ? "7 jours" : p === "month" ? "30 jours" : "1 an"}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Graphique principal */}
-          <div className="p-6 rounded-2xl border border-border bg-card mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-terracotta" />
-                {activeChart === "revenue" && "Évolution des revenus"}
-                {activeChart === "orders" && "Nombre de commandes"}
-                {activeChart === "comparison" && "Comparaison semaine"}
-              </h3>
-            </div>
-
-            {activeChart === "revenue" && (
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={dailyStats}>
-                    <defs>
-                      <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#c85a32" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#c85a32" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,32,36,0.06)" />
-                    <XAxis
-                      dataKey="date"
-                      tick={{ fill: "#8a726a", fontSize: 11 }}
-                      axisLine={{ stroke: "rgba(28,32,36,0.12)" }}
-                      tickLine={false}
-                      interval={period === "year" ? 30 : period === "month" ? 5 : 0}
-                    />
-                    <YAxis
-                      tick={{ fill: "#8a726a", fontSize: 11 }}
-                      axisLine={false}
-                      tickLine={false}
-                      tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
-                    />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Area
-                      type="monotone"
-                      dataKey="revenue"
-                      stroke="#c85a32"
-                      fillOpacity={1}
-                      fill="url(#colorRevenue)"
-                      strokeWidth={2}
-                      name="Revenus"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            )}
-
-            {activeChart === "orders" && (
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={dailyStats}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,32,36,0.06)" />
-                    <XAxis
-                      dataKey="date"
-                      tick={{ fill: "#8a726a", fontSize: 11 }}
-                      axisLine={{ stroke: "rgba(28,32,36,0.12)" }}
-                      tickLine={false}
-                      interval={period === "year" ? 30 : period === "month" ? 5 : 0}
-                    />
-                    <YAxis
-                      tick={{ fill: "#8a726a", fontSize: 11 }}
-                      axisLine={false}
-                      tickLine={false}
-                      allowDecimals={false}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        background: "#ffffff",
-                        border: "1px solid rgba(28,32,36,0.1)",
-                        borderRadius: 12,
-                      }}
-                      labelStyle={{ color: "#8a726a" }}
-                    />
-                    <Bar dataKey="orders" fill="#1b8354" radius={[4, 4, 0, 0]} name="Commandes" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            )}
-
-            {activeChart === "comparison" && (
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={weeklyComparison}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,32,36,0.06)" />
-                    <XAxis
-                      dataKey="day"
-                      tick={{ fill: "#8a726a", fontSize: 11 }}
-                      axisLine={{ stroke: "rgba(28,32,36,0.12)" }}
-                      tickLine={false}
-                    />
-                    <YAxis
-                      tick={{ fill: "#8a726a", fontSize: 11 }}
-                      axisLine={false}
-                      tickLine={false}
-                      tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
-                    />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Bar
-                      dataKey="thisWeek"
-                      fill="#c85a32"
-                      radius={[4, 4, 0, 0]}
-                      name="Cette semaine"
-                    />
-                    <Bar
-                      dataKey="lastWeek"
-                      fill="#8a726a"
-                      radius={[4, 4, 0, 0]}
-                      name="Semaine dernière"
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            )}
-          </div>
-
-          {/* Graphiques secondaires */}
-          <div className="grid lg:grid-cols-2 gap-6 mb-8">
-            {/* Top items avec graphique */}
-            <div className="p-6 rounded-2xl border border-border bg-card">
-              <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <PieChart className="w-5 h-5 text-terracotta" />
-                Top 5 des articles
-              </h3>
-              {topItems.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Aucune donnée disponible</p>
-              ) : (
-                <div className="space-y-4">
-                  {/* Pie chart */}
-                  <div className="h-48">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <RePieChart>
-                        <Pie
-                          data={topItemsPieData}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={50}
-                          outerRadius={80}
-                          paddingAngle={3}
-                          dataKey="value"
-                        >
-                          {topItemsPieData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip
-                          contentStyle={{
-                            background: "#ffffff",
-                            border: "1px solid rgba(28,32,36,0.1)",
-                            borderRadius: 12,
-                          }}
-                          formatter={(value: number) => formatCurrency(value)}
-                        />
-                      </RePieChart>
-                    </ResponsiveContainer>
-                  </div>
-
-                  {/* Liste */}
-                  <div className="space-y-2">
-                    {topItems.map((item, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center justify-between p-3 rounded-lg bg-surface-warm hover:bg-charcoal/5 transition-colors"
-                      >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div
-                            className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
-                            style={{
-                              backgroundColor: `${CHART_COLORS[i]}20`,
-                              color: CHART_COLORS[i],
-                            }}
-                          >
-                            {i + 1}
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-sm font-semibold truncate">{item.description}</p>
-                            <p className="text-xs text-muted-foreground">{item.quantity} vendus</p>
-                          </div>
-                        </div>
-                        <p className="text-sm font-bold text-terracotta-deep flex-shrink-0 ml-2">
-                          {item.revenue.toLocaleString("fr-FR")} F
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+          {showCharts && (
+            <>
+              {/* Période selector et tabs graphiques */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setActiveChart("revenue")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                      activeChart === "revenue"
+                        ? "bg-terracotta text-white shadow-sm"
+                        : "bg-surface-warm text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Revenus
+                  </button>
+                  <button
+                    onClick={() => setActiveChart("orders")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                      activeChart === "orders"
+                        ? "bg-terracotta text-white shadow-sm"
+                        : "bg-surface-warm text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Commandes
+                  </button>
+                  <button
+                    onClick={() => setActiveChart("comparison")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                      activeChart === "comparison"
+                        ? "bg-terracotta text-white shadow-sm"
+                        : "bg-surface-warm text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Comparaison
+                  </button>
                 </div>
-              )}
-            </div>
 
-            {/* Heures de pointe avec bar chart */}
-            <div className="p-6 rounded-2xl border border-border bg-card">
-              <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-terracotta" />
-                Heures de pointe
-              </h3>
-              {peakHours.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Aucune donnée disponible</p>
-              ) : (
-                <div className="space-y-4">
-                  {/* Bar chart des heures */}
-                  <div className="h-48">
+                <div className="flex gap-2">
+                  {(["week", "month", "year"] as const).map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => setPeriod(p)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                        period === p
+                          ? "bg-charcoal text-white"
+                          : "bg-surface-warm text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {p === "week" ? "7 jours" : p === "month" ? "30 jours" : "1 an"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Graphique principal */}
+              <div className="p-6 rounded-2xl border border-border bg-card mb-8">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold flex items-center gap-2">
+                    <BarChart3 className="w-5 h-5 text-terracotta" />
+                    {activeChart === "revenue" && "Évolution des revenus"}
+                    {activeChart === "orders" && "Nombre de commandes"}
+                    {activeChart === "comparison" && "Comparaison semaine"}
+                  </h3>
+                </div>
+
+                {activeChart === "revenue" && (
+                  <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={peakHoursData}>
+                      <AreaChart data={dailyStats}>
+                        <defs>
+                          <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#c85a32" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="#c85a32" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,32,36,0.06)" />
                         <XAxis
-                          dataKey="hour"
-                          tick={{ fill: "#8a726a", fontSize: 10 }}
+                          dataKey="date"
+                          tick={{ fill: "#8a726a", fontSize: 11 }}
                           axisLine={{ stroke: "rgba(28,32,36,0.12)" }}
                           tickLine={false}
-                          interval={2}
+                          interval={period === "year" ? 30 : period === "month" ? 5 : 0}
                         />
-                        <YAxis hide />
+                        <YAxis
+                          tick={{ fill: "#8a726a", fontSize: 11 }}
+                          axisLine={false}
+                          tickLine={false}
+                          tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Area
+                          type="monotone"
+                          dataKey="revenue"
+                          stroke="#c85a32"
+                          fillOpacity={1}
+                          fill="url(#colorRevenue)"
+                          strokeWidth={2}
+                          name="Revenus"
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+
+                {activeChart === "orders" && (
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={dailyStats}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,32,36,0.06)" />
+                        <XAxis
+                          dataKey="date"
+                          tick={{ fill: "#8a726a", fontSize: 11 }}
+                          axisLine={{ stroke: "rgba(28,32,36,0.12)" }}
+                          tickLine={false}
+                          interval={period === "year" ? 30 : period === "month" ? 5 : 0}
+                        />
+                        <YAxis
+                          tick={{ fill: "#8a726a", fontSize: 11 }}
+                          axisLine={false}
+                          tickLine={false}
+                          allowDecimals={false}
+                        />
                         <Tooltip
                           contentStyle={{
                             background: "#ffffff",
@@ -675,44 +540,205 @@ function StatisticsPage() {
                           labelStyle={{ color: "#8a726a" }}
                         />
                         <Bar
-                          dataKey="commandes"
-                          fill="#c85a32"
+                          dataKey="orders"
+                          fill="#1b8354"
                           radius={[4, 4, 0, 0]}
                           name="Commandes"
                         />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
+                )}
 
-                  {/* Top 5 heures */}
-                  <div className="space-y-2">
-                    {peakHours.map((peak, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center justify-between p-3 rounded-lg bg-surface-warm hover:bg-charcoal/5 transition-colors"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-terracotta-tint text-terracotta-deep flex items-center justify-center font-bold text-sm">
-                            {peak.hour}h
-                          </div>
-                          <div>
-                            <p className="text-sm font-semibold">
-                              {peak.hour}h - {peak.hour + 1}h
-                            </p>
-                            <p className="text-xs text-muted-foreground">{peak.orders} commandes</p>
-                          </div>
-                        </div>
-                        {i === 0 && <TrendingUp className="w-4 h-4 text-emerald-deep" />}
-                      </div>
-                    ))}
+                {activeChart === "comparison" && (
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={weeklyComparison}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,32,36,0.06)" />
+                        <XAxis
+                          dataKey="day"
+                          tick={{ fill: "#8a726a", fontSize: 11 }}
+                          axisLine={{ stroke: "rgba(28,32,36,0.12)" }}
+                          tickLine={false}
+                        />
+                        <YAxis
+                          tick={{ fill: "#8a726a", fontSize: 11 }}
+                          axisLine={false}
+                          tickLine={false}
+                          tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Bar
+                          dataKey="thisWeek"
+                          fill="#c85a32"
+                          radius={[4, 4, 0, 0]}
+                          name="Cette semaine"
+                        />
+                        <Bar
+                          dataKey="lastWeek"
+                          fill="#8a726a"
+                          radius={[4, 4, 0, 0]}
+                          name="Semaine dernière"
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* Graphiques secondaires */}
+          <div className="grid lg:grid-cols-2 gap-6 mb-8">
+            {/* Top items avec graphique */}
+            {showTop && (
+              <div className="p-6 rounded-2xl border border-border bg-card">
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                  <PieChart className="w-5 h-5 text-terracotta" />
+                  Top 5 des articles
+                </h3>
+                {topItems.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">Aucune donnée disponible</p>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Pie chart */}
+                    <div className="h-48">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <RePieChart>
+                          <Pie
+                            data={topItemsPieData}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={50}
+                            outerRadius={80}
+                            paddingAngle={3}
+                            dataKey="value"
+                          >
+                            {topItemsPieData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip
+                            contentStyle={{
+                              background: "#ffffff",
+                              border: "1px solid rgba(28,32,36,0.1)",
+                              borderRadius: 12,
+                            }}
+                            formatter={(value: number) => formatCurrency(value)}
+                          />
+                        </RePieChart>
+                      </ResponsiveContainer>
+                    </div>
+
+                    {/* Liste */}
+                    <div className="space-y-2">
+                      {topItems.map((item, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center justify-between p-3 rounded-lg bg-surface-warm hover:bg-charcoal/5 transition-colors"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div
+                              className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+                              style={{
+                                backgroundColor: `${CHART_COLORS[i]}20`,
+                                color: CHART_COLORS[i],
+                              }}
+                            >
+                              {i + 1}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-sm font-semibold truncate">{item.description}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {item.quantity} vendus
+                              </p>
+                            </div>
+                          </div>
+                          <p className="text-sm font-bold text-terracotta-deep flex-shrink-0 ml-2">
+                            {item.revenue.toLocaleString("fr-FR")} F
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Heures de pointe avec bar chart */}
+            {showHours && (
+              <div className="p-6 rounded-2xl border border-border bg-card">
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-terracotta" />
+                  Heures de pointe
+                </h3>
+                {peakHours.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">Aucune donnée disponible</p>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Bar chart des heures */}
+                    <div className="h-48">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={peakHoursData}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,32,36,0.06)" />
+                          <XAxis
+                            dataKey="hour"
+                            tick={{ fill: "#8a726a", fontSize: 10 }}
+                            axisLine={{ stroke: "rgba(28,32,36,0.12)" }}
+                            tickLine={false}
+                            interval={2}
+                          />
+                          <YAxis hide />
+                          <Tooltip
+                            contentStyle={{
+                              background: "#ffffff",
+                              border: "1px solid rgba(28,32,36,0.1)",
+                              borderRadius: 12,
+                            }}
+                            labelStyle={{ color: "#8a726a" }}
+                          />
+                          <Bar
+                            dataKey="commandes"
+                            fill="#c85a32"
+                            radius={[4, 4, 0, 0]}
+                            name="Commandes"
+                          />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+
+                    {/* Top 5 heures */}
+                    <div className="space-y-2">
+                      {peakHours.map((peak, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center justify-between p-3 rounded-lg bg-surface-warm hover:bg-charcoal/5 transition-colors"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-terracotta-tint text-terracotta-deep flex items-center justify-center font-bold text-sm">
+                              {peak.hour}h
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold">
+                                {peak.hour}h - {peak.hour + 1}h
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {peak.orders} commandes
+                              </p>
+                            </div>
+                          </div>
+                          {i === 0 && <TrendingUp className="w-4 h-4 text-emerald-deep" />}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Carte jour de la semaine */}
-          {dailyStats.length >= 7 && (
+          {showAdvanced && dailyStats.length >= 7 && (
             <div className="p-6 rounded-2xl border border-border bg-card mb-8">
               <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-terracotta" />
@@ -743,7 +769,7 @@ function StatisticsPage() {
           )}
 
           {/* Carte des tickets moyens */}
-          {dailyStats.length > 0 && (
+          {showAdvanced && dailyStats.length > 0 && (
             <div className="p-6 rounded-2xl border border-border bg-card mb-8">
               <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                 <DollarSign className="w-5 h-5 text-terracotta" />
@@ -805,6 +831,7 @@ function StatisticsPage() {
               </p>
             </div>
           </div>
+          {r && <ReportsPanel restaurantId={r.id} restaurantName={r.name} plan={r.plan} />}
         </>
       )}
     </div>

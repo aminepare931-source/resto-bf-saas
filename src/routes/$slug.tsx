@@ -11,7 +11,8 @@ import type {
 import { OrderCartFab } from "@/components/public/OrderCart";
 import { CartProvider } from "@/components/public/CartContext";
 import { demoData } from "@/components/public/demo-data";
-import { effectiveTemplate, isSiteOffline } from "@/lib/plans";
+import { effectiveTemplateFor, isSiteOffline, usePlanAccess } from "@/lib/plans";
+import { VideoStrip } from "@/components/public/VideoStrip";
 
 export const Route = createFileRoute("/$slug")({
   ssr: false,
@@ -49,11 +50,14 @@ function PublicRestaurantPage() {
   const [menu, setMenu] = useState<PublicMenuItem[]>([]);
   const [reviews, setReviews] = useState<PublicReview[]>([]);
   const [gallery, setGallery] = useState<PublicGalleryImage[]>([]);
+  const [videos, setVideos] = useState<PublicGalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   // Site coupé pour le public (abonnement expiré / suspendu / annulé)
   const [offlineStatus, setOfflineStatus] = useState<string | null>(null);
   // Le propriétaire / super admin peut voir son site même coupé
   const [viewerBypass, setViewerBypass] = useState(false);
+
+  const access = usePlanAccess(restaurant?.plan);
 
   useEffect(() => {
     let isMounted = true;
@@ -89,7 +93,7 @@ function PublicRestaurantPage() {
       }
 
       const cols =
-        "id, name, city, cuisine, description, address, hours, phone, whatsapp, email, plan, logo_url, template, subscription_status, offers_delivery";
+        "id, name, city, cuisine, description, address, hours, phone, whatsapp, email, plan, logo_url, template, subscription_status, offers_delivery, hero_title, hero_subtitle, about_text, primary_color, font_family, social_links";
 
       let rRaw: any = null;
       let fromPublicView = true;
@@ -144,10 +148,16 @@ function PublicRestaurantPage() {
         email: rRaw.email ?? "",
         logo_url: rRaw.logo_url ?? null,
         offers_delivery: rRaw.offers_delivery ?? false,
+        hero_title: rRaw.hero_title ?? null,
+        hero_subtitle: rRaw.hero_subtitle ?? null,
+        about_text: rRaw.about_text ?? null,
+        primary_color: rRaw.primary_color ?? null,
+        font_family: rRaw.font_family ?? null,
+        social_links: rRaw.social_links ?? null,
         // Le vrai forfait, plus de "premium" forcé
         plan: rRaw.plan ?? "basique",
         // ?tpl= = aperçu explicite ; sinon template de la base, borné au forfait
-        template: tpl || effectiveTemplate(rRaw.plan, rRaw.template),
+        template: tpl || rRaw.template || null,
       });
 
       try {
@@ -161,21 +171,23 @@ function PublicRestaurantPage() {
             .order("position"),
           supabase
             .from("reviews")
-            .select("id, author_name, rating, comment, created_at")
+            .select("id, author_name, rating, comment, created_at, owner_reply")
             .eq("restaurant_id", rRaw.id)
             .eq("approved", true)
             .order("created_at", { ascending: false })
             .limit(12),
           supabase
             .from("gallery_images")
-            .select("id, image_url, caption")
+            .select("id, image_url, caption, media_type")
             .eq("restaurant_id", rRaw.id)
             .order("position"),
         ]);
         if (!isMounted) return;
         setMenu((m.data ?? []) as PublicMenuItem[]);
         setReviews((rev.data ?? []) as PublicReview[]);
-        setGallery((g.data ?? []) as PublicGalleryImage[]);
+        const media = (g.data ?? []) as (PublicGalleryImage & { media_type?: string })[];
+        setGallery(media.filter((x) => x.media_type !== "video"));
+        setVideos(media.filter((x) => x.media_type === "video"));
       } catch (e) {
         console.warn("Details fetch error:", e);
       }
@@ -270,8 +282,57 @@ function PublicRestaurantPage() {
             Site hors ligne pour le public — abonnement « {offlineStatus} ». Vous seul le voyez.
           </div>
         )}
-        {renderTemplate(restaurant.template, { restaurant, menu, reviews, gallery, view })}
-        <OrderCartFab restaurant={restaurant} menu={menu} tableNumber={table ?? null} />
+        {(() => {
+          // Chaque case cochée dans le super admin décide de ce que le visiteur voit
+          const showReviews = access.has("avis-clients");
+          const showPhotos = access.hasAny(["galerie-photos", "galerie-illimitee"]);
+          const showVideos = access.has("galerie-videos");
+          const showCategories = access.has("categories-plats");
+          const gatedMenu = showCategories ? menu : menu.map((m) => ({ ...m, category: "Menu" }));
+          const gatedVideos = showVideos ? videos : [];
+          const t = tpl ? (restaurant.template ?? "") : effectiveTemplateFor(access.has, restaurant.template);
+          const stdHandlesVideos = [
+            "soleil",
+            "savane",
+            "marche",
+            "moderne",
+            "std-soleil",
+            "std-savane",
+            "std-marche",
+            "std-moderne",
+          ].includes(t);
+          return (
+            <>
+              {renderTemplate(t, {
+                restaurant: {
+                  ...restaurant,
+                  template: t,
+                  whatsapp: access.has("commande-whatsapp") ? restaurant.whatsapp : null,
+                  logo_url: access.has("logo-personnalise") ? restaurant.logo_url : null,
+                  primary_color: access.has("personnalisation-couleurs")
+                    ? restaurant.primary_color
+                    : null,
+                  font_family: access.has("personnalisation-police")
+                    ? restaurant.font_family
+                    : null,
+                  hero_title: access.has("contenu-branding") ? restaurant.hero_title : null,
+                  hero_subtitle: access.has("contenu-branding") ? restaurant.hero_subtitle : null,
+                  about_text: access.has("contenu-branding") ? restaurant.about_text : null,
+                  social_links: access.has("reseaux-sociaux") ? restaurant.social_links : null,
+                },
+                menu: gatedMenu,
+                reviews: showReviews ? reviews : [],
+                gallery: showPhotos ? gallery : [],
+                videos: gatedVideos,
+                view,
+              })}
+              {!stdHandlesVideos && <VideoStrip videos={gatedVideos} />}
+            </>
+          );
+        })()}
+        {access.has("panier-commande") && (
+          <OrderCartFab restaurant={restaurant} menu={menu} tableNumber={table ?? null} />
+        )}
       </div>
     </CartProvider>
   );

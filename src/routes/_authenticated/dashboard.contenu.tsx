@@ -1,3 +1,5 @@
+import { usePlanAccess } from "@/lib/plans";
+import { useMyRestaurant } from "@/hooks/use-my-restaurant";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +23,13 @@ const FONTS = [
 ];
 
 function ContentPage() {
+  const { restaurant: myResto } = useMyRestaurant();
+  const { has } = usePlanAccess(myResto?.plan);
+  const canLogo = has("logo-personnalise");
+  const canColor = has("personnalisation-couleurs");
+  const canFont = has("personnalisation-police");
+  const canContent = has("contenu-branding");
+  const canSocial = has("reseaux-sociaux");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -119,133 +128,146 @@ function ContentPage() {
       </div>
 
       <form onSubmit={save} className="space-y-8">
-        <Section title="Identité visuelle">
-          <div className="grid sm:grid-cols-[200px_1fr] gap-6 items-start">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
-                Logo
-              </p>
-              <div className="aspect-square rounded-2xl border-2 border-dashed border-border bg-surface-warm flex items-center justify-center overflow-hidden">
-                {form.logo_url ? (
-                  <img
-                    src={form.logo_url}
-                    alt="Logo"
-                    className="w-full h-full object-contain p-4"
-                  />
-                ) : (
-                  <UtensilsCrossed className="w-10 h-10 text-muted-foreground" />
+        {(canLogo || canColor || canFont) && (
+          <Section title="Identité visuelle">
+            <div className="grid sm:grid-cols-[200px_1fr] gap-6 items-start">
+              {canLogo && (
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                    Logo
+                  </p>
+                  <div className="aspect-square rounded-2xl border-2 border-dashed border-border bg-surface-warm flex items-center justify-center overflow-hidden">
+                    {form.logo_url ? (
+                      <img
+                        src={form.logo_url}
+                        alt="Logo"
+                        className="w-full h-full object-contain p-4"
+                      />
+                    ) : (
+                      <UtensilsCrossed className="w-10 h-10 text-muted-foreground" />
+                    )}
+                  </div>
+                  <label className="block mt-3 px-4 py-2.5 rounded-xl border border-terracotta/30 text-terracotta text-center text-sm font-bold cursor-pointer hover:bg-terracotta-tint transition-colors">
+                    {uploading ? "Envoi..." : form.logo_url ? "Changer" : "Téléverser"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => e.target.files?.[0] && onLogo(e.target.files[0])}
+                    />
+                  </label>
+                  {form.logo_url && (
+                    <button
+                      type="button"
+                      onClick={() => setForm((f) => ({ ...f, logo_url: "" }))}
+                      className="block mt-2 w-full text-xs text-muted-foreground hover:text-destructive"
+                    >
+                      Supprimer
+                    </button>
+                  )}
+                </div>
+              )}
+              <div className="space-y-4">
+                {canColor && (
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Couleur principale
+                    </label>
+                    <div className="mt-2 flex gap-3 items-center">
+                      <input
+                        type="color"
+                        value={form.primary_color}
+                        onChange={(e) => setForm((f) => ({ ...f, primary_color: e.target.value }))}
+                        className="w-16 h-12 rounded-xl cursor-pointer bg-transparent"
+                      />
+                      <input
+                        type="text"
+                        value={form.primary_color}
+                        onChange={(e) => setForm((f) => ({ ...f, primary_color: e.target.value }))}
+                        className="flex-1 px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all font-mono text-sm"
+                      />
+                    </div>
+                  </div>
+                )}
+                {canFont && (
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Police d'écriture
+                    </label>
+                    <select
+                      value={form.font_family}
+                      onChange={(e) => setForm((f) => ({ ...f, font_family: e.target.value }))}
+                      className="mt-2 w-full px-3 py-2.5 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
+                    >
+                      {FONTS.map((f) => (
+                        <option key={f} value={f}>
+                          {f}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 )}
               </div>
-              <label className="block mt-3 px-4 py-2.5 rounded-xl border border-terracotta/30 text-terracotta text-center text-sm font-bold cursor-pointer hover:bg-terracotta-tint transition-colors">
-                {uploading ? "Envoi..." : form.logo_url ? "Changer" : "Téléverser"}
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => e.target.files?.[0] && onLogo(e.target.files[0])}
-                />
-              </label>
-              {form.logo_url && (
-                <button
-                  type="button"
-                  onClick={() => setForm((f) => ({ ...f, logo_url: "" }))}
-                  className="block mt-2 w-full text-xs text-muted-foreground hover:text-destructive"
-                >
-                  Supprimer
-                </button>
-              )}
             </div>
+          </Section>
+        )}
 
-            <div className="space-y-4">
-              <div>
-                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Couleur principale
-                </label>
-                <div className="mt-2 flex gap-3 items-center">
-                  <input
-                    type="color"
-                    value={form.primary_color}
-                    onChange={(e) => setForm((f) => ({ ...f, primary_color: e.target.value }))}
-                    className="w-16 h-12 rounded-xl cursor-pointer bg-transparent"
-                  />
-                  <input
-                    type="text"
-                    value={form.primary_color}
-                    onChange={(e) => setForm((f) => ({ ...f, primary_color: e.target.value }))}
-                    className="flex-1 px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all font-mono text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Police d'écriture
-                </label>
-                <select
-                  value={form.font_family}
-                  onChange={(e) => setForm((f) => ({ ...f, font_family: e.target.value }))}
-                  className="mt-2 w-full px-3 py-2.5 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
-                >
-                  {FONTS.map((f) => (
-                    <option key={f} value={f}>
-                      {f}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-        </Section>
+        {canContent && (
+          <>
+            <Section title="Hero (page d'accueil)">
+              <Field
+                label="Titre principal"
+                value={form.hero_title}
+                onChange={(v) => setForm((f) => ({ ...f, hero_title: v }))}
+                placeholder="Bienvenue chez..."
+              />
+              <Field
+                label="Sous-titre"
+                value={form.hero_subtitle}
+                onChange={(v) => setForm((f) => ({ ...f, hero_subtitle: v }))}
+                placeholder="La meilleure cuisine de Ouagadougou"
+              />
+            </Section>
 
-        <Section title="Hero (page d'accueil)">
-          <Field
-            label="Titre principal"
-            value={form.hero_title}
-            onChange={(v) => setForm((f) => ({ ...f, hero_title: v }))}
-            placeholder="Bienvenue chez..."
-          />
-          <Field
-            label="Sous-titre"
-            value={form.hero_subtitle}
-            onChange={(v) => setForm((f) => ({ ...f, hero_subtitle: v }))}
-            placeholder="La meilleure cuisine de Ouagadougou"
-          />
-        </Section>
+            <Section title="À propos">
+              <TextArea
+                label="Histoire / présentation"
+                value={form.about_text}
+                onChange={(v) => setForm((f) => ({ ...f, about_text: v }))}
+                rows={5}
+              />
+            </Section>
+          </>
+        )}
 
-        <Section title="À propos">
-          <TextArea
-            label="Histoire / présentation"
-            value={form.about_text}
-            onChange={(v) => setForm((f) => ({ ...f, about_text: v }))}
-            rows={5}
-          />
-        </Section>
-
-        <Section title="Réseaux sociaux">
-          <Field
-            label="Facebook"
-            value={form.social_links.facebook ?? ""}
-            onChange={(v) =>
-              setForm((f) => ({ ...f, social_links: { ...f.social_links, facebook: v } }))
-            }
-            placeholder="https://facebook.com/..."
-          />
-          <Field
-            label="Instagram"
-            value={form.social_links.instagram ?? ""}
-            onChange={(v) =>
-              setForm((f) => ({ ...f, social_links: { ...f.social_links, instagram: v } }))
-            }
-            placeholder="https://instagram.com/..."
-          />
-          <Field
-            label="TikTok"
-            value={form.social_links.tiktok ?? ""}
-            onChange={(v) =>
-              setForm((f) => ({ ...f, social_links: { ...f.social_links, tiktok: v } }))
-            }
-            placeholder="https://tiktok.com/@..."
-          />
-        </Section>
+        {canSocial && (
+          <Section title="Réseaux sociaux">
+            <Field
+              label="Facebook"
+              value={form.social_links.facebook ?? ""}
+              onChange={(v) =>
+                setForm((f) => ({ ...f, social_links: { ...f.social_links, facebook: v } }))
+              }
+              placeholder="https://facebook.com/..."
+            />
+            <Field
+              label="Instagram"
+              value={form.social_links.instagram ?? ""}
+              onChange={(v) =>
+                setForm((f) => ({ ...f, social_links: { ...f.social_links, instagram: v } }))
+              }
+              placeholder="https://instagram.com/..."
+            />
+            <Field
+              label="TikTok"
+              value={form.social_links.tiktok ?? ""}
+              onChange={(v) =>
+                setForm((f) => ({ ...f, social_links: { ...f.social_links, tiktok: v } }))
+              }
+              placeholder="https://tiktok.com/@..."
+            />
+          </Section>
+        )}
 
         <Section title="Factures (Premium)">
           <div className="grid sm:grid-cols-2 gap-4">

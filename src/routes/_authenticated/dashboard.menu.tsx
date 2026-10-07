@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useMyRestaurant } from "@/hooks/use-my-restaurant";
+import { usePlanAccess, menuLimit } from "@/lib/plans";
 import { uploadRestaurantFile, deleteRestaurantFile } from "@/lib/storage";
 import { StorageImage } from "@/components/StorageImage";
 
@@ -22,7 +23,6 @@ type Item = {
   position: number;
 };
 
-const MAX_BY_PLAN: Record<string, number> = { gratuit: 5, standard: 30, premium: 9999 };
 
 function MenuPage() {
   const { restaurant } = useMyRestaurant();
@@ -31,7 +31,9 @@ function MenuPage() {
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const max = restaurant ? (MAX_BY_PLAN[restaurant.plan] ?? 30) : 30;
+  const { has } = usePlanAccess(restaurant?.plan);
+  const max = menuLimit(has);
+  const canCategories = has("categories-plats");
 
   const load = async () => {
     if (!restaurant) return;
@@ -50,7 +52,7 @@ function MenuPage() {
 
   const startNew = () => {
     if (items.length >= max) {
-      toast.error(`Limite atteinte (${max} plats sur votre forfait ${restaurant?.plan}).`);
+      toast.error(`Limite atteinte : ${max} plats maximum sur votre forfait.`);
       return;
     }
     setEditing({ category: "Plats", name: "", description: "", price: 0, available: true });
@@ -69,7 +71,7 @@ function MenuPage() {
       }
       const payload = {
         restaurant_id: restaurant.id,
-        category: editing.category || "Plats",
+        category: canCategories ? editing.category || "Plats" : "Plats",
         name: editing.name,
         description: editing.description ?? null,
         price: Number(editing.price) || 0,
@@ -113,7 +115,7 @@ function MenuPage() {
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">Menu</p>
           <h1 className="text-3xl font-black">
-            Vos plats ({items.length}/{max === 9999 ? "∞" : max})
+            Vos plats ({items.length}/{Number.isFinite(max) ? max : "∞"})
           </h1>
         </div>
         <button
@@ -193,12 +195,19 @@ function MenuPage() {
               {editing.id ? "Modifier le plat" : "Nouveau plat"}
             </h2>
             <div className="space-y-3">
-              <Input
-                label="Catégorie"
-                value={editing.category ?? ""}
-                onChange={(v) => setEditing({ ...editing, category: v })}
-                placeholder="Plats, Boissons, Desserts..."
-              />
+              {canCategories ? (
+                <Input
+                  label="Catégorie"
+                  value={editing.category ?? ""}
+                  onChange={(v) => setEditing({ ...editing, category: v })}
+                  placeholder="Plats, Boissons, Desserts..."
+                />
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Les catégories de plats ne sont pas incluses dans votre forfait : tous vos plats sont
+                  regroupés dans « Plats ».
+                </p>
+              )}
               <Input
                 label="Nom du plat"
                 value={editing.name ?? ""}

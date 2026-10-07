@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useMyRestaurant } from "@/hooks/use-my-restaurant";
+import { usePlanAccess } from "@/lib/plans";
 
 export const Route = createFileRoute("/_authenticated/dashboard/avis")({
   component: AvisPage,
@@ -15,11 +16,16 @@ type Review = {
   comment: string | null;
   approved: boolean;
   created_at: string;
+  owner_reply: string | null;
 };
 
 function AvisPage() {
   const { restaurant } = useMyRestaurant();
   const [list, setList] = useState<Review[]>([]);
+  const { has } = usePlanAccess(restaurant?.plan);
+  const canReply = has("repondre-avis");
+  const [replying, setReplying] = useState<string | null>(null);
+  const [draft, setDraft] = useState("");
 
   const load = async () => {
     if (!restaurant) return;
@@ -37,6 +43,19 @@ function AvisPage() {
   const toggle = async (r: Review) => {
     await supabase.from("reviews").update({ approved: !r.approved }).eq("id", r.id);
     toast.success(r.approved ? "Masqué" : "Publié ✓");
+    load();
+  };
+
+  const saveReply = async (r: Review) => {
+    const text = draft.trim();
+    const { error } = await supabase
+      .from("reviews")
+      .update({ owner_reply: text || null, owner_replied_at: text ? new Date().toISOString() : null })
+      .eq("id", r.id);
+    if (error) return toast.error(error.message);
+    toast.success(text ? "Réponse publiée ✓" : "Réponse supprimée");
+    setReplying(null);
+    setDraft("");
     load();
   };
 
@@ -86,8 +105,44 @@ function AvisPage() {
                   <p className="text-[10px] text-muted-foreground mt-2">
                     {new Date(r.created_at).toLocaleDateString("fr-FR")}
                   </p>
+                  {r.owner_reply && replying !== r.id && (
+                    <div className="mt-3 pl-3 border-l-2 border-terracotta/40 text-sm">
+                      <p className="text-[10px] uppercase font-bold text-terracotta mb-0.5">Votre réponse</p>
+                      <p className="text-muted-foreground">{r.owner_reply}</p>
+                    </div>
+                  )}
+                  {canReply && replying === r.id && (
+                    <div className="mt-3 space-y-2">
+                      <textarea
+                        rows={3}
+                        value={draft}
+                        onChange={(e) => setDraft(e.target.value)}
+                        placeholder="Remerciez votre client, répondez à sa remarque…"
+                        className="w-full px-3 py-2 rounded-lg bg-surface-warm border border-input text-sm outline-none focus:border-terracotta/40"
+                      />
+                      <div className="flex gap-2">
+                        <button onClick={() => saveReply(r)} className="px-4 py-1.5 rounded-lg bg-terracotta text-white text-xs font-bold">
+                          Publier la réponse
+                        </button>
+                        <button onClick={() => setReplying(null)} className="px-4 py-1.5 rounded-lg border border-border text-xs font-semibold">
+                          Annuler
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className="flex gap-2">
+                  {canReply && (
+                    <button
+                      onClick={() => {
+                        setReplying(r.id);
+                        setDraft(r.owner_reply ?? "");
+                      }}
+                      className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold hover:bg-surface-warm"
+                    >
+                      {r.owner_reply ? "Modifier la réponse" : "Répondre"}
+                    </button>
+                  )}
                   <button
                     onClick={() => toggle(r)}
                     className={`px-3 py-1.5 rounded-lg border text-xs font-semibold transition-colors ${

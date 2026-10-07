@@ -1,3 +1,4 @@
+import { usePlanAccess, allowedTemplateTiers } from "@/lib/plans";
 import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -126,7 +127,9 @@ function ChooseTemplate() {
     })();
   }, []);
 
-  const canPick = (p: Tpl["plan"]) => planRank[userPlan] >= planRank[p];
+  const access = usePlanAccess(userPlan === "gratuit" ? "basique" : userPlan);
+  const allowedTiers = allowedTemplateTiers(access.has);
+  const canPick = (p: Tpl["plan"]) => allowedTiers.includes(p === "gratuit" ? "basique" : p);
 
   const save = async () => {
     if (!selected) return;

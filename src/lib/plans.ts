@@ -1,5 +1,6 @@
 import * as React from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { FEATURE_REGISTRY } from "@/lib/features";
 
 /**
  * Source unique des droits par forfait.
@@ -38,6 +39,27 @@ export function templateTier(templateId?: string | null): PlanKey {
   return "basique";
 }
 
+/** Niveaux de templates autorisés d'après les cases cochées (template-basique/standard/premium). */
+export function allowedTemplateTiers(has: (id: string) => boolean): PlanKey[] {
+  const tiers: PlanKey[] = [];
+  if (has("template-basique")) tiers.push("basique");
+  if (has("template-standard")) tiers.push("standard");
+  if (has("template-premium")) tiers.push("premium");
+  return tiers;
+}
+
+/** Template affiché : celui choisi s'il est autorisé par les cases cochées, sinon le meilleur autorisé. */
+export function effectiveTemplateFor(
+  has: (id: string) => boolean,
+  template?: string | null,
+): string {
+  const tiers = allowedTemplateTiers(has);
+  if (template && tiers.includes(templateTier(template))) return template;
+  if (tiers.includes("premium")) return "prem-royal";
+  if (tiers.includes("standard")) return "std-soleil";
+  return "gratuit-classique";
+}
+
 export function defaultTemplateFor(plan?: string | null): string {
   const k = planKey(plan);
   if (k === "premium") return "prem-royal";
@@ -60,24 +82,10 @@ export function effectiveTemplate(plan?: string | null, template?: string | null
 
 export type PlanFeatureRow = { slug: string | null; plans: string[] };
 
-/** Valeurs de secours (reprennent les réglages par défaut du super admin). */
-export const FALLBACK_FEATURE_PLANS: Record<string, PlanKey[]> = {
-  "reservations-basiques": ["basique"],
-  "reservations-avancees": ["standard", "premium"],
-  "galerie-photos": ["standard", "premium"],
-  "galerie-illimitee": ["premium"],
-  "avis-clients": ["standard", "premium"],
-  "facturation-pdf": ["standard"],
-  "facturation-logo": ["premium"],
-  "facture-auto": ["premium"],
-  devis: ["premium"],
-  "gestion-employes": ["premium"],
-  "gestion-stocks": ["standard", "premium"],
-  "chat-interne": ["standard", "premium"],
-  "messagerie-whatsapp": ["standard", "premium"],
-  "plan-salle": ["standard", "premium"],
-  "personnalisation-couleurs": ["standard", "premium"],
-};
+/** Valeurs de secours (réglages par défaut du registre) si la table est vide ou injoignable. */
+export const FALLBACK_FEATURE_PLANS: Record<string, PlanKey[]> = Object.fromEntries(
+  FEATURE_REGISTRY.map((f) => [f.id, f.defaultPlans]),
+);
 
 export function featureEnabled(
   rows: PlanFeatureRow[] | null,
@@ -89,6 +97,20 @@ export function featureEnabled(
   if (row) return row.plans.includes(k);
   return FALLBACK_FEATURE_PLANS[featureId]?.includes(k) ?? false;
 }
+
+/** Nombre max de plats selon les cases cochées (la plus généreuse l'emporte). */
+export function menuLimit(has: (id: string) => boolean): number {
+  if (has("menu-illimite")) return Number.POSITIVE_INFINITY;
+  if (has("menu-30-plats")) return 30;
+  return 10;
+}
+
+/** Nombre max de photos en galerie. */
+export function galleryPhotoLimit(has: (id: string) => boolean): number {
+  return has("galerie-illimitee") ? Number.POSITIVE_INFINITY : 12;
+}
+
+export const GALLERY_VIDEO_LIMIT = 6;
 
 /* Cache module : une seule requête partagée par tous les composants. */
 let cache: PlanFeatureRow[] | null = null;

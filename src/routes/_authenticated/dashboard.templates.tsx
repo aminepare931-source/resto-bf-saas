@@ -1,3 +1,4 @@
+import { usePlanAccess, allowedTemplateTiers } from "@/lib/plans";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -131,6 +132,8 @@ function planToTier(plan: string): PlanTier {
 function DashboardTemplates() {
   const navigate = useNavigate();
   const { restaurant: r } = useMyRestaurant();
+  const access = usePlanAccess(r?.plan);
+  const allowedTiers = allowedTemplateTiers(access.has);
 
   const [userPlan, setUserPlan] = useState<PlanTier>("basique");
   const [selected, setSelected] = useState<string>(() => {
@@ -158,7 +161,7 @@ function DashboardTemplates() {
     window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
   };
 
-  const canPick = (p: PlanTier) => planRank[p] <= planRank[userPlan];
+  const canPick = (p: PlanTier) => allowedTiers.includes(p);
 
   const handleSave = async () => {
     if (!selected) return;
@@ -189,7 +192,9 @@ function DashboardTemplates() {
 
       if (!mainData || mainData.length === 0) {
         setSaving(false);
-        toast.error("Aucun restaurant trouvé pour votre compte — la sauvegarde n'a pas pu s'appliquer.");
+        toast.error(
+          "Aucun restaurant trouvé pour votre compte — la sauvegarde n'a pas pu s'appliquer.",
+        );
         return;
       }
 
@@ -287,9 +292,21 @@ function DashboardTemplates() {
       <div className="space-y-8">
         {(categoryFilter === "tout"
           ? [
-              { key: "premium", label: "Premium", items: filteredTemplates.filter((t) => t.plan === "premium") },
-              { key: "standard", label: "Standard", items: filteredTemplates.filter((t) => t.plan === "standard") },
-              { key: "basique", label: "Gratuit", items: filteredTemplates.filter((t) => t.plan === "basique") },
+              {
+                key: "premium",
+                label: "Premium",
+                items: filteredTemplates.filter((t) => t.plan === "premium"),
+              },
+              {
+                key: "standard",
+                label: "Standard",
+                items: filteredTemplates.filter((t) => t.plan === "standard"),
+              },
+              {
+                key: "basique",
+                label: "Gratuit",
+                items: filteredTemplates.filter((t) => t.plan === "basique"),
+              },
             ]
           : [{ key: categoryFilter, label: "", items: filteredTemplates }]
         ).map(

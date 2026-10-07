@@ -36,7 +36,9 @@ type Invoice = {
 
 function BillingPage() {
   const { restaurant: r, loading: loadingResto } = useMyRestaurant();
-  const { hasAny } = usePlanAccess(r?.plan);
+  const { has, hasAny } = usePlanAccess(r?.plan);
+  // Le logo n'apparaît sur les PDF que si la fonctionnalité est cochée pour le forfait
+  const rForPdf = r ? { ...r, logo_url: has("facturation-logo") ? r.logo_url : null } : r;
   const isPremium = hasAny(["facturation-pdf", "facturation-logo", "facture-auto", "devis"]);
 
   const [invoices, setInvoices] = useState<Invoice[]>([]);
@@ -139,14 +141,14 @@ function BillingPage() {
                   </td>
                   <td className="p-4 text-right">
                     <button
-                      onClick={() => downloadPdf(inv, r!)}
+                      onClick={() => downloadPdf(inv, rForPdf!)}
                       className="px-3 py-1.5 rounded-lg border border-terracotta/40 text-terracotta text-xs font-bold hover:bg-terracotta/10 transition-all"
                       title="Télécharger PDF"
                     >
                       PDF
                     </button>
                     <button
-                      onClick={() => downloadReceipt(inv, r!)}
+                      onClick={() => downloadReceipt(inv, rForPdf!)}
                       className="ml-2 px-3 py-1.5 rounded-lg border border-border text-xs font-bold hover:border-terracotta/40 hover:text-terracotta transition-all"
                       title="Télécharger Reçu"
                     >

@@ -34,6 +34,13 @@ export type PublicRestaurant = {
   template: string | null;
   logo_url: string | null;
   offers_delivery?: boolean;
+  /** Personnalisation (contenu & branding) */
+  hero_title?: string | null;
+  hero_subtitle?: string | null;
+  about_text?: string | null;
+  primary_color?: string | null;
+  font_family?: string | null;
+  social_links?: { facebook?: string; instagram?: string; tiktok?: string } | null;
 };
 
 export type PublicMenuItem = {
@@ -52,6 +59,7 @@ export type PublicReview = {
   rating: number;
   comment: string | null;
   created_at: string;
+  owner_reply?: string | null;
 };
 
 export type PublicGalleryImage = {
@@ -65,6 +73,8 @@ export type TemplateProps = {
   menu: PublicMenuItem[];
   reviews: PublicReview[];
   gallery: PublicGalleryImage[];
+  /** Vidéos de la galerie (si le forfait les inclut) */
+  videos?: PublicGalleryImage[];
   view?: string | null;
 };
 
@@ -217,25 +227,41 @@ export function DishModal({
             </p>
           )}
 
-          <div className="flex items-center justify-between mb-6 p-3 rounded-xl" style={{ background: theme.surfaceAlt, border: `1px solid ${theme.border}` }}>
-            <span className="text-sm font-semibold" style={{ color: theme.textMuted }}>Quantité</span>
+          <div
+            className="flex items-center justify-between mb-6 p-3 rounded-xl"
+            style={{ background: theme.surfaceAlt, border: `1px solid ${theme.border}` }}
+          >
+            <span className="text-sm font-semibold" style={{ color: theme.textMuted }}>
+              Quantité
+            </span>
             <div className="flex items-center gap-3">
               <button
                 type="button"
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
                 className="w-8 h-8 rounded-lg grid place-items-center font-bold text-base transition hover:opacity-80"
-                style={{ background: theme.surface, color: theme.text, border: `1px solid ${theme.border}` }}
+                style={{
+                  background: theme.surface,
+                  color: theme.text,
+                  border: `1px solid ${theme.border}`,
+                }}
               >
                 −
               </button>
-              <span className="font-bold text-base min-w-[20px] text-center" style={{ color: theme.text }}>
+              <span
+                className="font-bold text-base min-w-[20px] text-center"
+                style={{ color: theme.text }}
+              >
                 {qty}
               </span>
               <button
                 type="button"
                 onClick={() => setQty((q) => q + 1)}
                 className="w-8 h-8 rounded-lg grid place-items-center font-bold text-base transition hover:opacity-80"
-                style={{ background: theme.surface, color: theme.text, border: `1px solid ${theme.border}` }}
+                style={{
+                  background: theme.surface,
+                  color: theme.text,
+                  border: `1px solid ${theme.border}`,
+                }}
               >
                 +
               </button>
@@ -243,7 +269,9 @@ export function DishModal({
           </div>
 
           <div className="flex items-center justify-between mb-5">
-            <span className="text-sm font-medium" style={{ color: theme.textMuted }}>Total</span>
+            <span className="text-sm font-medium" style={{ color: theme.textMuted }}>
+              Total
+            </span>
             <p className="text-2xl font-black" style={{ color: theme.accent }}>
               {fmtPrice(dish.price * qty)}
             </p>
@@ -442,7 +470,10 @@ export function MenuGrid({ menu, theme }: { menu: PublicMenuItem[]; theme: Theme
                     <div className="flex-1 min-w-0 flex flex-col justify-between">
                       <div>
                         <div className="flex items-start justify-between gap-2 mb-1">
-                          <h4 className="font-bold leading-tight line-clamp-1" style={{ color: theme.text }}>
+                          <h4
+                            className="font-bold leading-tight line-clamp-1"
+                            style={{ color: theme.text }}
+                          >
                             {it.name}
                           </h4>
                           <span
@@ -453,14 +484,20 @@ export function MenuGrid({ menu, theme }: { menu: PublicMenuItem[]; theme: Theme
                           </span>
                         </div>
                         {it.description && (
-                          <p className="text-xs leading-relaxed line-clamp-2" style={{ color: theme.textMuted }}>
+                          <p
+                            className="text-xs leading-relaxed line-clamp-2"
+                            style={{ color: theme.textMuted }}
+                          >
                             {it.description}
                           </p>
                         )}
                       </div>
 
                       <div className="mt-2 flex items-center justify-between gap-2">
-                        <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: theme.accent }}>
+                        <span
+                          className="text-[10px] uppercase font-bold tracking-wider"
+                          style={{ color: theme.accent }}
+                        >
                           Découvrir →
                         </span>
                         {cart && (
@@ -588,7 +625,8 @@ export function StandardMobileBar({
   const totalCount = cart?.count ?? 0;
 
   return (
-    <div className="md:hidden fixed bottom-4 inset-x-4 z-[90] flex items-center justify-around py-2.5 px-4 rounded-2xl shadow-xl backdrop-blur-xl border"
+    <div
+      className="md:hidden fixed bottom-4 inset-x-4 z-[90] flex items-center justify-around py-2.5 px-4 rounded-2xl shadow-xl backdrop-blur-xl border"
       style={{
         background: `${theme.bg}ee`,
         borderColor: theme.border,
@@ -650,7 +688,6 @@ export function StandardMobileBar({
   );
 }
 
-
 /* ---------- Reviews ---------- */
 
 export function ReviewList({ reviews, theme }: { reviews: PublicReview[]; theme: Theme }) {
@@ -694,6 +731,20 @@ export function ReviewList({ reviews, theme }: { reviews: PublicReview[]; theme:
             <p className="text-sm leading-relaxed" style={{ color: theme.textMuted }}>
               "{r.comment}"
             </p>
+          )}
+          {r.owner_reply && (
+            <div
+              className="mt-3 pl-3 text-sm"
+              style={{ borderLeft: `2px solid ${theme.accent}`, color: theme.textMuted }}
+            >
+              <strong
+                style={{ color: theme.accent }}
+                className="block text-[11px] uppercase tracking-wider"
+              >
+                Réponse du restaurant
+              </strong>
+              {r.owner_reply}
+            </div>
           )}
         </article>
       ))}

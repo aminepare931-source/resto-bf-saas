@@ -1,3 +1,4 @@
+import { usePlanAccess } from "@/lib/plans";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
@@ -15,6 +16,9 @@ type SavedTable = { id: string; number: string; zone: string | null };
 
 function QrCodePage() {
   const { restaurant: r, loading } = useMyRestaurant();
+  const { has } = usePlanAccess(r?.plan);
+  const canTableQr = has("qr-code-table");
+  const canCustomQr = has("qr-code-personnalise");
   const [size, setSize] = useState(512);
   const [color, setColor] = useState("#0a0a0f");
   const [bg, setBg] = useState("#ffffff");
@@ -81,7 +85,9 @@ function QrCodePage() {
     return (
       <div className="max-w-5xl">
         <div className="mb-8">
-          <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">QR Code</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-terracotta font-bold mb-2">
+            QR Code
+          </p>
           <h1 className="text-3xl font-black">QR Code professionnel</h1>
         </div>
 
@@ -89,7 +95,9 @@ function QrCodePage() {
           <div className="flex items-start gap-4">
             <AlertTriangle className="w-8 h-8 text-destructive shrink-0" />
             <div>
-              <h2 className="text-xl font-bold text-destructive mb-3">Mode développement détecté</h2>
+              <h2 className="text-xl font-bold text-destructive mb-3">
+                Mode développement détecté
+              </h2>
               <p className="text-sm text-muted-foreground mb-4">
                 Vous êtes en mode <strong>localhost</strong>. Les QR codes générés ne seront pas
                 accessibles depuis un téléphone externe.
@@ -116,7 +124,9 @@ function QrCodePage() {
                 </div>
 
                 <div className="p-4 rounded-xl bg-surface-warm border border-border">
-                  <p className="font-semibold text-terracotta mb-2">Option 2 : Déployer en production</p>
+                  <p className="font-semibold text-terracotta mb-2">
+                    Option 2 : Déployer en production
+                  </p>
                   <p className="text-muted-foreground">
                     Déployez votre site sur Vercel, Netlify, ou tout autre hébergeur. Le QR code
                     pointera automatiquement vers l'URL de production.
@@ -216,126 +226,134 @@ function QrCodePage() {
         </div>
 
         <div className="space-y-5">
-          <SettingCard label="Numéro de table">
-            <input
-              type="text"
-              value={tableNum}
-              onChange={(e) =>
-                setTableNum(e.target.value.replace(/[^A-Za-z0-9-]/g, "").slice(0, 10))
-              }
-              placeholder="ex : 12"
-              className="w-full px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
-            />
-            {savedTables.length > 0 ? (
-              <div className="flex flex-wrap gap-1.5 mt-2">
-                {savedTables.map((t) => (
-                  <button
-                    key={t.id}
-                    type="button"
-                    onClick={() => setTableNum(t.number)}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-colors ${
-                      tableNum === t.number
-                        ? "bg-terracotta text-white border-terracotta"
-                        : "bg-surface-warm border-border text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    Table {t.number}
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <p className="text-xs text-muted-foreground mt-1">
-                Ajoutez vos tables dans <strong>Tables</strong> pour les retrouver ici
-                rapidement.
-              </p>
-            )}
-          </SettingCard>
-
-          {savedTables.length > 0 && (
-            <button
-              onClick={async () => {
-                if (!r?.slug) return;
-                setBulkGenerating(true);
-                try {
-                  for (const t of savedTables) {
-                    const url = buildRestaurantUrl(r.slug, t.number, override);
-                    const dataUrl = await QRCode.toDataURL(url, {
-                      errorCorrectionLevel: "H",
-                      margin,
-                      width: size,
-                      color: { dark: color, light: bg },
-                    });
-                    const a = document.createElement("a");
-                    a.href = dataUrl;
-                    a.download = `qr-table-${t.number}.png`;
-                    a.click();
-                    await new Promise((res) => setTimeout(res, 400));
+          {canTableQr && (
+            <>
+              <SettingCard label="Numéro de table">
+                <input
+                  type="text"
+                  value={tableNum}
+                  onChange={(e) =>
+                    setTableNum(e.target.value.replace(/[^A-Za-z0-9-]/g, "").slice(0, 10))
                   }
-                  toast.success(`${savedTables.length} QR codes téléchargés (un par table)`);
-                } catch {
-                  toast.error("Erreur pendant la génération groupée");
-                } finally {
-                  setBulkGenerating(false);
-                }
-              }}
-              disabled={bulkGenerating}
-              className="w-full px-4 py-3 rounded-2xl border border-terracotta/40 bg-terracotta-tint text-terracotta-deep font-bold text-sm hover:bg-terracotta/20 transition-colors disabled:opacity-50"
-            >
-              {bulkGenerating ? (
-                "Génération en cours..."
-              ) : (
-                <span className="inline-flex items-center justify-center gap-2">
-                  <Download className="w-4 h-4" /> Télécharger les {savedTables.length} QR (un par
-                  table)
-                </span>
+                  placeholder="ex : 12"
+                  className="w-full px-3 py-2 rounded-lg bg-card border border-border focus:border-terracotta/50 focus:ring-2 focus:ring-terracotta/20 focus:outline-none transition-all text-sm"
+                />
+                {savedTables.length > 0 ? (
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {savedTables.map((t) => (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => setTableNum(t.number)}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition-colors ${
+                          tableNum === t.number
+                            ? "bg-terracotta text-white border-terracotta"
+                            : "bg-surface-warm border-border text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        Table {t.number}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Ajoutez vos tables dans <strong>Tables</strong> pour les retrouver ici
+                    rapidement.
+                  </p>
+                )}
+              </SettingCard>
+
+              {savedTables.length > 0 && (
+                <button
+                  onClick={async () => {
+                    if (!r?.slug) return;
+                    setBulkGenerating(true);
+                    try {
+                      for (const t of savedTables) {
+                        const url = buildRestaurantUrl(r.slug, t.number, override);
+                        const dataUrl = await QRCode.toDataURL(url, {
+                          errorCorrectionLevel: "H",
+                          margin,
+                          width: size,
+                          color: { dark: color, light: bg },
+                        });
+                        const a = document.createElement("a");
+                        a.href = dataUrl;
+                        a.download = `qr-table-${t.number}.png`;
+                        a.click();
+                        await new Promise((res) => setTimeout(res, 400));
+                      }
+                      toast.success(`${savedTables.length} QR codes téléchargés (un par table)`);
+                    } catch {
+                      toast.error("Erreur pendant la génération groupée");
+                    } finally {
+                      setBulkGenerating(false);
+                    }
+                  }}
+                  disabled={bulkGenerating}
+                  className="w-full px-4 py-3 rounded-2xl border border-terracotta/40 bg-terracotta-tint text-terracotta-deep font-bold text-sm hover:bg-terracotta/20 transition-colors disabled:opacity-50"
+                >
+                  {bulkGenerating ? (
+                    "Génération en cours..."
+                  ) : (
+                    <span className="inline-flex items-center justify-center gap-2">
+                      <Download className="w-4 h-4" /> Télécharger les {savedTables.length} QR (un
+                      par table)
+                    </span>
+                  )}
+                </button>
               )}
-            </button>
+            </>
           )}
 
-          <SettingCard label="Taille">
-            <input
-              type="range"
-              min={256}
-              max={1024}
-              step={64}
-              value={size}
-              onChange={(e) => setSize(+e.target.value)}
-              className="w-full accent-terracotta"
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              {size}×{size} px
-            </p>
-          </SettingCard>
+          {canCustomQr && (
+            <>
+              <SettingCard label="Taille">
+                <input
+                  type="range"
+                  min={256}
+                  max={1024}
+                  step={64}
+                  value={size}
+                  onChange={(e) => setSize(+e.target.value)}
+                  className="w-full accent-terracotta"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {size}×{size} px
+                </p>
+              </SettingCard>
 
-          <SettingCard label="Marge">
-            <input
-              type="range"
-              min={0}
-              max={8}
-              value={margin}
-              onChange={(e) => setMargin(+e.target.value)}
-              className="w-full accent-terracotta"
-            />
-            <p className="text-xs text-muted-foreground mt-1">{margin} blocs</p>
-          </SettingCard>
+              <SettingCard label="Marge">
+                <input
+                  type="range"
+                  min={0}
+                  max={8}
+                  value={margin}
+                  onChange={(e) => setMargin(+e.target.value)}
+                  className="w-full accent-terracotta"
+                />
+                <p className="text-xs text-muted-foreground mt-1">{margin} blocs</p>
+              </SettingCard>
 
-          <SettingCard label="Couleur du QR">
-            <input
-              type="color"
-              value={color}
-              onChange={(e) => setColor(e.target.value)}
-              className="w-full h-10 rounded-lg cursor-pointer bg-transparent"
-            />
-          </SettingCard>
+              <SettingCard label="Couleur du QR">
+                <input
+                  type="color"
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                  className="w-full h-10 rounded-lg cursor-pointer bg-transparent"
+                />
+              </SettingCard>
 
-          <SettingCard label="Fond">
-            <input
-              type="color"
-              value={bg}
-              onChange={(e) => setBg(e.target.value)}
-              className="w-full h-10 rounded-lg cursor-pointer bg-transparent"
-            />
-          </SettingCard>
+              <SettingCard label="Fond">
+                <input
+                  type="color"
+                  value={bg}
+                  onChange={(e) => setBg(e.target.value)}
+                  className="w-full h-10 rounded-lg cursor-pointer bg-transparent"
+                />
+              </SettingCard>
+            </>
+          )}
 
           <div className="p-4 rounded-2xl border border-terracotta/20 bg-terracotta-tint/40">
             <p className="text-xs uppercase tracking-widest text-terracotta font-bold mb-1 inline-flex items-center gap-1.5">
