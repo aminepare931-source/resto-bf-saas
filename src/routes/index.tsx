@@ -4,7 +4,7 @@ import { Footer } from "@/components/landing/Footer";
 import { Interactive3DButton } from "@/components/landing/Interactive3DButton";
 import { Motion3DTiltCard } from "@/components/landing/Motion3DTiltCard";
 import { InteractiveDashboard3D } from "@/components/landing/InteractiveDashboard3D";
-import { TemplateCarousel3D } from "@/components/landing/3DTemplateCarousel";
+import { TemplatesShowcase } from "@/components/landing/TemplatesShowcase";
 import { InfiniteFeaturesCarousel } from "@/components/landing/InfiniteFeaturesCarousel";
 import { PricingSection } from "@/components/landing/PricingSection";
 import { useState, useEffect, useRef } from "react";
@@ -340,27 +340,8 @@ function LandingPage() {
           </div>
         </section>
 
-        {/* TEMPLATES INTERACTIVE SHOWCASE 3D CAROUSEL */}
-        <section id="templates" className="py-20 px-4 sm:px-6 relative overflow-hidden">
-          <div className="max-w-6xl mx-auto text-center mb-10 space-y-3">
-            <span className="px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-terracotta-tint text-terracotta-deep border border-terracotta/20">
-              Défilé 3D interactif
-            </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground">
-              Les{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#9f3c16] via-[#c85a32] to-[#996800]">
-                5 Templates
-              </span>{" "}
-              en rotation circulaire
-            </h2>
-            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
-              Glissez ou laissez défiler automatiquement pour découvrir les différents univers
-              graphiques conçus pour les restaurants du Burkina Faso.
-            </p>
-          </div>
-
-          <TemplateCarousel3D />
-        </section>
+        {/* TEMPLATES — « Choisissez votre univers » */}
+        <TemplatesShowcase />
 
         {/* FONCTIONNALITÉS — AUTO-SCROLL HORIZONTAL INFINITE MARQUEE */}
         <section

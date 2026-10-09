@@ -14,6 +14,9 @@ const PREMIUM_ROYAL_BG = "/premium-bgs/premium-royal-bg.jpg";
 const PREMIUM_PASTA_BG = "/premium-bgs/premium-pasta-bg.jpg";
 
 export const Route = createFileRoute("/auth/choisir-template")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    template: typeof search.template === "string" ? search.template : undefined,
+  }),
   ssr: false,
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
@@ -106,7 +109,10 @@ function ChooseTemplate() {
   const navigate = useNavigate();
   const [userPlan, setUserPlan] = useState<PlanTier>("standard");
   const [planLabel, setPlanLabel] = useState<string>("essai");
-  const [selected, setSelected] = useState<string | null>(null);
+  const { template: preTemplate } = Route.useSearch();
+  const [selected, setSelected] = useState<string | null>(
+    preTemplate && templates.some((t) => t.id === preTemplate) ? preTemplate : null,
+  );
   const [previewId, setPreviewId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 

@@ -6,20 +6,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { Interactive3DButton } from "@/components/landing/Interactive3DButton";
 import { signupSchema, firstZodError } from "@/lib/validation";
-import {
-  Store,
-  MapPin,
-  Utensils,
-  User,
-  Phone,
-  Mail,
-  Lock,
-  Gift,
-  ArrowRight,
-} from "lucide-react";
+import { Store, MapPin, Utensils, User, Phone, Mail, Lock, Gift, ArrowRight } from "lucide-react";
 
 const searchSchema = z.object({
   plan: z.enum(["trial", "basique", "standard", "premium"]).optional(),
+  template: z.string().optional(),
 });
 
 export const Route = createFileRoute("/auth/inscription")({
@@ -48,7 +39,7 @@ const cuisines = [
 
 function SignupPage() {
   const navigate = useNavigate();
-  const { plan: selectedPlan } = useSearch({ from: "/auth/inscription" });
+  const { plan: selectedPlan, template: preTemplate } = useSearch({ from: "/auth/inscription" });
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -109,7 +100,7 @@ function SignupPage() {
         ? "Compte créé ! Votre forfait " + selectedPlan + " est prêt."
         : "Compte créé ! Votre essai gratuit de 30 jours démarre maintenant.",
     );
-    navigate({ to: "/auth/choisir-template" });
+    navigate({ to: "/auth/choisir-template", search: { template: preTemplate } });
   };
 
   const handleGoogleLogin = async () => {
@@ -315,7 +306,10 @@ function SignupPage() {
 
         <p className="text-center text-xs text-muted-foreground mt-2">
           Déjà un compte ?{" "}
-          <Link to="/auth/connexion" className="text-terracotta-deep font-extrabold hover:underline">
+          <Link
+            to="/auth/connexion"
+            className="text-terracotta-deep font-extrabold hover:underline"
+          >
             Se connecter directement
           </Link>
         </p>
