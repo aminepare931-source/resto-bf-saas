@@ -62,7 +62,7 @@ export function Topbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-3">
         {/* LOGO WITH TERRACOTTA GLOW */}
-        <Link to="/" className="flex items-center gap-2.5 group shrink-0">
+        <Link to="/" className="flex items-center gap-2 sm:gap-2.5 group min-w-0">
           <div className="relative">
             <motion.div className="absolute -inset-1 rounded-xl bg-terracotta/25 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <img
@@ -73,11 +73,11 @@ export function Topbar() {
               className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-contain border border-terracotta/25 bg-card"
             />
           </div>
-          <div className="flex flex-col leading-tight">
+          <div className="flex flex-col leading-tight min-w-0 max-[339px]:hidden">
             <strong className="text-base font-black tracking-tight text-foreground group-hover:text-terracotta-deep transition-colors">
               RestoBF
             </strong>
-            <small className="text-[10px] text-muted-foreground font-medium">
+            <small className="hidden min-[400px]:block text-[10px] text-muted-foreground font-medium">
               Pour les restaurateurs
             </small>
           </div>
@@ -120,7 +120,7 @@ export function Topbar() {
         </nav>
 
         {/* RIGHT ACTION BUTTONS */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
           {/* Connexion Button */}
           <Link
             to="/auth"
@@ -138,7 +138,8 @@ export function Topbar() {
             icon={<ArrowRight className="w-3.5 h-3.5" />}
             className="shadow-[0_6px_18px_rgba(159,60,22,0.25)]"
           >
-            Créer mon restaurant
+            <span className="sm:hidden">Créer mon site</span>
+            <span className="hidden sm:inline">Créer mon restaurant</span>
           </Interactive3DButton>
 
           {/* Hamburger Mobile Toggle */}

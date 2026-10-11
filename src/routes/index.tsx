@@ -13,14 +13,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useSpring } from "motion/react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  ArrowRight,
-  ShieldCheck,
-  Zap,
-  MessageCircle,
-  Store,
-  Star,
-} from "lucide-react";
+import { ArrowRight, ShieldCheck, Zap, MessageCircle, Store, Star } from "lucide-react";
 
 function AnimatedStat({ value }: { value: string }) {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -190,13 +183,13 @@ function LandingPage() {
       <main className="relative z-10">
         {/* HERO SECTION WITH 3D MOTION DESIGN */}
         <section className="pt-32 pb-20 px-4 sm:px-6 relative overflow-hidden">
-          <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 items-center">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Hero Left Content */}
             <motion.div
               initial={{ opacity: 0, x: -40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="lg:col-span-6 space-y-6 text-left"
+              className="lg:col-span-6 space-y-6 text-left min-w-0"
             >
               {/* Badge */}
               <motion.div
@@ -285,7 +278,7 @@ function LandingPage() {
               initial={{ opacity: 0, scale: 0.9, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="lg:col-span-6"
+              className="lg:col-span-6 min-w-0"
             >
               <InteractiveDashboard3D />
             </motion.div>

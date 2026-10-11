@@ -207,20 +207,18 @@ export function TemplatesShowcase() {
         alt=""
         aria-hidden="true"
         className="pointer-events-none absolute left-0 bottom-0 w-[120px] sm:w-[200px] lg:w-[240px] opacity-90"
-        style={{ mixBlendMode: "multiply" }}
       />
       <img
         src="/landing/palm-br.webp"
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute right-0 w-[70px] sm:w-[100px] lg:w-[120px] top-[150px] -scale-y-100 lg:top-auto lg:bottom-0 lg:scale-y-100"
-        style={{ mixBlendMode: "multiply" }}
+        className="pointer-events-none absolute right-0 w-[56px] sm:w-[100px] lg:w-[120px] top-[96px] -scale-y-100 lg:top-auto lg:bottom-0 lg:scale-y-100"
       />
 
       <div className="relative max-w-[1500px] mx-auto px-5 sm:px-8 lg:px-12 pt-14 pb-24 lg:pt-16 lg:pb-28">
         <div className="grid lg:grid-cols-[minmax(0,1.08fr)_minmax(0,1fr)_290px] gap-x-6 gap-y-8 items-start">
           {/* ---------- Colonne gauche ---------- */}
-          <div className="lg:col-start-1 lg:row-start-1 min-w-0 order-1">
+          <div className="lg:col-start-1 lg:row-start-1 min-w-0 order-1 relative z-10">
             <p
               className="flex items-center gap-2 text-[12px] sm:text-[13px] font-bold uppercase tracking-[0.16em]"
               style={{ color: C.accent }}
@@ -311,7 +309,7 @@ export function TemplatesShowcase() {
                     </span>
                     <span className="mt-2.5 flex items-start justify-between gap-2 px-0.5">
                       <span className="min-w-0">
-                        <span className="block text-[15px] font-semibold leading-tight truncate">
+                        <span className="block text-[15px] font-semibold leading-tight">
                           {t.name}
                         </span>
                         <span
@@ -353,12 +351,16 @@ export function TemplatesShowcase() {
                     key={t.id}
                     aria-label={`Voir ${t.name}`}
                     onClick={() => setSelectedId(t.id)}
-                    className="h-2 rounded-full transition-all"
-                    style={{
-                      width: i === activeIndex ? 26 : 8,
-                      background: i === activeIndex ? C.accent : "#e3d2c2",
-                    }}
-                  />
+                    className="grid place-items-center"
+                  >
+                    <span
+                      className="block h-2 rounded-full transition-all"
+                      style={{
+                        width: i === activeIndex ? 26 : 8,
+                        background: i === activeIndex ? C.accent : "#e3d2c2",
+                      }}
+                    />
+                  </button>
                 ))}
             </div>
           </div>
@@ -388,7 +390,7 @@ export function TemplatesShowcase() {
             </div>
 
             <ul
-              className="space-y-4 row-span-2 col-start-2 row-start-1 lg:order-2 lg:mt-5 lg:pt-5 lg:border-t"
+              className="space-y-4 col-start-2 row-start-1 lg:order-2 lg:mt-5 lg:pt-5 lg:border-t"
               style={{ borderColor: C.line }}
             >
               {selected.features.map((f) => (
@@ -412,7 +414,7 @@ export function TemplatesShowcase() {
               ))}
             </ul>
 
-            <div className="flex flex-col gap-3 lg:order-3 lg:mt-7 self-end lg:self-auto">
+            <div className="flex flex-col gap-3 col-span-2 row-start-2 lg:order-3 lg:mt-7">
               <Link
                 to="/auth/inscription"
                 search={{ plan: "trial", template: selected.id }}

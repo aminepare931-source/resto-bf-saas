@@ -79,7 +79,7 @@ export function InteractiveDashboard3D() {
       />
 
       {/* Floating 3D Badge 1 - Top Right */}
-      <div className="float-badge float-badge-a absolute -top-6 -right-4 sm:-right-8 z-30 px-3.5 py-2 rounded-xl bg-card border border-terracotta/30 text-foreground shadow-card flex items-center gap-2.5 text-xs font-semibold">
+      <div className="float-badge float-badge-a absolute -top-6 right-1 sm:-right-8 z-30 px-3.5 py-2 rounded-xl bg-card border border-terracotta/30 text-foreground shadow-card flex items-center gap-2.5 text-xs font-semibold">
         <div className="w-7 h-7 rounded-lg bg-terracotta-tint flex items-center justify-center text-terracotta-deep">
           <MessageSquare className="w-4 h-4" />
         </div>
@@ -92,7 +92,7 @@ export function InteractiveDashboard3D() {
       </div>
 
       {/* Floating 3D Badge 2 - Bottom Left */}
-      <div className="float-badge float-badge-b absolute -bottom-6 -left-4 sm:-left-8 z-30 px-3.5 py-2 rounded-xl bg-card border border-emerald/30 text-foreground shadow-card flex items-center gap-2.5 text-xs font-semibold">
+      <div className="float-badge float-badge-b absolute -bottom-6 left-1 sm:-left-8 z-30 px-3.5 py-2 rounded-xl bg-card border border-emerald/30 text-foreground shadow-card flex items-center gap-2.5 text-xs font-semibold">
         <div className="w-7 h-7 rounded-lg bg-emerald-tint flex items-center justify-center text-emerald-deep">
           <ChefHat className="w-4 h-4" />
         </div>
