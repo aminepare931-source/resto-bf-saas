@@ -75,25 +75,11 @@ import { UsersManager } from "@/components/super-admin/UsersManager";
 export const Route = createFileRoute("/super-admin")({
   ssr: false,
   beforeLoad: async () => {
-    // Attendre que le client Supabase ait fini de restaurer la session
-    // depuis le stockage local avant de vérifier — sur une ouverture
-    // directe de l'URL (à froid), un simple getUser() peut répondre
-    // trop vite et croire l'utilisateur déconnecté alors qu'il ne l'est
-    // pas encore su.
-    const { data: sessionData } = await supabase.auth.getSession();
-    if (!sessionData?.session) {
-      throw redirect({ to: "/auth/connexion" });
+    // Pas de session dans ce navigateur → page de connexion, puis retour ici automatiquement.
+    const { data } = await supabase.auth.getSession();
+    if (!data?.session) {
+      throw redirect({ to: "/auth/connexion", search: { redirect: "/super-admin" } });
     }
-
-    const { data: u } = await supabase.auth.getUser();
-    if (!u.user) throw redirect({ to: "/auth/connexion" });
-    const { data } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", u.user.id)
-      .eq("role", "super_admin")
-      .maybeSingle();
-    if (!data) throw redirect({ to: "/" });
   },
   head: () => ({ meta: [{ title: "Super Administration — RestoBF" }] }),
   component: SuperAdminPage,
@@ -279,7 +265,113 @@ const STATUS_UI: Record<FeatureStatus, { label: string; cls: string; help: strin
   },
 };
 
+/** Vérifie le rôle puis affiche le tableau de bord, ou un écran d'accès refusé qui explique pourquoi. */
 function SuperAdminPage() {
+  type Access =
+    | { status: "checking" }
+    | { status: "ok" }
+    | { status: "denied"; email?: string; error?: string; canClaim: boolean };
+  const [access, setAccess] = useState<Access>({ status: "checking" });
+  const [busy, setBusy] = useState(false);
+
+  const check = async () => {
+    setAccess({ status: "checking" });
+    const { data: sess } = await supabase.auth.getSession();
+    const user = sess.session?.user;
+    if (!user) {
+      window.location.href = "/auth/connexion?redirect=/super-admin";
+      return;
+    }
+    const { data, error } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("role", "super_admin")
+      .maybeSingle();
+    if (data) {
+      setAccess({ status: "ok" });
+      return;
+    }
+    const { data: exists } = await (supabase.rpc as any)("super_admin_exists");
+    setAccess({
+      status: "denied",
+      email: user.email ?? undefined,
+      error: error?.message,
+      canClaim: exists === false,
+    });
+  };
+
+  useEffect(() => {
+    void check();
+  }, []);
+
+  const claim = async () => {
+    setBusy(true);
+    const { error } = await (supabase.rpc as any)("claim_super_admin");
+    setBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success("Vous êtes maintenant super admin");
+    void check();
+  };
+
+  const switchAccount = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/auth/connexion?redirect=/super-admin";
+  };
+
+  if (access.status === "checking") {
+    return (
+      <div className="min-h-screen grid place-items-center bg-background text-muted-foreground">
+        Vérification de l'accès…
+      </div>
+    );
+  }
+
+  if (access.status === "denied") {
+    return (
+      <div className="min-h-screen grid place-items-center bg-background text-foreground px-4">
+        <div className="max-w-md w-full rounded-2xl border border-border bg-card p-8 text-center shadow-card">
+          <h1 className="text-2xl font-black mb-2">Accès refusé</h1>
+          <p className="text-sm text-muted-foreground mb-1">
+            Le compte connecté n'a pas le rôle <strong>super admin</strong>.
+          </p>
+          {access.email && (
+            <p className="text-sm mb-4">
+              Connecté en tant que <strong>{access.email}</strong>
+            </p>
+          )}
+          {access.error && (
+            <p className="text-xs text-destructive mb-4 break-words">Erreur : {access.error}</p>
+          )}
+          <div className="flex flex-col gap-3 mt-4">
+            {access.canClaim && (
+              <button
+                onClick={claim}
+                disabled={busy}
+                className="px-5 py-3 rounded-xl bg-gradient-gold text-[#0a0a0f] font-black disabled:opacity-50"
+              >
+                {busy ? "..." : "Devenir super admin (aucun n'existe encore)"}
+              </button>
+            )}
+            <button
+              onClick={switchAccount}
+              className="px-5 py-3 rounded-xl border border-border font-semibold hover:bg-surface-warm"
+            >
+              Me connecter avec un autre compte
+            </button>
+            <Link to="/dashboard" className="text-sm text-muted-foreground underline">
+              Retour à mon tableau de bord
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return <SuperAdminDashboard />;
+}
+
+function SuperAdminDashboard() {
   const [tab, setTab] = useState<
     "overview" | "restaurants" | "subscriptions" | "features" | "leads" | "data" | "users"
   >("overview");
