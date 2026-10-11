@@ -7,15 +7,16 @@ import { InteractiveDashboard3D } from "@/components/landing/InteractiveDashboar
 import { TemplatesShowcase } from "@/components/landing/TemplatesShowcase";
 import { InfiniteFeaturesCarousel } from "@/components/landing/InfiniteFeaturesCarousel";
 import { PricingSection } from "@/components/landing/PricingSection";
+import { FaqSection } from "@/components/landing/FaqSection";
+import { CtaSection } from "@/components/landing/CtaSection";
 import { useState, useEffect, useRef } from "react";
-import { motion, useScroll, useSpring, AnimatePresence } from "motion/react";
+import { motion, useScroll, useSpring } from "motion/react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
 import {
   ArrowRight,
   ShieldCheck,
   Zap,
-  ChevronDown,
   MessageCircle,
   Store,
   Star,
@@ -137,33 +138,6 @@ const testimonials = [
   },
 ];
 
-const faqs = [
-  {
-    q: "En combien de temps mon restaurant sera-t-il en ligne ?",
-    a: "Votre espace est créé instantanément en 5 minutes. Une fois inscrit, vous ajoutez vos plats, fixez vos prix et personnalisez votre logo. Votre lien et votre QR Code sont immédiatement prêts à être partagés.",
-  },
-  {
-    q: "Faut-il payer à l'inscription ?",
-    a: "Non ! Vous bénéficiez de 30 jours d'essai 100% gratuit, sans aucune carte bancaire ni frais cachés. À la fin des 30 jours, vous décidez librement de poursuivre avec l'abonnement de votre choix.",
-  },
-  {
-    q: "Comment fonctionnent les commandes WhatsApp ?",
-    a: "Chaque plat affiché sur votre menu possède un bouton 'Commander'. Lorsque le client clique, un message pré-rempli contenant la liste des plats, le total en FCFA et ses coordonnées s'ouvre directement sur votre numéro WhatsApp.",
-  },
-  {
-    q: "Comment fonctionne la gestion de cuisine ?",
-    a: "Vous disposez d'un écran cuisine utilisable sur téléphone ou tablette. Chaque nouvelle commande s'y affiche avec son statut (Nouveau, En préparation, Prêt). Les cuisiniers peuvent valider les plats d'une simple touche.",
-  },
-  {
-    q: "Mes employés peuvent-ils avoir leurs propres accès ?",
-    a: "Oui, vous pouvez créer des comptes spécifiques pour vos serveurs, cuisiniers et gérants. Chaque rôle n'accède qu'aux fonctionnalités dont il a besoin.",
-  },
-  {
-    q: "Est-ce que je peux résilier à tout moment ?",
-    a: "Absolument. Il n'y a aucun engagement de durée. Vous pouvez suspendre ou résilier votre abonnement sans pénalité en un clic.",
-  },
-];
-
 function ScrollProgressBar({ isMobile }: { isMobile: boolean }) {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -204,7 +178,6 @@ function AmbientBackground() {
 }
 
 function LandingPage() {
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
   const isMobile = useIsMobile();
 
   return (
@@ -455,104 +428,11 @@ function LandingPage() {
         {/* PRICING SECTION WITH 2026 SAAS FEATURES */}
         <PricingSection />
 
-        {/* FAQ ACCORDION */}
-        <section id="faq" className="py-24 px-4 sm:px-6 relative">
-          <div className="max-w-4xl mx-auto text-center mb-16 space-y-3">
-            <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-terracotta-tint text-terracotta-deep border border-terracotta/20">
-              Questions Fréquentes
-            </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground">
-              Tout ce que vous devez <span className="text-terracotta-deep">savoir</span>
-            </h2>
-          </div>
+        {/* FAQ */}
+        <FaqSection />
 
-          <div className="max-w-3xl mx-auto space-y-4">
-            {faqs.map((f, i) => {
-              const isOpen = openFaq === i;
-              return (
-                <motion.div
-                  key={f.q}
-                  initial={{ opacity: 0, y: 15 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08 }}
-                  className="rounded-xl border border-border bg-card shadow-card overflow-hidden"
-                >
-                  <button
-                    onClick={() => setOpenFaq(isOpen ? null : i)}
-                    className="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-foreground hover:text-terracotta-deep transition-colors cursor-pointer"
-                  >
-                    <span>{f.q}</span>
-                    <motion.div
-                      animate={{ rotate: isOpen ? 180 : 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="shrink-0 text-terracotta"
-                    >
-                      <ChevronDown className="w-5 h-5" />
-                    </motion.div>
-                  </button>
-
-                  <AnimatePresence>
-                    {isOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <div className="px-5 pb-5 text-xs sm:text-sm text-muted-foreground leading-relaxed border-t border-border/40 pt-3">
-                          {f.a}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* FINAL CTA BANNER */}
-        <section id="contact" className="py-24 px-4 sm:px-6 relative overflow-hidden">
-          <div
-            className="max-w-4xl mx-auto text-center p-10 sm:p-14 rounded-3xl border border-[#9f3c16]/40 shadow-overlay space-y-6 relative overflow-hidden"
-            style={{ backgroundImage: "var(--gradient-hero)" }}
-          >
-            <div className="w-16 h-16 mx-auto rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center text-white">
-              <Store className="w-8 h-8" />
-            </div>
-
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight">
-              Prêt à propulser votre restaurant <br />
-              <span className="text-[#ffe3b3]">au Burkina Faso ?</span>
-            </h2>
-
-            <p className="text-sm sm:text-base text-white/85 max-w-xl mx-auto">
-              Rejoignez plus de 50 restaurateurs satisfaits. Lancez votre menu digital et commencez
-              à recevoir vos commandes WhatsApp en 5 minutes.
-            </p>
-
-            <div className="pt-4 flex flex-wrap justify-center gap-4">
-              <Interactive3DButton
-                to="/auth/inscription"
-                variant="secondary"
-                size="lg"
-                icon={<ArrowRight className="w-4 h-4" />}
-              >
-                Créer ma page gratuitement
-              </Interactive3DButton>
-
-              <Interactive3DButton
-                href="https://wa.me/22655300868"
-                variant="gold-glow"
-                size="lg"
-                icon={<MessageCircle className="w-4 h-4" />}
-              >
-                Nous écrire sur WhatsApp
-              </Interactive3DButton>
-            </div>
-          </div>
-        </section>
+        {/* CTA FINAL */}
+        <CtaSection />
       </main>
 
       <Footer />
