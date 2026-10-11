@@ -129,7 +129,7 @@ BEGIN
   IF TG_OP = 'INSERT' THEN
     NEW.plan := 'trial';
     NEW.subscription_status := 'trial';
-    NEW.trial_ends_at := now() + interval '14 days';
+    NEW.trial_ends_at := now() + interval '30 days';
     NEW.subscription_ends_at := NULL;
   ELSE
     NEW.plan := OLD.plan;
@@ -147,10 +147,12 @@ CREATE TRIGGER trg_protect_restaurant_billing
   BEFORE INSERT OR UPDATE ON public.restaurants
   FOR EACH ROW EXECUTE FUNCTION public.protect_restaurant_billing();
 
--- 6) Inscription : toujours un essai de 14 jours.
+-- 6) Inscription : toujours un essai de 30 jours (comme annoncé sur le site).
 --    Avant : le forfait venait de raw_user_meta_data (modifiable par le client)
 --    et passait directement en 'active' sans paiement. Le super admin active
 --    les forfaits payants une fois le paiement reçu.
+--    On conserve la logique de liens propres (slug sans suffixe sauf collision,
+--    noms de pages réservés) de 20260801150000.
 CREATE OR REPLACE FUNCTION public.handle_new_restaurant_user()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -165,8 +167,23 @@ BEGIN
   IF v_name IS NULL OR v_name = '' THEN
     RETURN NEW;
   END IF;
+
   v_slug := regexp_replace(lower(v_name), '[^a-z0-9]+', '-', 'g');
-  v_slug := trim(both '-' from v_slug) || '-' || substr(md5(random()::text), 1, 4);
+  v_slug := trim(both '-' from v_slug);
+
+  IF v_slug = '' THEN
+    v_slug := 'restaurant';
+  END IF;
+
+  IF v_slug IN ('auth', 'dashboard', 'conditions', 'confidentialite',
+                'mentions-legales', 'offline', 'super-admin', 'debug-user',
+                'demo', 'r', 'api', 'admin', 'sitemap.xml', 'robots.txt') THEN
+    v_slug := v_slug || '-resto';
+  END IF;
+
+  IF EXISTS (SELECT 1 FROM public.restaurants WHERE slug = v_slug) THEN
+    v_slug := v_slug || '-' || substr(md5(random()::text), 1, 4);
+  END IF;
 
   INSERT INTO public.restaurants (
     user_id, name, slug, city, cuisine, owner_name, phone, whatsapp, email,
@@ -179,7 +196,7 @@ BEGIN
     COALESCE(meta->>'phone', ''),
     regexp_replace(COALESCE(meta->>'phone',''), '\s|\+', '', 'g'),
     NEW.email,
-    'trial', 'trial', now() + interval '14 days'
+    'trial', 'trial', now() + interval '30 days'
   )
   ON CONFLICT DO NOTHING;
 
