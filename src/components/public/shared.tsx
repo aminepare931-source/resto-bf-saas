@@ -75,6 +75,8 @@ export type TemplateProps = {
   gallery: PublicGalleryImage[];
   /** Vidéos de la galerie (si le forfait les inclut) */
   videos?: PublicGalleryImage[];
+  /** false si le forfait n'inclut pas les avis clients */
+  reviewsEnabled?: boolean;
   view?: string | null;
 };
 

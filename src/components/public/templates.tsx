@@ -30,6 +30,7 @@ import { TplSoleil } from "./templates/tpl-soleil";
 import { TplSavane } from "./templates/tpl-savane";
 import { TplModerne } from "./templates/tpl-moderne";
 import { StdTemplate } from "./templates/tpl-std-base";
+import { TplPremRoyal } from "./templates/tpl-prem-royal";
 import { PALETTE_VERT } from "./templates/tpl-std-palettes";
 import {
   CalendarDays,
@@ -1832,7 +1833,7 @@ export function renderTemplate(template: string | null, props: TemplateProps) {
   const tpl = template || "prem-royal";
   switch (tpl) {
     case "prem-royal":
-      return <TplPremiumRoyal {...props} />;
+      return <TplPremRoyal {...props} />;
     case "prem-nuit":
       return <TplPremiumNuit {...props} />;
     case "prem-feu":

@@ -324,6 +324,7 @@ function PublicRestaurantPage() {
                 reviews: showReviews ? reviews : [],
                 gallery: showPhotos ? gallery : [],
                 videos: gatedVideos,
+                reviewsEnabled: showReviews,
                 view,
               })}
               {!stdHandlesVideos && <VideoStrip videos={gatedVideos} />}
