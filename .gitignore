@@ -36,3 +36,7 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# Generated / local tooling state
+.vite/
+supabase/.temp/
