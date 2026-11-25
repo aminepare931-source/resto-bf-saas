@@ -231,7 +231,7 @@ export const FEATURE_REGISTRY: FeatureDef[] = [
     icon: "🎨",
     defaultPlans: ["standard", "premium"],
     status: "live",
-    note: "Appliqué sur les 4 templates Standard (pas encore sur les Premium).",
+    note: "Appliqué sur les 4 templates Standard et les 4 templates Premium.",
   },
   {
     id: "personnalisation-police",
@@ -241,7 +241,7 @@ export const FEATURE_REGISTRY: FeatureDef[] = [
     icon: "✏️",
     defaultPlans: ["premium"],
     status: "live",
-    note: "Appliqué sur les 4 templates Standard (pas encore sur les Premium).",
+    note: "Appliqué sur les 4 templates Standard et les 4 templates Premium.",
   },
   {
     id: "stats-essentielles",

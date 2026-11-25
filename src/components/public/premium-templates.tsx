@@ -152,6 +152,58 @@ const PREMIUM_CONFIGS: Record<PremiumKind, PremiumConfig> = {
   },
 };
 
+/* ---------------- Personnalisation (couleur principale + police) ---------------- */
+/* Les valeurs arrivent déjà filtrées selon le forfait (voir $slug.tsx) : si le restaurant
+   n'y a pas droit, primary_color / font_family sont null et le design d'origine est conservé. */
+
+const HEX_RE = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
+const FONT_RE = /^[A-Za-z0-9 ]{1,40}$/;
+
+function hexToRgb(hex: string): [number, number, number] {
+  const h = hex.replace("#", "");
+  const n = parseInt(h.length === 3 ? h.replace(/(.)/g, "$1$1") : h, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+function luminance(hex: string): number {
+  const [r, g, b] = hexToRgb(hex);
+  return (r * 299 + g * 587 + b * 114) / 1000;
+}
+
+function rgba(hex: string, alpha: number): string {
+  const [r, g, b] = hexToRgb(hex);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+/** Assombrit une couleur (0 = inchangée, 1 = noir). */
+function darken(hex: string, amount: number): string {
+  const [r, g, b] = hexToRgb(hex).map((v) => Math.round(v * (1 - amount)));
+  return `#${[r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("")}`;
+}
+
+function applyBrand(
+  base: PremiumConfig,
+  color: string | null | undefined,
+  font: string | null | undefined,
+): PremiumConfig {
+  let cfg = base;
+  const c = color?.trim();
+  if (c && HEX_RE.test(c)) {
+    cfg = {
+      ...cfg,
+      accent: c,
+      accent2: darken(c, 0.55),
+      ink: luminance(c) > 150 ? "#1b1b1b" : "#ffffff",
+      border: rgba(c, 0.32),
+    };
+  }
+  const f = font?.trim();
+  if (f && FONT_RE.test(f)) {
+    cfg = { ...cfg, serif: `'${f}', serif` };
+  }
+  return cfg;
+}
+
 export function TplPremiumRoyal(props: TemplateProps) {
   return <PremiumRestaurantTemplate {...props} config={PREMIUM_CONFIGS.royal} />;
 }
@@ -536,9 +588,19 @@ function PremiumRestaurantTemplate({
   menu,
   reviews,
   gallery,
-  config,
+  config: baseConfig,
   view,
 }: TemplateProps & { config: PremiumConfig }) {
+  const config = useMemo(
+    () => applyBrand(baseConfig, restaurant.primary_color, restaurant.font_family),
+    [baseConfig, restaurant.primary_color, restaurant.font_family],
+  );
+  const brandFont =
+    restaurant.font_family?.trim() && FONT_RE.test(restaurant.font_family.trim())
+      ? restaurant.font_family.trim()
+      : null;
+  // Le QR code reste sombre sur fond clair, quelle que soit la couleur choisie (lisibilité du scan).
+  const qrPlate = luminance(config.accent) > 150 ? config.accent : "#ffffff";
   const [category, setCategory] = useState("Tout");
   const [searchQuery, setSearchQuery] = useState("");
   const [qr, setQr] = useState("");
@@ -610,11 +672,11 @@ function PremiumRestaurantTemplate({
     QRCode.toDataURL(target, {
       margin: 1,
       width: 260,
-      color: { dark: config.ink, light: "#00000000" },
+      color: { dark: baseConfig.ink, light: "#00000000" },
     })
       .then(setQr)
       .catch(() => setQr(""));
-  }, [config.ink, restaurant.name]);
+  }, [baseConfig.ink, restaurant.name]);
 
   const renderDedicatedView = () => {
     switch (activeView) {
@@ -866,13 +928,22 @@ function PremiumRestaurantTemplate({
           "--pr-ink": config.ink,
           "--pr-border": config.border,
           "--pr-serif": config.serif,
+          "--pr-qr-plate": qrPlate,
+          "--pr-qr-ink": baseConfig.ink,
           "--pr-radius": theme.radius,
+          ...(brandFont ? { fontFamily: `'${brandFont}', Inter, system-ui, sans-serif` } : {}),
           background: config.bg,
           color: config.text,
         } as CSSProperties
       }
     >
       <link rel="stylesheet" href={PREMIUM_FONTS_URL} />
+      {brandFont && (
+        <link
+          rel="stylesheet"
+          href={`https://fonts.googleapis.com/css2?family=${encodeURIComponent(brandFont).replace(/%20/g, "+")}:wght@400;500;600;700&display=swap`}
+        />
+      )}
       <style>{PREMIUM_CSS}</style>
 
       {/* DYNAMIC EMBER PARTICLES */}
@@ -2121,8 +2192,8 @@ const PREMIUM_CSS = `
 .premium-qr-card{padding:26px;text-align:center}
 .premium-qr-card h3{font-family:var(--pr-serif);font-size:32px;margin:0 0 10px;color:var(--pr-text)}
 .premium-qr-card p{color:var(--pr-muted);line-height:1.6;font-size:14px}
-.premium-qr-card img,.premium-qr-placeholder{width:220px;height:220px;margin:20px auto;background:var(--pr-accent);padding:14px;border-radius:calc(var(--pr-radius) * 1.4);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
-.premium-qr-placeholder{display:grid;place-items:center;color:var(--pr-ink);font-weight:900;font-size:40px}
+.premium-qr-card img,.premium-qr-placeholder{width:220px;height:220px;margin:20px auto;background:var(--pr-qr-plate,var(--pr-accent));padding:14px;border-radius:calc(var(--pr-radius) * 1.4);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+.premium-qr-placeholder{display:grid;place-items:center;color:var(--pr-qr-ink,var(--pr-ink));font-weight:900;font-size:40px}
 .premium-contact-mini{display:grid;gap:10px;text-align:left;color:var(--pr-muted);font-size:12px;margin-top:20px;padding-top:16px;border-top:1px solid var(--pr-border)}
 
 .premium-review-form{padding:26px;margin-top:30px;max-width:760px}
