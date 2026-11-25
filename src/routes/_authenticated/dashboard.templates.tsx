@@ -1,10 +1,11 @@
-import { usePlanAccess, allowedTemplateTiers } from "@/lib/plans";
+import { usePlanAccess, allowedTemplateTiers, planKey } from "@/lib/plans";
+import { TEMPLATE_CATALOG, type TemplateEntry } from "@/lib/templates-catalog";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyRestaurant } from "@/hooks/use-my-restaurant";
-import { renderTemplate } from "@/components/public/templates";
+import { renderTemplate } from "@/components/public/render-template";
 import { demoData } from "@/components/public/demo-data";
 import {
   Sparkles,
@@ -20,11 +21,6 @@ import {
   Save,
 } from "lucide-react";
 
-const PREMIUM_FEU_BG = "/premium-bgs/premium-feu-bg.png";
-const PREMIUM_ROYAL_BG = "/premium-bgs/premium-royal-bg.jpg";
-const PREMIUM_GRILL_BG = "/premium-bgs/premium-grill-bg.jpg";
-const PREMIUM_PASTA_BG = "/premium-bgs/premium-pasta-bg.jpg";
-
 export const Route = createFileRoute("/_authenticated/dashboard/templates")({
   component: DashboardTemplates,
 });
@@ -32,102 +28,9 @@ export const Route = createFileRoute("/_authenticated/dashboard/templates")({
 type PlanTier = "basique" | "standard" | "premium";
 type TplCategory = "tout" | "premium" | "standard" | "basique";
 
-type Tpl = {
-  id: string;
-  name: string;
-  tagline: string;
-  plan: PlanTier;
-  vibe: string;
-  features: string[];
-};
+type Tpl = Omit<TemplateEntry, "tier"> & { plan: PlanTier };
 
-const templates: Tpl[] = [
-  {
-    id: "prem-royal",
-    name: "Palais Royal",
-    tagline: "Atmosphère prestige, Or & Ébène",
-    plan: "premium",
-    vibe: `url(${PREMIUM_ROYAL_BG}) center/cover`,
-    features: ["Bannière prestige", "Réservation VIP", "Carte des vins", "QR Code intégré"],
-  },
-  {
-    id: "prem-nuit",
-    name: "Aurum Nuit",
-    tagline: "Fine dining sombre & luxueux",
-    plan: "premium",
-    vibe: `url(${PREMIUM_PASTA_BG}) center/cover`,
-    features: ["Carte curatée", "Avis clients", "Galerie HD", "Ambiance feutrée"],
-  },
-  {
-    id: "prem-feu",
-    name: "Ignis Feu & Grillades",
-    tagline: "Braises flamboyantes & Maquis",
-    plan: "premium",
-    vibe: `url(${PREMIUM_FEU_BG}) center/cover`,
-    features: [
-      "Spécial Maquis & Grill",
-      "Poulet Bicyclette",
-      "Commande WhatsApp",
-      "Effets braises",
-    ],
-  },
-  {
-    id: "prem-luxe",
-    name: "Luxe Grill & Lounge",
-    tagline: "Table d'honneur & événements",
-    plan: "premium",
-    vibe: `url(${PREMIUM_GRILL_BG}) center/cover`,
-    features: ["Espace VIP", "Commandes QR", "Traiteur & Fêtes", "Galerie immersive"],
-  },
-  {
-    id: "std-soleil",
-    name: "Soleil Chaleureux",
-    tagline: "Éditorial doré & solaire",
-    plan: "standard",
-    vibe: "linear-gradient(135deg, #fabc4d, #7e5700)",
-    features: ["Couleurs solaires", "Menu structuré", "Module avis"],
-  },
-  {
-    id: "std-savane",
-    name: "Savane & Ocre",
-    tagline: "Rustique africain authentique",
-    plan: "standard",
-    vibe: "linear-gradient(135deg, #e5a93c, #504535)",
-    features: ["Teintes terre d'ocre", "Authentique", "Spécialités locales"],
-  },
-  {
-    id: "std-marche",
-    name: "Vert Terroir",
-    tagline: "Vert émeraude & produits frais",
-    plan: "standard",
-    vibe: "linear-gradient(135deg, #49eb7b, #0d2818)",
-    features: ["Vert émeraude", "Terroir & marché", "Affichage réactif"],
-  },
-  {
-    id: "std-moderne",
-    name: "Épuré",
-    tagline: "Minimalisme contemporain",
-    plan: "standard",
-    vibe: "linear-gradient(135deg, #d4c4b0, #0b0f19)",
-    features: ["Typography nette", "Navigation fluide", "Adaptatif mobile"],
-  },
-  {
-    id: "gratuit-classique",
-    name: "Classique Swiss",
-    tagline: "Minimalisme noir & blanc",
-    plan: "basique",
-    vibe: "linear-gradient(135deg, #1f1f2e, #0a0a0f)",
-    features: ["Sobre & rapide", "Essentiel menu", "100% Gratuit"],
-  },
-];
-
-const planRank: Record<PlanTier, number> = { basique: 0, standard: 1, premium: 2 };
-
-function planToTier(plan: string): PlanTier {
-  if (plan === "premium" || plan === "sur_mesure") return "premium";
-  if (plan === "standard" || plan === "trial") return "standard";
-  return "basique";
-}
+const templates: Tpl[] = TEMPLATE_CATALOG.map(({ tier, ...t }) => ({ ...t, plan: tier }));
 
 function DashboardTemplates() {
   const navigate = useNavigate();
@@ -149,7 +52,7 @@ function DashboardTemplates() {
 
   useEffect(() => {
     if (!r) return;
-    setUserPlan(planToTier(r.plan));
+    setUserPlan(planKey(r.plan));
     if (r.template) {
       setSelected(r.template);
       setLastSaved(r.template);

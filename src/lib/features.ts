@@ -199,9 +199,9 @@ export const FEATURE_REGISTRY: FeatureDef[] = [
     description: "Template Classique uniquement",
     category: "template",
     icon: "🎨",
-    defaultPlans: ["basique"],
+    defaultPlans: ["basique", "standard", "premium"],
     status: "live",
-    note: "Autorise le template gratuit.",
+    note: "Autorise le template Classique. Inclus dans tous les forfaits (droits cumulatifs).",
   },
   {
     id: "template-standard",
@@ -209,9 +209,9 @@ export const FEATURE_REGISTRY: FeatureDef[] = [
     description: "Soleil, Savane, Vert, Épuré",
     category: "template",
     icon: "🎨",
-    defaultPlans: ["standard"],
+    defaultPlans: ["standard", "premium"],
     status: "live",
-    note: "Autorise les templates Standard.",
+    note: "Autorise les templates Standard. Le forfait Premium les inclut (droits cumulatifs).",
   },
   {
     id: "template-premium",

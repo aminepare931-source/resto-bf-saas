@@ -22,7 +22,7 @@ function AbonnementBasiquePage() {
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-tint via-background to-background" />
         <div className="absolute inset-0 opacity-10">
-          <img src="/bg-savane.jpg" alt="" className="w-full h-full object-cover" />
+          <img src="/bg-savane.webp" alt="" className="w-full h-full object-cover" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-24 pb-16">
@@ -61,7 +61,7 @@ function AbonnementBasiquePage() {
             <div className="relative">
               <div className="rounded-2xl overflow-hidden border border-border shadow-card">
                 <img
-                  src="/bg-marché.jpg"
+                  src="/bg-marche.webp"
                   alt="Restaurant"
                   className="w-full h-64 sm:h-80 object-cover"
                 />

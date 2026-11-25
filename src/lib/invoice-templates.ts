@@ -1,3 +1,4 @@
+import { planKey } from "@/lib/plans";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -639,11 +640,9 @@ export const defaultColors: Record<string, InvoiceColors> = {
 
 // Récupérer le template selon le plan
 export function getTemplateForPlan(plan: string): InvoiceTemplate {
-  if (plan === "premium" || plan === "sur_mesure") {
-    return premiumTemplate;
-  } else if (plan === "standard" || plan === "standard_plus" || plan === "trial") {
-    return standardTemplate;
-  }
+  const tier = planKey(plan);
+  if (tier === "premium") return premiumTemplate;
+  if (tier === "standard") return standardTemplate;
   return simpleTemplate;
 }
 

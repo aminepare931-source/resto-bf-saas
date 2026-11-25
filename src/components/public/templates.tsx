@@ -18,19 +18,7 @@ import {
   fmtPrice,
 } from "./shared";
 import { StorageImage } from "@/components/StorageImage";
-import {
-  TplPremiumFeu,
-  TplPremiumLuxe,
-  TplPremiumNuit,
-  TplPremiumRoyal,
-} from "./premium-templates";
 import { useRestaurantFeatures } from "@/hooks/use-restaurant-features";
-import { TplNuit } from "./templates/tpl-nuit";
-import { TplSoleil } from "./templates/tpl-soleil";
-import { TplSavane } from "./templates/tpl-savane";
-import { TplModerne } from "./templates/tpl-moderne";
-import { StdTemplate } from "./templates/tpl-std-base";
-import { PALETTE_VERT } from "./templates/tpl-std-palettes";
 import {
   CalendarDays,
   Check,
@@ -62,7 +50,7 @@ function FontImport() {
   return (
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&family=Archivo+Black&family=DM+Serif+Display&family=Space+Grotesk:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap"
     />
   );
 }
@@ -222,25 +210,7 @@ function Stat({ label, value, theme }: { label: string; value: React.ReactNode; 
   );
 }
 
-/* ================================================================== */
-/*  Decorative backgrounds (CDN patterns from the references)         */
-/* ================================================================== */
-
-const BG_SOLEIL = "/bg-soleil.webp";
-const BG_SAVANE = "/bg-savane.jpg";
-const BG_MARCHE = "/bg-marché.jpg";
-const BG_MODERNE = "/bg-moderne.jpg";
-
-const TPL_BG_CSS =
-  "\n/* Standard template full-screen backgrounds */\n.tpl-page{position:relative;min-height:100vh;overflow:hidden;isolation:isolate;}\n.tpl-bg{position:fixed;inset:0;z-index:-2;overflow:hidden;background:transparent;}\n.tpl-bg img{width:100%;height:100%;object-fit:cover;filter:saturate(1.08) contrast(1.1);transform:scale(1.08);animation:tpl-bg-drift 22s ease-in-out infinite alternate;}\n.tpl-bg span{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.78),rgba(0,0,0,.40),rgba(0,0,0,.80));}\n@keyframes tpl-bg-drift{0%{transform:scale(1.08) translate3d(-1.5%,0,0)}100%{transform:scale(1.18) translate3d(1.5%,-1.5%,0)}}\n@media(prefers-reduced-motion:reduce){.tpl-bg img{animation:none;transition:none}}\n";
-
-/* ================================================================== */
-/*  4. MARCHE — Indian-inspired dark green + orange/gold              */
-/* ================================================================== */
-
-export function TplMarche(props: TemplateProps) {
-  return <StdTemplate {...props} palette={PALETTE_VERT} />;
-}
+/* TplMarche (palette verte) est dans ./templates/tpl-marche.tsx, comme les autres Standard. */
 
 /* ================================================================== */
 /*  4. CLASSIQUE — Swiss minimal B&W (Gratuit)                        */
@@ -1647,7 +1617,7 @@ const CL_CSS = `
 .cl-badge{display:inline-flex;align-items:center;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:800;}
 .cl-badge-green{background:#fff;color:var(--cl-text);box-shadow:0 4px 12px rgba(0,0,0,0.12);}
 .cl-hero{position:relative;color:#fff;padding:100px 0 0;overflow:hidden;background:#090d16;}
-.cl-hero::before{content:"";position:absolute;inset:0;background-image:url("/hero-jollof.png");background-size:cover;background-position:center;opacity:0.35;z-index:0;}
+.cl-hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(60% 50% at 18% 22%,rgba(245,158,11,0.30),transparent 70%),radial-gradient(50% 60% at 86% 72%,rgba(34,197,94,0.20),transparent 70%);z-index:0;}
 .cl-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,13,22,0.5) 0%,rgba(9,13,22,0.96) 100%);z-index:0;}
 .cl-hero-inner{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
 .cl-eyebrow{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--cl-accent-light);margin-bottom:16px;display:inline-block;padding:4px 14px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:999px;}
@@ -1655,7 +1625,7 @@ const CL_CSS = `
 .cl-hero-title em{color:var(--cl-accent-light);font-style:normal;}
 .cl-hero-sub{font-size:16px;opacity:0.85;line-height:1.75;margin-bottom:32px;max-width:460px;}
 .cl-hero-btns{display:flex;gap:12px;flex-wrap:wrap;}
-.cl-hero-img{background-image:url("/hero-jollof.png");background-size:cover;background-position:center;border-radius:24px;height:420px;box-shadow:0 30px 70px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.12);transition:transform 0.3s;}
+.cl-hero-img{background-color:#111827;background-image:linear-gradient(135deg,rgba(245,158,11,0.38),rgba(9,13,22,0.15) 55%),radial-gradient(circle at 72% 28%,rgba(34,197,94,0.32),transparent 62%);border-radius:24px;height:420px;box-shadow:0 30px 70px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.12);transition:transform 0.3s;}
 .cl-hero-img:hover{transform:scale(1.02);}
 .cl-hero-stats{position:relative;z-index:1;display:flex;gap:0;background:rgba(255,255,255,0.06);border-top:1px solid rgba(255,255,255,0.12);margin-top:60px;backdrop-filter:blur(12px);}
 .cl-hero-stat{flex:1;text-align:center;padding:24px 12px;border-right:1px solid rgba(255,255,255,0.08);}
@@ -1826,37 +1796,5 @@ const CL_CSS = `
 }
 `;
 
-/* ============= Dispatcher ============= */
-
-export function renderTemplate(template: string | null, props: TemplateProps) {
-  const tpl = template || "prem-royal";
-  switch (tpl) {
-    case "prem-royal":
-      return <TplPremiumRoyal {...props} />;
-    case "prem-nuit":
-      return <TplPremiumNuit {...props} />;
-    case "prem-feu":
-      return <TplPremiumFeu {...props} />;
-    case "prem-luxe":
-      return <TplPremiumLuxe {...props} />;
-    case "soleil":
-    case "std-soleil":
-      return <TplSoleil {...props} />;
-    case "savane":
-    case "std-savane":
-      return <TplSavane {...props} />;
-    case "marche":
-    case "std-marche":
-      return <TplMarche {...props} />;
-    case "moderne":
-    case "std-moderne":
-      return <TplModerne {...props} />;
-    case "nuit":
-    case "std-nuit":
-      return <TplNuit {...props} />;
-    case "classique":
-    case "gratuit-classique":
-    default:
-      return <TplClassique {...props} />;
-  }
-}
+/* Le dispatcher (renderTemplate) vit désormais dans ./render-template.tsx :
+   chaque template y est chargé à la demande pour ne pas alourdir les autres forfaits. */

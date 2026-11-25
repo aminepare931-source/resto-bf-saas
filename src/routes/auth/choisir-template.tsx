@@ -1,17 +1,13 @@
-import { usePlanAccess, allowedTemplateTiers } from "@/lib/plans";
+import { usePlanAccess, allowedTemplateTiers, planKey, type PlanKey } from "@/lib/plans";
+import { TEMPLATE_CATALOG, templatesOfTier, type TemplateEntry } from "@/lib/templates-catalog";
 import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthShell } from "@/components/auth/AuthShell";
-import { renderTemplate } from "@/components/public/templates";
+import { renderTemplate } from "@/components/public/render-template";
 import { demoData } from "@/components/public/demo-data";
 import { Lock, Check, Eye, X } from "lucide-react";
-
-const PREMIUM_FEU_BG = "/premium-bgs/premium-feu-bg.png";
-const PREMIUM_GRILL_BG = "/premium-bgs/premium-grill-bg.jpg";
-const PREMIUM_ROYAL_BG = "/premium-bgs/premium-royal-bg.jpg";
-const PREMIUM_PASTA_BG = "/premium-bgs/premium-pasta-bg.jpg";
 
 export const Route = createFileRoute("/auth/choisir-template")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -26,88 +22,17 @@ export const Route = createFileRoute("/auth/choisir-template")({
   component: ChooseTemplate,
 });
 
-type PlanTier = "gratuit" | "standard" | "premium";
-type Tpl = { id: string; name: string; tagline: string; plan: PlanTier; vibe: string };
+const templates = TEMPLATE_CATALOG;
 
-const templates: Tpl[] = [
-  {
-    id: "gratuit-classique",
-    name: "Classique",
-    tagline: "Swiss minimal noir/blanc",
-    plan: "gratuit",
-    vibe: "linear-gradient(135deg,#1a1a24,#0a0a0f)",
-  },
-  {
-    id: "std-soleil",
-    name: "Soleil",
-    tagline: "Or solaire & crème chaleureuse",
-    plan: "standard",
-    vibe: "linear-gradient(135deg,#fabc4d,#7e5700)",
-  },
-  {
-    id: "std-savane",
-    name: "Savane",
-    tagline: "Ambre & terre d'ocre",
-    plan: "standard",
-    vibe: "linear-gradient(135deg,#e5a93c,#504535)",
-  },
-  {
-    id: "std-marche",
-    name: "Vert",
-    tagline: "Émeraude & produits frais",
-    plan: "standard",
-    vibe: "linear-gradient(135deg,#49eb7b,#0d2818)",
-  },
-  {
-    id: "std-moderne",
-    name: "Épuré",
-    tagline: "Minimalisme contemporain",
-    plan: "standard",
-    vibe: "linear-gradient(135deg,#d4c4b0,#0b0f19)",
-  },
-  {
-    id: "prem-royal",
-    name: "Palais Royal",
-    tagline: "Or, QR, cave, événements",
-    plan: "premium",
-    vibe: `url(${PREMIUM_ROYAL_BG}) center/cover`,
-  },
-  {
-    id: "prem-nuit",
-    name: "Aurum Nuit",
-    tagline: "Fine dining sombre animé",
-    plan: "premium",
-    vibe: `url(${PREMIUM_PASTA_BG}) center/cover`,
-  },
-  {
-    id: "prem-feu",
-    name: "Ignis Feu",
-    tagline: "Braises animées & grillades",
-    plan: "premium",
-    vibe: `url(${PREMIUM_FEU_BG}) center/cover`,
-  },
-  {
-    id: "prem-luxe",
-    name: "Luxe Grill",
-    tagline: "Grande réservation + QR",
-    plan: "premium",
-    vibe: `url(${PREMIUM_GRILL_BG}) center/cover`,
-  },
-];
-
-const planRank: Record<PlanTier, number> = { gratuit: 0, standard: 1, premium: 2 };
-
-// Map DB plan -> tier used for template gating.
-// Trial and standard_plus give Standard-tier template access (not Premium).
-function planToTier(plan: string): PlanTier {
-  if (plan === "premium" || plan === "sur_mesure") return "premium";
-  if (plan === "standard" || plan === "standard_plus" || plan === "trial") return "standard";
-  return "gratuit";
-}
+const TIER_LABEL: Record<PlanKey, string> = {
+  basique: "Basique",
+  standard: "Standard",
+  premium: "Premium",
+};
 
 function ChooseTemplate() {
   const navigate = useNavigate();
-  const [userPlan, setUserPlan] = useState<PlanTier>("standard");
+  const [userPlan, setUserPlan] = useState<PlanKey>("standard");
   const [planLabel, setPlanLabel] = useState<string>("essai");
   const { template: preTemplate } = Route.useSearch();
   const [selected, setSelected] = useState<string | null>(
@@ -126,22 +51,22 @@ function ChooseTemplate() {
         .eq("user_id", u.user.id)
         .maybeSingle();
       if (data) {
-        setUserPlan(planToTier(data.plan));
+        setUserPlan(planKey(data.plan));
         setPlanLabel(data.plan);
         setSelected(data.template ?? null);
       }
     })();
   }, []);
 
-  const access = usePlanAccess(userPlan === "gratuit" ? "basique" : userPlan);
+  const access = usePlanAccess(userPlan);
   const allowedTiers = allowedTemplateTiers(access.has);
-  const canPick = (p: Tpl["plan"]) => allowedTiers.includes(p === "gratuit" ? "basique" : p);
+  const canPick = (p: PlanKey) => allowedTiers.includes(p);
 
   const save = async () => {
     if (!selected) return;
     const tpl = templates.find((t) => t.id === selected);
     if (!tpl) return;
-    if (!canPick(tpl.plan)) {
+    if (!canPick(tpl.tier)) {
       toast.error("Ce template demande un forfait supérieur.");
       return;
     }
@@ -158,10 +83,10 @@ function ChooseTemplate() {
     navigate({ to: "/dashboard" });
   };
 
-  const grouped = {
-    gratuit: templates.filter((t) => t.plan === "gratuit"),
-    standard: templates.filter((t) => t.plan === "standard"),
-    premium: templates.filter((t) => t.plan === "premium"),
+  const grouped: Record<PlanKey, typeof templates> = {
+    basique: templatesOfTier("basique"),
+    standard: templatesOfTier("standard"),
+    premium: templatesOfTier("premium"),
   };
 
   return (
@@ -177,11 +102,7 @@ function ChooseTemplate() {
               Forfait actif
             </span>
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold bg-terracotta text-white">
-              {userPlan === "premium"
-                ? "Premium"
-                : userPlan === "standard"
-                  ? "Standard"
-                  : "Gratuit / Essai"}
+              {TIER_LABEL[userPlan]}
             </span>
             {userPlan !== "premium" && (
               <span className="text-xs text-muted-foreground">
@@ -189,10 +110,10 @@ function ChooseTemplate() {
               </span>
             )}
           </div>
-          {(["gratuit", "standard", "premium"] as const).map((plan) => (
+          {(["basique", "standard", "premium"] as const).map((plan) => (
             <div key={plan}>
               <h3 className="text-sm font-black uppercase tracking-widest text-terracotta-deep mb-3">
-                {plan === "gratuit" ? "Gratuit" : plan === "standard" ? "Standard" : "Premium"}
+                {TIER_LABEL[plan]}
                 {!canPick(plan) && (
                   <span className="ml-3 text-xs text-muted-foreground normal-case tracking-normal">
                     (aperçu seulement — upgrade requis pour activer)
@@ -201,7 +122,7 @@ function ChooseTemplate() {
               </h3>
               <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 {grouped[plan].map((t) => {
-                  const locked = !canPick(t.plan);
+                  const locked = !canPick(t.tier);
                   const active = selected === t.id;
                   return (
                     <div key={t.id} className="relative group">
@@ -218,7 +139,7 @@ function ChooseTemplate() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                         {locked && (
                           <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/70 text-[10px] font-bold text-white/90 border border-white/20 flex items-center gap-1">
-                            <Lock className="w-3 h-3" /> {t.plan}
+                            <Lock className="w-3 h-3" /> {TIER_LABEL[t.tier]}
                           </div>
                         )}
                         {active && (
@@ -266,7 +187,7 @@ function ChooseTemplate() {
       {previewId && (
         <PreviewModal
           tpl={templates.find((t) => t.id === previewId)!}
-          canActivate={canPick(templates.find((t) => t.id === previewId)!.plan)}
+          canActivate={canPick(templates.find((t) => t.id === previewId)!.tier)}
           isCurrent={selected === previewId}
           onClose={() => setPreviewId(null)}
           onSelect={() => {
@@ -286,7 +207,7 @@ function PreviewModal({
   onClose,
   onSelect,
 }: {
-  tpl: Tpl;
+  tpl: TemplateEntry;
   canActivate: boolean;
   isCurrent: boolean;
   onClose: () => void;
@@ -297,7 +218,7 @@ function PreviewModal({
       <header className="flex items-center justify-between px-5 py-3 border-b border-white/10 bg-[#0a0a0f] text-white">
         <div>
           <p className="text-[10px] uppercase tracking-widest text-[#e5a93c] font-bold">
-            Aperçu — {tpl.plan}
+            Aperçu — {TIER_LABEL[tpl.tier]}
           </p>
           <strong>{tpl.name}</strong>
         </div>

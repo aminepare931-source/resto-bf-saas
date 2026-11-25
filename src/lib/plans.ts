@@ -1,6 +1,7 @@
 import * as React from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { FEATURE_REGISTRY } from "@/lib/features";
+import { templateEntry } from "@/lib/templates-catalog";
 
 /**
  * Source unique des droits par forfait.
@@ -13,10 +14,10 @@ export type PlanKey = "basique" | "standard" | "premium";
 
 export const PLAN_RANK: Record<PlanKey, number> = { basique: 0, standard: 1, premium: 2 };
 
-/** Plan en base (trial, gratuit, sur_mesure…) → forfait de droits. */
+/** Plan en base (trial, gratuit, standard_plus, sur_mesure…) → forfait de droits. Seule version à utiliser. */
 export function planKey(plan?: string | null): PlanKey {
   if (plan === "premium" || plan === "sur_mesure") return "premium";
-  if (plan === "standard" || plan === "trial") return "standard";
+  if (plan === "standard" || plan === "standard_plus" || plan === "trial") return "standard";
   return "basique"; // basique, gratuit (legacy), inconnu
 }
 
@@ -31,6 +32,9 @@ export function isSiteOffline(status?: string | null): boolean {
 
 /** Niveau minimal de forfait requis pour un template. */
 export function templateTier(templateId?: string | null): PlanKey {
+  const known = templateEntry(templateId);
+  if (known) return known.tier;
+  // Anciens identifiants (avant le catalogue) : on se base sur le préfixe.
   const id = templateId ?? "";
   if (id.startsWith("prem-") || id === "premium") return "premium";
   if (id.startsWith("std-") || ["soleil", "savane", "marche", "moderne", "nuit"].includes(id)) {
@@ -58,24 +62,6 @@ export function effectiveTemplateFor(
   if (tiers.includes("premium")) return "prem-royal";
   if (tiers.includes("standard")) return "std-soleil";
   return "gratuit-classique";
-}
-
-export function defaultTemplateFor(plan?: string | null): string {
-  const k = planKey(plan);
-  if (k === "premium") return "prem-royal";
-  if (k === "standard") return "std-soleil";
-  return "gratuit-classique";
-}
-
-/**
- * Template réellement affiché : celui choisi en base, sauf s'il dépasse le forfait
- * (alors on retombe sur le meilleur template autorisé).
- */
-export function effectiveTemplate(plan?: string | null, template?: string | null): string {
-  if (!template) return defaultTemplateFor(plan);
-  return PLAN_RANK[templateTier(template)] <= PLAN_RANK[planKey(plan)]
-    ? template
-    : defaultTemplateFor(plan);
 }
 
 /* ---------------- Fonctionnalités ---------------- */

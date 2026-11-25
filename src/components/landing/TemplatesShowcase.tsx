@@ -100,7 +100,7 @@ const TEMPLATES: Tpl[] = [
     tagline: "Terre & tradition",
     description:
       "Inspiré des paysages burkinabè et de la cuisine du terroir. Idéal pour les restaurants de cuisine traditionnelle.",
-    thumb: "/bg-savane.jpg",
+    thumb: "/bg-savane.webp",
     frame: "#5a3b1a",
     features: [
       { icon: Sun, title: "Esprit terroir", text: "Couleurs de terre et de savane" },
@@ -115,7 +115,7 @@ const TEMPLATES: Tpl[] = [
     tagline: "Vivant & gourmand",
     description:
       "Un design vivace pour les fast-foods, grillades, shawarmas et livraisons express. Commandes rapides et WhatsApp en avant.",
-    thumb: "/bg-marché.jpg",
+    thumb: "/bg-marche.webp",
     frame: "#7a2a14",
     features: [{ icon: Sun, title: "Design vivace", text: "Fait pour vendre vite" }, wa, resp],
     order: { desktop: 5, mobile: 5 },

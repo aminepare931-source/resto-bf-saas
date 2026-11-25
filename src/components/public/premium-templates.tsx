@@ -49,10 +49,12 @@ import {
   Lamp,
 } from "lucide-react";
 
-const PREMIUM_FEU_BG = "/premium-bgs/premium-feu-bg.png";
-const PREMIUM_GRILL_BG = "/premium-bgs/premium-grill-bg.jpg";
-const PREMIUM_ROYAL_BG = "/premium-bgs/premium-royal-bg.jpg";
-const PREMIUM_PASTA_BG = "/premium-bgs/premium-pasta-bg.jpg";
+const PREMIUM_FONTS_URL =
+  "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=DM+Serif+Display&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap";
+const PREMIUM_FEU_BG = "/premium-bgs/premium-feu-bg.webp";
+const PREMIUM_GRILL_BG = "/premium-bgs/premium-grill-bg.webp";
+const PREMIUM_ROYAL_BG = "/premium-bgs/premium-royal-bg.webp";
+const PREMIUM_PASTA_BG = "/premium-bgs/premium-pasta-bg.webp";
 
 type PremiumKind = "royal" | "nuit" | "feu" | "luxe";
 
@@ -487,7 +489,7 @@ function Interactive3DPlatterHero({
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             />
           ) : (
-            <img
+            <img loading="lazy" decoding="async"
               src={config.background}
               alt={dish?.name ?? "Plat du chef"}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -737,7 +739,7 @@ function PremiumRestaurantTemplate({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <img src={config.background} alt="Ambiance prestige" />
+                  <img loading="lazy" decoding="async" src={config.background} alt="Ambiance prestige" />
                 )}
               </div>
               <h3>Table d'Honneur & Salon VIP</h3>
@@ -768,7 +770,7 @@ function PremiumRestaurantTemplate({
                   className="cursor-pointer group relative overflow-hidden rounded-xl border border-white/10"
                 >
                   {photo.image_url.startsWith("/") ? (
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={photo.image_url}
                       alt={photo.caption ?? restaurant.name}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -820,7 +822,7 @@ function PremiumRestaurantTemplate({
                   <h3>Menu QR Code Table</h3>
                   <p>Partagez ce QR code sur vos tables, flyers ou réseaux sociaux.</p>
                   {qr ? (
-                    <img src={qr} alt={`QR code ${restaurant.name}`} />
+                    <img loading="lazy" decoding="async" src={qr} alt={`QR code ${restaurant.name}`} />
                   ) : (
                     <div className="premium-qr-placeholder">QR</div>
                   )}
@@ -870,6 +872,7 @@ function PremiumRestaurantTemplate({
         } as CSSProperties
       }
     >
+      <link rel="stylesheet" href={PREMIUM_FONTS_URL} />
       <style>{PREMIUM_CSS}</style>
 
       {/* DYNAMIC EMBER PARTICLES */}
@@ -1190,7 +1193,7 @@ function PremiumRestaurantTemplate({
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <img src={config.background} alt="Ambiance prestige" />
+                    <img loading="lazy" decoding="async" src={config.background} alt="Ambiance prestige" />
                   )}
                 </div>
                 <h3>Table d'Honneur & VIP</h3>
@@ -1219,7 +1222,7 @@ function PremiumRestaurantTemplate({
                     className="cursor-pointer group relative overflow-hidden rounded-xl border border-white/10"
                   >
                     {photo.image_url.startsWith("/") ? (
-                      <img
+                      <img loading="lazy" decoding="async"
                         src={photo.image_url}
                         alt={photo.caption ?? restaurant.name}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -1363,7 +1366,7 @@ function SignatureCard({
               className="w-full h-full object-cover"
             />
           ) : (
-            <img src={config.background} alt={dish.name} />
+            <img loading="lazy" decoding="async" src={config.background} alt={dish.name} />
           )}
         </div>
         <footer>

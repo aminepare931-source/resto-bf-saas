@@ -32,5 +32,5 @@ export function StorageImage({ path, alt, className }: Props) {
       </div>
     );
   }
-  return <img src={url} alt={alt} className={className} loading="lazy" />;
+  return <img src={url} alt={alt} className={className} loading="lazy" decoding="async" />;
 }

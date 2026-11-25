@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { renderTemplate } from "@/components/public/templates";
+import { renderTemplate } from "@/components/public/render-template";
 import type {
   PublicRestaurant,
   PublicMenuItem,
